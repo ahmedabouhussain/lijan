@@ -20,6 +20,9 @@ import MemberManager from "@/components/raqeem/MemberManager";
 import MeetingScheduler from "@/components/raqeem/MeetingScheduler";
 import SecretaryPanel from "@/components/raqeem/SecretaryPanel";
 import CommitteeHome from "@/components/raqeem/CommitteeHome";
+import ChairRoom from "@/components/raqeem/rooms/ChairRoom";
+import MemberRoom from "@/components/raqeem/rooms/MemberRoom";
+import { useCommitteeRole } from "@/hooks/useCommitteeRole";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -43,6 +46,13 @@ export default function CommitteeDetail() {
   const [actions, setActions] = useState([]);
   const [minutes, setMinutes] = useState([]);
   const [activating, setActivating] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const myRole = useCommitteeRole(committee, members);
+
+  useEffect(() => {
+    base44.auth.me().then(setCurrentUser).catch(() => {});
+  }, []);
 
   async function load() {
     try {
@@ -116,49 +126,27 @@ export default function CommitteeDetail() {
       </div>
 
       {/* Committee Home — role-based landing */}
-      <CommitteeHome committee={committee} members={members} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
+      <CommitteeHome committee={committee} members={members} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} role={myRole} />
 
-      {/* Mandate-to-Impact chain indicator */}
-      {!committee.governance_complete && (
-        <div className="bg-amber-50 border border-amber-200 rounded-md p-3 flex items-center justify-between gap-2 text-sm text-amber-800">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span>هذه اللجنة في حالة مسودة — استكمل متطلبات الحوكمة للتفعيل</span>
-          </div>
-          {governanceReady && (
-            <button
-              onClick={activateCommittee}
-              disabled={activating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary-dark shrink-0"
-            >
-              <Play className="w-3.5 h-3.5" /> {activating ? "جارٍ التفعيل..." : "تفعيل اللجنة"}
-            </button>
-          )}
-        </div>
+      {/* Role-based Room */}
+      {myRole === "secretary" ? (
+        <SecretaryPanel committeeId={id} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
+      ) : myRole === "chair" || myRole === "vice_chair" ? (
+        <ChairRoom
+          committee={committee}
+          members={members}
+          meetings={meetings}
+          decisions={decisions}
+          governanceReady={governanceReady}
+          onActivate={activateCommittee}
+          activating={activating}
+        />
+      ) : (
+        <MemberRoom meetings={meetings} decisions={decisions} actions={actions} currentUser={currentUser} />
       )}
 
-      {/* In-committee navigation */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <a href="#info" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
-          <FileText className="w-3.5 h-3.5" /> المعلومات
-        </a>
-        <a href="#members" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
-          <Users className="w-3.5 h-3.5" /> الأعضاء
-        </a>
-        <a href="#meetings" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
-          <Calendar className="w-3.5 h-3.5" /> الاجتماعات
-        </a>
-        <a href="#decisions" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
-          <Gavel className="w-3.5 h-3.5" /> القرارات
-        </a>
-        <a href="#actions" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
-          <CheckSquare className="w-3.5 h-3.5" /> الإجراءات
-        </a>
-      </div>
-
-      {/* Two columns */}
+      {/* Committee Info — shared reference */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Committee info */}
         <div id="info" className="space-y-6 scroll-mt-4">
           <div className="raqeem-card p-5">
             <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
@@ -184,11 +172,8 @@ export default function CommitteeDetail() {
           </div>
         </div>
 
-        {/* Right: Tabs content */}
+        {/* Directory — shared reference for all roles */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Secretary Board */}
-          <SecretaryPanel committeeId={id} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
-
           {/* Members */}
           <div id="members" className="raqeem-card p-5 scroll-mt-4">
             <div className="flex items-center justify-between mb-3">

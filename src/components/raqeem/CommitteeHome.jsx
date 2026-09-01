@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Gavel, Calendar, FileText, Users, CheckSquare, AlertTriangle, ChevronLeft } from "lucide-react";
 import { MEETING_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -23,24 +22,7 @@ const ROLE_LABELS = {
   advisor: { ar: "مستشار", en: "Advisor" },
 };
 
-export default function CommitteeHome({ committee, members, meetings, decisions, actions, minutes }) {
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    base44.auth.me().then(setCurrentUser).catch(() => {});
-  }, []);
-
-  const myRole = useMemo(() => {
-    if (!currentUser) return "member";
-    const memberRecord = members.find(
-      (m) => m.email && currentUser.email && m.email.toLowerCase() === currentUser.email.toLowerCase()
-    );
-    if (memberRecord) return memberRecord.role;
-    if (committee.chair_name && currentUser.full_name === committee.chair_name) return "chair";
-    if (committee.secretary_name && currentUser.full_name === committee.secretary_name) return "secretary";
-    if (currentUser.role === "admin") return "chair";
-    return "member";
-  }, [currentUser, members, committee]);
+export default function CommitteeHome({ committee, members, meetings, decisions, actions, minutes, role: myRole }) {
 
   const governanceScore = useMemo(() => {
     let score = 0;
