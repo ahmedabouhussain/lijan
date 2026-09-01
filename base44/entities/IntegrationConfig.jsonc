@@ -1,0 +1,74 @@
+{
+  "name": "IntegrationConfig",
+  "type": "object",
+  "properties": {
+    "system": {
+      "type": "string",
+      "title": "External System Key"
+    },
+    "system_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "enabled": {
+      "type": "boolean",
+      "title": "Enabled",
+      "default": false
+    },
+    "maturity_level": {
+      "type": "string",
+      "title": "Maturity Level",
+      "enum": [
+        "read",
+        "sync",
+        "write_back",
+        "orchestrate"
+      ],
+      "default": "read"
+    },
+    "credentials_label": {
+      "type": "string",
+      "title": "Credentials Label"
+    },
+    "endpoint_url": {
+      "type": "string",
+      "title": "Endpoint URL",
+      "format": "uri"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "title": "Last Synced At",
+      "format": "date-time"
+    },
+    "sync_frequency": {
+      "type": "string",
+      "title": "Sync Frequency",
+      "enum": [
+        "realtime",
+        "hourly",
+        "daily",
+        "on_demand",
+        "manual"
+      ],
+      "default": "manual"
+    },
+    "graceful_degradation": {
+      "type": "boolean",
+      "title": "Graceful Degradation",
+      "default": true
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "system",
+    "enabled",
+    "maturity_level"
+  ]
+}

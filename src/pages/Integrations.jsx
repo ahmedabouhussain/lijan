@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   Plug,
@@ -12,8 +12,12 @@ import {
   Database,
   Layers,
   AlertCircle,
+  Settings2,
+  CheckCircle2,
+  Activity,
 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import IntegrationConfigSheet, { MATURITY_LEVELS } from "@/components/raqeem/IntegrationConfigSheet";
 
 const INTEGRATION_CATALOG = [
   {
@@ -79,15 +83,23 @@ const INTEGRATION_CATALOG = [
   },
 ];
 
+const FREQ_AR = { realtime: "لحظي", hourly: "كل ساعة", daily: "يومي", on_demand: "عند الطلب", manual: "يدوي" };
+
 export default function Integrations() {
   const [loading, setLoading] = useState(true);
+  const [configs, setConfigs] = useState([]);
   const [refs, setRefs] = useState([]);
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await base44.entities.ExternalReference.list("-created_date", 200);
-        setRefs(data || []);
+        const [cfgData, refData] = await Promise.all([
+          base44.entities.IntegrationConfig.list(),
+          base44.entities.ExternalReference.list("-created_date", 500),
+        ]);
+        setConfigs(cfgData || []);
+        setRefs(refData || []);
       } catch {
         setRefs([]);
       }
@@ -96,7 +108,31 @@ export default function Integrations() {
     load();
   }, []);
 
-  const connectedSystems = new Set(refs.map((r) => r.external_system));
+  const configBySystem = useMemo(() => {
+    const map = {};
+    configs.forEach((c) => { map[c.system] = c; });
+    return map;
+  }, [configs]);
+
+  const enabledConfigs = configs.filter((c) => c.enabled);
+  const mappingBySystem = useMemo(() => {
+    const map = {};
+    refs.forEach((r) => { map[r.external_system] = (map[r.external_system] || 0) + 1; });
+    return map;
+  }, [refs]);
+
+  const maturityCounts = useMemo(() => {
+    const m = { read: 0, sync: 0, write_back: 0, orchestrate: 0 };
+    enabledConfigs.forEach((c) => { if (m[c.maturity_level] !== undefined) m[c.maturity_level]++; });
+    return m;
+  }, [enabledConfigs]);
+
+  const onSaved = (saved) => {
+    setConfigs((prev) => {
+      const idx = prev.findIndex((c) => c.id === saved.id);
+      return idx >= 0 ? prev.map((c) => (c.id === saved.id ? saved : c)) : [...prev, saved];
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -109,6 +145,42 @@ export default function Integrations() {
         <p className="text-sm text-muted-foreground mt-1">
           رَقِيم لا يستبدل الأنظمة الموجودة في الدولة؛ رَقِيم يجعلها تعمل معًا حول القرار المؤسسي
         </p>
+      </div>
+
+      {/* Summary metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="raqeem-card p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground uppercase">إجمالي</span>
+            <Plug className="w-4 h-4 text-muted-foreground" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">{configs.length}</div>
+          <div className="text-xs text-muted-foreground">تكامل مُهيّأ</div>
+        </div>
+        <div className="raqeem-card p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground uppercase">مُفعّل</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div className="text-2xl font-bold text-emerald-700">{enabledConfigs.length}</div>
+          <div className="text-xs text-muted-foreground">قيد التشغيل</div>
+        </div>
+        <div className="raqeem-card p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground uppercase">مراجع</span>
+            <Layers className="w-4 h-4 text-accent" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">{refs.length}</div>
+          <div className="text-xs text-muted-foreground">ربط بين الأنظمة</div>
+        </div>
+        <div className="raqeem-card p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground uppercase">تنسيق</span>
+            <Activity className="w-4 h-4 text-primary" />
+          </div>
+          <div className="text-2xl font-bold text-primary">{maturityCounts.orchestrate}</div>
+          <div className="text-xs text-muted-foreground">أعلى مستوى نضج</div>
+        </div>
       </div>
 
       {/* Fabric Architecture */}
@@ -126,7 +198,7 @@ export default function Integrations() {
           <div className="raqeem-card p-4 bg-accent/10">
             <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Integration Fabric</div>
             <div className="text-sm font-semibold text-accent">طبقة التكامل المحايدة</div>
-            <div className="text-xs text-muted-foreground mt-1">مزودون قابلون للاستبدال</div>
+            <div className="text-xs text-muted-foreground mt-1">مزودون قابلون للاستبدال · تدهور رشيق</div>
           </div>
           <div className="raqeem-card p-4">
             <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">External Systems</div>
@@ -135,9 +207,18 @@ export default function Integrations() {
           </div>
         </div>
         <div className="mt-4 pt-4 border-t border-border">
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-semibold text-foreground">مستويات التكامل:</span> ١) قراءة · ٢) مزامنة · ٣) كتابة عكسية · ٤) تنسيق عبر أنظمة متعددة
-          </p>
+          <div className="text-xs font-semibold text-foreground mb-2">مستويات النضج · Maturity Levels</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {Object.entries(MATURITY_LEVELS).map(([k, v]) => (
+              <div key={k} className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${v.color.split(" ")[1]}`} />
+                <div>
+                  <div className="text-xs font-medium">{v.ar} · {v.en}</div>
+                  <div className="text-[11px] text-muted-foreground">{v.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -149,26 +230,35 @@ export default function Integrations() {
         </div>
         {loading ? (
           <div className="py-8 text-center text-sm text-muted-foreground">جارٍ التحميل...</div>
-        ) : refs.length === 0 ? (
+        ) : enabledConfigs.length === 0 ? (
           <div className="flex items-center gap-3 py-4 text-sm text-muted-foreground">
             <AlertCircle className="w-4 h-4 text-amber-500" />
-            لا توجد تكاملات مُفعّلة بعد · No integrations configured
+            لا توجد تكاملات مُفعّلة بعد · No integrations enabled — فعّل تكاملاً من الكتالوج أدناه
           </div>
         ) : (
           <div className="space-y-2">
-            {Array.from(connectedSystems).map((sys) => {
-              const sysRefs = refs.filter((r) => r.external_system === sys);
-              const healthy = sysRefs.filter((r) => r.sync_status === "synced").length;
+            {enabledConfigs.map((c) => {
+              const count = mappingBySystem[c.system] || 0;
+              const synced = refs.filter((r) => r.external_system === c.system && r.sync_status === "synced").length;
+              const healthy = count === 0 || synced === count;
               return (
-                <div key={sys} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <div>
-                    <div className="text-sm font-medium text-foreground">{sys}</div>
-                    <div className="text-xs text-muted-foreground">{sysRefs.length} مرجع · {healthy} متزامن</div>
+                <div key={c.id} className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <div className="text-sm font-medium text-foreground">{c.system_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {MATURITY_LEVELS[c.maturity_level]?.ar} · {FREQ_AR[c.sync_frequency] || c.sync_frequency}
+                        {c.last_synced_at && ` · آخر مزامنة ${new Date(c.last_synced_at).toLocaleDateString("en-GB")}`}
+                      </div>
+                    </div>
                   </div>
-                  <StatusBadge
-                    label={healthy === sysRefs.length ? "سليم" : "متأخر"}
-                    colorClass={healthy === sysRefs.length ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}
-                  />
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">{count} مرجع</span>
+                    <StatusBadge
+                      label={healthy ? "سليم" : "متأخر"}
+                      colorClass={healthy ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -187,24 +277,49 @@ export default function Integrations() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {cat.items.map((item) => {
-                const connected = connectedSystems.has(item.system);
+                const cfg = configBySystem[item.system];
+                const enabled = cfg?.enabled;
+                const mappingCount = mappingBySystem[item.system] || 0;
                 return (
-                  <div key={item.name} className="border border-border rounded-md p-3">
-                    <div className="flex items-center justify-between mb-1">
+                  <button
+                    key={item.name}
+                    onClick={() => setSelected({ item, existing: cfg })}
+                    className="border border-border rounded-md p-3 text-right hover:border-primary/40 hover:bg-secondary/20 transition-colors group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
                       <span className="text-sm font-medium text-foreground">{item.name}</span>
-                      <StatusBadge
-                        label={connected ? "متصل" : "غير مُفعّل"}
-                        colorClass={connected ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}
-                      />
+                      <div className="flex items-center gap-1.5">
+                        {enabled && cfg?.maturity_level && (
+                          <StatusBadge label={MATURITY_LEVELS[cfg.maturity_level]?.ar} colorClass={MATURITY_LEVELS[cfg.maturity_level]?.color} />
+                        )}
+                        <StatusBadge
+                          label={enabled ? "متصل" : "غير مُفعّل"}
+                          colorClass={enabled ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}
+                        />
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
+                    <p className="text-xs text-muted-foreground mb-2">{item.desc}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground">{mappingCount} ربط</span>
+                      <span className="text-[11px] text-primary flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Settings2 className="w-3 h-3" /> تهيئة
+                      </span>
+                    </div>
+                  </button>
                 );
               })}
             </div>
           </div>
         ))}
       </div>
+
+      <IntegrationConfigSheet
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+        item={selected?.item}
+        existing={selected?.existing}
+        onSaved={onSaved}
+      />
     </div>
   );
 }
