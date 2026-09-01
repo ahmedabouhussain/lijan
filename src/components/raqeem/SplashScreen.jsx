@@ -50,7 +50,7 @@ export default function SplashScreen({ onFinish }) {
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center cursor-pointer transition-opacity duration-700 ${
         phase === "exit" ? "opacity-0" : "opacity-100"
       }`}
-      style={{ background: BRAND_COLORS.background }}
+      style={{ background: "#FFFFFF" }}
       dir="rtl"
     >
       {/* Intro video — plays first, fades out when it ends */}

@@ -1,0 +1,119 @@
+{
+  "name": "InstrumentVersion",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "instrument_id": {
+      "type": "string",
+      "title": "Parent Founding Instrument ID"
+    },
+    "version_number": {
+      "type": "number",
+      "title": "Version Number",
+      "default": 1
+    },
+    "file_url": {
+      "type": "string",
+      "title": "File URL",
+      "format": "uri"
+    },
+    "original_filename": {
+      "type": "string",
+      "title": "Original Filename"
+    },
+    "mime_type": {
+      "type": "string",
+      "title": "MIME Type"
+    },
+    "file_size": {
+      "type": "number",
+      "title": "File Size (bytes)"
+    },
+    "content_hash": {
+      "type": "string",
+      "title": "Content Hash (SHA-256)"
+    },
+    "change_summary": {
+      "type": "string",
+      "title": "Change Summary"
+    },
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "enum": [
+        "ar",
+        "en",
+        "bilingual",
+        "other"
+      ],
+      "default": "ar"
+    },
+    "uploaded_by_user_id": {
+      "type": "string",
+      "title": "Uploaded By User ID"
+    },
+    "uploaded_by_name": {
+      "type": "string",
+      "title": "Uploaded By Name"
+    },
+    "uploaded_at": {
+      "type": "string",
+      "title": "Uploaded At",
+      "format": "date-time"
+    },
+    "is_current": {
+      "type": "boolean",
+      "title": "Is Current Version",
+      "default": true
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "active",
+        "superseded",
+        "archived"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "instrument_id",
+    "version_number",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
