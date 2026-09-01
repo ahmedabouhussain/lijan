@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Check, Send, Edit3, Save, X, UserCheck } from "lucide-react";
+import { FileText, Sparkles, Check, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
@@ -15,6 +15,21 @@ export default function MinutesManager({ meeting, committee, members, attendance
   const [summary, setSummary] = useState(minutes?.summary_ar || "");
   const [saving, setSaving] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [signatures, setSignatures] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [signing, setSigning] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then((u) => setCurrentUser(u)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!minutes) return;
+    base44.entities.Signature
+      .filter({ document_type: "MeetingMinutes", document_id: minutes.id })
+      .then((sigs) => setSignatures(sigs || []))
+      .catch(() => {});
+  }, [minutes]);
 
   const generateDraft = async () => {
     setGenerating(true);
@@ -74,6 +89,42 @@ export default function MinutesManager({ meeting, committee, members, attendance
 
   const presentCount = attendance.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
   const quorumMet = presentCount >= (meeting.quorum_required || 3);
+
+  const signElectronically = async () => {
+    if (!currentUser) return;
+    setSigning(true);
+    try {
+      await base44.entities.Signature.create({
+        document_type: "MeetingMinutes",
+        document_id: minutes.id,
+        document_title: `محضر ${meeting.title || ""}`,
+        committee_id: meeting.committee_id,
+        signer_name: currentUser.full_name,
+        signer_user_id: currentUser.id,
+        signer_role: "chair",
+        signature_method: currentUser.signature_image_url ? "drawn" : "typed",
+        signature_text: currentUser.signature_text || currentUser.full_name,
+        signature_image_url: currentUser.signature_image_url || undefined,
+        intent: "approve",
+        signed_at: new Date().toISOString(),
+        status: "active",
+      });
+      await base44.entities.MeetingMinutes.update(minutes.id, {
+        status: "approved",
+        approved_by_name: currentUser.full_name,
+        approved_date: new Date().toISOString().slice(0, 10),
+      });
+      await base44.entities.AuditLog.create({
+        action: "sign",
+        entity_type: "MeetingMinutes",
+        entity_id: minutes.id,
+        entity_title: `محضر ${meeting.title || ""}`,
+        description: `توقيع إلكتروني بواسطة ${currentUser.full_name}`,
+      });
+      onChanged();
+    } catch {}
+    setSigning(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -189,8 +240,8 @@ export default function MinutesManager({ meeting, committee, members, attendance
                 </Button>
               )}
               {minutes.status === "in_review" && (
-                <Button size="sm" onClick={() => transition("approved", { approved_by_name: committee?.chair_name, approved_date: new Date().toISOString().slice(0, 10) })} disabled={transitioning}>
-                  <Check className="w-3.5 h-3.5" /> اعتماد (الرئيس)
+                <Button size="sm" onClick={signElectronically} disabled={signing || !currentUser}>
+                  <PenLine className="w-3.5 h-3.5" /> {signing ? "جارٍ التوقيع..." : "توقيع واعتماد إلكترونياً"}
                 </Button>
               )}
               {minutes.status === "approved" && (
@@ -209,6 +260,36 @@ export default function MinutesManager({ meeting, committee, members, attendance
                 </span>
               )}
             </div>
+
+            {/* Signatures */}
+            {signatures.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <PenLine className="w-4 h-4 text-primary" />
+                  <h4 className="text-sm font-semibold text-foreground">التوقيعات الإلكترونية · E-Signatures</h4>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {signatures.filter((s) => s.status === "active").map((sig) => (
+                    <div key={sig.id} className="border border-border rounded-md p-3 bg-secondary/20">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="text-xs font-medium text-foreground">{sig.signer_name}</div>
+                        <StatusBadge label="موقّع" colorClass="bg-emerald-50 text-emerald-700" />
+                      </div>
+                      {sig.signature_image_url ? (
+                        <img src={sig.signature_image_url} alt="signature" className="h-10 object-contain mb-1" />
+                      ) : (
+                        <div className="text-xl text-foreground mb-1" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}>
+                          {sig.signature_text}
+                        </div>
+                      )}
+                      <div className="text-[10px] text-muted-foreground">
+                        {new Date(sig.signed_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

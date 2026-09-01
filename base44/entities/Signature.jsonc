@@ -1,0 +1,101 @@
+{
+  "name": "Signature",
+  "type": "object",
+  "properties": {
+    "document_type": {
+      "type": "string",
+      "title": "Document Type",
+      "enum": [
+        "MeetingMinutes",
+        "Decision",
+        "Action",
+        "Document"
+      ],
+      "default": "MeetingMinutes"
+    },
+    "document_id": {
+      "type": "string",
+      "title": "Document ID"
+    },
+    "document_title": {
+      "type": "string",
+      "title": "Document Title"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "signer_name": {
+      "type": "string",
+      "title": "Signer Name"
+    },
+    "signer_user_id": {
+      "type": "string",
+      "title": "Signer User ID"
+    },
+    "signer_role": {
+      "type": "string",
+      "title": "Signer Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "observer",
+        "advisor"
+      ],
+      "default": "chair"
+    },
+    "signature_method": {
+      "type": "string",
+      "title": "Signature Method",
+      "enum": [
+        "typed",
+        "drawn"
+      ],
+      "default": "typed"
+    },
+    "signature_text": {
+      "type": "string",
+      "title": "Signature Text"
+    },
+    "signature_image_url": {
+      "type": "string",
+      "title": "Signature Image URL",
+      "format": "uri"
+    },
+    "intent": {
+      "type": "string",
+      "title": "Signature Intent",
+      "enum": [
+        "approve",
+        "acknowledge",
+        "attest",
+        "witness"
+      ],
+      "default": "approve"
+    },
+    "signed_at": {
+      "type": "string",
+      "title": "Signed At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "revoked"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "document_type",
+    "document_id",
+    "signer_name",
+    "signature_method",
+    "intent",
+    "signed_at"
+  ]
+}

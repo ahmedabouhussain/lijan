@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   User as UserIcon, Mail, Shield, Save, Camera, Phone, Briefcase,
-  CheckCircle2, LogOut,
+  CheckCircle2, LogOut, PenLine,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 import { Image } from "@/components/ui/image";
+import SignaturePad from "@/components/raqeem/SignaturePad";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -25,6 +26,8 @@ export default function Profile() {
   const [title, setTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
+  const [sigText, setSigText] = useState("");
+  const [sigImage, setSigImage] = useState("");
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +41,8 @@ export default function Profile() {
         setTitle(u.title || "");
         setPhone(u.phone || "");
         setBio(u.bio || "");
+        setSigText(u.signature_text || "");
+        setSigImage(u.signature_image_url || "");
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -65,6 +70,8 @@ export default function Profile() {
         title,
         phone,
         bio,
+        signature_text: sigText,
+        signature_image_url: sigImage,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -212,6 +219,21 @@ export default function Profile() {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Signature customization */}
+      <div className="raqeem-card p-6 space-y-4">
+        <div className="flex items-center gap-2 pb-3 border-b border-border">
+          <PenLine className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">التوقيع الإلكتروني · E-Signature</h2>
+        </div>
+        <p className="text-xs text-muted-foreground -mt-1">
+          خصّص توقيعك المستخدم لاعتماد المحاضر والقرارات رسمياً · Customize your signature used to formally approve minutes and decisions
+        </p>
+        <SignaturePad
+          value={{ text: sigText, image_url: sigImage }}
+          onChange={(v) => { setSigText(v.text || ""); setSigImage(v.image_url || ""); }}
+        />
       </div>
     </div>
   );

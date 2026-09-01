@@ -19,6 +19,7 @@ import Committees from '@/pages/Committees';
 import CommitteeCreate from '@/pages/CommitteeCreate';
 import CommitteeDetail from '@/pages/CommitteeDetail';
 import Decisions from '@/pages/Decisions';
+import Minutes from '@/pages/Minutes';
 import Execution from '@/pages/Execution';
 import CalendarPage from '@/pages/CalendarPage';
 import Memory from '@/pages/Memory';
@@ -74,6 +75,7 @@ const AuthenticatedApp = () => {
           <Route path="/meetings/:id" element={<MeetingDetail />} />
           <Route path="/decisions" element={<Decisions />} />
           <Route path="/decisions/:id" element={<DecisionDetail />} />
+          <Route path="/minutes" element={<Minutes />} />
           <Route path="/execution" element={<Execution />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/memory" element={<Memory />} />

@@ -39,6 +39,17 @@
     "bio": {
       "type": "string",
       "title": "Bio"
+    },
+    "signature_text": {
+      "type": "string",
+      "title": "Signature Text",
+      "description": "Typed electronic signature (styled)"
+    },
+    "signature_image_url": {
+      "type": "string",
+      "title": "Signature Image URL",
+      "format": "uri",
+      "description": "Drawn electronic signature image"
     }
   },
   "required": [
