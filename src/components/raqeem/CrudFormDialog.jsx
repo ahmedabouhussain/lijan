@@ -45,7 +45,11 @@ export default function CrudFormDialog({
       if (f.required && !String(form[f.name] || "").trim()) return;
     }
     try {
-      await execute(functionName, { ...payload, ...form }, (res) => {
+      // CreateCommitteeRecord expects form data wrapped in a `fields` object
+      const body = functionName === "CreateCommitteeRecord"
+        ? { ...payload, fields: { ...form } }
+        : { ...payload, ...form };
+      await execute(functionName, body, (res) => {
         setForm({});
         onClose();
         if (onSuccess) onSuccess(res);
