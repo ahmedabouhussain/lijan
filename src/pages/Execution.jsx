@@ -5,6 +5,7 @@ import { CheckSquare, AlertTriangle, Clock } from "lucide-react";
 import { ACTION_STATUS, PRIORITY, formatDate, isOverdue, daysUntil } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
+import ActionTrackerChat from "@/components/raqeem/ActionTrackerChat";
 
 export default function Execution() {
   const [loading, setLoading] = useState(true);
@@ -39,9 +40,12 @@ export default function Execution() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">التنفيذ · Execution</h1>
-        <p className="text-sm text-muted-foreground mt-1">تتبع الإجراءات عبر اللجان · Cross-committee execution</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">التنفيذ · Execution</h1>
+          <p className="text-sm text-muted-foreground mt-1">تتبع الإجراءات عبر اللجان · Cross-committee execution</p>
+        </div>
+        <ActionTrackerChat />
       </div>
 
       {/* Summary */}
