@@ -2,6 +2,10 @@
   "name": "Signature",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
     "document_type": {
       "type": "string",
       "title": "Document Type",
@@ -99,8 +103,12 @@
     "signed_at"
   ],
   "rls": {
-    "read": {},
-    "create": {},
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
     "update": false,
     "delete": false
   }
