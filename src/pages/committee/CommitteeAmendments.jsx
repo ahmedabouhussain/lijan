@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { base44 } from "@/api/base44Client";
-import { GitBranch, Loader2, Plus, Check, X, AlertTriangle } from "lucide-react";
+import { GitBranch, Loader2, Plus, Check, X, AlertTriangle, Send, RotateCcw, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -109,9 +109,26 @@ export default function CommitteeAmendments() {
     if (!confirm("رفض هذا التعديل؟")) return;
     setBusy(`reject-${id}`);
     try {
-      await base44.entities.CommitteeAmendment.update(id, { status: "rejected" });
-      load();
-    } catch (e) {}
+      const res = await base44.functions.invoke("TransitionAmendmentStatus", { amendment_id: id, transition: "reject" });
+      const d = res.data || res;
+      if (d.error) setMsg(d.error); else load();
+    } catch (e) { setMsg(e?.message || "خطأ"); }
+    setBusy("");
+  };
+
+  const transition = async (id, action, extra = {}) => {
+    const labels = { submit: "إرسال للاعتماد", return: "إرجاع للتصحيح", schedule: "جدولة للنفاذ المستقبلي" };
+    if (action === "schedule") {
+      const date = prompt("تاريخ النفاذ المستقبلي (YYYY-MM-DD):");
+      if (!date) return;
+      extra.effective_date = date;
+    }
+    setBusy(`${action}-${id}`);
+    try {
+      const res = await base44.functions.invoke("TransitionAmendmentStatus", { amendment_id: id, transition: action, ...extra });
+      const d = res.data || res;
+      if (d.error) setMsg(d.error); else { setMsg(`${labels[action]} — الحالة: ${d.new_status}`); load(); }
+    } catch (e) { setMsg(e?.message || "خطأ"); }
     setBusy("");
   };
 
@@ -205,25 +222,47 @@ export default function CommitteeAmendments() {
               {a.proposed_by_name && (
                 <div className="text-xs text-muted-foreground">اقترح: {a.proposed_by_name}</div>
               )}
-              {(a.status === "draft" || a.status === "pending_approval" || a.status === "returned") && (
+              {a.status === "draft" && (
                 <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    size="sm" variant="outline"
-                    disabled={busy === `approve-${a.id}`}
-                    onClick={() => approve(a.id)}
-                    className="inline-flex items-center gap-1.5 h-7 text-xs"
-                  >
+                  <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    إرسال للاعتماد
+                  </Button>
+                  <Button size="sm" variant="ghost" disabled={busy === `reject-${a.id}`} onClick={() => reject(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
+                    {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
+                    رفض
+                  </Button>
+                </div>
+              )}
+              {a.status === "returned" && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    إعادة إرسال
+                  </Button>
+                </div>
+              )}
+              {a.status === "pending_approval" && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Button size="sm" variant="outline" disabled={busy === `approve-${a.id}`} onClick={() => approve(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs">
                     {busy === `approve-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     اعتماد ونفاذ
                   </Button>
-                  <Button
-                    size="sm" variant="ghost"
-                    disabled={busy === `reject-${a.id}`}
-                    onClick={() => reject(a.id)}
-                    className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive"
-                  >
+                  <Button size="sm" variant="ghost" disabled={busy === `return-${a.id}`} onClick={() => transition(a.id, "return")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `return-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+                    إرجاع للتصحيح
+                  </Button>
+                  <Button size="sm" variant="ghost" disabled={busy === `reject-${a.id}`} onClick={() => reject(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
                     {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
                     رفض
+                  </Button>
+                </div>
+              )}
+              {a.status === "approved" && a.effective_date && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Button size="sm" variant="outline" disabled={busy === `schedule-${a.id}`} onClick={() => transition(a.id, "schedule")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `schedule-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CalendarClock className="w-3.5 h-3.5" />}
+                    جدولة للنفاذ المستقبلي
                   </Button>
                 </div>
               )}

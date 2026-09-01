@@ -1,0 +1,125 @@
+{
+  "name": "MemberAcknowledgement",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "amendment_id": {
+      "type": "string",
+      "title": "Amendment ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "member_user_id": {
+      "type": "string",
+      "title": "Member User ID"
+    },
+    "member_email": {
+      "type": "string",
+      "title": "Member Email",
+      "format": "email"
+    },
+    "status": {
+      "type": "string",
+      "title": "Acknowledgement Status",
+      "enum": [
+        "not_required",
+        "pending",
+        "viewed",
+        "acknowledged",
+        "disputed",
+        "escalated"
+      ],
+      "default": "pending"
+    },
+    "viewed_at": {
+      "type": "string",
+      "title": "Viewed At",
+      "format": "date-time"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "title": "Acknowledged At",
+      "format": "date-time"
+    },
+    "dispute_reason": {
+      "type": "string",
+      "title": "Dispute Reason"
+    },
+    "escalation_reason": {
+      "type": "string",
+      "title": "Escalation Reason"
+    },
+    "notification_sent_at": {
+      "type": "string",
+      "title": "Notification Sent At",
+      "format": "date-time"
+    },
+    "change_summary": {
+      "type": "string",
+      "title": "Change Summary (what changed)"
+    },
+    "new_role": {
+      "type": "string",
+      "title": "New Role (if applicable)"
+    },
+    "access_impact": {
+      "type": "string",
+      "title": "Access Impact"
+    },
+    "actions_required": {
+      "type": "string",
+      "title": "Actions Required"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "amendment_id",
+    "member_name",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.member_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.member_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

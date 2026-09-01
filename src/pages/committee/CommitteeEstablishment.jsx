@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { base44 } from "@/api/base44Client";
-import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle } from "lucide-react";
+import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle, Check, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,6 +46,8 @@ export default function CommitteeEstablishment() {
   const [uploading, setUploading] = useState(false);
   const [extracting, setExtracting] = useState("");
   const [extraction, setExtraction] = useState(null);
+  const [confirming, setConfirming] = useState("");
+  const [creatingDraft, setCreatingDraft] = useState("");
   const [msg, setMsg] = useState("");
 
   const [form, setForm] = useState({
@@ -121,6 +123,28 @@ export default function CommitteeEstablishment() {
       else { setExtraction({ instrumentId, data: d.extracted, warning: d.warning }); loadInstruments(); }
     } catch (e) { setMsg(e?.message || "خطأ في الاستخراج"); }
     setExtracting("");
+  };
+
+  const confirmExtraction = async (instrumentId) => {
+    setConfirming(instrumentId);
+    try {
+      const res = await base44.functions.invoke("ConfirmExtractedInstrumentFields", { instrument_id: instrumentId });
+      const d = res.data || res;
+      if (d.error) setMsg(d.error);
+      else { setMsg("تم تأكيد البيانات المستخرجة — جاهزة لإنشاء مسودة اللجنة"); loadInstruments(); }
+    } catch (e) { setMsg(e?.message || "خطأ"); }
+    setConfirming("");
+  };
+
+  const createDraftFromInstrument = async (instrumentId) => {
+    setCreatingDraft(instrumentId);
+    try {
+      const res = await base44.functions.invoke("CreateCommitteeDraftFromInstrument", { instrument_id: instrumentId });
+      const d = res.data || res;
+      if (d.error) setMsg(d.error);
+      else { setMsg(`تم إنشاء مسودة اللجنة — ${d.members_created} أعضاء، نسخة تشكيل #${d.formation_version}`); loadInstruments(); }
+    } catch (e) { setMsg(e?.message || "خطأ"); }
+    setCreatingDraft("");
   };
 
   if (!data) return null;
@@ -257,6 +281,33 @@ export default function CommitteeEstablishment() {
               {inst.extracted_data && !extraction && inst.extraction_status === "extracted" && (
                 <div className="mt-2 p-3 rounded-md bg-secondary/40 text-xs">
                   <ExtractionView data={JSON.parse(inst.extracted_data)} />
+                </div>
+              )}
+              {inst.extraction_status === "extracted" && (
+                <Button
+                  size="sm" variant="outline"
+                  disabled={confirming === inst.id}
+                  onClick={() => confirmExtraction(inst.id)}
+                  className="inline-flex items-center gap-2 h-7 text-xs"
+                >
+                  {confirming === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                  تأكيد البيانات المستخرجة
+                </Button>
+              )}
+              {inst.extraction_status === "confirmed" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-green-600 inline-flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5" /> تم التأكيد
+                  </span>
+                  <Button
+                    size="sm" variant="default"
+                    disabled={creatingDraft === inst.id}
+                    onClick={() => createDraftFromInstrument(inst.id)}
+                    className="inline-flex items-center gap-2 h-7 text-xs"
+                  >
+                    {creatingDraft === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FilePlus2 className="w-3.5 h-3.5" />}
+                    إنشاء مسودة لجنة من السند
+                  </Button>
                 </div>
               )}
             </div>
