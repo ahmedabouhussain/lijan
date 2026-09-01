@@ -1,24 +1,71 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
-import { Calendar } from "lucide-react";
+import { Calendar, Plus, X, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function CommitteeMeetings() {
-  const { data } = useCommittee();
+  const { data, reload } = useCommittee();
   const { t } = useLanguage();
+  const { orgRef, committeeRef } = useParams();
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ title: "", date: "", mode: "hybrid", provider: "none", location: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   if (!data) return null;
-  const { meetings, committee } = data;
+  const { meetings, committee, my_role, is_oversight } = data;
+  const base = `/o/${orgRef}/c/${committeeRef}`;
+  const canCreate = !is_oversight && ["chair", "vice_chair", "secretary"].includes(my_role);
+
+  const submit = async () => {
+    if (!form.title.trim() || !form.date) { setError("Title and date are required"); return; }
+    setSubmitting(true); setError("");
+    try {
+      await base44.functions.invoke("CreateMeeting", { committee_id: committee.id, ...form, date: new Date(form.date).toISOString() });
+      setShowCreate(false); setForm({ title: "", date: "", mode: "hybrid", provider: "none", location: "" });
+      reload();
+    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    setSubmitting(false);
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("اجتماعات اللجنة", "Committee Meetings")}</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold">{t("اجتماعات اللجنة", "Committee Meetings")}</h1>
+        </div>
+        {canCreate && (
+          <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
+            <Plus className="w-4 h-4" />
+            {t("اجتماع جديد", "New Meeting")}
+          </Button>
+        )}
       </div>
+
+      {showCreate && (
+        <div className="raqeem-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">{t("إنشاء اجتماع", "Create Meeting")}</h3>
+            <button onClick={() => setShowCreate(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
+          </div>
+          {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div><Label>{t("العنوان", "Title")}</Label><Input value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Quarterly Review" /></div>
+            <div><Label>{t("التاريخ والوقت", "Date & Time")}</Label><Input type="datetime-local" value={form.date} onChange={(e) => setForm(f => ({ ...f, date: e.target.value }))} /></div>
+            <div><Label>{t("الوضع", "Mode")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">Physical</option><option value="online">Online</option><option value="hybrid">Hybrid</option></select></div>
+            <div><Label>{t("المزود", "Provider")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">None</option><option value="teams">Teams</option><option value="zoom">Zoom</option><option value="external_link">External Link</option></select></div>
+          </div>
+          <Button onClick={submit} disabled={submitting} className="w-full">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("إنشاء", "Create")}</Button>
+        </div>
+      )}
 
       {/* Upcoming */}
       <div className="raqeem-card p-4">
@@ -28,7 +75,7 @@ export default function CommitteeMeetings() {
         ) : (
           <div className="space-y-2">
             {meetings.upcoming.map((m) => (
-              <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
+              <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div>
                   <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
@@ -48,7 +95,7 @@ export default function CommitteeMeetings() {
         ) : (
           <div className="space-y-2">
             {meetings.previous.map((m) => (
-              <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
+              <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div>
                   <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>

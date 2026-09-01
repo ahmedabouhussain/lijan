@@ -112,6 +112,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/recusals" element={<CommitteeRecusals />} />
           {/* Meetings */}
           <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<CommitteeMeetings />} />
+          <Route path="/o/:orgRef/c/:committeeRef/meetings/:id" element={<MeetingDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/calendar" element={<CommitteeCalendar />} />
           <Route path="/o/:orgRef/c/:committeeRef/agenda" element={<CommitteeAgenda />} />
           <Route path="/o/:orgRef/c/:committeeRef/packs" element={<CommitteePacks />} />
@@ -121,6 +122,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/minutes" element={<CommitteeMinutes />} />
           <Route path="/o/:orgRef/c/:committeeRef/voting" element={<CommitteeVoting />} />
           <Route path="/o/:orgRef/c/:committeeRef/decisions" element={<CommitteeDecisions />} />
+          <Route path="/o/:orgRef/c/:committeeRef/decisions/:id" element={<DecisionDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/signatures" element={<CommitteeSignatures />} />
           {/* Execution */}
           <Route path="/o/:orgRef/c/:committeeRef/actions" element={<CommitteeActions />} />
