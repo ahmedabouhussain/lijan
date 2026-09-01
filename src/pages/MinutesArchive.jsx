@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Plus, Archive, MessageSquareText } from "lucide-react";
+import { Plus, Archive, MessageSquareText, ArrowRight, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import DeliberationCard from "@/components/raqeem/DeliberationCard";
 import DeliberationFormDialog from "@/components/raqeem/DeliberationFormDialog";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function MinutesArchive() {
+  const navigate = useNavigate();
   const [deliberations, setDeliberations] = useState([]);
   const [committees, setCommittees] = useState([]);
   const [decisions, setDecisions] = useState([]);
@@ -88,6 +90,18 @@ export default function MinutesArchive() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto px-6 py-8">
+        {/* Navigation */}
+        <div className="flex items-center gap-2 mb-6">
+          <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1.5">
+            <ArrowRight className="w-4 h-4" />
+            رجوع
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate("/")} className="gap-1.5">
+            <Home className="w-4 h-4" />
+            الرئيسية
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
