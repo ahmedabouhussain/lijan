@@ -20,6 +20,25 @@
         "auditor"
       ],
       "default": "member"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "Avatar URL",
+      "format": "uri",
+      "description": "Profile picture URL"
+    },
+    "title": {
+      "type": "string",
+      "title": "Job Title",
+      "description": "The user's professional title / position"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "bio": {
+      "type": "string",
+      "title": "Bio"
     }
   },
   "required": [
