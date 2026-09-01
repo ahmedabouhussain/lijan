@@ -14,13 +14,17 @@ export function useCommitteeRole(committee, members) {
 
   const role = useMemo(() => {
     if (!currentUser) return "member";
-    const memberRecord = members.find(
-      (m) => m.email && currentUser.email && m.email.toLowerCase() === currentUser.email.toLowerCase()
+    // Resolve from stored backend assignments (user_id or email match), no admin→oversight fallback.
+    const myMemberships = members.filter(
+      (m) =>
+        (m.user_id && m.user_id === currentUser.id) ||
+        (m.user_email && currentUser.email && m.user_email.toLowerCase() === currentUser.email.toLowerCase())
     );
-    if (memberRecord) return memberRecord.role;
-    if (committee?.chair_name && currentUser.full_name === committee.chair_name) return "chair";
-    if (committee?.secretary_name && currentUser.full_name === committee.secretary_name) return "secretary";
-    if (currentUser.role === "admin") return "oversight";
+    if (myMemberships.length > 0) {
+      const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, committee_administrator: 4, member: 5, alternate: 6, observer: 7, advisor: 8 };
+      const sorted = myMemberships.sort((a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99));
+      return sorted[0].role;
+    }
     return "member";
   }, [currentUser, members, committee]);
 

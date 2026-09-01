@@ -123,15 +123,13 @@ function CommitteeShell() {
 
   if (!data) return null;
 
-  const { committee, my_role, is_oversight, is_recused } = data;
+  const { committee, my_role, is_recused } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
 
-  const roleLabel = is_oversight
-    ? t("إشراف قراءة فقط", "Oversight (Read-Only)")
-    : t(
-        { chair: "رئيس", vice_chair: "نائب الرئيس", secretary: "أمين السر", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
-        { chair: "Chair", vice_chair: "Vice Chair", secretary: "Secretary", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
-      );
+  const roleLabel = t(
+    { chair: "رئيس اللجنة", vice_chair: "نائب الرئيس", secretary: "أمين السر", committee_administrator: "مدير اللجنة", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
+    { chair: "Committee Chair", vice_chair: "Vice Chair", secretary: "Secretary", committee_administrator: "Committee Administrator", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
+  );
 
   const toggleGroup = (label) => setCollapsedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
 

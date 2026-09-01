@@ -23,6 +23,8 @@ export default async function(req) {
       return Response.json({ error: 'organization_id, name_ar, name_en are required' }, { status: 400 });
     }
 
+    const today = new Date().toISOString().split('T')[0];
+
     // Verify org ownership or admin
     const memberships = await base44.asServiceRole.entities.OrganizationMembership
       .filter({ organization_id, user_id: user.id, status: 'active' })
@@ -76,8 +78,40 @@ export default async function(req) {
       });
     }
 
-    // Create CommitteeMembership for chair
-    if (chair_name) {
+    // Auto-assign the creator (Founder/Owner) as Committee Chair + Committee Administrator.
+    // This is a real backend assignment — not a visual label or fallback.
+    const creatorName = user.full_name || user.email;
+    await base44.asServiceRole.entities.CommitteeMembership.create({
+      organization_id,
+      committee_id: committee.id,
+      user_id: user.id,
+      user_email: user.email,
+      full_name: creatorName,
+      role: 'chair',
+      authority_level: 'decision',
+      voting_right: true,
+      status: 'active',
+      term_start: term_start || today,
+      term_end: term_end || null,
+      protocol_order: 1,
+    });
+    await base44.asServiceRole.entities.CommitteeMembership.create({
+      organization_id,
+      committee_id: committee.id,
+      user_id: user.id,
+      user_email: user.email,
+      full_name: creatorName,
+      role: 'committee_administrator',
+      authority_level: 'execution',
+      voting_right: false,
+      status: 'active',
+      term_start: term_start || today,
+      term_end: term_end || null,
+      protocol_order: 2,
+    });
+
+    // Create CommitteeMembership for a named chair (if different from creator)
+    if (chair_name && chair_name !== creatorName) {
       await base44.asServiceRole.entities.CommitteeMembership.create({
         organization_id,
         committee_id: committee.id,

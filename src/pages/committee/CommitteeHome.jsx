@@ -25,19 +25,16 @@ export default function CommitteeHome() {
 
   if (!data) return null;
 
-  const { committee, mandate, my_role, is_oversight, is_recused, members, meetings, registers, counters } = data;
+  const { committee, mandate, my_role, is_recused, members, meetings, registers, counters } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
 
-  const roleLabel = is_oversight
-    ? t("إشراف قراءة فقط", "Oversight (Read-Only)")
-    : t(
-        { chair: "رئيس", vice_chair: "نائب الرئيس", secretary: "أمين السر", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
-        { chair: "Chair", vice_chair: "Vice Chair", secretary: "Secretary", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
-      );
+  const roleLabel = t(
+    { chair: "رئيس اللجنة", vice_chair: "نائب الرئيس", secretary: "أمين السر", committee_administrator: "مدير اللجنة", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
+    { chair: "Committee Chair", vice_chair: "Vice Chair", secretary: "Secretary", committee_administrator: "Committee Administrator", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
+  );
 
   // Render role-specific home
   const renderRoleHome = () => {
-    if (is_oversight) return <ObserverHomeEnhanced data={data} base={base} />;
     if (is_recused) return <ObserverHomeEnhanced data={data} base={base} />;
     switch (my_role) {
       case "chair":
@@ -78,13 +75,7 @@ export default function CommitteeHome() {
               </span>
             </div>
           </div>
-          {is_oversight && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200">
-              <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <p className="text-xs text-amber-800">{t("وضع الإشراف: قراءة فقط. لا يمكنك تنفيذ عمليات اللجنة.", "Oversight mode: read-only. You cannot perform committee operations.")}</p>
-            </div>
-          )}
-          {is_recused && !is_oversight && (
+          {is_recused && (
             <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-red-50 border border-red-200">
               <Lock className="w-3.5 h-3.5 text-red-600 shrink-0" />
               <p className="text-xs text-red-800">{t("أنت متنحّي من هذه اللجنة. وضع القراءة فقط.", "You are recused from this committee. Read-only mode.")}</p>

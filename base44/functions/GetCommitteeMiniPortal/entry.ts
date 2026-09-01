@@ -46,16 +46,14 @@ export default async function(req) {
       return Response.json({ error: 'Not a member of this committee' }, { status: 403 });
     }
 
-    // Resolve effective role
+    // Resolve effective role from active backend assignments.
+    // No more oversight fallback — authority comes from stored CommitteeMembership records.
     let effectiveRole = 'observer';
     let isOversight = false;
     if (activeMemberships.length > 0) {
-      const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
+      const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, committee_administrator: 4, member: 5, alternate: 6, observer: 7, advisor: 8 };
       const sorted = activeMemberships.sort((a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99));
       effectiveRole = sorted[0].role;
-    } else if (isOrgAdmin || isPlatformAdmin) {
-      effectiveRole = 'oversight';
-      isOversight = true;
     }
 
     // Check recusal
@@ -68,7 +66,7 @@ export default async function(req) {
     const allMembers = await base44.asServiceRole.entities.CommitteeMembership
       .filter({ committee_id: committee.id, status: 'active' })
       .catch(() => []);
-    const roleOrder = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
+    const roleOrder = { chair: 1, vice_chair: 2, secretary: 3, committee_administrator: 4, member: 5, alternate: 6, observer: 7, advisor: 8 };
     const orderedMembers = (allMembers || []).sort((a, b) => {
       const r = (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
       if (r !== 0) return r;
