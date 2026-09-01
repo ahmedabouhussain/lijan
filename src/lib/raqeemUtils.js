@@ -70,6 +70,23 @@ export const READINESS = {
   not_ready: { ar: "غير جاهز", en: "Not Ready", color: "text-destructive bg-red-50" },
 };
 
+export const AGENDA_ITEM_STATUS = {
+  pending: { ar: "بانتظار", en: "Pending", color: "text-muted-foreground bg-secondary" },
+  in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: "text-blue-700 bg-blue-50" },
+  decided: { ar: "تم القرار", en: "Decided", color: "text-emerald-700 bg-emerald-50" },
+  deferred: { ar: "مؤجل", en: "Deferred", color: "text-amber-700 bg-amber-50" },
+  withdrawn: { ar: "مسحوب", en: "Withdrawn", color: "text-destructive bg-red-50" },
+};
+
+export const ESCALATION_LEVEL = {
+  none: { ar: "بدون", en: "None" },
+  reminder: { ar: "تذكير", en: "Reminder" },
+  priority_reminder: { ar: "تذكير أولوية", en: "Priority Reminder" },
+  owner_secretary: { ar: "الأمين", en: "Owner Secretary" },
+  chair: { ar: "الرئيس", en: "Chair" },
+  escalation_authority: { ar: "جهة التصعيد", en: "Escalation Authority" },
+};
+
 export const CLASSIFICATION = {
   public: { ar: "عام", en: "Public" },
   internal: { ar: "داخلي", en: "Internal" },

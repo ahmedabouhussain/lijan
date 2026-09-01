@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -49,13 +50,13 @@ export default function CalendarPage() {
               <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">القادمة · Upcoming</h2>
               <div className="space-y-2">
                 {upcoming.map((m) => (
-                  <div key={m.id} className="raqeem-card p-4 flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                  <Link key={m.id} to={`/meetings/${m.id}`} className="raqeem-card p-4 flex items-center justify-between hover:border-primary/30 transition-colors">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
                       <div className="text-xs text-muted-foreground mt-1">{formatDate(m.date)} · {m.mode} · {m.provider !== "none" ? m.provider : ""}</div>
                     </div>
                     <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -65,13 +66,13 @@ export default function CalendarPage() {
               <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">السابقة · Past</h2>
               <div className="space-y-2">
                 {past.slice(0, 10).map((m) => (
-                  <div key={m.id} className="raqeem-card p-4 flex items-center justify-between opacity-75">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                  <Link key={m.id} to={`/meetings/${m.id}`} className="raqeem-card p-4 flex items-center justify-between opacity-75 hover:border-primary/30 transition-colors">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
                       <div className="text-xs text-muted-foreground mt-1">{formatDate(m.date)}</div>
                     </div>
                     <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

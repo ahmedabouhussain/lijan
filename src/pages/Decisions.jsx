@@ -96,7 +96,7 @@ export default function Decisions() {
             <tbody>
               {filtered.map((d) => (
                 <tr key={d.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
-                  <td className="py-3 px-4 font-medium text-foreground max-w-xs truncate">{d.title}</td>
+                  <td className="py-3 px-4 font-medium text-foreground max-w-xs truncate"><Link to={`/decisions/${d.id}`} className="hover:text-primary hover:underline">{d.title}</Link></td>
                   <td className="py-3 px-4 text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{commName(d.committee_id)}</td>
                   <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{d.decision_number || "—"}</td>
                   <td className="py-3 px-4"><StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} /></td>

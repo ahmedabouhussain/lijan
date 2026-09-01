@@ -27,6 +27,8 @@ import Integrations from '@/pages/Integrations';
 import FounderVault from '@/pages/FounderVault';
 import InstitutionCreate from '@/pages/InstitutionCreate';
 import Profile from '@/pages/Profile';
+import MeetingDetail from '@/pages/MeetingDetail';
+import DecisionDetail from '@/pages/DecisionDetail';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -65,7 +67,9 @@ const AuthenticatedApp = () => {
           <Route path="/committees" element={<Committees />} />
           <Route path="/committees/new" element={<CommitteeCreate />} />
           <Route path="/committees/:id" element={<CommitteeDetail />} />
+          <Route path="/meetings/:id" element={<MeetingDetail />} />
           <Route path="/decisions" element={<Decisions />} />
+          <Route path="/decisions/:id" element={<DecisionDetail />} />
           <Route path="/execution" element={<Execution />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/memory" element={<Memory />} />

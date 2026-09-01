@@ -195,13 +195,13 @@ export default function CommitteeDetail() {
             ) : (
               <div className="space-y-2">
                 {meetings.map((m) => (
-                  <div key={m.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                  <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
                       <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
                     </div>
                     <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -217,13 +217,13 @@ export default function CommitteeDetail() {
             ) : (
               <div className="space-y-2">
                 {decisions.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <Link key={d.id} to={`/decisions/${d.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                     <div className="min-w-0">
                       <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
                       {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                     </div>
                     <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
