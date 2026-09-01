@@ -10,6 +10,7 @@ import {
   Map as MapIcon,
   Plus,
   X,
+  Archive,
 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
@@ -96,7 +97,7 @@ export default function FounderVault() {
       )}
 
       <Tabs defaultValue="book" className="space-y-4">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-5 w-full">
+        <TabsList className="grid grid-cols-2 lg:grid-cols-6 w-full">
           <TabsTrigger value="book" className="text-xs gap-1.5">
             <BookOpen className="w-3.5 h-3.5" /> الكتاب المؤسس
           </TabsTrigger>
@@ -111,6 +112,9 @@ export default function FounderVault() {
           </TabsTrigger>
           <TabsTrigger value="roadmap" className="text-xs gap-1.5">
             <MapIcon className="w-3.5 h-3.5" /> خارطة الطريق
+          </TabsTrigger>
+          <TabsTrigger value="memory" className="text-xs gap-1.5">
+            <Archive className="w-3.5 h-3.5" /> الذاكرة المؤسسية
           </TabsTrigger>
         </TabsList>
 
@@ -271,6 +275,29 @@ export default function FounderVault() {
                 </div>
               ))}
             </div>
+          )}
+        </TabsContent>
+        {/* Institutional Memory */}
+        <TabsContent value="memory" className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            الذاكرة المؤسسية · ذاكرة اللجان المغلقة المنقولة من دورة حياة كل لجنة
+          </p>
+          {byType("institutional_memory").length === 0 ? (
+            <EmptyState icon={Archive} title="لا توجد ذاكرة مؤسسية بعد" description="عند إغلاق لجنة، تُنقل ذاكرتها تلقائياً إلى هنا" />
+          ) : (
+            byType("institutional_memory").map((e) => (
+              <div key={e.id} className="raqeem-card p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Archive className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-xs font-mono text-accent">{e.code || "MEM"}</span>
+                  <StatusBadge label={STATUS_LABELS[e.status]?.label || e.status} colorClass={STATUS_LABELS[e.status]?.color} />
+                </div>
+                <h3 className="text-base font-semibold text-foreground mb-2">{e.title_ar || e.title}</h3>
+                {e.content && (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{e.content}</p>
+                )}
+              </div>
+            ))
           )}
         </TabsContent>
       </Tabs>

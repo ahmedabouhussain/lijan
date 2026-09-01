@@ -129,6 +129,53 @@ export const AUTHORITY_LEVELS = {
   advisory: { ar: "سلطة الاستشارة", en: "Advisory Authority" },
 };
 
+export const DEPENDENCY_TYPE = {
+  requires: { ar: "يتطلب", en: "Requires", color: "text-blue-700 bg-blue-50" },
+  blocks: { ar: "يعيق", en: "Blocks", color: "text-destructive bg-red-50" },
+  informs: { ar: "يبلغ", en: "Informs", color: "text-amber-700 bg-amber-50" },
+  supersedes: { ar: "يحل محل", en: "Supersedes", color: "text-purple-700 bg-purple-50" },
+  aligns_with: { ar: "متوافق مع", en: "Aligns With", color: "text-emerald-700 bg-emerald-50" },
+};
+
+export const DEPENDENCY_STATUS = {
+  pending: { ar: "بانتظار", en: "Pending", color: "text-amber-700 bg-amber-50" },
+  active: { ar: "نشطة", en: "Active", color: "text-blue-700 bg-blue-50" },
+  resolved: { ar: "محلولة", en: "Resolved", color: "text-emerald-700 bg-emerald-50" },
+  broken: { ar: "مكسورة", en: "Broken", color: "text-destructive bg-red-50" },
+};
+
+export const SCENARIO_TYPE = {
+  baseline: { ar: "الأساسي", en: "Baseline", color: "text-muted-foreground bg-secondary" },
+  alternative: { ar: "بديل", en: "Alternative", color: "text-blue-700 bg-blue-50" },
+  preferred: { ar: "مفضل", en: "Preferred", color: "text-emerald-700 bg-emerald-50" },
+  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
+};
+
+export const SCENARIO_STATUS = {
+  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
+  evaluating: { ar: "قيد التقييم", en: "Evaluating", color: "text-blue-700 bg-blue-50" },
+  selected: { ar: "مختار", en: "Selected", color: "text-emerald-700 bg-emerald-50" },
+  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
+  archived: { ar: "مؤرشف", en: "Archived", color: "text-muted-foreground bg-secondary" },
+};
+
+export const AI_OUTPUT_TYPE = {
+  meeting_minutes: { ar: "محضر اجتماع", en: "Meeting Minutes", color: "text-blue-700 bg-blue-50" },
+  governance_doc: { ar: "وثيقة حوكمة", en: "Governance Doc", color: "text-primary bg-primary/10" },
+  decision_draft: { ar: "مسودة قرار", en: "Decision Draft", color: "text-purple-700 bg-purple-50" },
+  policy_scenario: { ar: "سيناريو سياسي", en: "Policy Scenario", color: "text-amber-700 bg-amber-50" },
+  summary: { ar: "ملخص", en: "Summary", color: "text-muted-foreground bg-secondary" },
+  other: { ar: "أخرى", en: "Other", color: "text-muted-foreground bg-secondary" },
+};
+
+export const AI_OUTPUT_STATUS = {
+  generated: { ar: "مولّد", en: "Generated", color: "text-amber-700 bg-amber-50" },
+  under_review: { ar: "قيد المراجعة", en: "Under Review", color: "text-blue-700 bg-blue-50" },
+  approved: { ar: "معتمد", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
+  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
+  amended: { ar: "معدل", en: "Amended", color: "text-amber-700 bg-amber-50" },
+};
+
 export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {

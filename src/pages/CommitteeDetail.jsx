@@ -23,6 +23,7 @@ import CommitteeHome from "@/components/raqeem/CommitteeHome";
 import ChairRoom from "@/components/raqeem/rooms/ChairRoom";
 import MemberRoom from "@/components/raqeem/rooms/MemberRoom";
 import AuthorityGraph from "@/components/raqeem/AuthorityGraph";
+import CommitteeClosure from "@/components/raqeem/CommitteeClosure";
 import { useCommitteeRole } from "@/hooks/useCommitteeRole";
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -266,6 +267,9 @@ export default function CommitteeDetail() {
           </div>
         </div>
       </div>
+
+      {/* Institutional Memory Transfer — closure & archival */}
+      <CommitteeClosure committee={committee} members={members} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} onChanged={load} />
     </div>
   );
 }

@@ -34,6 +34,9 @@ import InstitutionCreate from '@/pages/InstitutionCreate';
 import Profile from '@/pages/Profile';
 import MeetingDetail from '@/pages/MeetingDetail';
 import DecisionDetail from '@/pages/DecisionDetail';
+import Dependencies from '@/pages/Dependencies';
+import PolicyScenarios from '@/pages/PolicyScenarios';
+import AIOutputLedger from '@/pages/AIOutputLedger';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -77,6 +80,9 @@ const AuthenticatedApp = () => {
           <Route path="/decisions/:id" element={<DecisionDetail />} />
           <Route path="/minutes" element={<Minutes />} />
           <Route path="/execution" element={<Execution />} />
+          <Route path="/dependencies" element={<Dependencies />} />
+          <Route path="/scenarios" element={<PolicyScenarios />} />
+          <Route path="/ai-ledger" element={<AIOutputLedger />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/memory" element={<Memory />} />
           <Route path="/admin" element={<Admin />} />

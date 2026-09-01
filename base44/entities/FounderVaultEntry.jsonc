@@ -12,7 +12,8 @@
         "book_chapter",
         "moat",
         "roadmap_item",
-        "ip_register"
+        "ip_register",
+        "institutional_memory"
       ],
       "default": "adr"
     },

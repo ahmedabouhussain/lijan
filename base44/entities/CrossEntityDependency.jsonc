@@ -1,0 +1,112 @@
+{
+  "name": "CrossEntityDependency",
+  "type": "object",
+  "properties": {
+    "source_entity_type": {
+      "type": "string",
+      "title": "Source Entity Type",
+      "enum": [
+        "Decision",
+        "Action",
+        "Committee"
+      ],
+      "default": "Decision"
+    },
+    "source_id": {
+      "type": "string",
+      "title": "Source Record ID"
+    },
+    "source_title": {
+      "type": "string",
+      "title": "Source Title"
+    },
+    "source_committee_id": {
+      "type": "string",
+      "title": "Source Committee ID"
+    },
+    "target_entity_type": {
+      "type": "string",
+      "title": "Target Entity Type",
+      "enum": [
+        "Decision",
+        "Action",
+        "Committee"
+      ],
+      "default": "Decision"
+    },
+    "target_id": {
+      "type": "string",
+      "title": "Target Record ID"
+    },
+    "target_title": {
+      "type": "string",
+      "title": "Target Title"
+    },
+    "target_committee_id": {
+      "type": "string",
+      "title": "Target Committee ID"
+    },
+    "target_institution_id": {
+      "type": "string",
+      "title": "Target Institution ID"
+    },
+    "dependency_type": {
+      "type": "string",
+      "title": "Dependency Type",
+      "enum": [
+        "requires",
+        "blocks",
+        "informs",
+        "supersedes",
+        "aligns_with"
+      ],
+      "default": "requires"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "active",
+        "resolved",
+        "broken"
+      ],
+      "default": "pending"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "source_entity_type",
+    "source_id",
+    "source_title",
+    "target_entity_type",
+    "target_id",
+    "target_title",
+    "dependency_type",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "create": {},
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
