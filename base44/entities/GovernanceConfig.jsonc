@@ -1,0 +1,23 @@
+{
+  "name": "GovernanceConfig",
+  "type": "object",
+  "properties": {
+    "config_key": {
+      "type": "string",
+      "title": "Config Key",
+      "enum": [
+        "role_matrix",
+        "classification",
+        "committee_types"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "title": "Payload"
+    }
+  },
+  "required": [
+    "config_key",
+    "payload"
+  ]
+}
