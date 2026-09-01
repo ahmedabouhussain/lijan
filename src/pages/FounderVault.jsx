@@ -15,6 +15,7 @@ import {
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import VaultEntryForm from "@/components/raqeem/VaultEntryForm";
+import PageNav from "@/components/raqeem/PageNav";
 
 const STATUS_LABELS = {
   active: { label: "ساري", color: "bg-emerald-100 text-emerald-700" },
@@ -70,6 +71,7 @@ export default function FounderVault() {
 
   return (
     <div className="space-y-6">
+      <PageNav />
       {/* Header */}
       <div className="raqeem-card p-5 bg-primary-dark text-primary-foreground" style={{ background: "hsl(var(--primary-dark))" }}>
         <div className="flex items-start gap-4">

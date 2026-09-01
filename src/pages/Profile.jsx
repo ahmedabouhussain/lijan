@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 import { Image } from "@/components/ui/image";
 import SignaturePad from "@/components/raqeem/SignaturePad";
+import PageNav from "@/components/raqeem/PageNav";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -98,6 +99,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <PageNav />
       <div>
         <h1 className="text-2xl font-bold text-foreground">الملف الشخصي · Profile</h1>
         <p className="text-sm text-muted-foreground mt-1">هويتك داخل رَقِيم™</p>

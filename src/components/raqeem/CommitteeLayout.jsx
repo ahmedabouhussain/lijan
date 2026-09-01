@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
+import PageNav from "@/components/raqeem/PageNav";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 
 const NAV_GROUPS = [
@@ -248,7 +249,8 @@ function CommitteeShell() {
         </header>
 
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <PageNav />
             <Outlet />
           </div>
         </main>

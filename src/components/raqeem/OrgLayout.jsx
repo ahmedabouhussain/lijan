@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
+import PageNav from "@/components/raqeem/PageNav";
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
@@ -183,7 +184,8 @@ function OrgShell() {
         </header>
 
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <PageNav />
             <Outlet />
           </div>
         </main>
