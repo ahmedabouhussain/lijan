@@ -81,8 +81,6 @@ export default function CommitteeDetail() {
     setActivating(false);
   };
 
-  const governanceReady = members.length >= (committee.quorum_count || 3) && committee.mandate && committee.chair_name;
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -100,6 +98,7 @@ export default function CommitteeDetail() {
     );
   }
 
+  const governanceReady = members.length >= (committee.quorum_count || 3) && committee.mandate && committee.chair_name;
   const overdueActions = actions.filter((a) => isOverdue(a.deadline));
 
   return (
