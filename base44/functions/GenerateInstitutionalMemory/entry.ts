@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { brandedMarkdownHeader } from '../../shared/brandHeader.ts';
 
 // GenerateInstitutionalMemory — server-side AI for committee closure memory transfer.
 // Replaces the unsafe client-side InvokeLLM call in CommitteeClosure.jsx.
@@ -72,7 +73,8 @@ ${actionSummaries}
       },
     });
 
-    const summary = `## الإنجازات الرئيسية\n${llmResponse.key_achievements}\n\n## الدروس المستفادة\n${llmResponse.lessons_learned}\n\n## الأنماط الملاحظة\n${llmResponse.patterns}\n\n## التوصيات للجنة الخلف\n${llmResponse.recommendations}`;
+    const rawSummary = `## الإنجازات الرئيسية\n${llmResponse.key_achievements}\n\n## الدروس المستفادة\n${llmResponse.lessons_learned}\n\n## الأنماط الملاحظة\n${llmResponse.patterns}\n\n## التوصيات للجنة الخلف\n${llmResponse.recommendations}`;
+    const summary = brandedMarkdownHeader(committee.name_ar || committee.name_en) + '\n' + rawSummary;
 
     // Create AIOutputLedger entry
     const ledgerEntry = await base44.asServiceRole.entities.AIOutputLedger.create({

@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
+import BrandLogo from "@/components/raqeem/BrandLogo";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 
 const NAV_GROUPS = [
@@ -127,8 +128,20 @@ function CommitteeShell() {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
+      {/* Brand */}
+      <div className="px-4 py-2.5 border-b border-sidebar-border">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+            <BrandLogo className="w-full h-full" />
+          </div>
+          <div className="leading-tight">
+            <div className="font-bold text-sidebar-foreground text-sm tracking-tight">رَقِيم™</div>
+          </div>
+        </Link>
+      </div>
+
       {/* Committee identity */}
-      <div className="px-4 py-4 border-b border-sidebar-border">
+      <div className="px-4 py-3 border-b border-sidebar-border">
         <Link to={`/o/${orgRef}`} className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50 mb-2 hover:text-sidebar-foreground/80">
           <ChevronLeft className="w-3 h-3" />
           {t("بوابة المنظمة", "Organization Portal")}
@@ -241,6 +254,9 @@ function CommitteeShell() {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#F9F6F2" }}>
+              <BrandLogo className="w-full h-full" />
+            </div>
             <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>
           </div>
           <Link to={`/o/${orgRef}`} className="text-primary">

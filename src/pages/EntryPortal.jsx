@@ -4,6 +4,7 @@ import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2
 import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
+import BrandLogo from "@/components/raqeem/BrandLogo";
 
 export default function EntryPortal() {
   const navigate = useNavigate();
@@ -82,8 +83,8 @@ export default function EntryPortal() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="w-11 h-11 rounded-md bg-accent flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-6 h-6 text-primary" />
+            <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+              <BrandLogo className="w-full h-full" />
             </div>
             <div className="leading-tight">
               <div className="font-bold text-2xl tracking-tight">رَقِيم™</div>

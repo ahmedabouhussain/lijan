@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
+import BrandLogo from "@/components/raqeem/BrandLogo";
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
@@ -52,8 +53,8 @@ function OrgShell() {
       {/* Brand */}
       <div className="px-5 py-5 border-b border-sidebar-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-md bg-sidebar-primary flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-5 h-5 text-sidebar-background" />
+          <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+            <BrandLogo className="w-full h-full" />
           </div>
           <div className="leading-tight">
             <div className="font-bold text-sidebar-foreground text-lg tracking-tight">رَقِيم™</div>
@@ -177,7 +178,9 @@ function OrgShell() {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-primary" />
+            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#F9F6F2" }}>
+              <BrandLogo className="w-full h-full" />
+            </div>
             <span className="font-bold text-sm">{org.name_ar || org.name_en}</span>
           </div>
           <div className="w-5" />

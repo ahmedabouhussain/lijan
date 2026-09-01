@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -6,6 +7,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import SplashScreen from '@/components/raqeem/SplashScreen';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import Login from '@/pages/Login';
@@ -175,12 +177,14 @@ const AuthenticatedApp = () => {
 };
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <LanguageProvider>
           <Router>
             <ScrollToTop />
+            {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
             <AuthenticatedApp />
           </Router>
           <Toaster />

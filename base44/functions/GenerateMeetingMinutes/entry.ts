@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { brandedMarkdownHeader } from '../../shared/brandHeader.ts';
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -87,7 +88,8 @@ ${decisionsText || 'لا توجد قرارات'}
       prompt,
     });
 
-    const minutesBody = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.response || llmResponse?.text || JSON.stringify(llmResponse));
+    const rawMinutesBody = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.response || llmResponse?.text || JSON.stringify(llmResponse));
+    const minutesBody = brandedMarkdownHeader(`محضر ${meeting.title || ''}`) + '\n' + rawMinutesBody;
 
     // Generate a short Arabic summary
     const summaryPrompt = `لخص المحضر التالي لاجتماع رسمي في فقرة عربية واحدة (3-4 أسطر) تذكر فيها أهم القرارات والإجراءات:\n\n${minutesBody}`;
