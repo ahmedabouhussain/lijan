@@ -1,0 +1,100 @@
+{
+  "name": "Action",
+  "type": "object",
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Action Title"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0625\u062c\u0631\u0627\u0621"
+    },
+    "owner_name": {
+      "type": "string",
+      "title": "Owner"
+    },
+    "responsible_department": {
+      "type": "string",
+      "title": "Responsible Department"
+    },
+    "contributors": {
+      "type": "string",
+      "title": "Contributors"
+    },
+    "deadline": {
+      "type": "string",
+      "title": "Deadline",
+      "format": "date"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "progress_percent": {
+      "type": "number",
+      "title": "Progress %",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "blocker": {
+      "type": "string",
+      "title": "Blocker Description"
+    },
+    "evidence_url": {
+      "type": "string",
+      "title": "Evidence URL",
+      "format": "uri"
+    },
+    "escalation_level": {
+      "type": "string",
+      "title": "Escalation Level",
+      "enum": [
+        "none",
+        "reminder",
+        "priority_reminder",
+        "owner_secretary",
+        "chair",
+        "escalation_authority"
+      ],
+      "default": "none"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "assigned",
+        "in_progress",
+        "blocked",
+        "evidence_pending",
+        "under_review",
+        "verified",
+        "closed",
+        "overdue"
+      ],
+      "default": "assigned"
+    }
+  },
+  "required": [
+    "committee_id",
+    "title",
+    "owner_name",
+    "status"
+  ]
+}

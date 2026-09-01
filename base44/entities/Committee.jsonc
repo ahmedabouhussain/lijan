@@ -1,0 +1,135 @@
+{
+  "name": "Committee",
+  "type": "object",
+  "properties": {
+    "institution_id": {
+      "type": "string",
+      "title": "Institution ID"
+    },
+    "name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0644\u062c\u0646\u0629"
+    },
+    "name_en": {
+      "type": "string",
+      "title": "Committee Name (English)"
+    },
+    "type": {
+      "type": "string",
+      "title": "Committee Type",
+      "enum": [
+        "permanent_council",
+        "permanent_committee",
+        "temporary_committee",
+        "ministerial_committee",
+        "national_committee",
+        "task_force",
+        "working_group",
+        "advisory_committee",
+        "special_committee",
+        "joint_committee",
+        "cross_institutional"
+      ],
+      "default": "permanent_committee"
+    },
+    "mandate": {
+      "type": "string",
+      "title": "Mandate / \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629"
+    },
+    "establishing_authority": {
+      "type": "string",
+      "title": "Establishing Authority"
+    },
+    "scope": {
+      "type": "string",
+      "title": "Scope & Responsibilities"
+    },
+    "term_start": {
+      "type": "string",
+      "title": "Term Start",
+      "format": "date"
+    },
+    "term_end": {
+      "type": "string",
+      "title": "Term End",
+      "format": "date"
+    },
+    "chair_name": {
+      "type": "string",
+      "title": "Chair Name"
+    },
+    "secretary_name": {
+      "type": "string",
+      "title": "Secretary Name"
+    },
+    "quorum_count": {
+      "type": "number",
+      "title": "Quorum Count",
+      "default": 3
+    },
+    "voting_rule": {
+      "type": "string",
+      "title": "Voting Rule",
+      "enum": [
+        "simple_majority",
+        "two_thirds",
+        "unanimous",
+        "chair_decides"
+      ],
+      "default": "simple_majority"
+    },
+    "meeting_cadence": {
+      "type": "string",
+      "title": "Meeting Cadence",
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "quarterly",
+        "ad_hoc"
+      ],
+      "default": "monthly"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "reporting_requirements": {
+      "type": "string",
+      "title": "Reporting Requirements"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "pending_activation",
+        "active",
+        "closing",
+        "closed",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "governance_complete": {
+      "type": "boolean",
+      "title": "Governance Complete",
+      "default": false
+    }
+  },
+  "required": [
+    "institution_id",
+    "name_ar",
+    "name_en",
+    "type",
+    "status"
+  ]
+}

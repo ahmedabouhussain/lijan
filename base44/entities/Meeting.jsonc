@@ -1,0 +1,83 @@
+{
+  "name": "Meeting",
+  "type": "object",
+  "properties": {
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Meeting Title"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date & Time",
+      "format": "date-time"
+    },
+    "location": {
+      "type": "string",
+      "title": "Location"
+    },
+    "mode": {
+      "type": "string",
+      "title": "Meeting Mode",
+      "enum": [
+        "physical",
+        "online",
+        "hybrid"
+      ],
+      "default": "hybrid"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Meeting Provider",
+      "enum": [
+        "teams",
+        "zoom",
+        "webex",
+        "google_meet",
+        "external_link",
+        "sovereign",
+        "none"
+      ],
+      "default": "none"
+    },
+    "meeting_url": {
+      "type": "string",
+      "title": "Meeting URL"
+    },
+    "quorum_required": {
+      "type": "number",
+      "title": "Quorum Required",
+      "default": 3
+    },
+    "agenda_ready": {
+      "type": "boolean",
+      "title": "Agenda Ready",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "scheduled",
+        "in_progress",
+        "adjourned",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    }
+  },
+  "required": [
+    "committee_id",
+    "title",
+    "date",
+    "status"
+  ]
+}

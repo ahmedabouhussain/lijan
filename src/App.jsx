@@ -7,6 +7,16 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
+import Layout from '@/components/raqeem/Layout';
+import Home from '@/pages/Home';
+import Committees from '@/pages/Committees';
+import CommitteeCreate from '@/pages/CommitteeCreate';
+import CommitteeDetail from '@/pages/CommitteeDetail';
+import Decisions from '@/pages/Decisions';
+import Execution from '@/pages/Execution';
+import CalendarPage from '@/pages/CalendarPage';
+import Memory from '@/pages/Memory';
+import Admin from '@/pages/Admin';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +44,17 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/committees" element={<Committees />} />
+        <Route path="/committees/new" element={<CommitteeCreate />} />
+        <Route path="/committees/:id" element={<CommitteeDetail />} />
+        <Route path="/decisions" element={<Decisions />} />
+        <Route path="/execution" element={<Execution />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/memory" element={<Memory />} />
+        <Route path="/admin" element={<Admin />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

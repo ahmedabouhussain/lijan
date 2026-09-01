@@ -1,0 +1,84 @@
+{
+  "name": "AgendaItem",
+  "type": "object",
+  "properties": {
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "sequence": {
+      "type": "number",
+      "title": "Sequence Order",
+      "default": 1
+    },
+    "title": {
+      "type": "string",
+      "title": "Agenda Item Title"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0628\u0646\u062f"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Objective"
+    },
+    "presenter": {
+      "type": "string",
+      "title": "Presenter"
+    },
+    "time_allocation_minutes": {
+      "type": "number",
+      "title": "Time Allocation (min)",
+      "default": 15
+    },
+    "required_decision": {
+      "type": "string",
+      "title": "Required Decision"
+    },
+    "related_decision_id": {
+      "type": "string",
+      "title": "Related Decision ID"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "readiness": {
+      "type": "string",
+      "title": "Readiness",
+      "enum": [
+        "ready",
+        "needs_attention",
+        "not_ready"
+      ],
+      "default": "not_ready"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "in_discussion",
+        "decided",
+        "deferred",
+        "withdrawn"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "meeting_id",
+    "title",
+    "sequence",
+    "status"
+  ]
+}

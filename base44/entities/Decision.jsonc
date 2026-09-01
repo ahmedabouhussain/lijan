@@ -1,0 +1,110 @@
+{
+  "name": "Decision",
+  "type": "object",
+  "properties": {
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "decision_number": {
+      "type": "string",
+      "title": "Decision Number"
+    },
+    "title": {
+      "type": "string",
+      "title": "Decision Title"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0646\u0635 \u0627\u0644\u0642\u0631\u0627\u0631"
+    },
+    "proposal": {
+      "type": "string",
+      "title": "Proposal / Draft"
+    },
+    "legal_basis": {
+      "type": "string",
+      "title": "Legal Basis"
+    },
+    "alternatives": {
+      "type": "string",
+      "title": "Alternatives Considered"
+    },
+    "deliberation_summary": {
+      "type": "string",
+      "title": "Deliberation Summary"
+    },
+    "vote_for": {
+      "type": "number",
+      "title": "Votes For",
+      "default": 0
+    },
+    "vote_against": {
+      "type": "number",
+      "title": "Votes Against",
+      "default": 0
+    },
+    "vote_abstain": {
+      "type": "number",
+      "title": "Abstentions",
+      "default": 0
+    },
+    "dissent": {
+      "type": "string",
+      "title": "Dissent Recorded"
+    },
+    "owner_name": {
+      "type": "string",
+      "title": "Execution Owner"
+    },
+    "deadline": {
+      "type": "string",
+      "title": "Execution Deadline",
+      "format": "date"
+    },
+    "dependencies": {
+      "type": "string",
+      "title": "Dependencies"
+    },
+    "outcome": {
+      "type": "string",
+      "title": "Outcome"
+    },
+    "impact": {
+      "type": "string",
+      "title": "Impact Assessment"
+    },
+    "superseded_by": {
+      "type": "string",
+      "title": "Superseded By Decision ID"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "in_review",
+        "proposed",
+        "voting",
+        "approved",
+        "rejected",
+        "deferred",
+        "issued",
+        "executing",
+        "completed",
+        "superseded",
+        "closed"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "committee_id",
+    "title",
+    "status"
+  ]
+}
