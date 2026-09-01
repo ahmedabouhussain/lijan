@@ -41,13 +41,20 @@ export default function CommitteeAmendments() {
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const presetType = urlParams.get("type");
+
   const [form, setForm] = useState({
-    amendment_type: "add_member",
+    amendment_type: presetType || "add_member",
     description: "",
     source_instrument_ref: "",
     effective_date: "",
     after_state: "",
   });
+
+  useEffect(() => {
+    if (presetType) setShowForm(true);
+  }, []);
 
   const load = async () => {
     if (!data?.committee) return;

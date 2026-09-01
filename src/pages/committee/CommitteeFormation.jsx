@@ -1,277 +1,295 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useNavigate, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { UserCog, Loader2, Plus, X, RefreshCw, Save, Trash2, Mail } from "lucide-react";
+import {
+  GitBranch, Loader2, ScrollText, History, FileCheck, CalendarClock,
+  UserPlus, UserMinus, RefreshCw, Type, FileText, ShieldCheck, Clock,
+  AlertTriangle, ArrowLeft, Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
-const ROLES = [
-  { value: "chair", label: "رئيس" },
-  { value: "vice_chair", label: "نائب رئيس" },
-  { value: "secretary", label: "أمين" },
-  { value: "member", label: "عضو" },
-  { value: "alternate", label: "بديل" },
-  { value: "observer", label: "مراقب" },
-  { value: "advisor", label: "مستشار" },
+const PROPOSE_ACTIONS = [
+  { type: "rename", label: "اقتراح إعادة تسمية", labelEn: "Propose Renaming", icon: Type, color: "text-blue-600" },
+  { type: "amend_mandate", label: "اقتراح تعديل الصلاحية", labelEn: "Propose Mandate Amendment", icon: FileText, color: "text-amber-600" },
+  { type: "add_member", label: "اقتراح تعيين عضو", labelEn: "Propose Member Appointment", icon: UserPlus, color: "text-green-600" },
+  { type: "end_member", label: "اقتراح إنهاء عضوية", labelEn: "Propose End of Membership", icon: UserMinus, color: "text-red-600" },
+  { type: "reconstitute", label: "اقتراح إعادة تشكيل", labelEn: "Propose Reconstitution", icon: RefreshCw, color: "text-purple-600" },
 ];
+
+const AMENDMENT_LABELS = {
+  rename: "إعادة تسمية", change_arabic_name: "تغيير الاسم العربي", change_english_name: "تغيير الاسم الإنجليزي",
+  add_member: "تعيين عضو", end_member: "إنهاء عضوية", replace_member: "استبدال عضو", change_role: "تغيير دور",
+  reconstitute: "إعادة تشكيل", amend_mandate: "تعديل الصلاحية", change_quorum: "تغيير النصاب",
+  change_voting_rule: "تغيير قاعدة التصويت", extend_committee: "تمديد اللجنة", renew_committee: "تجديد اللجنة",
+  other: "أخرى",
+};
+
+const STATUS_COLORS = {
+  draft: "bg-secondary text-muted-foreground",
+  ai_processing: "bg-blue-100 text-blue-700",
+  secretary_review: "bg-indigo-100 text-indigo-700",
+  governance_review: "bg-purple-100 text-purple-700",
+  legal_review: "bg-amber-100 text-amber-700",
+  returned: "bg-orange-100 text-orange-700",
+  pending_approval: "bg-cyan-100 text-cyan-700",
+  approved: "bg-green-100 text-green-700",
+  scheduled: "bg-violet-100 text-violet-700",
+  effective: "bg-green-600 text-white",
+  rejected: "bg-red-100 text-red-700",
+  cancelled: "bg-gray-200 text-gray-600",
+  superseded: "bg-gray-300 text-gray-700",
+};
 
 export default function CommitteeFormation() {
   const { data, reload } = useCommittee();
   const { t } = useLanguage();
-  const [busy, setBusy] = useState("");
-  const [msg, setMsg] = useState("");
-  const [err, setErr] = useState("");
+  const navigate = useNavigate();
+  const { orgRef, committeeRef } = useParams();
+  const [amendments, setAmendments] = useState([]);
+  const [loadingAmendments, setLoadingAmendments] = useState(true);
 
-  // Rename
-  const [rename, setRename] = useState({ name_ar: "", name_en: "" });
-  // Mandate
-  const [mandateForm, setMandateForm] = useState({ mandate: "", scope: "" });
-  // Add member
-  const [newMember, setNewMember] = useState({ full_name: "", role: "member", institution_name: "", email: "" });
-  // Reform
-  const [reformList, setReformList] = useState([]);
-  const [reformMember, setReformMember] = useState({ full_name: "", role: "member", institution_name: "" });
+  const base = `/o/${orgRef}/c/${committeeRef}`;
+
+  useEffect(() => {
+    if (!data?.committee) return;
+    let cancelled = false;
+    (async () => {
+      setLoadingAmendments(true);
+      try {
+        const res = await base44.entities.CommitteeAmendment.filter(
+          { committee_id: data.committee.id },
+          "-created_date",
+          50
+        );
+        if (!cancelled) setAmendments(res || []);
+      } catch (e) {
+        if (!cancelled) setAmendments([]);
+      }
+      if (!cancelled) setLoadingAmendments(false);
+    })();
+    return () => { cancelled = true; };
+  }, [data?.committee?.id]);
 
   if (!data) return null;
   const { committee, members } = data;
   const ordered = [...members].sort((a, b) => (ROLE_ORDER[a.role] || 99) - (ROLE_ORDER[b.role] || 99));
 
-  const call = async (action, payload, label) => {
-    setBusy(action);
-    setErr("");
-    setMsg("");
-    try {
-      const res = await base44.functions.invoke("UpdateCommitteeFormation", { committee_id: committee.id, action, ...payload });
-      const d = res.data || res;
-      if (d.error) {
-        setErr(d.error);
-      } else {
-        setMsg(`${label} — تم. ${d.notified ? `تم إشعار ${d.notified} عضو.` : ""}`);
-        reload();
-      }
-    } catch (e) {
-      setErr(e?.response?.data?.error || e?.message || "تعذّر التنفيذ");
-    }
-    setBusy("");
-  };
+  const proposed = amendments.filter((a) => ["draft", "ai_processing", "secretary_review", "governance_review", "legal_review", "returned", "pending_approval"].includes(a.status));
+  const scheduled = amendments.filter((a) => (a.status === "approved" || a.status === "scheduled") && a.effective_date);
+  const history = amendments.filter((a) => ["effective", "rejected", "cancelled", "superseded"].includes(a.status));
 
-  const addReformMember = () => {
-    if (!reformMember.full_name.trim()) return;
-    setReformList((l) => [...l, { ...reformMember, protocol_order: 99 }]);
-    setReformMember({ full_name: "", role: "member", institution_name: "" });
-  };
+  const today = new Date().toISOString().split("T")[0];
+  const upcomingScheduled = scheduled.filter((a) => a.effective_date >= today);
+
+  const propose = (type) => navigate(`${base}/amendments?type=${type}`);
 
   return (
     <div className="space-y-5" dir="rtl">
+      {/* Header */}
       <div className="flex items-center gap-2">
-        <UserCog className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">تحديثات التشكيل · Formation Updates</h1>
+        <GitBranch className="w-5 h-5 text-primary" />
+        <h1 className="text-lg font-bold">التشكيل والتعديلات · Formation & Amendments</h1>
       </div>
 
-      {msg && <div className="p-3 rounded-md bg-green-50 border border-green-200 text-sm text-green-700">{msg}</div>}
-      {err && <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-sm text-destructive">{err}</div>}
-
-      {/* Rename */}
-      <div className="raqeem-card p-4 space-y-3">
-        <Label className="text-sm font-semibold">إعادة تسمية اللجنة · Rename</Label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Input
-            placeholder={committee.name_ar}
-            value={rename.name_ar}
-            onChange={(e) => setRename((r) => ({ ...r, name_ar: e.target.value }))}
-          />
-          <Input
-            placeholder={committee.name_en}
-            value={rename.name_en}
-            onChange={(e) => setRename((r) => ({ ...r, name_en: e.target.value }))}
-            dir="ltr"
-          />
+      {/* Governance notice */}
+      <div className="raqeem-card p-4 bg-amber-50/50 border-amber-200">
+        <div className="flex items-start gap-2.5">
+          <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="text-sm font-semibold text-amber-800">حوكمة التشكيل · Governed Formation</div>
+            <p className="text-xs text-amber-700 leading-relaxed">
+              لا يمكن تعديل التشكيل أو التسمية أو الصلاحية مباشرةً. كل تغيير رسمي يمر عبر سير عمل محوَّك:
+              اقتراح ← تحليل أثر ← مراجعة ← اعتماد ← نفاذ. التعديلات غير المعتمدة لا تؤثر على الصلاحيات الحالية.
+            </p>
+          </div>
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={busy === "rename" || (!rename.name_ar && !rename.name_en)}
-          onClick={() => call("rename", rename, "إعادة التسمية")}
-          className="inline-flex items-center gap-2"
-        >
-          {busy === "rename" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          حفظ التسمية
-        </Button>
       </div>
 
-      {/* Mandate / Scope */}
+      {/* Propose actions */}
       <div className="raqeem-card p-4 space-y-3">
-        <Label className="text-sm font-semibold">الصلاحية والاختصاصات · Mandate & Scope</Label>
-        <Textarea
-          placeholder={committee.mandate || "نص الصلاحية"}
-          value={mandateForm.mandate}
-          onChange={(e) => setMandateForm((f) => ({ ...f, mandate: e.target.value }))}
-          rows={3}
-        />
-        <Textarea
-          placeholder={committee.scope || "النطاق والمسؤوليات"}
-          value={mandateForm.scope}
-          onChange={(e) => setMandateForm((f) => ({ ...f, scope: e.target.value }))}
-          rows={3}
-        />
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={busy === "update_mandate" || (!mandateForm.mandate && !mandateForm.scope)}
-          onClick={() => call("update_mandate", mandateForm, "تحديث الاختصاصات")}
-          className="inline-flex items-center gap-2"
-        >
-          {busy === "update_mandate" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          حفظ الاختصاصات
-        </Button>
-      </div>
-
-      {/* Add member */}
-      <div className="raqeem-card p-4 space-y-3">
-        <Label className="text-sm font-semibold">إضافة عضو · Add Member</Label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <Input
-            placeholder="الاسم الكامل"
-            value={newMember.full_name}
-            onChange={(e) => setNewMember((m) => ({ ...m, full_name: e.target.value }))}
-          />
-          <Input
-            placeholder="البريد الإلكتروني (للإشعار)"
-            value={newMember.email}
-            onChange={(e) => setNewMember((m) => ({ ...m, email: e.target.value }))}
-            dir="ltr"
-          />
-          <Input
-            placeholder="الجهة الممثَّلة"
-            value={newMember.institution_name}
-            onChange={(e) => setNewMember((m) => ({ ...m, institution_name: e.target.value }))}
-          />
-          <select
-            value={newMember.role}
-            onChange={(e) => setNewMember((m) => ({ ...m, role: e.target.value }))}
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
-          >
-            {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-          </select>
+        <div className="text-sm font-semibold">إجراء مقترح · Propose a Change</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {PROPOSE_ACTIONS.map((a) => (
+            <button
+              key={a.type}
+              onClick={() => propose(a.type)}
+              className="flex items-center gap-2.5 p-3 rounded-md border border-border bg-card hover:bg-secondary/50 transition-colors text-right"
+            >
+              <a.icon className={`w-4 h-4 shrink-0 ${a.color}`} />
+              <div className="min-w-0">
+                <div className="text-sm font-medium truncate">{t(a.label, a.labelEn)}</div>
+                <div className="text-[11px] text-muted-foreground truncate">{a.labelEn}</div>
+              </div>
+            </button>
+          ))}
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={busy === "add_member" || !newMember.full_name.trim()}
-          onClick={() => {
-            call("add_member", { member: newMember }, "إضافة عضو");
-            setNewMember({ full_name: "", role: "member", institution_name: "", email: "" });
-          }}
-          className="inline-flex items-center gap-2"
-        >
-          {busy === "add_member" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-          إضافة وإشعار
-        </Button>
       </div>
 
-      {/* Current members */}
+      {/* Current Formation */}
       <div className="raqeem-card divide-y divide-border">
-        <div className="p-3 pb-2">
-          <Label className="text-sm font-semibold">الأعضاء الحاليون · Current Members ({ordered.length})</Label>
+        <div className="p-3 pb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">التشكيل الحالي · Current Formation ({ordered.length})</span>
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => navigate(`${base}/members`)} className="h-7 text-xs">
+            {t("قائمة الأعضاء", "Member List")}
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </Button>
         </div>
         {ordered.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground text-center">لا يوجد أعضاء</div>
+          <div className="p-4 text-sm text-muted-foreground text-center">لا يوجد أعضاء نشطون</div>
         ) : (
           ordered.map((m) => (
             <div key={m.id} className="flex items-center justify-between p-3">
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{m.full_name}</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  {m.institution_name || "—"} {m.user_email ? `· ${m.user_email}` : ""}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0 text-xs font-medium">
+                  {(m.full_name || "?").charAt(0)}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{m.full_name}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {m.institution_name || "—"} {m.user_email ? `· ${m.user_email}` : ""}
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
-                <button
-                  disabled={busy === "remove_member"}
-                  onClick={() => call("remove_member", { membership_id: m.id }, "إزالة عضو")}
-                  className="text-muted-foreground hover:text-destructive disabled:opacity-50"
-                >
-                  {busy === "remove_member" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                </button>
-              </div>
+              <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
             </div>
           ))
         )}
       </div>
 
-      {/* Reform */}
+      {/* Charter & Mandate (read-only) */}
       <div className="raqeem-card p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <RefreshCw className="w-4 h-4 text-primary" />
-          <Label className="text-sm font-semibold">إعادة التشكيل · Reform Roster</Label>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ScrollText className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">الصلاحية والاختصاصات · Charter & Mandate</span>
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => propose("amend_mandate")} className="h-7 text-xs">
+            <FileText className="w-3.5 h-3.5" />
+            {t("اقتراح تعديل", "Propose Amendment")}
+          </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
-          سيتم إنهاء جميع الأعضاء الحاليين واستبدالهم بقائمة جديدة. يتطلب تأكيدًا.
-        </p>
-        {reformList.length > 0 && (
-          <div className="space-y-1.5">
-            {reformList.map((m, i) => (
-              <div key={i} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-secondary/30 text-sm">
-                <span>{m.full_name} · {ROLES.find((r) => r.value === m.role)?.label}</span>
-                <button
-                  onClick={() => setReformList((l) => l.filter((_, idx) => idx !== i))}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+        <div className="space-y-2">
+          <div>
+            <div className="text-[11px] text-muted-foreground mb-1">{t("الصلاحية", "Mandate")}</div>
+            <div className="text-sm whitespace-pre-wrap rounded-md bg-secondary/30 p-3 min-h-[3rem]">
+              {committee.mandate || t("غير محدد", "Not specified")}
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] text-muted-foreground mb-1">{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</div>
+            <div className="text-sm whitespace-pre-wrap rounded-md bg-secondary/30 p-3 min-h-[3rem]">
+              {committee.scope || t("غير محدد", "Not specified")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Founding Instrument */}
+      <div className="raqeem-card p-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <FileCheck className="w-4 h-4 text-primary" />
+          <div>
+            <div className="text-sm font-semibold">سند التأسيس · Founding Instrument</div>
+            <div className="text-xs text-muted-foreground">
+              {committee.establishing_doc_reference || t("مرجع التأسيس", "Establishing reference")}
+            </div>
+          </div>
+        </div>
+        <Button size="sm" variant="ghost" onClick={() => navigate(`${base}/establishment`)} className="h-7 text-xs">
+          {t("السندات", "Instruments")}
+          <ArrowLeft className="w-3.5 h-3.5" />
+        </Button>
+      </div>
+
+      {/* Proposed Amendments */}
+      <div className="raqeem-card divide-y divide-border">
+        <div className="p-3 pb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <GitBranch className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">التعديلات المقترحة · Proposed Amendments ({proposed.length})</span>
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => navigate(`${base}/amendments`)} className="h-7 text-xs">
+            {t("الكل", "All")}
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+        {loadingAmendments ? (
+          <div className="p-4 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+        ) : proposed.length === 0 ? (
+          <div className="p-4 text-sm text-muted-foreground text-center">لا توجد تعديلات قيد المراجعة</div>
+        ) : (
+          proposed.slice(0, 5).map((a) => (
+            <div key={a.id} className="p-3 flex items-center justify-between">
+              <div className="min-w-0">
+                <div className="text-sm font-medium truncate">{AMENDMENT_LABELS[a.amendment_type] || a.amendment_type}</div>
+                {a.description && <div className="text-xs text-muted-foreground truncate">{a.description}</div>}
+                {a.impact_summary && (
+                  <div className="text-[11px] text-amber-600 truncate mt-0.5 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3 shrink-0" /> {a.impact_summary}
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        )}
-        <div className="flex items-end gap-2">
-          <div className="flex-1">
-            <Input
-              placeholder="اسم العضو"
-              value={reformMember.full_name}
-              onChange={(e) => setReformMember((m) => ({ ...m, full_name: e.target.value }))}
-              className="text-sm"
-            />
-          </div>
-          <select
-            value={reformMember.role}
-            onChange={(e) => setReformMember((m) => ({ ...m, role: e.target.value }))}
-            className="h-9 rounded-md border border-input bg-transparent px-2 text-sm"
-          >
-            {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-          </select>
-          <Button size="sm" variant="outline" onClick={addReformMember}>
-            <Plus className="w-4 h-4" />
-          </Button>
-        </div>
-        {reformList.length > 0 && (
-          <Button
-            size="sm"
-            variant="destructive"
-            disabled={busy === "reform"}
-            onClick={() => {
-              if (!confirm("تأكيد إعادة التشكيل؟ سيتم استبدال جميع الأعضاء الحاليين.")) return;
-              call("reform", { members: reformList }, "إعادة التشكيل");
-              setReformList([]);
-            }}
-            className="inline-flex items-center gap-2"
-          >
-            {busy === "reform" ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-            تأكيد إعادة التشكيل ({reformList.length} أعضاء)
-          </Button>
+              <StatusBadge label={a.status} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
+            </div>
+          ))
         )}
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-muted-foreground p-3 rounded-md bg-secondary/30">
-        <Mail className="w-3.5 h-3.5" />
-        يتم إشعار جميع الأعضاء الذين لديهم بريد إلكتروني فورًا بعد كل تحديث.
+      {/* Scheduled Changes */}
+      <div className="raqeem-card divide-y divide-border">
+        <div className="p-3 pb-2 flex items-center gap-2">
+          <CalendarClock className="w-4 h-4 text-primary" />
+          <span className="text-sm font-semibold">التغييرات المجدولة · Scheduled Changes ({upcomingScheduled.length})</span>
+        </div>
+        {upcomingScheduled.length === 0 ? (
+          <div className="p-4 text-sm text-muted-foreground text-center">لا توجد تغييرات مجدولة للنفاذ المستقبلي</div>
+        ) : (
+          upcomingScheduled.map((a) => (
+            <div key={a.id} className="p-3 flex items-center justify-between">
+              <div className="min-w-0">
+                <div className="text-sm font-medium truncate">{AMENDMENT_LABELS[a.amendment_type] || a.amendment_type}</div>
+                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {t("نفاذ", "Effective")}: {a.effective_date}
+                </div>
+              </div>
+              <StatusBadge label={a.status === "approved" ? "معتمد" : "مجدول"} colorClass={STATUS_COLORS[a.status]} />
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Amendment History + Formation Versions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button
+          onClick={() => navigate(`${base}/amendments`)}
+          className="raqeem-card p-4 text-right hover:bg-secondary/30 transition-colors"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <History className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">سجل التعديلات · Amendment History</span>
+          </div>
+          <div className="text-xs text-muted-foreground">{history.length} {t("تعديل منفّذ/مرفوض", "effective/rejected amendments")}</div>
+        </button>
+        <button
+          onClick={() => navigate(`${base}/formation-history`)}
+          className="raqeem-card p-4 text-right hover:bg-secondary/30 transition-colors"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <History className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">نسخ التشكيل · Formation Versions</span>
+          </div>
+          <div className="text-xs text-muted-foreground">{t("الخط الزمني الكامل للتشكيل", "Full formation timeline")}</div>
+        </button>
       </div>
     </div>
   );
