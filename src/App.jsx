@@ -13,6 +13,7 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 // Add page imports here
 import Layout from '@/components/raqeem/Layout';
+import EntryPortal from '@/pages/EntryPortal';
 import Home from '@/pages/Home';
 import Committees from '@/pages/Committees';
 import CommitteeCreate from '@/pages/CommitteeCreate';
@@ -53,13 +54,14 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/" element={<EntryPortal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} />
           <Route path="/committees" element={<Committees />} />
           <Route path="/committees/new" element={<CommitteeCreate />} />
           <Route path="/committees/:id" element={<CommitteeDetail />} />

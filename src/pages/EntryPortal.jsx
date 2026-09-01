@@ -1,0 +1,175 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles } from "lucide-react";
+import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
+
+export default function EntryPortal() {
+  const navigate = useNavigate();
+  const [entityId, setEntityId] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const grouped = getEntitiesByCategory();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    if (!entityId) {
+      setError("الرجاء اختيار الجهة المؤسسية · Please select your institution");
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("الرجاء إدخال بريد إلكتروني صحيح · Please enter a valid email");
+      return;
+    }
+    setSubmitting(true);
+    const selected = QATARI_ENTITIES.find((x) => x.id === entityId);
+    // Persist the selected institution for post-auth association
+    localStorage.setItem("raqeem_pending_entity", JSON.stringify(selected));
+    localStorage.setItem("raqeem_pending_email", email);
+    // Redirect to register with email pre-filled and returnTo dashboard
+    navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/dashboard")}`);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row" dir="rtl">
+      {/* Left: Brand panel */}
+      <div className="lg:w-1/2 bg-primary text-primary-foreground flex flex-col justify-between p-8 lg:p-12 relative overflow-hidden">
+        {/* Decorative pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full border-8 border-accent translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full border-8 border-accent -translate-x-1/4 translate-y-1/4" />
+        </div>
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-12">
+            <div className="w-11 h-11 rounded-md bg-accent flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-6 h-6 text-primary" />
+            </div>
+            <div className="leading-tight">
+              <div className="font-bold text-2xl tracking-tight">رَقِيم™</div>
+              <div className="text-xs text-primary-foreground/60 uppercase tracking-wider">RAQEEM™</div>
+            </div>
+          </div>
+
+          <h1 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">
+            بوابة الدخول المؤسسية
+            <span className="block text-accent text-xl lg:text-2xl mt-2">Institutional Entry Portal</span>
+          </h1>
+          <p className="text-primary-foreground/70 text-sm lg:text-base leading-relaxed max-w-md">
+            نظام التشغيل المؤسسي للجان والمجالس الوطنية — من الصلاحية إلى الأثر.
+            <span className="block mt-1 text-primary-foreground/50 text-sm">
+              The institutional operating system for national councils and committees — from Mandate to Impact.
+            </span>
+          </p>
+        </div>
+
+        <div className="relative z-10 space-y-3 mt-8">
+          {[
+            { ar: "سلطة موثقة", en: "Governed Authority" },
+            { ar: "قرار مُسنَد", en: "Evidence-Based Decisions" },
+            { ar: "أثر محفوظ", en: "Preserved Impact" },
+          ].map((item) => (
+            <div key={item.ar} className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="text-sm text-primary-foreground/80">{item.ar} · {item.en}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right: Form panel */}
+      <div className="lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-md space-y-6">
+          <div>
+            <div className="flex items-center gap-2 text-accent mb-3">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-xs font-semibold uppercase tracking-wider">AI-Assisted Onboarding</span>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-1">تسجيل الدخول</h2>
+            <p className="text-sm text-muted-foreground">
+              اختر جهتك وأدخل بريدك لبدء إنشاء اللجان · Select your entity and enter your email to begin
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Entity dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
+                الجهة المؤسسية · Institution
+              </label>
+              <div className="relative">
+                <select
+                  value={entityId}
+                  onChange={(e) => setEntityId(e.target.value)}
+                  className="w-full appearance-none px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring pr-9"
+                >
+                  <option value="">— اختر الجهة · Select entity —</option>
+                  {Object.entries(grouped).map(([catKey, entities]) => (
+                    <optgroup key={catKey} label={`${ENTITY_CATEGORIES[catKey].ar} — ${ENTITY_CATEGORIES[catKey].en}`}>
+                      {entities.map((entity) => (
+                        <option key={entity.id} value={entity.id}>
+                          {entity.ar} — {entity.en}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-muted-foreground absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                البريد الإلكتروني المؤسسي · Official Email
+              </label>
+              <input
+                type="email"
+                dir="ltr"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@institution.gov.qa"
+                className="w-full px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+
+            {error && (
+              <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md">{error}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors"
+            >
+              {submitting ? (
+                <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> جارٍ التحويل...</>
+              ) : (
+                <>متابعة · Continue <ArrowLeft className="w-4 h-4" /></>
+              )}
+            </button>
+          </form>
+
+          <div className="pt-4 border-t border-border text-center">
+            <p className="text-xs text-muted-foreground mb-2">لديك حساب بالفعل؟ · Already have an account?</p>
+            <button
+              onClick={() => navigate("/login?returnTo=" + encodeURIComponent("/dashboard"))}
+              className="text-sm text-primary hover:underline font-medium"
+            >
+              تسجيل الدخول · Sign in
+            </button>
+          </div>
+
+          <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+            باستخدامك للمنصة فإنك توافق على الالتزام بسياسات الحوكمة والتصنيف المؤسسي.
+            <span className="block">By using this platform you agree to comply with institutional governance and classification policies.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

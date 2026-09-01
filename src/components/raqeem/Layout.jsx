@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 import {
   LayoutDashboard,
   Users,
@@ -18,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { to: "/", label: "نظرة عامة", labelEn: "Overview", icon: LayoutDashboard },
+  { to: "/dashboard", label: "نظرة عامة", labelEn: "Overview", icon: LayoutDashboard },
   { to: "/committees", label: "اللجان", labelEn: "Committees", icon: Users },
   { to: "/calendar", label: "التقويم", labelEn: "Calendar", icon: Calendar },
   { to: "/decisions", label: "القرارات", labelEn: "Decisions", icon: Gavel },
@@ -35,6 +36,22 @@ const VAULT_ITEMS = [
 export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [institution, setInstitution] = useState(null);
+
+  useEffect(() => {
+    async function loadInstitution() {
+      try {
+        const user = await base44.auth.me();
+        if (user?.institution_id) {
+          const inst = await base44.entities.Institution.get(user.institution_id).catch(() => null);
+          if (inst) setInstitution(inst);
+        }
+      } catch {
+        // Non-critical
+      }
+    }
+    loadInstitution();
+  }, []);
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -54,7 +71,10 @@ export default function Layout() {
       {/* Institution context */}
       <div className="px-5 py-3 border-b border-sidebar-border">
         <div className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wider mb-1">المؤسسة · Institution</div>
-        <div className="text-sm text-sidebar-foreground font-medium truncate">المجلس الأعلى للحوكمة</div>
+        <div className="text-sm text-sidebar-foreground font-medium truncate">
+          {institution ? institution.name_ar : "المجلس الأعلى للحوكمة"}
+        </div>
+        {institution && <div className="text-[10px] text-sidebar-foreground/40 truncate">{institution.name_en}</div>}
       </div>
 
       {/* Nav */}

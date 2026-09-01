@@ -45,10 +45,36 @@ export default function Home() {
   const [committees, setCommittees] = useState([]);
   const [decisions, setDecisions] = useState([]);
   const [actions, setActions] = useState([]);
+  const [institution, setInstitution] = useState(null);
 
   useEffect(() => {
     async function load() {
       try {
+        // Associate pending institution from EntryPortal
+        const pending = localStorage.getItem("raqeem_pending_entity");
+        if (pending) {
+          const entity = JSON.parse(pending);
+          const existing = await base44.entities.Institution.filter({ name_en: entity.en }).catch(() => []);
+          let inst = existing && existing[0];
+          if (!inst) {
+            inst = await base44.entities.Institution.create({
+              name_ar: entity.ar,
+              name_en: entity.en,
+              type: entity.category === "holding" ? "organization" : entity.category === "ministry" ? "ministry" : "authority",
+              status: "active",
+            });
+          }
+          await base44.auth.updateMe({ institution_id: inst.id });
+          localStorage.removeItem("raqeem_pending_entity");
+          setInstitution(inst);
+        } else {
+          const user = await base44.auth.me();
+          if (user?.institution_id) {
+            const inst = await base44.entities.Institution.get(user.institution_id).catch(() => null);
+            if (inst) setInstitution(inst);
+          }
+        }
+
         const [comms, decs, acts] = await Promise.all([
           base44.entities.Committee.list().catch(() => []),
           base44.entities.Decision.list().catch(() => []),
@@ -81,7 +107,9 @@ export default function Home() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">المجلس الأعلى للحوكمة · Supreme Council for Governance</div>
+        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+          {institution ? `${institution.name_ar} · ${institution.name_en}` : "المجلس الأعلى للحوكمة · Supreme Council for Governance"}
+        </div>
         <h1 className="text-2xl font-bold text-foreground">الملخص التنفيذي · Executive Brief</h1>
         <p className="text-sm text-muted-foreground mt-1">ما يتطلب انتباهك الآن · What requires your attention</p>
       </div>

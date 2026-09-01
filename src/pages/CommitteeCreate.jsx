@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Check, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, X, Sparkles, Wand2 } from "lucide-react";
 import { COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +22,10 @@ export default function CommitteeCreate() {
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const [suggestedMembers, setSuggestedMembers] = useState([]);
+  const [institution, setInstitution] = useState(null);
   const [form, setForm] = useState({
     name_ar: "",
     name_en: "",
@@ -42,6 +46,117 @@ export default function CommitteeCreate() {
 
   const update = (field, value) => setForm((p) => ({ ...p, [field]: value }));
 
+  // Fetch user's institution context
+  useEffect(() => {
+    async function loadInstitution() {
+      try {
+        const user = await base44.auth.me();
+        if (user?.institution_id) {
+          const inst = await base44.entities.Institution.get(user.institution_id).catch(() => null);
+          if (inst) setInstitution(inst);
+        } else {
+          // Check pending entity from EntryPortal
+          const pending = localStorage.getItem("raqeem_pending_entity");
+          if (pending) {
+            const entity = JSON.parse(pending);
+            // Find or create institution
+            const existing = await base44.entities.Institution.filter({ name_en: entity.en }).catch(() => []);
+            let inst = existing && existing[0];
+            if (!inst) {
+              inst = await base44.entities.Institution.create({
+                name_ar: entity.ar,
+                name_en: entity.en,
+                type: entity.category === "holding" ? "organization" : entity.category === "ministry" ? "ministry" : "authority",
+                status: "active",
+              });
+            }
+            await base44.auth.updateMe({ institution_id: inst.id });
+            setInstitution(inst);
+            localStorage.removeItem("raqeem_pending_entity");
+          }
+        }
+      } catch {
+        // Non-critical — committee creation falls back to default
+      }
+    }
+    loadInstitution();
+  }, []);
+
+  // AI: Auto-generate full governance structure
+  const autoGenerate = async () => {
+    if (!form.name_ar && !form.name_en) {
+      setAiError("أدخل اسم اللجنة أولاً · Enter committee name first");
+      return;
+    }
+    setGenerating(true);
+    setAiError(null);
+    try {
+      const response = await base44.functions.invoke("GenerateCommitteeGovernance", {
+        committee_name_ar: form.name_ar || form.name_en,
+        committee_name_en: form.name_en || form.name_ar,
+        type: form.type,
+        institution_name_ar: institution?.name_ar,
+        institution_name_en: institution?.name_en,
+      });
+      const data = response.data;
+      // Extract chair and secretary from suggested members
+      const chair = data.suggested_members?.find((m) => m.role === "chair");
+      const secretary = data.suggested_members?.find((m) => m.role === "secretary");
+      // Default term: today → +3 years
+      const today = new Date();
+      const termEnd = new Date();
+      termEnd.setFullYear(termEnd.getFullYear() + 3);
+      setForm((p) => ({
+        ...p,
+        mandate: data.mandate_ar || p.mandate,
+        scope: data.scope_ar || p.scope,
+        establishing_authority: data.establishing_authority_ar || p.establishing_authority,
+        chair_name: chair?.full_name_ar || chair?.full_name || p.chair_name,
+        secretary_name: secretary?.full_name_ar || secretary?.full_name || p.secretary_name,
+        quorum_count: data.quorum_count || p.quorum_count,
+        voting_rule: data.voting_rule || p.voting_rule,
+        meeting_cadence: data.meeting_cadence || p.meeting_cadence,
+        classification: data.classification || p.classification,
+        reporting_requirements: data.reporting_requirements_ar || p.reporting_requirements,
+        term_start: p.term_start || today.toISOString().split("T")[0],
+        term_end: p.term_end || termEnd.toISOString().split("T")[0],
+      }));
+      if (data.suggested_members) setSuggestedMembers(data.suggested_members);
+      // Jump to review step
+      setStep(STEPS.length - 1);
+    } catch {
+      setAiError("تعذر التوليد الآن · Could not generate at this time");
+    }
+    setGenerating(false);
+  };
+
+  // AI: Suggest a single field
+  const suggestField = async (field) => {
+    setGenerating(true);
+    setAiError(null);
+    try {
+      const response = await base44.functions.invoke("GenerateCommitteeGovernance", {
+        committee_name_ar: form.name_ar || form.name_en,
+        committee_name_en: form.name_en || form.name_ar,
+        type: form.type,
+        institution_name_ar: institution?.name_ar,
+        institution_name_en: institution?.name_en,
+      });
+      const data = response.data;
+      const fieldMap = {
+        mandate: data.mandate_ar,
+        scope: data.scope_ar,
+        establishing_authority: data.establishing_authority_ar,
+        reporting_requirements: data.reporting_requirements_ar,
+      };
+      if (fieldMap[field]) update(field, fieldMap[field]);
+      if (data.suggested_members) setSuggestedMembers(data.suggested_members);
+    } catch {
+      setAiError("تعذر الاقتراح الآن · Could not suggest at this time");
+    }
+    setGenerating(false);
+  };
+
   const canProceed = () => {
     if (step === 0) return form.name_ar && form.name_en;
     if (step === 1) return form.mandate;
@@ -60,7 +175,7 @@ export default function CommitteeCreate() {
       // Default institution — in production this would be the user's institution
       const record = await base44.entities.Committee.create({
         ...form,
-        institution_id: "default",
+        institution_id: institution?.id || "default",
         status: "draft",
         governance_complete: false,
       });
@@ -148,6 +263,33 @@ export default function CommitteeCreate() {
                 ))}
               </select>
             </div>
+
+            {/* AI Auto-Generate */}
+            <div className="mt-2 border border-accent/30 bg-accent/5 rounded-md p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-md bg-accent/15 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-foreground">توليد الحوكمة بالذكاء الاصطناعي · AI Auto-Generate</div>
+                  <p className="text-xs text-muted-foreground mt-1 mb-3">
+                    يولّد AI موثوق الصلاحية والنطاق والجهة المؤسِّسة والنصاب وقواعد التصويت والأعضاء المقترحين — بضغطة واحدة، مع إمكانية التعديل.
+                  </p>
+                  <button
+                    onClick={autoGenerate}
+                    disabled={generating}
+                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark disabled:opacity-50"
+                  >
+                    {generating ? (
+                      <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> جارٍ التوليد...</>
+                    ) : (
+                      <><Wand2 className="w-4 h-4" /> توليد تلقائي · Auto-Generate</>
+                    )}
+                  </button>
+                  {aiError && <p className="text-xs text-destructive mt-2">{aiError}</p>}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -157,7 +299,12 @@ export default function CommitteeCreate() {
             <h2 className="text-lg font-semibold">الصلاحية · Mandate</h2>
             <p className="text-sm text-muted-foreground">لماذا أُنشئت هذه اللجنة؟ ما السلطة المفوضة لها؟</p>
             <div>
-              <label className={labelClass}>نص الصلاحية *</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={labelClass + " mb-0"}>نص الصلاحية *</label>
+                <button onClick={() => suggestField("mandate")} disabled={generating} className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent/80 disabled:opacity-50">
+                  <Wand2 className="w-3 h-3" /> اقتراح AI
+                </button>
+              </div>
               <textarea className={inputClass} rows={5} value={form.mandate} onChange={(e) => update("mandate", e.target.value)} placeholder="تتولى اللجنة صلاحية..." />
             </div>
           </div>
@@ -169,7 +316,12 @@ export default function CommitteeCreate() {
             <h2 className="text-lg font-semibold">الجهة المؤسِّسة · Establishing Authority</h2>
             <p className="text-sm text-muted-foreground">ما الجهة التي أنشأت أو فوّضت هذه اللجنة؟</p>
             <div>
-              <label className={labelClass}>الجهة المؤسِّسة *</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={labelClass + " mb-0"}>الجهة المؤسِّسة *</label>
+                <button onClick={() => suggestField("establishing_authority")} disabled={generating} className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent/80 disabled:opacity-50">
+                  <Wand2 className="w-3 h-3" /> اقتراح AI
+                </button>
+              </div>
               <input className={inputClass} value={form.establishing_authority} onChange={(e) => update("establishing_authority", e.target.value)} placeholder="مثال: مجلس الوزراء / المرسوم رقم ..." />
             </div>
           </div>
@@ -180,7 +332,12 @@ export default function CommitteeCreate() {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">النطاق والمسؤوليات · Scope & Responsibilities</h2>
             <div>
-              <label className={labelClass}>نطاق العمل والمسؤوليات *</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={labelClass + " mb-0"}>نطاق العمل والمسؤوليات *</label>
+                <button onClick={() => suggestField("scope")} disabled={generating} className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent/80 disabled:opacity-50">
+                  <Wand2 className="w-3 h-3" /> اقتراح AI
+                </button>
+              </div>
               <textarea className={inputClass} rows={5} value={form.scope} onChange={(e) => update("scope", e.target.value)} placeholder="حدد نطاق صلاحيات اللجنة ومسؤولياتها..." />
             </div>
           </div>
@@ -277,11 +434,30 @@ export default function CommitteeCreate() {
             <div className="bg-secondary/40 rounded-md p-4 space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">الاسم:</span><span className="font-medium">{form.name_ar}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">النوع:</span><span className="font-medium">{COMMITTEE_TYPES[form.type]?.ar}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">الرئيس:</span><span className="font-medium">{form.chair_name}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">الأمين:</span><span className="font-medium">{form.secretary_name}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">الرئيس:</span><span className="font-medium">{form.chair_name || "—"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">الأمين:</span><span className="font-medium">{form.secretary_name || "—"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">النصاب:</span><span className="font-medium">{form.quorum_count}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">الدورية:</span><span className="font-medium">{form.meeting_cadence}</span></div>
             </div>
+
+            {/* AI Suggested Members */}
+            {suggestedMembers.length > 0 && (
+              <div className="border border-accent/30 bg-accent/5 rounded-md p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  <span className="text-sm font-semibold">أعضاء مقترحون من AI · AI Suggested Members</span>
+                </div>
+                <div className="space-y-1.5">
+                  {suggestedMembers.map((m, i) => (
+                    <div key={i} className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-foreground">{m.full_name_ar || m.full_name}</span>
+                      <span className="text-muted-foreground">{m.role} · {m.authority_level}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">ستتمكن من إضافة الأعضاء بعد إنشاء اللجنة · You can add members after creating the committee</p>
+              </div>
+            )}
           </div>
         )}
 
