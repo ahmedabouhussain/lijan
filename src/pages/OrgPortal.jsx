@@ -68,21 +68,29 @@ export default function OrgPortal() {
           )}
         </div>
 
-        {allCommittees.length === 0 ? (
+        {myCommittees.length === 0 ? (
           <div className="raqeem-card p-10 text-center">
             <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-3">{t("لا توجد لجان بعد", "No committees yet")}</p>
+            <p className="text-sm text-muted-foreground mb-3">{t("لم تتم إضافتك إلى أي لجنة بعد", "You have not been assigned to any committee yet")}</p>
             {isAdmin && (
               <Link to={`/o/${orgRef}/create-committee`} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
                 <Plus className="w-4 h-4" />
-                {t("إنشاء أول لجنة", "Create your first committee")}
+                {t("إنشاء لجنة", "Create Committee")}
               </Link>
             )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {allCommittees.map((c) => {
+            {myCommittees.map((c) => {
               const cRef = `${c.slug || c.id}--${c.public_id || c.id}`;
+              const roleLabel = {
+                chair: t("رئيس", "Chair"),
+                vice_chair: t("نائب الرئيس", "Vice Chair"),
+                secretary: t("أمين السر", "Secretary"),
+                member: t("عضو", "Member"),
+                observer: t("مراقب", "Observer"),
+                advisor: t("مستشار", "Advisor"),
+              }[c.my_role_in_committee] || t("عضو", "Member");
               return (
                 <Link
                   key={c.id}
@@ -96,9 +104,12 @@ export default function OrgPortal() {
                     </div>
                     <StatusBadge label={COMMITTEE_STATUS[c.status]?.ar || c.status} colorClass={COMMITTEE_STATUS[c.status]?.color} />
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                    <span>{COMMITTEE_TYPES[c.type]?.ar || c.type}</span>
-                    {c.chair_name && <span>· {c.chair_name}</span>}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                      <ShieldCheck className="w-3 h-3" />
+                      {roleLabel}
+                    </span>
+                    <span>· {COMMITTEE_TYPES[c.type]?.ar || c.type}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{t("الدخول للجنة", "Enter Committee")}</span>
@@ -110,6 +121,40 @@ export default function OrgPortal() {
           </div>
         )}
       </div>
+
+      {/* Other committees (oversight) */}
+      {isAdmin && otherCommittees.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <Lock className="w-4 h-4 text-muted-foreground" />
+            {t("لجان أخرى (إشراف)", "Other Committees (Oversight)")}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {otherCommittees.map((c) => {
+              const cRef = `${c.slug || c.id}--${c.public_id || c.id}`;
+              return (
+                <Link
+                  key={c.id}
+                  to={`/o/${orgRef}/c/${cRef}`}
+                  className="raqeem-card p-4 hover:shadow-md transition-shadow group opacity-75"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold text-foreground truncate">{c.name_ar || c.name_en}</h3>
+                      <p className="text-xs text-muted-foreground truncate">{c.name_en}</p>
+                    </div>
+                    <StatusBadge label={COMMITTEE_STATUS[c.status]?.ar || c.status} colorClass={COMMITTEE_STATUS[c.status]?.color} />
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Lock className="w-3 h-3" />
+                    <span>{t("إشراف قراءة فقط", "Read-only oversight")}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Oversight notice */}
       {my_role === "admin_oversight" && (
