@@ -105,6 +105,11 @@
       "type": "string",
       "title": "Secretary Name"
     },
+    "logo_url": {
+      "type": "string",
+      "title": "Committee Logo URL",
+      "format": "uri"
+    },
     "quorum_count": {
       "type": "number",
       "title": "Quorum Count",

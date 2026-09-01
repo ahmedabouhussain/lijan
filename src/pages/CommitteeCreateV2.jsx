@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import EstablishingDocumentSection from "@/components/raqeem/EstablishingDocumentSection";
 import SupportingDocumentsSection from "@/components/raqeem/SupportingDocumentsSection";
+import CommitteeLogoSection from "@/components/raqeem/CommitteeLogoSection";
 
 const COMMITTEE_TYPES = [
   { value: "permanent_council", label: "مجلس دائم" },
@@ -51,6 +52,7 @@ export default function CommitteeCreateV2() {
   const [newMember, setNewMember] = useState({ full_name: "", role: "member", institution_name: "" });
   const [establishingDoc, setEstablishingDoc] = useState({ type: "", reference: "", date: "", file_url: "", file_name: "" });
   const [supportingDocs, setSupportingDocs] = useState([]);
+  const [logoUrl, setLogoUrl] = useState("");
 
   const publicId = orgRef?.split("--").pop() || orgRef;
 
@@ -106,6 +108,7 @@ export default function CommitteeCreateV2() {
       const res = await base44.functions.invoke("CreateCommittee", {
         ...form,
         organization_id: orgId,
+        logo_url: logoUrl || null,
         members,
         establishing_doc: establishingDoc,
         supporting_docs: supportingDocs,
@@ -135,6 +138,8 @@ export default function CommitteeCreateV2() {
       {error && <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-sm text-destructive">{error}</div>}
 
       <div className="raqeem-card p-6 space-y-4">
+        <CommitteeLogoSection value={logoUrl} onChange={setLogoUrl} committeeInfo={form} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>اسم اللجنة (عربي) *</Label>

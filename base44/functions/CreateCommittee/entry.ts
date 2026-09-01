@@ -16,7 +16,7 @@ export default async function(req) {
       organization_id, name_ar, name_en, type, mandate, appointing_authority,
       term_start, term_end, classification, chair_name, secretary_name,
       quorum_count, voting_rule, meeting_cadence, members,
-      establishing_doc, supporting_docs,
+      establishing_doc, supporting_docs, logo_url,
     } = body;
 
     if (!organization_id || !name_ar || !name_en) {
@@ -60,6 +60,7 @@ export default async function(req) {
       classification: classification || 'internal',
       term_start: term_start || null,
       term_end: term_end || null,
+      logo_url: logo_url || null,
       status: 'draft',
       version: 1,
     });
