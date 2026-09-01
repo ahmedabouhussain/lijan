@@ -14,7 +14,7 @@ export function useCommitteeScopedData(entityName, filterFn = null) {
 
   const committeeId = data?.committee?.id;
 
-  useEffect(() => {
+  const fetch = () => {
     if (!committeeId) return;
     const filter = filterFn ? filterFn(committeeId, data) : { committee_id: committeeId };
     setLoading(true);
@@ -23,7 +23,9 @@ export function useCommitteeScopedData(entityName, filterFn = null) {
       .then((res) => setRecords(res || []))
       .catch(() => setRecords([]))
       .finally(() => setLoading(false));
-  }, [committeeId, entityName]);
+  };
 
-  return { records, loading, committee: data?.committee, fullData: data };
+  useEffect(() => { fetch(); }, [committeeId, entityName]);
+
+  return { records, loading, reload: fetch, committee: data?.committee, fullData: data };
 }

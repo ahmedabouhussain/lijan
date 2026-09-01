@@ -19,7 +19,7 @@ const READINESS = {
 
 const STATUS = {
   pending: { ar: "معلق", en: "Pending", color: "bg-secondary text-muted-foreground" },
-  in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: "bg-blue-100 text-blue-700" },
+  in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: "bg-secondary text-muted-foreground" },
   decided: { ar: "تم القرار", en: "Decided", color: "bg-emerald-100 text-emerald-700" },
   deferred: { ar: "مؤجل", en: "Deferred", color: "bg-amber-100 text-amber-700" },
   withdrawn: { ar: "مسحب", en: "Withdrawn", color: "bg-red-100 text-red-700" },

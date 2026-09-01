@@ -20,6 +20,8 @@ export const ENTITY_CAPABILITY_MAP: Record<string, string> = {
   Recusal: 'can_manage_committee_records',
   CrossEntityDependency: 'can_manage_committee_records',
   PolicyScenario: 'can_manage_committee_records',
+  NotificationConfig: 'can_manage_notifications',
+  IntegrationConfig: 'can_manage_integrations',
 };
 
 // States where records can be directly edited (Level 2)
