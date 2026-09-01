@@ -1,19 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
 import { DECISION_STATUS } from "@/lib/raqeemUtils";
-import { CheckSquare, Gavel } from "lucide-react";
+import { CheckSquare, Gavel, Loader2, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function CommitteeVoting() {
-  const { data } = useCommittee();
+  const { data, reload } = useCommittee();
   const { t } = useLanguage();
+  const { orgRef, committeeRef } = useParams();
+  const [voting, setVoting] = useState(false);
+  const [error, setError] = useState("");
 
   if (!data) return null;
   const { my_role, is_oversight, is_recused, committee } = data;
-  const voting = (data.registers.decisions || []).filter((d) => d.status === "voting");
+  const base = `/o/${orgRef}/c/${committeeRef}`;
+  const votingDecisions = (data.registers.decisions || []).filter((d) => d.status === "voting" || d.status === "proposed");
+  const canCallVote = !is_oversight && !is_recused && ["chair", "vice_chair"].includes(my_role);
+  const canCastVote = !is_oversight && !is_recused && ["chair", "vice_chair", "secretary", "member"].includes(my_role);
+
+  const handleVoteAction = async (fn, payload, successMsg) => {
+    setVoting(true); setError("");
+    try {
+      await base44.functions.invoke(fn, payload);
+      reload();
+    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    setVoting(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -31,17 +48,18 @@ export default function CommitteeVoting() {
         committeeName={committee.name_ar || committee.name_en}
       />
 
-      {voting.length === 0 ? (
+      {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
+      {votingDecisions.length === 0 ? (
         <div className="raqeem-card p-8 text-center">
           <CheckSquare className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">{t("لا توجد قرارات قيد التصويت حالياً", "No decisions currently in voting")}</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {voting.map((d) => (
+          {votingDecisions.map((d) => (
             <div key={d.id} className="raqeem-card p-4">
               <div className="flex items-center justify-between mb-2">
-                <Link to={`/decisions/${d.id}`} className="text-sm font-medium text-foreground hover:text-primary">
+                <Link to={`${base}/decisions/${d.id}`} className="text-sm font-medium text-foreground hover:text-primary">
                   {d.title}
                 </Link>
                 <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
@@ -58,6 +76,33 @@ export default function CommitteeVoting() {
                   <span>{t("الأساس القانوني", "Legal Basis")}: {d.legal_basis}</span>
                 </div>
               )}
+              {/* Voting controls */}
+              <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 flex-wrap">
+                {d.status === "proposed" && canCallVote && (
+                  <Button size="sm" disabled={voting} onClick={() => handleVoteAction("OpenVote", { committee_id: committee.id, decision_id: d.id })}>
+                    {voting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5" />}
+                    {t("فتح التصويت", "Open Vote")}
+                  </Button>
+                )}
+                {d.status === "voting" && canCastVote && (
+                  <>
+                    <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "for" })}>
+                      <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" /> {t("موافق", "For")}
+                    </Button>
+                    <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "against" })}>
+                      <ThumbsDown className="w-3.5 h-3.5 text-red-600" /> {t("معارض", "Against")}
+                    </Button>
+                    <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "abstain" })}>
+                      <Minus className="w-3.5 h-3.5" /> {t("ممتنع", "Abstain")}
+                    </Button>
+                  </>
+                )}
+                {d.status === "voting" && canCallVote && (
+                  <Button size="sm" disabled={voting} onClick={() => handleVoteAction("CloseVote", { committee_id: committee.id, decision_id: d.id })}>
+                    {t("إغلاق التصويت", "Close Vote")}
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
         </div>
