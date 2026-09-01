@@ -71,8 +71,8 @@ export default function Layout() {
             <ShieldCheck className="w-5 h-5 text-sidebar-background" />
           </div>
           <div className="leading-tight">
-            <div className="font-bold text-sidebar-foreground text-lg tracking-tight">رَقِيم™</div>
-            <div className="text-[10px] text-sidebar-foreground/60 uppercase tracking-wider">RAQEEM™</div>
+            <div dir="rtl" className="font-bold text-sidebar-foreground text-lg tracking-tight flex items-start gap-0.5">لِجان<sup className="text-[10px] mt-1">™</sup></div>
+            <div dir="ltr" className="text-[10px] text-sidebar-foreground/60 uppercase tracking-wider flex items-start gap-0.5">LIJAN<sup className="text-[8px] mt-0.5">™</sup></div>
           </div>
         </Link>
       </div>
@@ -205,7 +205,7 @@ export default function Layout() {
           </button>
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-primary" />
-            <span className="font-bold">رَقِيم™</span>
+            <span dir="rtl" className="font-bold flex items-start gap-0.5">لِجان<sup className="text-[9px] mt-0.5">™</sup></span>
           </div>
           <div className="w-5" />
         </header>

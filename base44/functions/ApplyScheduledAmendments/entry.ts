@@ -59,7 +59,7 @@ export default async function(req) {
           .filter({ committee_id: amendment.committee_id, status: "active" }).catch(() => []);
         const committeeName = committee.name_ar || committee.name_en || "";
         const subject = `نفاذ تعديل مجدول: ${committeeName}`;
-        const emailBody = `السلام عليكم،\n\nنفذ التعديل المجدول على لجنة "${committeeName}".\n\nنوع التعديل: ${amendment.amendment_type}\nالوصف: ${amendment.description || "—"}\nتاريخ النفاذ: ${amendment.effective_date}\nنسخة التشكيل: #${formationVersion.version_number}\n\nمع تحيات،\nرَقِيم™ — نظام الحوكمة المؤسسية`;
+        const emailBody = `السلام عليكم،\n\nنفذ التعديل المجدول على لجنة "${committeeName}".\n\nنوع التعديل: ${amendment.amendment_type}\nالوصف: ${amendment.description || "—"}\nتاريخ النفاذ: ${amendment.effective_date}\nنسخة التشكيل: #${formationVersion.version_number}\n\nمع تحيات،\nلِجان™ — نظام تشغيل المجالس واللجان الوطنية\nPowered by CONNECTION™`;
         let notified = 0;
         for (const m of (activeMembers || [])) {
           if (!m.user_email) continue;

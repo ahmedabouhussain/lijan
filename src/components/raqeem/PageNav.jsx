@@ -34,7 +34,7 @@ export default function PageNav() {
 
   const crumbs = [];
   // Always: root entry
-  crumbs.push({ label: t("رَقِيم", "RAQEEM"), to: "/" });
+  crumbs.push({ label: t("لِجان", "LIJAN"), to: "/" });
   if (orgRef) {
     crumbs.push({ label: t("البوابة", "Portal"), to: `/o/${orgRef}` });
   }

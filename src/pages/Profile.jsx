@@ -102,7 +102,7 @@ export default function Profile() {
       <PageNav />
       <div>
         <h1 className="text-2xl font-bold text-foreground">الملف الشخصي · Profile</h1>
-        <p className="text-sm text-muted-foreground mt-1">هويتك داخل رَقِيم™</p>
+        <p className="text-sm text-muted-foreground mt-1">هويتك داخل لِجان™</p>
       </div>
 
       {/* Identity header card */}

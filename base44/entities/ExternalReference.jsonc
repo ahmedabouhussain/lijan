@@ -8,7 +8,7 @@
     },
     "raqeem_entity_type": {
       "type": "string",
-      "title": "RAQEEM Entity Type",
+      "title": "LIJAN Entity Type",
       "enum": [
         "Meeting",
         "Decision",
@@ -20,7 +20,7 @@
     },
     "raqeem_record_id": {
       "type": "string",
-      "title": "RAQEEM Record ID"
+      "title": "LIJAN Record ID"
     },
     "external_system": {
       "type": "string",

@@ -1,4 +1,4 @@
-// capabilityKernel.ts — Backend-governed capability resolution for RAQEEM.
+// capabilityKernel.ts — Backend-governed capability resolution for LIJAN.
 // Resolves explicit capabilities based on org membership, committee membership,
 // delegation/alternate activation, and recusal status.
 // Platform Admin does NOT automatically gain operational committee authority.

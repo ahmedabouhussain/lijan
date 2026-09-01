@@ -15,6 +15,8 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import BrandWordmark from "@/components/brand/BrandWordmark";
+import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 
 const NAV_GROUPS = [
@@ -138,12 +140,10 @@ function CommitteeShell() {
       {/* Brand */}
       <div className="px-4 py-2.5 border-b border-sidebar-border">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+          <div className="w-8 h-8 rounded overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
             <BrandLogo className="w-full h-full" />
           </div>
-          <div className="leading-tight">
-            <div className="font-bold text-sidebar-foreground text-sm tracking-tight">رَقِيم™</div>
-          </div>
+          <BrandWordmark variant="light" className="text-sm" />
         </Link>
       </div>
 
@@ -227,8 +227,9 @@ function CommitteeShell() {
       <div className="px-4 py-2 border-t border-sidebar-border">
         <LanguageSwitcher />
       </div>
-      <div className="px-4 py-3 border-t border-sidebar-border">
-        <div className="text-[10px] text-sidebar-foreground/40">{t("رَقِيم™ · نظام التشغيل المؤسسي", "RAQEEM™ · Institutional OS")}</div>
+      <div className="px-4 py-3 border-t border-sidebar-border space-y-1">
+        <div className="text-[10px] text-sidebar-foreground/40">{t("نظام تشغيل المجالس واللجان الوطنية", "National Councils & Committees OS")}</div>
+        <PoweredByConnection variant="light" />
       </div>
     </div>
   );
@@ -261,7 +262,7 @@ function CommitteeShell() {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#F9F6F2" }}>
+            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
               <BrandLogo className="w-full h-full" />
             </div>
             <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>

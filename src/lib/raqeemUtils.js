@@ -1,4 +1,4 @@
-// RAQEEM shared utilities — bilingual labels, status maps, helpers
+// LIJAN shared utilities — bilingual labels, status maps, helpers
 
 export const COMMITTEE_TYPES = {
   permanent_council: { ar: "مجلس دائم", en: "Permanent Council" },

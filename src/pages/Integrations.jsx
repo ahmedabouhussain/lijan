@@ -46,7 +46,7 @@ const INTEGRATION_CATALOG = [
       { name: "Zoom", system: "zoom", desc: "قناة اجتماعات" },
       { name: "Cisco Webex", system: "webex", desc: "قناة اجتماعات" },
       { name: "Google Meet", system: "google_meet", desc: "قناة اجتماعات" },
-      { name: "RAQEEM Secure Channel™", system: "sovereign_channel", desc: "قناة سيادية مستقبلية" },
+      { name: "LIJAN Secure Channel™", system: "sovereign_channel", desc: "قناة سيادية مستقبلية" },
     ],
   },
   {
@@ -143,7 +143,7 @@ export default function Integrations() {
         </div>
         <h1 className="text-2xl font-bold text-foreground">التكاملات · Integrations</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          رَقِيم لا يستبدل الأنظمة الموجودة في الدولة؛ رَقِيم يجعلها تعمل معًا حول القرار المؤسسي
+          لِجان لا يستبدل الأنظمة الموجودة في الدولة؛ لِجان يجعلها تعمل معًا حول القرار المؤسسي
         </p>
       </div>
 
@@ -191,7 +191,7 @@ export default function Integrations() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 text-center">
           <div className="raqeem-card p-4 bg-primary/5">
-            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">RAQEEM Core</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">LIJAN Core</div>
             <div className="text-sm font-semibold text-primary">النظام المرجعي للحوكمة</div>
             <div className="text-xs text-muted-foreground mt-1">القرار · المحضر · الأثر · الذاكرة</div>
           </div>

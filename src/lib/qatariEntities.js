@@ -1,4 +1,4 @@
-// قائمة الجهات القطرية المشتركة على منصة رَقِيم™
+// قائمة الجهات القطرية المشتركة على منصة لِجان™
 // Qatari Entities Registry — Government, Semi-Government, Holding Companies
 // Bilingual (Arabic / English) — Business & Government language
 

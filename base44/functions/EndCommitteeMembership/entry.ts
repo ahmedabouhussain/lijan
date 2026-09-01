@@ -72,7 +72,7 @@ export default async function(req) {
       const committee = await base44.asServiceRole.entities.Committee.get(committee_id);
       const committeeName = committee?.name_ar || committee?.name_en || '';
       const subject = `تحديث تشكيل اللجنة: ${committeeName}`;
-      const emailBody = `السلام عليكم،\n\nتم إنهاء عضوية ${membership.full_name} في لجنة "${committeeName}".\n\nالسبب: ${end_reason || 'غير محدد'}\nالسند: ${end_source_instrument_ref || '—'}\nتاريخ النفاذ: ${today}\n\nمع تحيات،\nرَقِيم™ — نظام الحوكمة المؤسسية`;
+      const emailBody = `السلام عليكم،\n\nتم إنهاء عضوية ${membership.full_name} في لجنة "${committeeName}".\n\nالسبب: ${end_reason || 'غير محدد'}\nالسند: ${end_source_instrument_ref || '—'}\nتاريخ النفاذ: ${today}\n\nمع تحيات،\nلِجان™ — نظام تشغيل المجالس واللجان الوطنية\nPowered by CONNECTION™`;
       for (const m of (activeMembers || [])) {
         if (!m.user_email) continue;
         try {

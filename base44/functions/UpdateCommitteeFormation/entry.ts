@@ -11,7 +11,7 @@ import { resolveAuthority } from '../../shared/authorityKernel.ts';
 //   - Full formation replacement (ending all members + creating new roster)
 //   - Immediate email notification to all members after execution
 //
-// These behaviors violated RAQEEM governance, historical-integrity, authority
+// These behaviors violated LIJAN governance, historical-integrity, authority
 // and evidence requirements. This function is now permanently disabled.
 //
 // All formation changes must go through the governed amendment workflow:

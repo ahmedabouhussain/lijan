@@ -61,7 +61,7 @@ export default function AuditorHome({ data }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `raqeem_audit_pack_${new Date().toISOString().split("T")[0]}.csv`;
+    link.download = `LIJAN_Audit_Pack_${new Date().toISOString().split("T")[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };

@@ -27,7 +27,7 @@ export default async function(req) {
 
     const committeeName = committee?.name_ar || committee?.name_en || '';
     const emailSubject = subject || `إشعار تحديث لجنة: ${committeeName}`;
-    const emailBody = message || `السلام عليكم،\n\nتم تحديث لجنة "${committeeName}".\n\n${change_summary || ''}\n\nمع تحيات،\nرَقِيم™ — نظام الحوكمة المؤسسية`;
+    const emailBody = message || `السلام عليكم،\n\nتم تحديث لجنة "${committeeName}".\n\n${change_summary || ''}\n\nمع تحيات،\nلِجان™ — نظام تشغيل المجالس واللجان الوطنية\nPowered by CONNECTION™`;
 
     let notified = 0;
     let acknowledgementsCreated = 0;

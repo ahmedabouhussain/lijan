@@ -1,18 +1,38 @@
-// RAQEEM™ brand constants — single source of truth for logo, video, and tagline.
+// LIJAN™ brand constants — single source of truth for logo, video, and identity.
+// Powered by CONNECTION™ — parent platform identity remains intact.
+
+// ── Official brand assets (approved lockup + intro) ──
 export const BRAND_LOGO_URL =
-  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/8f8c5da44_file_1788277312686.png";
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png";
 
 export const BRAND_INTRO_VIDEO_URL =
-  "https://media.base44.com/videos/public/6a96a0e0cd5dac701b62b7f5/977259bf0_l8aRJmSL.mp4";
+  "https://media.base44.com/videos/public/6a96a0e0cd5dac701b62b7f5/f43411a16_Cq91lW4B.mp4";
 
-export const BRAND_TAGLINE_AR = "من الصلاحية إلى الأثر";
-export const BRAND_TAGLINE_EN = "From Mandate to Impact";
+// ── Central brand configuration ──
+export const BRAND = {
+  nameAr: "لِجان",
+  nameEn: "LIJAN",
+  trademark: "™",
+  descriptorEn: "National Councils & Committees Operating System",
+  descriptorAr: "نظام تشغيل المجالس واللجان الوطنية",
+  poweredBy: "Powered by CONNECTION™",
+  poweredByAr: "مدعوم بواسطة CONNECTION™",
+  primaryColor: "#8A1538",
+  goldColor: "#B59358",
+  shortName: "LIJAN",
+  taglineAr: "من الصلاحية إلى الأثر",
+  taglineEn: "From Mandate to Impact",
+};
 
-export const BRAND_NAME_AR = "رَقِيم";
-export const BRAND_NAME_EN = "RAQEEM";
+// ── Legacy exports (backward compatibility) ──
+export const BRAND_NAME_AR = BRAND.nameAr;
+export const BRAND_NAME_EN = BRAND.nameEn;
+export const BRAND_TAGLINE_AR = BRAND.taglineAr;
+export const BRAND_TAGLINE_EN = BRAND.taglineEn;
 
 export const BRAND_COLORS = {
-  background: "#F9F6F2",
-  primary: "#7D1424",
-  gold: "#A68966",
+  background: "#8A1538",
+  primary: "#8A1538",
+  gold: "#B59358",
+  white: "#FFFFFF",
 };

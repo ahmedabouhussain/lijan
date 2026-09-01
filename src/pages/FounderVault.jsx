@@ -84,7 +84,7 @@ export default function FounderVault() {
             </div>
             <h1 className="text-xl font-bold">خزنة المؤسس · Founder Vault</h1>
             <p className="text-sm text-primary-foreground/70 mt-1">
-              العقل الاستراتيجي المحمي لرَقِيم™ — فلسفة المنتج، المعمارية، والقرارات المعمارية المسجلة
+              العقل الاستراتيجي المحمي للِجان™ — فلسفة المنتج، المعمارية، والقرارات المعمارية المسجلة
             </p>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function FounderVault() {
         <TabsContent value="principles" className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              مبادئ لا تتغير · ما يجب أن تبقىه رَقِيم وما لا يجوز أن تصبحه
+              مبادئ لا تتغير · ما يجب أن تبقىه لِجان وما لا يجوز أن تصبحه
             </p>
             <button
               onClick={() => openForm("non_negotiable")}
@@ -220,7 +220,7 @@ export default function FounderVault() {
         <TabsContent value="moat" className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              نقاط التفوق الاستراتيجي · ما يميز رَقِيم عن منصات الاجتماعات واللوح
+              نقاط التفوق الاستراتيجي · ما يميز لِجان عن منصات الاجتماعات واللوح
             </p>
             <button
               onClick={() => openForm("moat")}

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import BrandWordmark from "@/components/brand/BrandWordmark";
+import PoweredByConnection from "@/components/brand/PoweredByConnection";
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
@@ -53,13 +55,10 @@ function OrgShell() {
       {/* Brand */}
       <div className="px-5 py-5 border-b border-sidebar-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+          <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
             <BrandLogo className="w-full h-full" />
           </div>
-          <div className="leading-tight">
-            <div className="font-bold text-sidebar-foreground text-lg tracking-tight">رَقِيم™</div>
-            <div className="text-[10px] text-sidebar-foreground/60 uppercase tracking-wider">RAQEEM™</div>
-          </div>
+          <BrandWordmark variant="light" />
         </Link>
       </div>
 
@@ -148,8 +147,9 @@ function OrgShell() {
       <div className="px-5 py-2 border-t border-sidebar-border">
         <LanguageSwitcher />
       </div>
-      <div className="px-5 py-3 border-t border-sidebar-border">
+      <div className="px-5 py-3 border-t border-sidebar-border space-y-1">
         <div className="text-[10px] text-sidebar-foreground/40">{t("سلطة موثقة · قرار مُسنَد · أثر محفوظ", "Governed Authority · Evidence-Based Decisions · Preserved Impact")}</div>
+        <PoweredByConnection variant="light" />
       </div>
     </div>
   );
@@ -178,7 +178,7 @@ function OrgShell() {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#F9F6F2" }}>
+            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
               <BrandLogo className="w-full h-full" />
             </div>
             <span className="font-bold text-sm">{org.name_ar || org.name_en}</span>

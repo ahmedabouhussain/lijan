@@ -5,6 +5,8 @@ import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import PoweredByConnection from "@/components/brand/PoweredByConnection";
+import { BRAND } from "@/lib/brand";
 
 export default function EntryPortal() {
   const navigate = useNavigate();
@@ -65,8 +67,8 @@ export default function EntryPortal() {
     setSubmitting(true);
     const selected = QATARI_ENTITIES.find((x) => x.id === entityId);
     // Persist the selected institution for post-auth association
-    localStorage.setItem("raqeem_pending_entity", JSON.stringify(selected));
-    localStorage.setItem("raqeem_pending_email", email);
+    localStorage.setItem("lijan_pending_entity", JSON.stringify(selected));
+    localStorage.setItem("lijan_pending_email", email);
     // Redirect to register with email pre-filled and returnTo dashboard
     navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
   };
@@ -83,12 +85,18 @@ export default function EntryPortal() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#F9F6F2" }}>
+            <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
               <BrandLogo className="w-full h-full" />
             </div>
             <div className="leading-tight">
-              <div className="font-bold text-2xl tracking-tight">رَقِيم™</div>
-              <div className="text-xs text-primary-foreground/60 uppercase tracking-wider">RAQEEM™</div>
+              <div dir="rtl" className="font-bold text-2xl tracking-tight flex items-start gap-0.5">
+                {BRAND.nameAr}
+                <sup className="text-xs mt-1">™</sup>
+              </div>
+              <div dir="ltr" className="text-xs text-primary-foreground/60 uppercase tracking-wider flex items-start gap-0.5">
+                {BRAND.nameEn}
+                <sup className="text-[8px] mt-0.5">™</sup>
+              </div>
             </div>
           </div>
 
@@ -97,9 +105,9 @@ export default function EntryPortal() {
             <span className="block text-accent text-xl lg:text-2xl mt-2">Institutional Entry Portal</span>
           </h1>
           <p className="text-primary-foreground/70 text-sm lg:text-base leading-relaxed max-w-md">
-            نظام التشغيل المؤسسي للجان والمجالس الوطنية — من الصلاحية إلى الأثر.
+            نظام تشغيل المجالس واللجان الوطنية — من الصلاحية إلى الأثر.
             <span className="block mt-1 text-primary-foreground/50 text-sm">
-              The institutional operating system for national councils and committees — from Mandate to Impact.
+              {BRAND.descriptorEn} — From Mandate to Impact.
             </span>
           </p>
         </div>
@@ -201,6 +209,10 @@ export default function EntryPortal() {
             >
               تسجيل الدخول · Sign in
             </button>
+          </div>
+
+          <div className="flex justify-center">
+            <PoweredByConnection variant="dark" />
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
