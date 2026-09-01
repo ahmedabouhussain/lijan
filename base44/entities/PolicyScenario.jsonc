@@ -2,6 +2,10 @@
   "name": "PolicyScenario",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
     "committee_id": {
       "type": "string",
       "title": "Committee ID"
@@ -88,12 +92,16 @@
     "status"
   ],
   "rls": {
-    "read": {},
-    "create": {},
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.organization_id": "{{user.data.active_org_id}}"
         },
         {
           "user_condition": {

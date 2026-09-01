@@ -2,6 +2,14 @@
   "name": "AuditLog",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (optional)"
+    },
     "actor_name": {
       "type": "string",
       "title": "Actor Name"
@@ -27,7 +35,12 @@
         "issue",
         "escalate",
         "close",
-        "activate"
+        "activate",
+        "suspend",
+        "extend",
+        "renew",
+        "adjourn",
+        "start"
       ],
       "default": "create"
     },
@@ -58,14 +71,30 @@
     "authority_context": {
       "type": "string",
       "title": "Authority Context"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
     }
   },
   "required": [
+    "organization_id",
     "action",
     "entity_type"
   ],
   "rls": {
-    "read": {},
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "create": {},
     "update": false,
     "delete": false

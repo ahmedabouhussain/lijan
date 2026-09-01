@@ -2,6 +2,10 @@
   "name": "CrossEntityDependency",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
     "source_entity_type": {
       "type": "string",
       "title": "Source Entity Type",
@@ -79,6 +83,7 @@
     }
   },
   "required": [
+    "organization_id",
     "source_entity_type",
     "source_id",
     "source_title",
@@ -89,12 +94,16 @@
     "status"
   ],
   "rls": {
-    "read": {},
-    "create": {},
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.organization_id": "{{user.data.active_org_id}}"
         },
         {
           "user_condition": {

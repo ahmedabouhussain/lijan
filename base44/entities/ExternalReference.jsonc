@@ -2,6 +2,10 @@
   "name": "ExternalReference",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
     "raqeem_entity_type": {
       "type": "string",
       "title": "RAQEEM Entity Type",
@@ -85,22 +89,30 @@
     }
   },
   "required": [
+    "organization_id",
     "raqeem_entity_type",
     "raqeem_record_id",
     "external_system",
     "sync_status"
   ],
   "rls": {
-    "read": {},
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
     "create": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "data.organization_id": "{{user.data.active_org_id}}"
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
       "user_condition": {
