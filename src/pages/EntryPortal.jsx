@@ -1,16 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles } from "lucide-react";
+import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2 } from "lucide-react";
 import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
+import { useAuth } from "@/lib/AuthContext";
+import { base44 } from "@/api/base44Client";
 
 export default function EntryPortal() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoadingAuth, user } = useAuth();
   const [entityId, setEntityId] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [redirecting, setRedirecting] = useState(false);
 
   const grouped = getEntitiesByCategory();
+
+  // Authenticated users → redirect to their org portal (or create-portal if no org)
+  useEffect(() => {
+    if (isLoadingAuth || !isAuthenticated || !user || redirecting) return;
+    setRedirecting(true);
+    (async () => {
+      try {
+        const res = await base44.functions.invoke("GetMyOrganizations", {});
+        const data = res.data || res;
+        if (data.has_org && data.organizations?.length > 0) {
+          const org = data.organizations[0];
+          const orgRef = org.slug ? `${org.slug}--${org.public_id}` : org.public_id;
+          navigate(`/o/${orgRef}`, { replace: true });
+        } else {
+          navigate("/create-portal", { replace: true });
+        }
+      } catch (e) {
+        console.error("Failed to resolve organizations:", e);
+        navigate("/create-portal", { replace: true });
+      }
+    })();
+  }, [isAuthenticated, isLoadingAuth, user, redirecting, navigate]);
+
+  // Show spinner while auth is loading or while redirecting
+  if (isLoadingAuth || redirecting) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-7 h-7 text-primary animate-spin" />
+          <p className="text-sm text-muted-foreground">جارٍ التحويل · Redirecting…</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +67,7 @@ export default function EntryPortal() {
     localStorage.setItem("raqeem_pending_entity", JSON.stringify(selected));
     localStorage.setItem("raqeem_pending_email", email);
     // Redirect to register with email pre-filled and returnTo dashboard
-    navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/dashboard")}`);
+    navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
   };
 
   return (
@@ -157,7 +195,7 @@ export default function EntryPortal() {
           <div className="pt-4 border-t border-border text-center">
             <p className="text-xs text-muted-foreground mb-2">لديك حساب بالفعل؟ · Already have an account?</p>
             <button
-              onClick={() => navigate("/login?returnTo=" + encodeURIComponent("/dashboard"))}
+              onClick={() => navigate("/login?returnTo=" + encodeURIComponent("/"))}
               className="text-sm text-primary hover:underline font-medium"
             >
               تسجيل الدخول · Sign in
