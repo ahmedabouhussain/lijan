@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { useCommittee } from "@/lib/CommitteeContext";
+import { useCommitteeSafe } from "@/lib/CommitteeContext";
 
 /**
  * usePageConfig — returns the effective published page configuration
  * for the current committee page. Falls back to org template, then system defaults.
  */
 export function usePageConfig(pageKey) {
-  const { data } = useCommittee();
+  const { data } = useCommitteeSafe() || {};
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDefault, setIsDefault] = useState(true);

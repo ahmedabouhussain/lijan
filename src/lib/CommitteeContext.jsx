@@ -41,3 +41,8 @@ export function useCommittee() {
   if (!ctx) throw new Error("useCommittee must be used within CommitteeProvider");
   return ctx;
 }
+
+// Safe variant — returns null when outside CommitteeProvider (e.g. org-level pages).
+export function useCommitteeSafe() {
+  return useContext(CommitteeContext);
+}

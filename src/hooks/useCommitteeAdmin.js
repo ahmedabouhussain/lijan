@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { useCommittee } from "@/lib/CommitteeContext";
+import { useCommitteeSafe } from "@/lib/CommitteeContext";
 
 /**
  * useCommitteeAdmin — resolves backend-governed capabilities for the current user
@@ -10,7 +10,7 @@ import { useCommittee } from "@/lib/CommitteeContext";
  * Returns explicit capability flags resolved server-side by GetCommitteeCapabilities.
  */
 export function useCommitteeAdmin() {
-  const { data } = useCommittee();
+  const { data } = useCommitteeSafe() || {};
   const [capabilities, setCapabilities] = useState(null);
   const [loading, setLoading] = useState(true);
 

@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Home, Building2, ChevronLeft, Settings2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
-import { useCommittee } from "@/lib/CommitteeContext";
+import { useCommitteeSafe } from "@/lib/CommitteeContext";
 import { cn } from "@/lib/utils";
 import AdminEditMode from "@/components/raqeem/admin/AdminEditMode";
 
@@ -18,7 +18,7 @@ export default function PageNav() {
   const isRTL = lang === "ar";
   const [editMode, setEditMode] = useState(false);
   const { canConfigure, loading: capsLoading } = useCommitteeAdmin();
-  const { data } = useCommittee();
+  const { data } = useCommitteeSafe() || {};
 
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
   const inCommittee = Boolean(orgRef && committeeRef);
