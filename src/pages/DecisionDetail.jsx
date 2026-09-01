@@ -6,6 +6,7 @@ import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raq
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
+import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -113,6 +114,15 @@ export default function DecisionDetail() {
         votes={votes}
         actions={actions}
         supersedingDecision={supersedingDecision}
+      />
+
+      {/* Immutable Proof Chain Snapshot */}
+      <ProofChainSnapshot
+        decision={decision}
+        committee={committee}
+        votes={votes}
+        signatures={[]}
+        actions={actions}
       />
 
       {/* Dependencies & Execution Actions */}
