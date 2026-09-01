@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [governanceRole, setGovernanceRole] = useState("member");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -19,6 +22,7 @@ export default function Profile() {
       .then((u) => {
         setUser(u);
         setFullName(u.full_name || "");
+        setGovernanceRole(u.governance_role || "member");
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -27,7 +31,7 @@ export default function Profile() {
   const save = async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ full_name: fullName });
+      await base44.auth.updateMe({ full_name: fullName, governance_role: governanceRole });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
@@ -83,6 +87,22 @@ export default function Profile() {
               label={user.role === "admin" ? "مدير" : "مستخدم"}
               colorClass={user.role === "admin" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}
             />
+          </div>
+          <div>
+            <Label className="text-xs mb-1.5 block">دور الحوكمة · Governance Role</Label>
+            <Select value={governanceRole} onValueChange={setGovernanceRole}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(GOVERNANCE_ROLES).map(([key, role]) => (
+                  <SelectItem key={key} value={key}>
+                    {role.ar} · {role.en}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[10px] text-muted-foreground mt-1">يحدد تجربة لوحة التحكم المناسبة لدورك · Determines your home dashboard experience</p>
           </div>
           <div className="flex items-center gap-3 pt-2">
             <Button size="sm" onClick={save} disabled={saving}>

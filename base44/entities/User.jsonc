@@ -7,6 +7,19 @@
         "admin",
         "user"
       ]
+    },
+    "governance_role": {
+      "type": "string",
+      "title": "Governance Role",
+      "description": "The user's governance role \u2014 drives the role-based home experience",
+      "enum": [
+        "executive",
+        "chair",
+        "secretary",
+        "member",
+        "auditor"
+      ],
+      "default": "member"
     }
   },
   "required": [

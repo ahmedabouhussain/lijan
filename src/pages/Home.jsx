@@ -1,99 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
-import {
-  AlertCircle,
-  Gavel,
-  CheckSquare,
-  Calendar,
-  TrendingUp,
-  ChevronLeft,
-  Users,
-  Clock,
-  ArrowRight,
-} from "lucide-react";
-import { COMMITTEE_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue, daysUntil } from "@/lib/raqeemUtils";
-import StatusBadge from "@/components/raqeem/StatusBadge";
+import React from "react";
+import { ShieldCheck, Gavel, FileText, Users, ShieldAlert } from "lucide-react";
+import { useGovernanceData, GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
+import ExecutiveHome from "@/components/raqeem/home/ExecutiveHome";
+import ChairHome from "@/components/raqeem/home/ChairHome";
+import SecretaryHome from "@/components/raqeem/home/SecretaryHome";
+import MemberHome from "@/components/raqeem/home/MemberHome";
+import AuditorHome from "@/components/raqeem/home/AuditorHome";
 
-function StatCard({ icon: Icon, label, value, accent }) {
-  return (
-    <div className="raqeem-card p-4">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
-        <Icon className={`w-4 h-4 ${accent || "text-muted-foreground"}`} />
-      </div>
-      <div className="text-2xl font-bold text-foreground">{value}</div>
-    </div>
-  );
-}
+const ROLE_COMPONENTS = {
+  executive: ExecutiveHome,
+  chair: ChairHome,
+  secretary: SecretaryHome,
+  member: MemberHome,
+  auditor: AuditorHome,
+};
 
-function AttentionItem({ title, subtitle, badge, to }) {
-  return (
-    <Link to={to || "#"} className="flex items-center gap-3 py-3 border-b border-border last:border-0 hover:bg-secondary/50 -mx-2 px-2 rounded-md transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-foreground truncate">{title}</div>
-        {subtitle && <div className="text-xs text-muted-foreground truncate mt-0.5">{subtitle}</div>}
-      </div>
-      {badge}
-      <ArrowRight className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
-    </Link>
-  );
-}
+const ROLE_ICONS = {
+  executive: ShieldCheck,
+  chair: Gavel,
+  secretary: FileText,
+  member: Users,
+  auditor: ShieldAlert,
+};
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [committees, setCommittees] = useState([]);
-  const [decisions, setDecisions] = useState([]);
-  const [actions, setActions] = useState([]);
-  const [institution, setInstitution] = useState(null);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        // Associate pending institution from EntryPortal
-        const pending = localStorage.getItem("raqeem_pending_entity");
-        if (pending) {
-          const entity = JSON.parse(pending);
-          const existing = await base44.entities.Institution.filter({ name_en: entity.en }).catch(() => []);
-          let inst = existing && existing[0];
-          if (!inst) {
-            inst = await base44.entities.Institution.create({
-              name_ar: entity.ar,
-              name_en: entity.en,
-              type: entity.category === "holding" ? "organization" : entity.category === "ministry" ? "ministry" : "authority",
-              status: "active",
-            });
-          }
-          await base44.auth.updateMe({ institution_id: inst.id });
-          localStorage.removeItem("raqeem_pending_entity");
-          setInstitution(inst);
-        } else {
-          const user = await base44.auth.me();
-          if (user?.institution_id) {
-            const inst = await base44.entities.Institution.get(user.institution_id).catch(() => null);
-            if (inst) setInstitution(inst);
-          }
-        }
-
-        const [comms, decs, acts] = await Promise.all([
-          base44.entities.Committee.list().catch(() => []),
-          base44.entities.Decision.list().catch(() => []),
-          base44.entities.Action.list().catch(() => []),
-        ]);
-        setCommittees(comms || []);
-        setDecisions(decs || []);
-        setActions(acts || []);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  const activeCommittees = committees.filter((c) => c.status === "active");
-  const pendingDecisions = decisions.filter((d) => ["draft", "in_review", "proposed", "voting"].includes(d.status));
-  const overdueActions = actions.filter((a) => isOverdue(a.deadline) || a.status === "overdue");
-  const inProgressActions = actions.filter((a) => ["assigned", "in_progress", "blocked", "evidence_pending"].includes(a.status));
+  const { loading, ...data } = useGovernanceData();
+  const { user, institution } = data;
 
   if (loading) {
     return (
@@ -103,6 +35,11 @@ export default function Home() {
     );
   }
 
+  const governanceRole = user?.governance_role || "member";
+  const RoleComponent = ROLE_COMPONENTS[governanceRole] || MemberHome;
+  const RoleIcon = ROLE_ICONS[governanceRole] || Users;
+  const roleLabel = GOVERNANCE_ROLES[governanceRole] || GOVERNANCE_ROLES.member;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -110,130 +47,22 @@ export default function Home() {
         <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
           {institution ? `${institution.name_ar} · ${institution.name_en}` : "المجلس الأعلى للحوكمة · Supreme Council for Governance"}
         </div>
-        <h1 className="text-2xl font-bold text-foreground">الملخص التنفيذي · Executive Brief</h1>
-        <p className="text-sm text-muted-foreground mt-1">ما يتطلب انتباهك الآن · What requires your attention</p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Users} label="لجان نشطة" value={activeCommittees.length} accent="text-primary" />
-        <StatCard icon={Gavel} label="قرارات معلقة" value={pendingDecisions.length} accent="text-amber-600" />
-        <StatCard icon={Clock} label="إجراءات متأخرة" value={overdueActions.length} accent="text-destructive" />
-        <StatCard icon={CheckSquare} label="إجراءات جارية" value={inProgressActions.length} accent="text-blue-600" />
-      </div>
-
-      {/* Two-column: Attention + Upcoming */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Attention Required */}
-        <div className="raqeem-card p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertCircle className="w-4 h-4 text-destructive" />
-            <h2 className="text-sm font-semibold text-foreground">يتطلب انتباهًا · Attention Required</h2>
-          </div>
-          {overdueActions.length === 0 && pendingDecisions.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">لا توجد أمور عاجلة · No urgent items</p>
-          ) : (
-            <div>
-              {overdueActions.slice(0, 4).map((a) => (
-                <AttentionItem
-                  key={a.id}
-                  title={a.title}
-                  subtitle={`المسؤول: ${a.owner_name || "—"} · الموعد: ${formatDate(a.deadline)}`}
-                  badge={<StatusBadge label="متأخر" colorClass={ACTION_STATUS.overdue.color} />}
-                  to="/execution"
-                />
-              ))}
-              {pendingDecisions.slice(0, 3).map((d) => (
-                <AttentionItem
-                  key={d.id}
-                  title={d.title}
-                  subtitle={`اللجنة · ${d.decision_number || "—"}`}
-                  badge={<StatusBadge label={DECISION_STATUS[d.status]?.en || d.status} colorClass={DECISION_STATUS[d.status]?.color} />}
-                  to="/decisions"
-                />
-              ))}
-            </div>
-          )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-foreground">{roleLabel.ar} · {roleLabel.en}</h1>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+            <RoleIcon className="w-3 h-3" /> {roleLabel.en} Home
+          </span>
         </div>
-
-        {/* Active Committees */}
-        <div className="raqeem-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              <h2 className="text-sm font-semibold text-foreground">اللجان النشطة · Active Committees</h2>
-            </div>
-            <Link to="/committees" className="text-xs text-primary hover:underline flex items-center gap-1">
-              عرض الكل <ChevronLeft className="w-3 h-3" />
-            </Link>
-          </div>
-          {activeCommittees.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-muted-foreground mb-3">لا توجد لجان نشطة بعد</p>
-              <Link to="/committees/new" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-                <Users className="w-4 h-4" /> إنشاء لجنة جديدة
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {activeCommittees.slice(0, 5).map((c) => (
-                <Link
-                  key={c.id}
-                  to={`/committees/${c.id}`}
-                  className="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-md hover:bg-secondary/50 transition-colors"
-                >
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{c.name_ar || c.name_en}</div>
-                    <div className="text-xs text-muted-foreground truncate">{c.name_en}</div>
-                  </div>
-                  <ChevronLeft className="w-4 h-4 text-muted-foreground shrink-0" />
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+        <p className="text-sm text-muted-foreground mt-1">
+          {governanceRole === "executive" && "نظرة استراتيجية على صحة اللجان والمخاطر والقرارات التنفيذية"}
+          {governanceRole === "chair" && "إدارة الأعمال والقرارات والتصعيدات والحوكمة"}
+          {governanceRole === "secretary" && "تنظيم الاجتماعات وجداول الأعمال والمتابعات"}
+          {governanceRole === "member" && "اجتماعاتك ووثائقك ومهامك وتصويتاتك"}
+          {governanceRole === "auditor" && "اكتمال التدقيق وفجوات التتبع وحزم التدقيق"}
+        </p>
       </div>
 
-      {/* Recent Decisions */}
-      <div className="raqeem-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Gavel className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">أحدث القرارات · Recent Decisions</h2>
-          </div>
-          <Link to="/decisions" className="text-xs text-primary hover:underline flex items-center gap-1">
-            سجل القرارات <ChevronLeft className="w-3 h-3" />
-          </Link>
-        </div>
-        {decisions.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center">لا توجد قرارات بعد · No decisions yet</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-xs text-muted-foreground uppercase tracking-wider border-b border-border">
-                  <th className="text-right py-2 font-medium">القرار</th>
-                  <th className="text-right py-2 font-medium hidden sm:table-cell">الرقم</th>
-                  <th className="text-right py-2 font-medium">الحالة</th>
-                  <th className="text-right py-2 font-medium hidden sm:table-cell">الموعد</th>
-                </tr>
-              </thead>
-              <tbody>
-                {decisions.slice(0, 6).map((d) => (
-                  <tr key={d.id} className="border-b border-border last:border-0">
-                    <td className="py-2.5 font-medium text-foreground truncate max-w-xs">{d.title}</td>
-                    <td className="py-2.5 text-muted-foreground hidden sm:table-cell">{d.decision_number || "—"}</td>
-                    <td className="py-2.5">
-                      <StatusBadge label={DECISION_STATUS[d.status]?.en || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
-                    </td>
-                    <td className="py-2.5 text-muted-foreground hidden sm:table-cell">{formatDate(d.deadline)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <RoleComponent data={data} />
     </div>
   );
 }
