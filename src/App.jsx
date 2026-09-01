@@ -37,6 +37,10 @@ import DecisionDetail from '@/pages/DecisionDetail';
 import Dependencies from '@/pages/Dependencies';
 import PolicyScenarios from '@/pages/PolicyScenarios';
 import AIOutputLedger from '@/pages/AIOutputLedger';
+import CreatePortal from '@/pages/CreatePortal';
+import OrgPortal from '@/pages/OrgPortal';
+import CommitteeMiniPortal from '@/pages/CommitteeMiniPortal';
+import CommitteeCreateV2 from '@/pages/CommitteeCreateV2';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -65,6 +69,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<EntryPortal />} />
+      <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -94,6 +99,9 @@ const AuthenticatedApp = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/founder-vault" element={<FounderVault />} />
+          <Route path="/o/:orgRef" element={<OrgPortal />} />
+          <Route path="/o/:orgRef/create-committee" element={<CommitteeCreateV2 />} />
+          <Route path="/o/:orgRef/c/:committeeRef" element={<CommitteeMiniPortal />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

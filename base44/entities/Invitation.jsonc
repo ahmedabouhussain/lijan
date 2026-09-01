@@ -1,0 +1,119 @@
+{
+  "name": "Invitation",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (optional)"
+    },
+    "email": {
+      "type": "string",
+      "title": "Invitee Email",
+      "format": "email"
+    },
+    "role": {
+      "type": "string",
+      "title": "Invited Role",
+      "enum": [
+        "owner",
+        "admin",
+        "member",
+        "auditor",
+        "chair",
+        "vice_chair",
+        "secretary",
+        "observer",
+        "advisor"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "accepted",
+        "revoked",
+        "expired"
+      ],
+      "default": "pending"
+    },
+    "invited_by_user_id": {
+      "type": "string",
+      "title": "Invited By User ID"
+    },
+    "invited_by_name": {
+      "type": "string",
+      "title": "Invited By Name"
+    },
+    "invited_at": {
+      "type": "string",
+      "title": "Invited At",
+      "format": "date-time"
+    },
+    "accepted_at": {
+      "type": "string",
+      "title": "Accepted At",
+      "format": "date-time"
+    },
+    "token": {
+      "type": "string",
+      "title": "Invitation Token"
+    }
+  },
+  "required": [
+    "organization_id",
+    "email",
+    "role",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -57,21 +57,13 @@ ${actionSummaries}
 
 أعد النتيجة بصيغة JSON بالحقول: key_achievements, lessons_learned, patterns, recommendations (كل حقل نص متعدد الأسطر)`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            key_achievements: { type: "string" },
-            lessons_learned: { type: "string" },
-            patterns: { type: "string" },
-            recommendations: { type: "string" },
-          },
-        },
-      });
-
-      const summary = `## الإنجازات الرئيسية\n${result.key_achievements}\n\n## الدروس المستفادة\n${result.lessons_learned}\n\n## الأنماط الملاحظة\n${result.patterns}\n\n## التوصيات للجنة الخلف\n${result.recommendations}`;
-      setMemorySummary(summary);
+      const res = await base44.functions.invoke("GenerateInstitutionalMemory", { committee_id: committee.id });
+      const data = res.data || res;
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setMemorySummary(data.summary);
+      }
     } catch (e) {
       setError("تعذّر توليد ملخص الذاكرة. حاول مرة أخرى.");
     }

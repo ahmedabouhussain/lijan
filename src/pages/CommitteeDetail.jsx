@@ -87,16 +87,20 @@ export default function CommitteeDetail() {
   const activateCommittee = async () => {
     setActivating(true);
     try {
-      await base44.entities.Committee.update(id, { status: "active", governance_complete: true });
-      await base44.entities.AuditLog.create({
-        action: "activate",
-        entity_type: "Committee",
-        entity_id: id,
-        entity_title: committee.name_ar || committee.name_en,
-        description: "تفعيل اللجنة بعد استكمال متطلبات الحوكمة",
+      const res = await base44.functions.invoke("TransitionCommitteeStatus", {
+        committee_id: id,
+        target_status: "active",
+        expected_version: committee.version || 1,
       });
-      load();
-    } catch {
+      const data = res.data || res;
+      if (data.error) {
+        alert(data.error + (data.missing ? `\nالعناصر الناقصة: ${data.missing.join("، ")}` : ""));
+      } else {
+        load();
+      }
+    } catch (e) {
+      const msg = e?.response?.data?.error || e?.message || "تعذّر التفعيل";
+      alert(msg);
     }
     setActivating(false);
   };

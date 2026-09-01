@@ -21,6 +21,29 @@
       ],
       "default": "member"
     },
+    "active_org_id": {
+      "type": "string",
+      "title": "Active Organization ID",
+      "description": "Context only \u2014 not evidence of authorization. Server resolves entitlement from OrganizationMembership."
+    },
+    "active_committee_id": {
+      "type": "string",
+      "title": "Active Committee ID",
+      "description": "Context only \u2014 not evidence of authorization."
+    },
+    "locale": {
+      "type": "string",
+      "title": "Interface Language",
+      "enum": [
+        "ar",
+        "en"
+      ],
+      "default": "ar"
+    },
+    "display_name_ar": {
+      "type": "string",
+      "title": "Display Name (Arabic)"
+    },
     "avatar_url": {
       "type": "string",
       "title": "Avatar URL",

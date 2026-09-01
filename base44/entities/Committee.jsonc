@@ -4,7 +4,16 @@
   "properties": {
     "institution_id": {
       "type": "string",
-      "title": "Institution ID"
+      "title": "Institution ID (V1 legacy)"
+    },
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (V2)",
+      "description": "Authoritative tenant scope \u2014 verified server-side"
+    },
+    "mandate_id": {
+      "type": "string",
+      "title": "Committee Mandate ID (V2)"
     },
     "name_ar": {
       "type": "string",
@@ -13,6 +22,14 @@
     "name_en": {
       "type": "string",
       "title": "Committee Name (English)"
+    },
+    "slug": {
+      "type": "string",
+      "title": "URL Slug (human-readable, not a security key)"
+    },
+    "public_id": {
+      "type": "string",
+      "title": "Public ID (immutable authoritative identity)"
     },
     "type": {
       "type": "string",
@@ -39,6 +56,10 @@
     "establishing_authority": {
       "type": "string",
       "title": "Establishing Authority"
+    },
+    "appointing_authority": {
+      "type": "string",
+      "title": "Appointing Authority (V2)"
     },
     "scope": {
       "type": "string",
@@ -113,28 +134,61 @@
         "draft",
         "pending_activation",
         "active",
+        "temporarily_suspended",
+        "expiring_soon",
         "closing",
         "closed",
         "archived"
       ],
       "default": "draft"
     },
+    "version": {
+      "type": "number",
+      "title": "Record Version",
+      "default": 1
+    },
     "governance_complete": {
       "type": "boolean",
       "title": "Governance Complete",
       "default": false
+    },
+    "audit_correlation_id": {
+      "type": "string",
+      "title": "Audit Correlation ID"
     }
   },
   "required": [
-    "institution_id",
+    "organization_id",
     "name_ar",
     "name_en",
     "type",
     "status"
   ],
   "rls": {
-    "read": {},
-    "create": {},
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "update": {
       "$or": [
         {

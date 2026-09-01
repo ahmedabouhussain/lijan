@@ -1,0 +1,72 @@
+{
+  "name": "RoleDefinition",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (null = platform role)"
+    },
+    "role_key": {
+      "type": "string",
+      "title": "Role Key",
+      "enum": [
+        "platform_admin",
+        "org_owner",
+        "org_admin",
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "alternate",
+        "observer",
+        "advisor",
+        "auditor",
+        "action_owner",
+        "legal_reviewer"
+      ]
+    },
+    "role_name": {
+      "type": "string",
+      "title": "Role Name (English)"
+    },
+    "role_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u062f\u0648\u0631"
+    },
+    "capabilities": {
+      "type": "string",
+      "title": "Capabilities (JSON array as string)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "is_default": {
+      "type": "boolean",
+      "title": "Is Default",
+      "default": false
+    }
+  },
+  "required": [
+    "role_key",
+    "role_name"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

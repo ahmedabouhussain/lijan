@@ -1,0 +1,111 @@
+{
+  "name": "AuditEvent",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "actor_user_id": {
+      "type": "string",
+      "title": "Actor User ID"
+    },
+    "actor_name": {
+      "type": "string",
+      "title": "Actor Name"
+    },
+    "actor_email": {
+      "type": "string",
+      "title": "Actor Email"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "create",
+        "update",
+        "delete",
+        "status_change",
+        "login",
+        "logout",
+        "vote",
+        "approve",
+        "reject",
+        "sign",
+        "issue",
+        "escalate",
+        "close",
+        "activate",
+        "provision",
+        "suspend",
+        "deny_access"
+      ],
+      "default": "create"
+    },
+    "entity_type": {
+      "type": "string",
+      "title": "Entity Type"
+    },
+    "entity_id": {
+      "type": "string",
+      "title": "Entity ID"
+    },
+    "entity_title": {
+      "type": "string",
+      "title": "Entity Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "old_value": {
+      "type": "string",
+      "title": "Old Value"
+    },
+    "new_value": {
+      "type": "string",
+      "title": "New Value"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "authority_context": {
+      "type": "string",
+      "title": "Authority Context"
+    },
+    "ip_address": {
+      "type": "string",
+      "title": "IP Address"
+    },
+    "user_agent": {
+      "type": "string",
+      "title": "User Agent"
+    }
+  },
+  "required": [
+    "action",
+    "entity_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": false,
+    "delete": false
+  }
+}

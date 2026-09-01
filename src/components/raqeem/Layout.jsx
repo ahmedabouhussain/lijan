@@ -19,6 +19,7 @@ import {
   Plug,
   Lock,
   UserCircle,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -129,6 +130,18 @@ export default function Layout() {
             </Link>
           );
         })}
+      </div>
+
+      {/* Create Portal */}
+      <div className="px-3 py-2 border-t border-sidebar-border">
+        <Link
+          to="/create-portal"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors"
+        >
+          <Building2 className="w-4 h-4 shrink-0" />
+          <span>إنشاء بوابة منظمة</span>
+        </Link>
       </div>
 
       {/* User profile */}

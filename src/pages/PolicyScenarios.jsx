@@ -113,27 +113,11 @@ export default function PolicyScenarios() {
 
 أعد النتيجة بصيغة JSON بالحقول: projected_impact, projected_cost, projected_timeline, risk_assessment`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            projected_impact: { type: "string" },
-            projected_cost: { type: "string" },
-            projected_timeline: { type: "string" },
-            risk_assessment: { type: "string" },
-          },
-        },
+      const res = await base44.functions.invoke("GeneratePolicyScenarioAI", {
+        scenario_id: scenario.id,
+        committee_id: scenario.committee_id,
       });
-
-      await base44.entities.PolicyScenario.update(scenario.id, {
-        projected_impact: result.projected_impact,
-        projected_cost: result.projected_cost,
-        projected_timeline: result.projected_timeline,
-        risk_assessment: result.risk_assessment,
-        ai_generated: true,
-        status: "evaluating",
-      });
+      const data = res.data || res;
       await base44.entities.AuditLog.create({
         action: "update",
         entity_type: "PolicyScenario",

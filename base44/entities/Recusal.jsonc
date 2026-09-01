@@ -1,0 +1,103 @@
+{
+  "name": "Recusal",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "member_id": {
+      "type": "string",
+      "title": "Member ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Agenda Item ID (optional)"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID (optional)"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason for Recusal / Conflict"
+    },
+    "start_time": {
+      "type": "string",
+      "title": "Start Time",
+      "format": "date-time"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "lifted",
+        "expired"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "member_name",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

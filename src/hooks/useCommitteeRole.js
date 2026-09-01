@@ -20,7 +20,7 @@ export function useCommitteeRole(committee, members) {
     if (memberRecord) return memberRecord.role;
     if (committee?.chair_name && currentUser.full_name === committee.chair_name) return "chair";
     if (committee?.secretary_name && currentUser.full_name === committee.secretary_name) return "secretary";
-    if (currentUser.role === "admin") return "chair";
+    if (currentUser.role === "admin") return "oversight";
     return "member";
   }, [currentUser, members, committee]);
 

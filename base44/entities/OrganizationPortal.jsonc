@@ -1,0 +1,89 @@
+{
+  "name": "OrganizationPortal",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Portal Slug"
+    },
+    "public_id": {
+      "type": "string",
+      "title": "Public ID (immutable)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Portal Status",
+      "enum": [
+        "draft",
+        "pending_review",
+        "sandbox_active",
+        "official_active",
+        "suspended",
+        "closed"
+      ],
+      "default": "draft"
+    },
+    "sandbox_badge": {
+      "type": "boolean",
+      "title": "Sandbox Badge Visible",
+      "default": true
+    },
+    "verified_at": {
+      "type": "string",
+      "title": "Verified At",
+      "format": "date-time"
+    },
+    "verified_by_user_id": {
+      "type": "string",
+      "title": "Verified By User ID"
+    },
+    "custom_domain": {
+      "type": "string",
+      "title": "Custom Domain"
+    },
+    "public_page_enabled": {
+      "type": "boolean",
+      "title": "Public Page Enabled",
+      "default": false
+    }
+  },
+  "required": [
+    "organization_id",
+    "slug",
+    "public_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "name": "CommitteeMembership",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email",
+      "format": "email"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "full_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644"
+    },
+    "role": {
+      "type": "string",
+      "title": "Committee Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "alternate",
+        "observer",
+        "advisor"
+      ],
+      "default": "member"
+    },
+    "authority_level": {
+      "type": "string",
+      "title": "Authority Level",
+      "enum": [
+        "decision",
+        "approval",
+        "execution",
+        "oversight",
+        "escalation",
+        "advisory"
+      ],
+      "default": "decision"
+    },
+    "voting_right": {
+      "type": "boolean",
+      "title": "Voting Right",
+      "default": true
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "inactive",
+        "recused",
+        "resigned",
+        "pending"
+      ],
+      "default": "active"
+    },
+    "activated": {
+      "type": "boolean",
+      "title": "Alternate Activated",
+      "default": false
+    },
+    "term_start": {
+      "type": "string",
+      "title": "Term Start",
+      "format": "date"
+    },
+    "term_end": {
+      "type": "string",
+      "title": "Term End",
+      "format": "date"
+    },
+    "institution_name": {
+      "type": "string",
+      "title": "Representing Institution"
+    },
+    "protocol_order": {
+      "type": "number",
+      "title": "Protocol Order",
+      "default": 99
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "full_name",
+    "role",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

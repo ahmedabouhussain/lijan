@@ -1,0 +1,94 @@
+{
+  "name": "BrandTheme",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "primary_color": {
+      "type": "string",
+      "title": "Primary Color",
+      "default": "#8A1538"
+    },
+    "secondary_color": {
+      "type": "string",
+      "title": "Secondary Color",
+      "default": "#FAF8F5"
+    },
+    "accent_color": {
+      "type": "string",
+      "title": "Accent Color",
+      "default": "#B59A5B"
+    },
+    "logo_url": {
+      "type": "string",
+      "title": "Logo URL",
+      "format": "uri"
+    },
+    "font_heading": {
+      "type": "string",
+      "title": "Heading Font"
+    },
+    "font_body": {
+      "type": "string",
+      "title": "Body Font"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "draft"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

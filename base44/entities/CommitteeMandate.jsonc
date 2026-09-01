@@ -1,0 +1,131 @@
+{
+  "name": "CommitteeMandate",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "establishing_instrument": {
+      "type": "string",
+      "title": "Establishing Instrument"
+    },
+    "official_reference": {
+      "type": "string",
+      "title": "Official Reference"
+    },
+    "issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority"
+    },
+    "mandate_text": {
+      "type": "string",
+      "title": "Mandate Text (English)"
+    },
+    "mandate_text_ar": {
+      "type": "string",
+      "title": "\u0646\u0635 \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629"
+    },
+    "scope": {
+      "type": "string",
+      "title": "Scope"
+    },
+    "scope_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0646\u0637\u0627\u0642"
+    },
+    "powers": {
+      "type": "string",
+      "title": "Powers"
+    },
+    "prohibited_matters": {
+      "type": "string",
+      "title": "Prohibited / Out-of-Scope Matters"
+    },
+    "deliverables": {
+      "type": "string",
+      "title": "Deliverables"
+    },
+    "reporting_lines": {
+      "type": "string",
+      "title": "Reporting Lines"
+    },
+    "effective_start": {
+      "type": "string",
+      "title": "Effective Start",
+      "format": "date"
+    },
+    "effective_end": {
+      "type": "string",
+      "title": "Effective End",
+      "format": "date"
+    },
+    "version": {
+      "type": "number",
+      "title": "Version",
+      "default": 1
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "superseded",
+        "expired"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

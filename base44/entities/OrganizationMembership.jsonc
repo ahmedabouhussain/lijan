@@ -1,0 +1,111 @@
+{
+  "name": "OrganizationMembership",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email",
+      "format": "email"
+    },
+    "user_name": {
+      "type": "string",
+      "title": "User Name"
+    },
+    "role": {
+      "type": "string",
+      "title": "Organization Role",
+      "enum": [
+        "owner",
+        "admin",
+        "member",
+        "auditor"
+      ],
+      "default": "member"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "suspended",
+        "revoked"
+      ],
+      "default": "active"
+    },
+    "invited_at": {
+      "type": "string",
+      "title": "Invited At",
+      "format": "date-time"
+    },
+    "joined_at": {
+      "type": "string",
+      "title": "Joined At",
+      "format": "date-time"
+    },
+    "suspended_at": {
+      "type": "string",
+      "title": "Suspended At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "organization_id",
+    "user_id",
+    "role",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

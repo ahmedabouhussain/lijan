@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Send, Vote, Check, X, Clock, FileSignature, Play, CheckCircle2, ArrowUp, GitBranch } from "lucide-react";
+import { Send, Vote, Check, X, Clock, FileSignature, Play, CheckCircle2, ArrowUp, GitBranch, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -151,7 +151,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
   const ActionBtn = ({ onClick, icon: Icon, label, variant = "default" }) => (
     <button
       onClick={onClick}
-      disabled={saving}
+      disabled={true}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50 ${
         variant === "approve" ? "bg-emerald-600 text-white hover:bg-emerald-700" :
         variant === "reject" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" :
@@ -165,6 +165,10 @@ export default function DecisionWorkflow({ decision, onChanged }) {
 
   return (
     <div className="space-y-4">
+      <div className="p-3 rounded-md bg-amber-50 border border-amber-200 flex items-center gap-2">
+        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+        <p className="text-xs text-amber-800">معطل مؤقتاً أثناء تأمين سير العمل المحكوم · Temporarily unavailable while the governed workflow is being secured</p>
+      </div>
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-muted-foreground">الحالة الحالية:</span>
         <StatusBadge label={DECISION_STATUS[status]?.ar || status} colorClass={DECISION_STATUS[status]?.color} size="md" />

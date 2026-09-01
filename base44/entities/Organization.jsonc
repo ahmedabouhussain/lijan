@@ -1,0 +1,174 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0627\u0633\u0645 \u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629"
+    },
+    "name_en": {
+      "type": "string",
+      "title": "Name (English)"
+    },
+    "type": {
+      "type": "string",
+      "title": "Organization Type",
+      "enum": [
+        "ministry",
+        "authority",
+        "council",
+        "organization",
+        "agency",
+        "committee",
+        "other"
+      ],
+      "default": "organization"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Portal Slug (human-readable)"
+    },
+    "public_id": {
+      "type": "string",
+      "title": "Public ID (immutable authoritative identity)"
+    },
+    "owner_user_id": {
+      "type": "string",
+      "title": "Owner User ID"
+    },
+    "owner_name": {
+      "type": "string",
+      "title": "Owner Name"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email",
+      "format": "email"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "email_verified",
+        "organization_review",
+        "sandbox_active",
+        "official_active",
+        "suspended",
+        "closed"
+      ],
+      "default": "draft"
+    },
+    "classification_policy": {
+      "type": "string",
+      "title": "Default Classification Policy",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "branding_primary_color": {
+      "type": "string",
+      "title": "Branding Primary Color",
+      "default": "#8A1538"
+    },
+    "logo_url": {
+      "type": "string",
+      "title": "Logo URL",
+      "format": "uri"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "country": {
+      "type": "string",
+      "title": "Country",
+      "default": "QA"
+    },
+    "timezone": {
+      "type": "string",
+      "title": "Default Timezone",
+      "default": "Asia/Qatar"
+    },
+    "default_locale": {
+      "type": "string",
+      "title": "Default Locale",
+      "enum": [
+        "ar",
+        "en"
+      ],
+      "default": "ar"
+    },
+    "retention_policy_years": {
+      "type": "number",
+      "title": "Retention Policy (Years)",
+      "default": 7
+    },
+    "contact_email": {
+      "type": "string",
+      "title": "Contact Email",
+      "format": "email"
+    },
+    "contact_phone": {
+      "type": "string",
+      "title": "Contact Phone"
+    },
+    "verified_at": {
+      "type": "string",
+      "title": "Verified At",
+      "format": "date-time"
+    },
+    "suspended_at": {
+      "type": "string",
+      "title": "Suspended At",
+      "format": "date-time"
+    },
+    "suspended_reason": {
+      "type": "string",
+      "title": "Suspension Reason"
+    }
+  },
+  "required": [
+    "name_ar",
+    "name_en",
+    "type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "$or": [
+        {
+          "data.owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

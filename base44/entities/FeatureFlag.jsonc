@@ -1,0 +1,45 @@
+{
+  "name": "FeatureFlag",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Flag Key"
+    },
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (null = platform-wide)"
+    },
+    "enabled": {
+      "type": "boolean",
+      "title": "Enabled",
+      "default": false
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    }
+  },
+  "required": [
+    "key",
+    "enabled"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

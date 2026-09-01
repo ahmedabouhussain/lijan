@@ -1,0 +1,76 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "display_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0645\u0639\u0631\u0648\u0636"
+    },
+    "locale": {
+      "type": "string",
+      "title": "Interface Language",
+      "enum": [
+        "ar",
+        "en"
+      ],
+      "default": "ar"
+    },
+    "timezone": {
+      "type": "string",
+      "title": "Timezone",
+      "default": "Asia/Qatar"
+    },
+    "default_organization_id": {
+      "type": "string",
+      "title": "Default Organization ID"
+    },
+    "job_title": {
+      "type": "string",
+      "title": "Job Title"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "bio": {
+      "type": "string",
+      "title": "Bio"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.user_id": "{{user.id}}"
+    },
+    "update": {
+      "data.user_id": "{{user.id}}"
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
