@@ -1,15 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCommitteeScopedData } from "@/hooks/useCommitteeScoped";
+import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
+import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import { ArrowRightLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function CommitteeDelegations() {
-  const { records, loading } = useCommitteeScopedData("Delegation");
+  const { records, loading, reload } = useCommitteeScopedData("Delegation");
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle, getDescription, getEmptyState } = usePageConfig("delegations");
+  const { canManageGovernance } = useCommitteeAdmin();
+  const [showCreate, setShowCreate] = useState(false);
+
+  const committeeId = data?.committee?.id;
+  const orgId = data?.committee?.organization_id;
+  const members = data?.members || [];
+
+  const MEMBER_OPTIONS = members.map((m) => ({
+    value: m.full_name,
+    label_ar: m.full_name,
+    label_en: m.full_name,
+  }));
 
   return (
     <div className="space-y-4">
@@ -18,11 +34,38 @@ export default function CommitteeDelegations() {
           <ArrowRightLeft className="w-5 h-5 text-primary" />
           <h1 className="text-lg font-bold">{getTitle("تفويضات الصلاحية", "Authority Delegations", lang)}</h1>
         </div>
+        {canManageGovernance && (
+          <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
+            <Plus className="w-4 h-4" />
+            {t("تفويض جديد", "New Delegation")}
+          </Button>
+        )}
       </div>
       {(() => {
         const desc = getDescription("", "", lang);
         return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
       })()}
+
+      {showCreate && canManageGovernance && (
+        <CrudFormDialog
+          open={showCreate}
+          onClose={() => setShowCreate(false)}
+          title={t("تفويض صلاحية", "Delegate Authority")}
+          functionName="DelegateAuthority"
+          payload={{ committee_id: committeeId, organization_id: orgId }}
+          onSuccess={reload}
+          submitLabel={t("تفويض", "Delegate")}
+          fields={[
+            { name: "from_member_name", label: t("المُفوِّض", "From"), type: "select", required: true, options: MEMBER_OPTIONS },
+            { name: "to_member_name", label: t("المُفوَّض إليه", "To"), type: "select", required: true, options: MEMBER_OPTIONS },
+            { name: "scope", label: t("نطاق التفويض", "Scope"), fullWidth: true, placeholder: "Sign budget approvals up to 500K QAR" },
+            { name: "reason", label: t("السبب", "Reason"), type: "textarea", fullWidth: true, rows: 2 },
+            { name: "start_date", label: t("تاريخ البداية", "Start Date"), type: "date" },
+            { name: "end_date", label: t("تاريخ النهاية", "End Date"), type: "date" },
+          ]}
+        />
+      )}
+
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : records.length === 0 ? (

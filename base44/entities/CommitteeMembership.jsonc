@@ -34,6 +34,7 @@
         "chair",
         "vice_chair",
         "secretary",
+        "committee_administrator",
         "member",
         "alternate",
         "observer",

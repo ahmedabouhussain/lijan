@@ -248,8 +248,8 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
         <div className="max-w-2xl mx-auto">
           {/* Inheritance Indicator */}
           {view === "edit" && isInherited && !dirty && (
-            <div className="mb-3 p-3 rounded-md bg-blue-50 border border-blue-200 flex items-center gap-2 text-xs text-blue-800">
-              <Building2 className="w-4 h-4 shrink-0" />
+            <div className="mb-3 p-3 rounded-md bg-secondary/60 border border-border flex items-center gap-2 text-xs text-muted-foreground">
+              <Building2 className="w-4 h-4 shrink-0 text-primary" />
               <span className="flex-1">{t("هذا التكوين موروث من مستوى المنظمة. أي تعديل سينشئ تجاوزاً خاصاً باللجنة.", "This configuration is inherited from organization level. Any edit will create a committee-specific override.")}</span>
             </div>
           )}
@@ -268,7 +268,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
                   <p className="text-sm text-muted-foreground mt-1">{tab === "ar" ? config.description_ar : config.description_en}</p>
                 )}
                 {(config.guidance_ar || config.guidance_en) && (
-                  <div className="mt-3 p-3 rounded-md bg-blue-50 text-xs text-blue-800">
+                  <div className="mt-3 p-3 rounded-md bg-secondary/60 text-xs text-muted-foreground">
                     {tab === "ar" ? config.guidance_ar : config.guidance_en}
                   </div>
                 )}

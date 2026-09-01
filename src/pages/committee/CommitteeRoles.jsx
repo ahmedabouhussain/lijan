@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { Award } from "lucide-react";
+import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
+import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { Award, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ROLE_INFO = {
   chair: { ar: "الرئيس", en: "Chair", color: "bg-primary/10 text-primary" },
   vice_chair: { ar: "نائب الرئيس", en: "Vice Chair", color: "bg-primary/10 text-primary" },
-  secretary: { ar: "أمين السر", en: "Secretary", color: "bg-blue-100 text-blue-700" },
+  secretary: { ar: "أمين السر", en: "Secretary", color: "bg-secondary text-secondary-foreground" },
+  committee_administrator: { ar: "مدير اللجنة", en: "Committee Admin", color: "bg-accent/20 text-foreground" },
   member: { ar: "عضو", en: "Member", color: "bg-secondary text-secondary-foreground" },
-  alternate: { ar: "بديل", en: "Alternate", color: "bg-amber-100 text-amber-700" },
-  observer: { ar: "مراقب", en: "Observer", color: "bg-gray-100 text-gray-600" },
-  advisor: { ar: "مستشار", en: "Advisor", color: "bg-purple-100 text-purple-700" },
+  alternate: { ar: "بديل", en: "Alternate", color: "bg-amber-50 text-amber-700" },
+  observer: { ar: "مراقب", en: "Observer", color: "bg-secondary text-muted-foreground" },
+  advisor: { ar: "مستشار", en: "Advisor", color: "bg-secondary text-muted-foreground" },
 };
 
 const AUTH_INFO = {
@@ -24,24 +28,66 @@ const AUTH_INFO = {
   advisory: { ar: "استشاري", en: "Advisory" },
 };
 
+const ROLE_OPTIONS = [
+  { value: "chair", label_ar: "الرئيس", label_en: "Chair" },
+  { value: "vice_chair", label_ar: "نائب الرئيس", label_en: "Vice Chair" },
+  { value: "secretary", label_ar: "أمين السر", label_en: "Secretary" },
+  { value: "committee_administrator", label_ar: "مدير اللجنة", label_en: "Committee Administrator" },
+  { value: "member", label_ar: "عضو", label_en: "Member" },
+  { value: "observer", label_ar: "مراقب", label_en: "Observer" },
+  { value: "advisor", label_ar: "مستشار", label_en: "Advisor" },
+  { value: "alternate", label_ar: "بديل", label_en: "Alternate" },
+];
+
 export default function CommitteeRoles() {
-  const { data } = useCommittee();
+  const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle, getDescription } = usePageConfig("roles");
+  const { canManageMembership } = useCommitteeAdmin();
+  const [showCreate, setShowCreate] = useState(false);
+
   if (!data) return null;
   const members = data.members || [];
+  const committee = data.committee;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Award className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("الأدوار والصلاحيات", "Roles & Authorities", lang)}</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Award className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold">{getTitle("الأدوار والصلاحيات", "Roles & Authorities", lang)}</h1>
+        </div>
+        {canManageMembership && (
+          <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
+            <Plus className="w-4 h-4" />
+            {t("تعيين دور", "Assign Role")}
+          </Button>
+        )}
       </div>
       {(() => {
         const desc = getDescription("", "", lang);
         return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
       })()}
-      <div className="raqeem-card overflow-hidden">
+
+      {showCreate && canManageMembership && (
+        <CrudFormDialog
+          open={showCreate}
+          onClose={() => setShowCreate(false)}
+          title={t("تعيين دور جديد", "Assign New Role")}
+          functionName="InviteCommitteeMember"
+          payload={{ committee_id: committee.id }}
+          onSuccess={reload}
+          submitLabel={t("تعيين", "Assign")}
+          fields={[
+            { name: "full_name", label: t("الاسم الكامل", "Full Name"), required: true, fullWidth: true, placeholder: "Dr. Sara Al-Kuwari" },
+            { name: "email", label: t("البريد الإلكتروني", "Email"), type: "email", required: true, fullWidth: true },
+            { name: "role", label: t("الدور", "Role"), type: "select", required: true, options: ROLE_OPTIONS },
+            { name: "institution_name", label: t("المؤسسة", "Institution"), placeholder: "Ministry of Health" },
+          ]}
+        />
+      )}
+
+      <div className="raqeem-card overflow-hidden overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-xs text-muted-foreground">
             <tr>

@@ -9,7 +9,7 @@ export function resolveCapabilities({ user, orgMembership, committeeMemberships,
   const isOrgOwner = !!(orgMembership && orgMembership.role === 'owner');
 
   // Effective committee role (highest-priority active membership)
-  const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
+  const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, committee_administrator: 4, member: 5, alternate: 6, observer: 7, advisor: 8 };
   const sorted = [...(committeeMemberships || [])].sort(
     (a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99)
   );
@@ -18,6 +18,7 @@ export function resolveCapabilities({ user, orgMembership, committeeMemberships,
   const isCommitteeChair = effectiveCommitteeRole === 'chair';
   const isCommitteeSecretary = effectiveCommitteeRole === 'secretary';
   const isCommitteeViceChair = effectiveCommitteeRole === 'vice_chair';
+  const isCommitteeAdmin = (committeeMemberships || []).some((m) => m.role === 'committee_administrator');
   const isCommitteeOfficer = isCommitteeChair || isCommitteeSecretary || isCommitteeViceChair;
   const isCommitteeMember = (committeeMemberships || []).length > 0;
 
@@ -25,20 +26,20 @@ export function resolveCapabilities({ user, orgMembership, committeeMemberships,
   // Org Admin gets administrative config but NOT operational committee roles.
   return {
     // Level 1 — Page Configuration (administrative)
-    can_configure_committee_pages: isOrgAdmin || isOrgOwner || isCommitteeOfficer,
-    can_edit_page_drafts: isOrgAdmin || isOrgOwner || isCommitteeOfficer,
+    can_configure_committee_pages: isOrgAdmin || isOrgOwner || isCommitteeOfficer || isCommitteeAdmin,
+    can_edit_page_drafts: isOrgAdmin || isOrgOwner || isCommitteeOfficer || isCommitteeAdmin,
     can_publish_page_configuration: isOrgOwner || isOrgAdmin || isCommitteeChair,
     can_restore_configuration_version: isOrgOwner || isOrgAdmin || isCommitteeChair,
 
-    // Level 2 — Operational Record Editing (committee officers only, NOT org admin unless they hold a committee role)
-    can_manage_committee_records: isCommitteeOfficer,
-    can_manage_membership: isCommitteeOfficer,
-    can_manage_meetings: isCommitteeOfficer,
-    can_manage_documents: isCommitteeOfficer,
-    can_manage_minutes: isCommitteeSecretary || isCommitteeChair,
+    // Level 2 — Operational Record Editing (committee officers + committee_administrator)
+    can_manage_committee_records: isCommitteeOfficer || isCommitteeAdmin,
+    can_manage_membership: isCommitteeOfficer || isCommitteeAdmin,
+    can_manage_meetings: isCommitteeOfficer || isCommitteeAdmin,
+    can_manage_documents: isCommitteeOfficer || isCommitteeAdmin,
+    can_manage_minutes: isCommitteeSecretary || isCommitteeChair || isCommitteeAdmin,
     can_manage_decisions: isCommitteeChair,
-    can_manage_execution: isCommitteeOfficer,
-    can_manage_notifications: isCommitteeOfficer || isOrgAdmin,
+    can_manage_execution: isCommitteeOfficer || isCommitteeAdmin,
+    can_manage_notifications: isCommitteeOfficer || isOrgAdmin || isCommitteeAdmin,
     can_manage_governance: isCommitteeChair || isOrgAdmin,
     can_manage_integrations: isOrgAdmin || isOrgOwner,
 
@@ -55,5 +56,6 @@ export function resolveCapabilities({ user, orgMembership, committeeMemberships,
     is_org_owner: isOrgOwner,
     is_committee_member: isCommitteeMember,
     is_committee_officer: isCommitteeOfficer,
+    is_committee_admin: isCommitteeAdmin,
   };
 }

@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
+import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
-import { GitBranch } from "lucide-react";
+import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
+import { GitBranch, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const DEP_TYPE = {
   requires: { ar: "يتطلب", en: "Requires" },
@@ -16,37 +20,78 @@ const DEP_TYPE = {
 };
 
 const DEP_STATUS = {
-  pending: { ar: "معلق", en: "Pending", color: "bg-amber-100 text-amber-700" },
-  active: { ar: "نشط", en: "Active", color: "bg-blue-100 text-blue-700" },
-  resolved: { ar: "محلول", en: "Resolved", color: "bg-emerald-100 text-emerald-700" },
-  broken: { ar: "مكسور", en: "Broken", color: "bg-red-100 text-red-700" },
+  pending: { ar: "معلق", en: "Pending", color: "bg-amber-50 text-amber-700" },
+  active: { ar: "نشط", en: "Active", color: "bg-secondary text-muted-foreground" },
+  resolved: { ar: "محلول", en: "Resolved", color: "bg-emerald-50 text-emerald-700" },
+  broken: { ar: "مكسور", en: "Broken", color: "bg-red-50 text-red-700" },
 };
+
+const TYPE_OPTIONS = Object.entries(DEP_TYPE).map(([value, v]) => ({ value, label_ar: v.ar, label_en: v.en }));
 
 export default function CommitteeDependencies() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle, getDescription } = usePageConfig("dependencies");
+  const { canManageExecution } = useCommitteeAdmin();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
 
-  useEffect(() => {
-    if (!data?.committee?.id) return;
-    const cid = data.committee.id;
-    base44.entities.CrossEntityDependency.list()
-      .then((all) => {
-        const filtered = (all || []).filter((d) => d.source_committee_id === cid || d.target_committee_id === cid);
-        setRecords(filtered);
-      })
-      .catch(() => setRecords([]))
-      .finally(() => setLoading(false));
-  }, [data?.committee?.id]);
+  const committeeId = data?.committee?.id;
+  const orgId = data?.committee?.organization_id;
+
+  const fetchRecords = async () => {
+    if (!committeeId) return;
+    try {
+      const all = await base44.entities.CrossEntityDependency.list();
+      const filtered = (all || []).filter((d) => d.source_committee_id === committeeId || d.target_committee_id === committeeId);
+      setRecords(filtered);
+    } catch { setRecords([]); }
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchRecords(); }, [committeeId]);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <GitBranch className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("التبعيات", "Dependencies", lang)}</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <GitBranch className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold">{getTitle("التبعيات", "Dependencies", lang)}</h1>
+          <span className="text-sm text-muted-foreground">({records.length})</span>
+        </div>
+        {canManageExecution && (
+          <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
+            <Plus className="w-4 h-4" />
+            {t("تبعية جديدة", "New Dependency")}
+          </Button>
+        )}
       </div>
+
+      {showCreate && canManageExecution && (
+        <CrudFormDialog
+          open={showCreate}
+          onClose={() => setShowCreate(false)}
+          title={t("إنشاء تبعية", "Create Dependency")}
+          functionName="CreateCommitteeRecord"
+          payload={{
+            entity_type: "CrossEntityDependency",
+            committee_id: committeeId,
+            organization_id: orgId,
+            source_committee_id: committeeId,
+            status: "pending",
+          }}
+          onSuccess={fetchRecords}
+          submitLabel={t("إنشاء", "Create")}
+          fields={[
+            { name: "target_title", label: t("الجهة الهدف", "Target"), required: true, fullWidth: true, placeholder: "National Health Council" },
+            { name: "source_title", label: t("عنوان المصدر", "Source Title"), fullWidth: true },
+            { name: "dependency_type", label: t("نوع التبعية", "Type"), type: "select", options: TYPE_OPTIONS },
+            { name: "notes", label: t("ملاحظات", "Notes"), type: "textarea", fullWidth: true, rows: 2 },
+          ]}
+        />
+      )}
+
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : records.length === 0 ? (
