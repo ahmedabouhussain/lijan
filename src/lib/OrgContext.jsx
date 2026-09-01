@@ -10,7 +10,7 @@ export function OrgProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const publicId = orgRef?.split("--")[1] || orgRef;
+  const publicId = orgRef?.split("--").pop() || orgRef;
 
   const reload = useCallback(async () => {
     if (!publicId) return;

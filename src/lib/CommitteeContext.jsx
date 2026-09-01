@@ -10,7 +10,7 @@ export function CommitteeProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const publicId = committeeRef?.split("--")[1] || committeeRef;
+  const publicId = committeeRef?.split("--").pop() || committeeRef;
 
   const reload = useCallback(async () => {
     if (!publicId) return;

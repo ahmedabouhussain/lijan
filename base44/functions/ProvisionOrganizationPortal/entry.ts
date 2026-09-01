@@ -18,7 +18,7 @@ export default async function(req) {
       return Response.json({ error: 'Missing required fields: name_ar, name_en, type, slug' }, { status: 400 });
     }
 
-    const normalizedSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-');
+    const normalizedSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
 
     // Idempotency + slug uniqueness check (case-insensitive)
     const existing = await base44.asServiceRole.entities.Organization

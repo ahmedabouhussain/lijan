@@ -97,7 +97,7 @@ export default function CreatePortal() {
             <Label htmlFor="slug">عنوان البوابة · Portal Address *</Label>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">/o/</span>
-              <Input id="slug" value={form.slug} onChange={(e) => update("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} placeholder="my-organization" dir="ltr" />
+              <Input id="slug" value={form.slug} onChange={(e) => update("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, ""))} placeholder="my-organization" dir="ltr" />
             </div>
             <p className="text-xs text-muted-foreground">سيُستخدم معرف فريد دائم في العنوان لمنع التضارب</p>
           </div>

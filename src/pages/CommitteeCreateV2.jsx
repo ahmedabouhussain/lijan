@@ -48,7 +48,7 @@ export default function CommitteeCreateV2() {
   });
   const [newMember, setNewMember] = useState({ full_name: "", role: "member", institution_name: "" });
 
-  const publicId = orgRef?.split("--")[1] || orgRef;
+  const publicId = orgRef?.split("--").pop() || orgRef;
 
   useEffect(() => {
     if (!publicId) return;

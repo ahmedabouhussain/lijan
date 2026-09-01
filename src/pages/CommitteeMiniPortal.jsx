@@ -32,7 +32,7 @@ export default function CommitteeMiniPortal() {
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
-  const publicId = committeeRef?.split("--")[1] || committeeRef;
+  const publicId = committeeRef?.split("--").pop() || committeeRef;
 
   useEffect(() => {
     if (!publicId) return;
