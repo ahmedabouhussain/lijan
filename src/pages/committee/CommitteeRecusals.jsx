@@ -1,20 +1,26 @@
 import React from "react";
 import { useCommitteeScopedData } from "@/hooks/useCommitteeScoped";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { ShieldOff } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function CommitteeRecusals() {
   const { records, loading } = useCommitteeScopedData("Recusal");
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription, getEmptyState } = usePageConfig("recusals");
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <ShieldOff className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("التنحي وتضارب المصالح", "Recusals & Conflicts")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("التنحي وتضارب المصالح", "Recusals & Conflicts", lang)}</h1>
       </div>
+      {(() => {
+        const desc = getDescription("", "", lang);
+        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
+      })()}
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : records.length === 0 ? (

@@ -1,11 +1,13 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { BookOpen } from "lucide-react";
 
 export default function CommitteeGovernanceRules() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("governance-rules");
   if (!data) return null;
   const { committee } = data;
 
@@ -22,8 +24,12 @@ export default function CommitteeGovernanceRules() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <BookOpen className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("قواعد الحوكمة", "Governance Rules")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("قواعد الحوكمة", "Governance Rules", lang)}</h1>
       </div>
+      {(() => {
+        const desc = getDescription("", "", lang);
+        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
+      })()}
       <div className="raqeem-card p-5 space-y-3">
         {rules.map((r, i) => (
           <div key={i} className="flex items-start justify-between py-2 border-b border-border last:border-0">

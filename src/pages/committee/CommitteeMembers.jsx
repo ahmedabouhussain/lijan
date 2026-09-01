@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { Users } from "lucide-react";
@@ -9,7 +10,8 @@ const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate
 
 export default function CommitteeMembers() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription, getEmptyState, isSectionVisible } = usePageConfig("members");
 
   if (!data) return null;
   const { members, committee } = data;
@@ -19,14 +21,18 @@ export default function CommitteeMembers() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Users className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("أعضاء اللجنة", "Committee Members")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("أعضاء اللجنة", "Committee Members", lang)}</h1>
         <span className="text-sm text-muted-foreground">({ordered.length})</span>
       </div>
+      {(() => {
+        const desc = getDescription("", "", lang);
+        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
+      })()}
 
       {ordered.length === 0 ? (
         <div className="raqeem-card p-8 text-center">
           <Users className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">{t("لا يوجد أعضاء مسجلون", "No members registered")}</p>
+          <p className="text-sm text-muted-foreground">{getEmptyState("لا يوجد أعضاء مسجلون", "No members registered", lang)}</p>
         </div>
       ) : (
         <div className="raqeem-card divide-y divide-border">

@@ -1,0 +1,97 @@
+{
+  "name": "PageConfigurationVersion",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (null = org-level)"
+    },
+    "page_key": {
+      "type": "string",
+      "title": "Page Key"
+    },
+    "version_number": {
+      "type": "number",
+      "title": "Version Number",
+      "default": 1
+    },
+    "config_snapshot": {
+      "type": "string",
+      "title": "Full Configuration Snapshot (JSON)",
+      "description": "Complete config at publish time \u2014 immutable"
+    },
+    "change_reason": {
+      "type": "string",
+      "title": "Change Reason"
+    },
+    "effective_from": {
+      "type": "string",
+      "title": "Effective From",
+      "format": "date"
+    },
+    "published_by_name": {
+      "type": "string",
+      "title": "Published By Name"
+    },
+    "published_by_user_id": {
+      "type": "string",
+      "title": "Published By User ID"
+    },
+    "published_at": {
+      "type": "string",
+      "title": "Published At",
+      "format": "date-time"
+    },
+    "audit_correlation_id": {
+      "type": "string",
+      "title": "Audit Correlation ID"
+    },
+    "is_current": {
+      "type": "boolean",
+      "title": "Is Current Published Version",
+      "default": false
+    }
+  },
+  "required": [
+    "organization_id",
+    "page_key",
+    "version_number",
+    "config_snapshot"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": false,
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

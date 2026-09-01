@@ -1,20 +1,36 @@
-import React from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Home, Building2, ChevronLeft } from "lucide-react";
+import React, { useState } from "react";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Home, Building2, ChevronLeft, Settings2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
+import { useCommittee } from "@/lib/CommitteeContext";
 import { cn } from "@/lib/utils";
+import AdminEditMode from "@/components/raqeem/admin/AdminEditMode";
 
 // Unified navigation bar — appears at the top of every page.
 // Context-aware: detects committee vs org vs top-level and offers relevant shortcuts.
+// Shows "Edit Page" button for authorized admins (can_configure_committee_pages).
 export default function PageNav() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { orgRef, committeeRef } = useParams();
   const { t, lang } = useLanguage();
   const isRTL = lang === "ar";
+  const [editMode, setEditMode] = useState(false);
+  const { canConfigure, loading: capsLoading } = useCommitteeAdmin();
+  const { data } = useCommittee();
 
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
   const inCommittee = Boolean(orgRef && committeeRef);
   const inOrg = Boolean(orgRef && !committeeRef);
+
+  // Derive page_key from current route
+  const pageKey = (() => {
+    if (!inCommittee) return null;
+    const base = `/o/${orgRef}/c/${committeeRef}`;
+    const rest = location.pathname.slice(base.length).replace(/^\//, "");
+    return rest || "home";
+  })();
 
   const crumbs = [];
   // Always: root entry
@@ -75,6 +91,16 @@ export default function PageNav() {
       </div>
 
       <div className="flex items-center gap-1.5 shrink-0">
+        {inCommittee && canConfigure && !capsLoading && pageKey && (
+          <button
+            onClick={() => setEditMode(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-primary hover:bg-primary/10 transition-colors min-h-[36px]"
+            title={t("تحرير الصفحة", "Edit Page")}
+          >
+            <Settings2 className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("تحرير الصفحة", "Edit Page")}</span>
+          </button>
+        )}
         {inCommittee && (
           <Link
             to={`/o/${orgRef}/c/${committeeRef}`}
@@ -104,6 +130,14 @@ export default function PageNav() {
           <span className="hidden lg:inline">{t("الرئيسية", "Home")}</span>
         </Link>
       </div>
+
+      {editMode && pageKey && data?.committee?.id && (
+        <AdminEditMode
+          pageKey={pageKey}
+          committeeId={data.committee.id}
+          onClose={() => setEditMode(false)}
+        />
+      )}
     </div>
   );
 }

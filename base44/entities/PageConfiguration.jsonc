@@ -1,0 +1,185 @@
+{
+  "name": "PageConfiguration",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (null = org-level template)"
+    },
+    "page_key": {
+      "type": "string",
+      "title": "Page Key (sidebar route identifier)"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "Title (Arabic)"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Title (English)"
+    },
+    "description_ar": {
+      "type": "string",
+      "title": "Description / Guidance (Arabic)"
+    },
+    "description_en": {
+      "type": "string",
+      "title": "Description / Guidance (English)"
+    },
+    "guidance_ar": {
+      "type": "string",
+      "title": "Inline Guidance (Arabic)"
+    },
+    "guidance_en": {
+      "type": "string",
+      "title": "Inline Guidance (English)"
+    },
+    "visible": {
+      "type": "boolean",
+      "title": "Page Visible",
+      "default": true
+    },
+    "sidebar_visible": {
+      "type": "boolean",
+      "title": "Sidebar Visible",
+      "default": true
+    },
+    "sidebar_order": {
+      "type": "number",
+      "title": "Sidebar Order",
+      "default": 0
+    },
+    "sections": {
+      "type": "string",
+      "title": "Sections Configuration (JSON array)",
+      "description": "Array of {key, title_ar, title_en, visible, order, is_system}"
+    },
+    "labels": {
+      "type": "string",
+      "title": "Label Overrides (JSON object)",
+      "description": "Map of label_key -> {ar, en}"
+    },
+    "empty_state_ar": {
+      "type": "string",
+      "title": "Empty State Message (Arabic)"
+    },
+    "empty_state_en": {
+      "type": "string",
+      "title": "Empty State Message (English)"
+    },
+    "table_columns": {
+      "type": "string",
+      "title": "Table Columns Configuration (JSON array)"
+    },
+    "filters": {
+      "type": "string",
+      "title": "Filters & Default Sort (JSON)"
+    },
+    "role_visibility": {
+      "type": "string",
+      "title": "Role Visibility (JSON array of roles that can see this page)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "published"
+      ],
+      "default": "draft"
+    },
+    "version": {
+      "type": "number",
+      "title": "Configuration Version",
+      "default": 1
+    },
+    "published_version": {
+      "type": "number",
+      "title": "Last Published Version",
+      "default": 0
+    },
+    "draft_version": {
+      "type": "number",
+      "title": "Draft Version (for optimistic concurrency)",
+      "default": 1
+    },
+    "change_reason": {
+      "type": "string",
+      "title": "Change Reason (last publish)"
+    },
+    "effective_from": {
+      "type": "string",
+      "title": "Effective From",
+      "format": "date"
+    },
+    "published_by_name": {
+      "type": "string",
+      "title": "Published By Name"
+    },
+    "published_by_user_id": {
+      "type": "string",
+      "title": "Published By User ID"
+    },
+    "published_at": {
+      "type": "string",
+      "title": "Published At",
+      "format": "date-time"
+    },
+    "audit_correlation_id": {
+      "type": "string",
+      "title": "Audit Correlation ID"
+    }
+  },
+  "required": [
+    "organization_id",
+    "page_key",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

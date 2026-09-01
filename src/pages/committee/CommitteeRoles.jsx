@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { Award } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 
@@ -25,7 +26,8 @@ const AUTH_INFO = {
 
 export default function CommitteeRoles() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("roles");
   if (!data) return null;
   const members = data.members || [];
 
@@ -33,8 +35,12 @@ export default function CommitteeRoles() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Award className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("الأدوار والصلاحيات", "Roles & Authorities")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("الأدوار والصلاحيات", "Roles & Authorities", lang)}</h1>
       </div>
+      {(() => {
+        const desc = getDescription("", "", lang);
+        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
+      })()}
       <div className="raqeem-card overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-xs text-muted-foreground">
