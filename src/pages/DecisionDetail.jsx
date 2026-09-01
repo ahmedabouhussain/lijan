@@ -25,6 +25,7 @@ export default function DecisionDetail() {
   const [committee, setCommittee] = useState(null);
   const [meeting, setMeeting] = useState(null);
   const [actions, setActions] = useState([]);
+  const [votes, setVotes] = useState([]);
   const [supersedingDecision, setSupersedingDecision] = useState(null);
 
   async function load() {
@@ -43,8 +44,12 @@ export default function DecisionDetail() {
         const sd = await base44.entities.Decision.get(d.superseded_by).catch(() => null);
         setSupersedingDecision(sd);
       }
-      const acts = await base44.entities.Action.filter({ decision_id: id }).catch(() => []);
+      const [acts, voteList] = await Promise.all([
+        base44.entities.Action.filter({ decision_id: id }).catch(() => []),
+        base44.entities.Vote.filter({ decision_id: id }).catch(() => []),
+      ]);
       setActions(acts || []);
+      setVotes(voteList || []);
     } finally {
       setLoading(false);
     }
@@ -141,6 +146,27 @@ export default function DecisionDetail() {
               <div className="mt-3 p-3 bg-amber-50 rounded-md">
                 <div className="text-xs text-amber-700 font-medium mb-1">المخالفة المُسجلة · Dissent</div>
                 <p className="text-sm text-amber-800">{decision.dissent}</p>
+              </div>
+            )}
+            {votes.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <div className="text-xs text-muted-foreground font-medium mb-2">سجل التصويت الفردي · Roll-Call Record</div>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                  {votes.map((v) => {
+                    const choiceConfig = {
+                      for: { label: "موافق", color: "text-emerald-700 bg-emerald-50" },
+                      against: { label: "رافض", color: "text-destructive bg-red-50" },
+                      abstain: { label: "ممتنع", color: "text-muted-foreground bg-secondary" },
+                    };
+                    const cfg = choiceConfig[v.vote_choice] || choiceConfig.abstain;
+                    return (
+                      <div key={v.id} className="flex items-center justify-between gap-2 text-xs">
+                        <span className="text-foreground font-medium truncate">{v.voter_name}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${cfg.color}`}>{cfg.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
             {supersedingDecision && (

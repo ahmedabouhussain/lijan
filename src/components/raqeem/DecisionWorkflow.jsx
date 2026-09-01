@@ -10,12 +10,10 @@ export default function DecisionWorkflow({ decision, onChanged }) {
   const [showVoting, setShowVoting] = useState(false);
   const [showEscalate, setShowEscalate] = useState(false);
   const [showSupersede, setShowSupersede] = useState(false);
-  const [votes, setVotes] = useState({
-    vote_for: decision.vote_for || 0,
-    vote_against: decision.vote_against || 0,
-    vote_abstain: decision.vote_abstain || 0,
-    dissent: decision.dissent || "",
-  });
+  const [memberVotes, setMemberVotes] = useState({});
+  const [members, setMembers] = useState([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [existingVotes, setExistingVotes] = useState([]);
   const [escalationLevel, setEscalationLevel] = useState("reminder");
   const [supersedeById, setSupersedeById] = useState("");
   const [otherDecisions, setOtherDecisions] = useState([]);
@@ -47,17 +45,68 @@ export default function DecisionWorkflow({ decision, onChanged }) {
     setSaving(false);
   };
 
+  const loadMembersAndVotes = async () => {
+    setLoadingMembers(true);
+    try {
+      const [mems, votesData] = await Promise.all([
+        base44.entities.CommitteeMember.filter({ committee_id: decision.committee_id, status: "active" }).catch(() => []),
+        base44.entities.Vote.filter({ decision_id: decision.id }).catch(() => []),
+      ]);
+      const memList = mems || [];
+      const voteList = votesData || [];
+      setMembers(memList);
+      setExistingVotes(voteList);
+      const initial = {};
+      memList.forEach((m) => {
+        const existing = voteList.find((v) => v.voter_name === m.full_name);
+        initial[m.id] = {
+          choice: existing?.vote_choice || "abstain",
+          dissent: existing?.dissent_reason || "",
+          member: m,
+        };
+      });
+      setMemberVotes(initial);
+    } catch {}
+    setLoadingMembers(false);
+  };
+
   const recordVotes = async (outcome) => {
     setSaving(true);
     try {
+      const voteList = Object.entries(memberVotes).filter(([, v]) => v.choice);
+      let forCount = 0, againstCount = 0, abstainCount = 0;
+      const dissentParts = [];
+
+      for (const [, v] of voteList) {
+        if (v.choice === "for") forCount++;
+        else if (v.choice === "against") againstCount++;
+        else abstainCount++;
+        if (v.choice === "against" && v.dissent) dissentParts.push(`${v.member.full_name}: ${v.dissent}`);
+      }
+
+      const now = new Date().toISOString();
+      const voteRecords = voteList.map(([, v]) => ({
+        decision_id: decision.id,
+        committee_id: decision.committee_id,
+        meeting_id: decision.meeting_id,
+        voter_name: v.member.full_name,
+        voter_role: v.member.role,
+        vote_choice: v.choice,
+        dissent_reason: v.choice === "against" ? v.dissent : undefined,
+        vote_method: "open",
+        voted_at: now,
+      }));
+
+      await base44.entities.Vote.bulkCreate(voteRecords);
+
       await base44.entities.Decision.update(decision.id, {
-        vote_for: parseInt(votes.vote_for) || 0,
-        vote_against: parseInt(votes.vote_against) || 0,
-        vote_abstain: parseInt(votes.vote_abstain) || 0,
-        dissent: votes.dissent,
+        vote_for: forCount,
+        vote_against: againstCount,
+        vote_abstain: abstainCount,
+        dissent: dissentParts.join(" | ") || undefined,
         status: outcome,
       });
-      await log("vote", `تصويت: ${votes.vote_for} موافق / ${votes.vote_against} رافض / ${votes.vote_abstain} ممتنع — النتيجة: ${DECISION_STATUS[outcome]?.ar}`, decision.status, outcome);
+      await log("vote", `تصويت فردي: ${forCount} موافق / ${againstCount} رافض / ${abstainCount} ممتنع — النتيجة: ${DECISION_STATUS[outcome]?.ar}`, decision.status, outcome);
       setShowVoting(false);
       onChanged();
     } catch {}
@@ -136,7 +185,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
             <ActionBtn onClick={() => transition("voting", "status_change", "فتح التصويت")} icon={Vote} label="فتح التصويت" />
           )}
           {status === "voting" && (
-            <ActionBtn onClick={() => setShowVoting(true)} icon={Vote} label="تسجيل التصويت" variant="approve" />
+            <ActionBtn onClick={() => { loadMembersAndVotes(); setShowVoting(true); }} icon={Vote} label="تسجيل التصويت" variant="approve" />
           )}
           {status === "approved" && (
             <ActionBtn onClick={() => transition("issued", "issue", "إصدار")} icon={FileSignature} label="إصدار القرار" />
@@ -158,34 +207,67 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {showVoting && (
         <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">تسجيل التصويت · Record Votes</h4>
+            <h4 className="text-sm font-semibold">تسجيل التصويت الفردي · Individual Roll-Call Vote</h4>
             <button onClick={() => setShowVoting(false)} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <Label className="text-xs text-emerald-700">موافق</Label>
-              <Input type="number" min="0" value={votes.vote_for} onChange={(e) => setVotes((v) => ({ ...v, vote_for: e.target.value }))} />
-            </div>
-            <div>
-              <Label className="text-xs text-destructive">رافض</Label>
-              <Input type="number" min="0" value={votes.vote_against} onChange={(e) => setVotes((v) => ({ ...v, vote_against: e.target.value }))} />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">ممتنع</Label>
-              <Input type="number" min="0" value={votes.vote_abstain} onChange={(e) => setVotes((v) => ({ ...v, vote_abstain: e.target.value }))} />
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs">المخالفة المُسجلة · Dissent</Label>
-            <textarea value={votes.dissent} onChange={(e) => setVotes((v) => ({ ...v, dissent: e.target.value }))} rows={2} className="w-full px-3 py-2 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring" placeholder="نص المخالفة إن وجد" />
-          </div>
-          <div className="flex items-center gap-2">
-            <ActionBtn onClick={() => recordVotes("approved")} icon={Check} label="اعتماد" variant="approve" />
-            <ActionBtn onClick={() => recordVotes("rejected")} icon={X} label="رفض" variant="reject" />
-            <ActionBtn onClick={() => recordVotes("deferred")} icon={Clock} label="تأجيل" variant="neutral" />
-          </div>
+          {loadingMembers ? (
+            <p className="text-xs text-muted-foreground">جارٍ تحميل الأعضاء...</p>
+          ) : members.length === 0 ? (
+            <p className="text-xs text-muted-foreground">لا يوجد أعضاء نشطون في هذه اللجنة</p>
+          ) : (
+            <>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {members.map((m) => {
+                  const mv = memberVotes[m.id] || { choice: "abstain", dissent: "" };
+                  const isAgainst = mv.choice === "against";
+                  return (
+                    <div key={m.id} className="border border-border rounded-md p-3 bg-card">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-foreground truncate">{m.full_name}</div>
+                          <div className="text-[10px] text-muted-foreground">{m.role === "chair" ? "الرئيس" : m.role === "secretary" ? "الأمين" : m.role === "vice_chair" ? "نائب الرئيس" : "عضو"}</div>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {["for", "against", "abstain"].map((choice) => {
+                            const labels = { for: "موافق", against: "رافض", abstain: "ممتنع" };
+                            const colors = {
+                              for: mv.choice === "for" ? "bg-emerald-600 text-white" : "bg-secondary text-muted-foreground hover:bg-emerald-50",
+                              against: mv.choice === "against" ? "bg-destructive text-destructive-foreground" : "bg-secondary text-muted-foreground hover:bg-red-50",
+                              abstain: mv.choice === "abstain" ? "bg-muted-foreground text-white" : "bg-secondary text-muted-foreground hover:bg-secondary/80",
+                            };
+                            return (
+                              <button
+                                key={choice}
+                                onClick={() => setMemberVotes((prev) => ({ ...prev, [m.id]: { ...prev[m.id], choice } }))}
+                                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${colors[choice]}`}
+                              >
+                                {labels[choice]}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      {isAgainst && (
+                        <Input
+                          value={mv.dissent || ""}
+                          onChange={(e) => setMemberVotes((prev) => ({ ...prev, [m.id]: { ...prev[m.id], dissent: e.target.value } }))}
+                          placeholder="سبب المخالفة (اختياري)"
+                          className="text-xs h-8"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <ActionBtn onClick={() => recordVotes("approved")} icon={Check} label="اعتماد القرار" variant="approve" />
+                <ActionBtn onClick={() => recordVotes("rejected")} icon={X} label="رفض القرار" variant="reject" />
+                <ActionBtn onClick={() => recordVotes("deferred")} icon={Clock} label="تأجيل" variant="neutral" />
+              </div>
+            </>
+          )}
         </div>
       )}
 

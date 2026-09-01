@@ -63,5 +63,11 @@
   "required": [
     "action",
     "entity_type"
-  ]
+  ],
+  "rls": {
+    "read": {},
+    "create": {},
+    "update": false,
+    "delete": false
+  }
 }

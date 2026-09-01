@@ -1,0 +1,87 @@
+{
+  "name": "Vote",
+  "type": "object",
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "voter_name": {
+      "type": "string",
+      "title": "Voter Full Name"
+    },
+    "voter_user_id": {
+      "type": "string",
+      "title": "Voter User ID"
+    },
+    "voter_role": {
+      "type": "string",
+      "title": "Voter Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "observer",
+        "advisor"
+      ],
+      "default": "member"
+    },
+    "vote_choice": {
+      "type": "string",
+      "title": "Vote Choice",
+      "enum": [
+        "for",
+        "against",
+        "abstain"
+      ],
+      "default": "abstain"
+    },
+    "dissent_reason": {
+      "type": "string",
+      "title": "Dissent Reason"
+    },
+    "vote_method": {
+      "type": "string",
+      "title": "Vote Method",
+      "enum": [
+        "open",
+        "secret"
+      ],
+      "default": "open"
+    },
+    "voted_at": {
+      "type": "string",
+      "title": "Voted At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "decision_id",
+    "voter_name",
+    "vote_choice",
+    "voted_at"
+  ],
+  "rls": {
+    "read": {},
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

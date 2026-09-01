@@ -97,5 +97,11 @@
     "signature_method",
     "intent",
     "signed_at"
-  ]
+  ],
+  "rls": {
+    "read": {},
+    "create": {},
+    "update": false,
+    "delete": false
+  }
 }
