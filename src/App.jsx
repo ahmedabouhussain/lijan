@@ -19,6 +19,7 @@ import Profile from '@/pages/Profile';
 import FounderVault from '@/pages/FounderVault';
 import MeetingDetail from '@/pages/MeetingDetail';
 import DecisionDetail from '@/pages/DecisionDetail';
+import MinutesArchive from '@/pages/MinutesArchive';
 
 // Organization Portal (Level 2)
 import OrgLayout from '@/components/raqeem/OrgLayout';
@@ -143,6 +144,9 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/closure" element={<CommitteeClosure />} />
           <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
         </Route>
+
+        {/* Deliberations Archive */}
+        <Route path="/minutes-archive" element={<MinutesArchive />} />
 
         {/* Legacy detail routes (still accessible) */}
         <Route path="/meetings/:id" element={<MeetingDetail />} />

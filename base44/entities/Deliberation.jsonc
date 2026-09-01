@@ -1,0 +1,97 @@
+{
+  "name": "Deliberation",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID (optional)"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Related Decision ID (optional)"
+    },
+    "topic": {
+      "type": "string",
+      "title": "Topic / Subject"
+    },
+    "topic_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0648\u0636\u0648\u0639"
+    },
+    "discussion_summary": {
+      "type": "string",
+      "title": "Discussion Summary"
+    },
+    "key_points": {
+      "type": "string",
+      "title": "Key Points"
+    },
+    "positions": {
+      "type": "string",
+      "title": "Positions Expressed"
+    },
+    "outcome": {
+      "type": "string",
+      "title": "Outcome"
+    },
+    "deliberated_by": {
+      "type": "string",
+      "title": "Deliberated By"
+    },
+    "deliberated_at": {
+      "type": "string",
+      "title": "Deliberated At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "open",
+        "concluded",
+        "deferred",
+        "archived"
+      ],
+      "default": "concluded"
+    }
+  },
+  "required": [
+    "committee_id",
+    "topic",
+    "discussion_summary",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
