@@ -35,6 +35,7 @@ import CommitteeCreateV2 from '@/pages/CommitteeCreateV2';
 import CommitteeLayout from '@/components/raqeem/CommitteeLayout';
 import CommitteeHome from '@/pages/committee/CommitteeHome';
 import CommitteeMembers from '@/pages/committee/CommitteeMembers';
+import CommitteeFormation from '@/pages/committee/CommitteeFormation';
 import CommitteeRoles from '@/pages/committee/CommitteeRoles';
 import CommitteeDelegations from '@/pages/committee/CommitteeDelegations';
 import CommitteeAlternates from '@/pages/committee/CommitteeAlternates';
@@ -109,6 +110,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef" element={<CommitteeHome />} />
           {/* People */}
           <Route path="/o/:orgRef/c/:committeeRef/members" element={<CommitteeMembers />} />
+          <Route path="/o/:orgRef/c/:committeeRef/formation" element={<CommitteeFormation />} />
           <Route path="/o/:orgRef/c/:committeeRef/roles" element={<CommitteeRoles />} />
           <Route path="/o/:orgRef/c/:committeeRef/delegations" element={<CommitteeDelegations />} />
           <Route path="/o/:orgRef/c/:committeeRef/alternates" element={<CommitteeAlternates />} />

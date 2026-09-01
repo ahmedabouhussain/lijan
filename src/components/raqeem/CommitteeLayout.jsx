@@ -8,7 +8,7 @@ import {
   Lock, UserCircle, AlertTriangle, Menu, X, ArrowLeftRight,
   ClipboardList, Package, UserCheck, PenLine, FileCheck, GitBranch,
   TrendingUp, Brain, Bot, ScrollText, BookOpen, Plug, Bell, Award,
-  Users2, ShieldOff,
+  Users2, ShieldOff, UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -26,6 +26,7 @@ const NAV_GROUPS = [
     label: "الأشخاص", labelEn: "People",
     items: [
       { to: "/members", label: "الأعضاء", labelEn: "Members", icon: Users },
+      { to: "/formation", label: "تحديثات التشكيل", labelEn: "Formation Updates", icon: UserCog },
       { to: "/roles", label: "الأدوار", labelEn: "Roles", icon: Award },
       { to: "/delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight },
       { to: "/alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2 },
