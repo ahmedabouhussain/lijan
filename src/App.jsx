@@ -24,20 +24,42 @@ import DecisionDetail from '@/pages/DecisionDetail';
 import OrgLayout from '@/components/raqeem/OrgLayout';
 import OrgPortal from '@/pages/OrgPortal';
 import OrgCommittees from '@/pages/OrgCommittees';
+import OrgNotifications from '@/pages/OrgNotifications';
+import OrgAdmin from '@/pages/OrgAdmin';
 import CommitteeCreateV2 from '@/pages/CommitteeCreateV2';
 
 // Committee Workspace (Level 3)
 import CommitteeLayout from '@/components/raqeem/CommitteeLayout';
 import CommitteeHome from '@/pages/committee/CommitteeHome';
 import CommitteeMembers from '@/pages/committee/CommitteeMembers';
+import CommitteeRoles from '@/pages/committee/CommitteeRoles';
+import CommitteeDelegations from '@/pages/committee/CommitteeDelegations';
+import CommitteeAlternates from '@/pages/committee/CommitteeAlternates';
+import CommitteeRecusals from '@/pages/committee/CommitteeRecusals';
 import CommitteeMeetings from '@/pages/committee/CommitteeMeetings';
+import CommitteeCalendar from '@/pages/committee/CommitteeCalendar';
+import CommitteeAgenda from '@/pages/committee/CommitteeAgenda';
+import CommitteePacks from '@/pages/committee/CommitteePacks';
+import CommitteeAttendance from '@/pages/committee/CommitteeAttendance';
+import CommitteeDocuments from '@/pages/committee/CommitteeDocuments';
 import CommitteeMinutes from '@/pages/committee/CommitteeMinutes';
+import CommitteeSignatures from '@/pages/committee/CommitteeSignatures';
 import CommitteeDecisions from '@/pages/committee/CommitteeDecisions';
 import CommitteeActions from '@/pages/committee/CommitteeActions';
 import CommitteeVoting from '@/pages/committee/CommitteeVoting';
+import CommitteeEvidence from '@/pages/committee/CommitteeEvidence';
+import CommitteeDependencies from '@/pages/committee/CommitteeDependencies';
+import CommitteeEscalations from '@/pages/committee/CommitteeEscalations';
 import CommitteeRisks from '@/pages/committee/CommitteeRisks';
 import CommitteeReports from '@/pages/committee/CommitteeReports';
+import CommitteeMemory from '@/pages/committee/CommitteeMemory';
+import CommitteeAI from '@/pages/committee/CommitteeAI';
 import CommitteeAudit from '@/pages/committee/CommitteeAudit';
+import CommitteeMandate from '@/pages/committee/CommitteeMandate';
+import CommitteeGovernanceRules from '@/pages/committee/CommitteeGovernanceRules';
+import CommitteeIntegrations from '@/pages/committee/CommitteeIntegrations';
+import CommitteeNotifications from '@/pages/committee/CommitteeNotifications';
+import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 
 const AuthenticatedApp = () => {
@@ -74,21 +96,49 @@ const AuthenticatedApp = () => {
         <Route element={<OrgLayout />}>
           <Route path="/o/:orgRef" element={<OrgPortal />} />
           <Route path="/o/:orgRef/committees" element={<OrgCommittees />} />
+          <Route path="/o/:orgRef/notifications" element={<OrgNotifications />} />
+          <Route path="/o/:orgRef/admin" element={<OrgAdmin />} />
           <Route path="/o/:orgRef/create-committee" element={<CommitteeCreateV2 />} />
         </Route>
 
         {/* Committee Workspace (Level 3) */}
         <Route element={<CommitteeLayout />}>
           <Route path="/o/:orgRef/c/:committeeRef" element={<CommitteeHome />} />
+          {/* People */}
           <Route path="/o/:orgRef/c/:committeeRef/members" element={<CommitteeMembers />} />
+          <Route path="/o/:orgRef/c/:committeeRef/roles" element={<CommitteeRoles />} />
+          <Route path="/o/:orgRef/c/:committeeRef/delegations" element={<CommitteeDelegations />} />
+          <Route path="/o/:orgRef/c/:committeeRef/alternates" element={<CommitteeAlternates />} />
+          <Route path="/o/:orgRef/c/:committeeRef/recusals" element={<CommitteeRecusals />} />
+          {/* Meetings */}
           <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<CommitteeMeetings />} />
+          <Route path="/o/:orgRef/c/:committeeRef/calendar" element={<CommitteeCalendar />} />
+          <Route path="/o/:orgRef/c/:committeeRef/agenda" element={<CommitteeAgenda />} />
+          <Route path="/o/:orgRef/c/:committeeRef/packs" element={<CommitteePacks />} />
+          <Route path="/o/:orgRef/c/:committeeRef/attendance" element={<CommitteeAttendance />} />
+          {/* Official Records */}
+          <Route path="/o/:orgRef/c/:committeeRef/documents" element={<CommitteeDocuments />} />
           <Route path="/o/:orgRef/c/:committeeRef/minutes" element={<CommitteeMinutes />} />
-          <Route path="/o/:orgRef/c/:committeeRef/decisions" element={<CommitteeDecisions />} />
-          <Route path="/o/:orgRef/c/:committeeRef/actions" element={<CommitteeActions />} />
           <Route path="/o/:orgRef/c/:committeeRef/voting" element={<CommitteeVoting />} />
+          <Route path="/o/:orgRef/c/:committeeRef/decisions" element={<CommitteeDecisions />} />
+          <Route path="/o/:orgRef/c/:committeeRef/signatures" element={<CommitteeSignatures />} />
+          {/* Execution */}
+          <Route path="/o/:orgRef/c/:committeeRef/actions" element={<CommitteeActions />} />
+          <Route path="/o/:orgRef/c/:committeeRef/evidence" element={<CommitteeEvidence />} />
           <Route path="/o/:orgRef/c/:committeeRef/risks" element={<CommitteeRisks />} />
+          <Route path="/o/:orgRef/c/:committeeRef/dependencies" element={<CommitteeDependencies />} />
+          <Route path="/o/:orgRef/c/:committeeRef/escalations" element={<CommitteeEscalations />} />
+          {/* Intelligence & Reporting */}
           <Route path="/o/:orgRef/c/:committeeRef/reports" element={<CommitteeReports />} />
+          <Route path="/o/:orgRef/c/:committeeRef/memory" element={<CommitteeMemory />} />
+          <Route path="/o/:orgRef/c/:committeeRef/ai" element={<CommitteeAI />} />
           <Route path="/o/:orgRef/c/:committeeRef/audit" element={<CommitteeAudit />} />
+          {/* Administration */}
+          <Route path="/o/:orgRef/c/:committeeRef/mandate" element={<CommitteeMandate />} />
+          <Route path="/o/:orgRef/c/:committeeRef/governance-rules" element={<CommitteeGovernanceRules />} />
+          <Route path="/o/:orgRef/c/:committeeRef/integrations" element={<CommitteeIntegrations />} />
+          <Route path="/o/:orgRef/c/:committeeRef/notifications" element={<CommitteeNotifications />} />
+          <Route path="/o/:orgRef/c/:committeeRef/closure" element={<CommitteeClosure />} />
           <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
         </Route>
 

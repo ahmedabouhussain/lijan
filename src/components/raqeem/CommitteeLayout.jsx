@@ -5,7 +5,10 @@ import { useLanguage } from "@/lib/LanguageContext";
 import {
   ChevronLeft, ChevronDown, LayoutDashboard, Users, Calendar, FileText,
   Gavel, CheckSquare, Network, BarChart3, Settings, ShieldCheck,
-  Lock, UserCircle, Building2, Clock, AlertTriangle, Menu, X,
+  Lock, UserCircle, AlertTriangle, Menu, X, ArrowLeftRight,
+  ClipboardList, Package, UserCheck, PenLine, FileCheck, GitBranch,
+  TrendingUp, Brain, Bot, ScrollText, BookOpen, Plug, Bell, Award,
+  Users2, ShieldOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -19,37 +22,63 @@ const NAV_GROUPS = [
   },
   {
     label: "الأشخاص", labelEn: "People",
-    items: [{ to: "/members", label: "الأعضاء", labelEn: "Members", icon: Users }],
+    items: [
+      { to: "/members", label: "الأعضاء", labelEn: "Members", icon: Users },
+      { to: "/roles", label: "الأدوار", labelEn: "Roles", icon: Award },
+      { to: "/delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight },
+      { to: "/alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2 },
+      { to: "/recusals", label: "التنحي والتعارض", labelEn: "Conflicts & Recusals", icon: ShieldOff },
+    ],
   },
   {
     label: "الاجتماعات", labelEn: "Meetings",
-    items: [{ to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar }],
+    items: [
+      { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar },
+      { to: "/calendar", label: "التقويم", labelEn: "Calendar", icon: Calendar },
+      { to: "/agenda", label: "جدول الأعمال", labelEn: "Agenda", icon: ClipboardList },
+      { to: "/packs", label: "حزم الاجتماعات", labelEn: "Meeting Packs", icon: Package },
+      { to: "/attendance", label: "الحضور", labelEn: "Attendance", icon: UserCheck },
+    ],
   },
   {
     label: "السجلات الرسمية", labelEn: "Official Records",
     items: [
+      { to: "/documents", label: "الوثائق", labelEn: "Documents", icon: FileText },
       { to: "/minutes", label: "المحاضر", labelEn: "Minutes", icon: FileText },
-      { to: "/decisions", label: "القرارات", labelEn: "Decisions", icon: Gavel },
       { to: "/voting", label: "التصويت", labelEn: "Voting", icon: CheckSquare },
+      { to: "/decisions", label: "القرارات", labelEn: "Decisions", icon: Gavel },
+      { to: "/signatures", label: "التواقيع", labelEn: "Signatures", icon: PenLine },
     ],
   },
   {
     label: "التنفيذ", labelEn: "Execution",
     items: [
       { to: "/actions", label: "الإجراءات", labelEn: "Actions", icon: CheckSquare },
-      { to: "/risks", label: "المخاطر والتبعيات", labelEn: "Risks", icon: Network },
+      { to: "/evidence", label: "الأدلة", labelEn: "Evidence", icon: FileCheck },
+      { to: "/risks", label: "المخاطر", labelEn: "Risks", icon: Network },
+      { to: "/dependencies", label: "التبعيات", labelEn: "Dependencies", icon: GitBranch },
+      { to: "/escalations", label: "التصعيدات", labelEn: "Escalations", icon: TrendingUp },
     ],
   },
   {
-    label: "الذكاء والتقارير", labelEn: "Intelligence",
+    label: "الذكاء والتقارير", labelEn: "Intelligence & Reporting",
     items: [
       { to: "/reports", label: "التقارير", labelEn: "Reports", icon: BarChart3 },
-      { to: "/audit", label: "التدقيق", labelEn: "Audit", icon: ShieldCheck },
+      { to: "/memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain },
+      { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot },
+      { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck },
     ],
   },
   {
     label: "إدارة اللجنة", labelEn: "Administration",
-    items: [{ to: "/settings", label: "الإعدادات", labelEn: "Settings", icon: Settings }],
+    items: [
+      { to: "/mandate", label: "الصلاحية", labelEn: "Mandate", icon: ScrollText },
+      { to: "/governance-rules", label: "قواعد الحوكمة", labelEn: "Governance Rules", icon: BookOpen },
+      { to: "/integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug },
+      { to: "/notifications", label: "الإشعارات", labelEn: "Notifications", icon: Bell },
+      { to: "/closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock },
+      { to: "/settings", label: "الإعدادات", labelEn: "Settings", icon: Settings },
+    ],
   },
 ];
 
@@ -59,6 +88,7 @@ function CommitteeShell() {
   const { data, loading, error } = useCommittee();
   const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState({});
 
   if (loading) {
     return (
@@ -92,6 +122,8 @@ function CommitteeShell() {
         { chair: "Chair", vice_chair: "Vice Chair", secretary: "Secretary", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
       );
 
+  const toggleGroup = (label) => setCollapsedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Committee identity */}
@@ -114,39 +146,60 @@ function CommitteeShell() {
             {t("متتنحّ من هذه اللجنة", "Recused from this committee")}
           </div>
         )}
+        {/* Switch Committee */}
+        <Link
+          to={`/o/${orgRef}/committees`}
+          className="mt-2 flex items-center gap-1.5 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+        >
+          <ArrowLeftRight className="w-3 h-3" />
+          {t("تبديل اللجنة", "Switch Committee")}
+        </Link>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation with progressive disclosure */}
       <nav className="flex-1 px-3 py-3 overflow-y-auto">
-        {NAV_GROUPS.map((group) => (
-          <div key={group.label} className="mb-3">
-            <div className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-              {t(group.label, group.labelEn)}
+        {NAV_GROUPS.map((group) => {
+          const collapsed = collapsedGroups[group.label];
+          // Auto-expand if any item in this group is active
+          const hasActive = group.items.some((item) => {
+            const to = item.to === "" ? base : `${base}${item.to}`;
+            return item.to === "" ? location.pathname === base : (location.pathname === to || location.pathname.startsWith(to + "/"));
+          });
+          const show = !collapsed || hasActive;
+          return (
+            <div key={group.label} className="mb-2">
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className="w-full flex items-center justify-between px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
+              >
+                <span>{t(group.label, group.labelEn)}</span>
+                <ChevronDown className={cn("w-3 h-3 transition-transform", show ? "" : "-rotate-90")} />
+              </button>
+              {show && group.items.map((item) => {
+                const to = item.to === "" ? base : `${base}${item.to}`;
+                const active = item.to === ""
+                  ? location.pathname === base
+                  : location.pathname === to || location.pathname.startsWith(to + "/");
+                return (
+                  <Link
+                    key={item.to}
+                    to={to}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-colors",
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                    )}
+                  >
+                    <item.icon className="w-4 h-4 shrink-0" />
+                    <span>{t(item.label, item.labelEn)}</span>
+                  </Link>
+                );
+              })}
             </div>
-            {group.items.map((item) => {
-              const to = item.to === "" ? base : `${base}${item.to}`;
-              const active = item.to === ""
-                ? location.pathname === base
-                : location.pathname === to || location.pathname.startsWith(to + "/");
-              return (
-                <Link
-                  key={item.to}
-                  to={to}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors",
-                    active
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
-                  )}
-                >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{t(item.label, item.labelEn)}</span>
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Language + Footer */}
@@ -170,8 +223,8 @@ function CommitteeShell() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-60 bg-sidebar flex-col flex">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-3 left-3 text-sidebar-foreground/60 hover:text-sidebar-foreground">
+          <aside className="relative w-60 bg-sidebar flex-col flex max-h-screen overflow-y-auto">
+            <button onClick={() => setMobileOpen(false)} className="absolute top-3 left-3 text-sidebar-foreground/60 hover:text-sidebar-foreground z-10">
               <X className="w-5 h-5" />
             </button>
             <SidebarContent />
@@ -189,7 +242,9 @@ function CommitteeShell() {
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>
           </div>
-          <div className="w-5" />
+          <Link to={`/o/${orgRef}`} className="text-primary">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
         </header>
 
         <main className="flex-1 overflow-y-auto">
