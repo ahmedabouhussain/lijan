@@ -6,6 +6,7 @@ import { MEETING_STATUS, DECISION_STATUS, CLASSIFICATION, formatDate } from "@/l
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AgendaManager from "@/components/raqeem/AgendaManager";
 import MinutesManager from "@/components/raqeem/MinutesManager";
+import MeetingCopilot from "@/components/raqeem/MeetingCopilot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -149,6 +150,7 @@ export default function MeetingDetail() {
 
         {/* Meeting status controls */}
         <div className="flex items-center gap-2 flex-wrap">
+          <MeetingCopilot meetingId={id} committeeId={meeting.committee_id} />
           {status === "scheduled" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")}>
               <Play className="w-3.5 h-3.5" /> بدء الاجتماع
