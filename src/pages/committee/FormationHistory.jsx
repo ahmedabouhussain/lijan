@@ -1,0 +1,126 @@
+import React, { useState, useEffect } from "react";
+import { useCommittee } from "@/lib/CommitteeContext";
+import { base44 } from "@/api/base44Client";
+import { History, Loader2, ChevronDown, ChevronUp, Users, Crown } from "lucide-react";
+import StatusBadge from "@/components/raqeem/StatusBadge";
+
+const ROLE_LABELS = {
+  chair: "رئيس", vice_chair: "نائب رئيس", secretary: "أمين",
+  member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار",
+};
+
+export default function FormationHistory() {
+  const { data } = useCommittee();
+  const [versions, setVersions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState({});
+
+  const load = async () => {
+    if (!data?.committee) return;
+    setLoading(true);
+    try {
+      const res = await base44.entities.CommitteeFormationVersion.filter({
+        committee_id: data.committee.id,
+      }, "-version_number", 50);
+      setVersions(res || []);
+    } catch (e) {}
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [data?.committee?.id]);
+
+  const toggle = (id) => setExpanded((e) => ({ ...e, [id]: !e[id] }));
+
+  if (!data) return null;
+
+  const current = versions.find((v) => v.is_current);
+
+  return (
+    <div className="space-y-4" dir="rtl">
+      <div className="flex items-center gap-2">
+        <History className="w-5 h-5 text-primary" />
+        <h1 className="text-lg font-bold">سجل التشكيل · Formation Register</h1>
+      </div>
+
+      {/* Current formation */}
+      {current && (
+        <div className="raqeem-card p-4 space-y-2 border-r-4 border-r-primary">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-primary" />
+              <span className="font-semibold text-sm">التشكيل الحالي · نسخة #{current.version_number}</span>
+            </div>
+            <StatusBadge label="نافذ" colorClass="bg-green-100 text-green-700" />
+          </div>
+          <div className="text-xs text-muted-foreground">
+            نافذ من {current.effective_date}
+            {current.source_instrument_ref ? ` · السند: ${current.source_instrument_ref}` : ""}
+            {current.reason_for_change ? ` · ${current.reason_for_change}` : ""}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            <Users className="w-3.5 h-3.5 inline" /> {current.member_count} أعضاء
+            {current.chair_name ? ` · الرئيس: ${current.chair_name}` : ""}
+          </div>
+        </div>
+      )}
+
+      {/* Timeline */}
+      {loading ? (
+        <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+      ) : versions.length === 0 ? (
+        <div className="raqeem-card p-6 text-center text-sm text-muted-foreground">
+          لا توجد نسخ تشكيل مسجَّلة. يتم إنشاء نسخة تلقائيًا عند أول تغيير محوَّك.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {versions.map((v) => {
+            const members = v.formation_snapshot ? JSON.parse(v.formation_snapshot) : [];
+            const isOpen = expanded[v.id];
+            return (
+              <div key={v.id} className="raqeem-card p-3">
+                <button
+                  onClick={() => toggle(v.id)}
+                  className="w-full flex items-center justify-between text-right"
+                >
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium">
+                      نسخة #{v.version_number}
+                      {v.is_current && <span className="text-green-600 mr-2">· الحالية</span>}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {v.effective_date} → {v.end_date || "الآن"}
+                      {v.member_count ? ` · ${v.member_count} أعضاء` : ""}
+                    </div>
+                  </div>
+                  {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {isOpen && (
+                  <div className="mt-3 space-y-2">
+                    {v.reason_for_change && (
+                      <div className="text-xs text-muted-foreground">سبب التغيير: {v.reason_for_change}</div>
+                    )}
+                    {v.source_instrument_ref && (
+                      <div className="text-xs text-muted-foreground">السند: {v.source_instrument_ref}</div>
+                    )}
+                    {v.approving_authority && (
+                      <div className="text-xs text-muted-foreground">جهة الاعتماد: {v.approving_authority}</div>
+                    )}
+                    <div className="divide-y divide-border">
+                      {members.map((m, i) => (
+                        <div key={i} className="flex items-center justify-between py-1.5 text-xs">
+                          <span>{m.full_name}</span>
+                          <span className="text-muted-foreground">{ROLE_LABELS[m.role] || m.role}</span>
+                        </div>
+                      ))}
+                      {members.length === 0 && <div className="text-xs text-muted-foreground py-2">لا أعضاء في هذه النسخة</div>}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

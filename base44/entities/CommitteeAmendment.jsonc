@@ -1,0 +1,168 @@
+{
+  "name": "CommitteeAmendment",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "amendment_type": {
+      "type": "string",
+      "title": "Amendment Type",
+      "enum": [
+        "add_member",
+        "end_member",
+        "replace_member",
+        "change_role",
+        "appoint_chair",
+        "appoint_vice_chair",
+        "appoint_secretary",
+        "activate_alternate",
+        "change_organization",
+        "reconstitute",
+        "rename",
+        "change_arabic_name",
+        "change_english_name",
+        "add_mandate",
+        "remove_mandate",
+        "amend_mandate",
+        "change_authority_level",
+        "change_reporting_authority",
+        "change_quorum",
+        "change_voting_rule",
+        "change_term",
+        "extend_committee",
+        "renew_committee",
+        "suspend_committee",
+        "reactivate_committee",
+        "change_classification",
+        "initiate_closure",
+        "dissolve_committee",
+        "other"
+      ],
+      "default": "add_member"
+    },
+    "source_instrument_id": {
+      "type": "string",
+      "title": "Source Founding Instrument ID"
+    },
+    "source_instrument_ref": {
+      "type": "string",
+      "title": "Source Instrument Reference (display)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "before_state": {
+      "type": "string",
+      "title": "Before State (JSON)"
+    },
+    "after_state": {
+      "type": "string",
+      "title": "After State (JSON)"
+    },
+    "impact_analysis": {
+      "type": "string",
+      "title": "Impact Analysis (JSON)"
+    },
+    "impact_summary": {
+      "type": "string",
+      "title": "Impact Summary (human-readable)"
+    },
+    "effective_date": {
+      "type": "string",
+      "title": "Effective Date",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "ai_processing",
+        "secretary_review",
+        "governance_review",
+        "legal_review",
+        "returned",
+        "pending_approval",
+        "approved",
+        "scheduled",
+        "effective",
+        "rejected",
+        "cancelled",
+        "superseded"
+      ],
+      "default": "draft"
+    },
+    "proposed_by_user_id": {
+      "type": "string",
+      "title": "Proposed By User ID"
+    },
+    "proposed_by_name": {
+      "type": "string",
+      "title": "Proposed By Name"
+    },
+    "reviewed_by_name": {
+      "type": "string",
+      "title": "Reviewed By Name"
+    },
+    "approved_by_name": {
+      "type": "string",
+      "title": "Approved By Name"
+    },
+    "approved_at": {
+      "type": "string",
+      "title": "Approved At",
+      "format": "date-time"
+    },
+    "applied_at": {
+      "type": "string",
+      "title": "Applied At",
+      "format": "date-time"
+    },
+    "formation_version_id": {
+      "type": "string",
+      "title": "Resulting Formation Version ID"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "amendment_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

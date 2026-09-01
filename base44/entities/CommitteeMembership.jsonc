@@ -86,6 +86,23 @@
       "title": "Term End",
       "format": "date"
     },
+    "end_reason": {
+      "type": "string",
+      "title": "End Reason (non-destructive)"
+    },
+    "end_source_instrument_ref": {
+      "type": "string",
+      "title": "End Source Instrument Reference"
+    },
+    "end_source_instrument_id": {
+      "type": "string",
+      "title": "End Source Instrument ID"
+    },
+    "ended_at": {
+      "type": "string",
+      "title": "Ended At",
+      "format": "date-time"
+    },
     "institution_name": {
       "type": "string",
       "title": "Representing Institution"

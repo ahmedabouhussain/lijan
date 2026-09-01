@@ -1,0 +1,271 @@
+{
+  "name": "FoundingInstrument",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "instrument_type": {
+      "type": "string",
+      "title": "Instrument Type",
+      "enum": [
+        "law",
+        "amiri_decree",
+        "amiri_decision",
+        "council_of_ministers_decision",
+        "ministerial_decision",
+        "administrative_decision",
+        "board_resolution",
+        "executive_decision",
+        "circular",
+        "directive",
+        "official_memorandum",
+        "official_letter",
+        "charter",
+        "terms_of_reference",
+        "policy_instrument",
+        "inter_entity_agreement",
+        "internal_governance_instrument",
+        "other"
+      ],
+      "default": "ministerial_decision"
+    },
+    "custom_type": {
+      "type": "string",
+      "title": "Custom Instrument Type (for 'other')"
+    },
+    "custom_description": {
+      "type": "string",
+      "title": "Custom Type Description"
+    },
+    "issuing_authority_custom": {
+      "type": "string",
+      "title": "Issuing Authority (custom)"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "Arabic Title"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "English Title"
+    },
+    "instrument_number": {
+      "type": "string",
+      "title": "Instrument Number"
+    },
+    "issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority"
+    },
+    "issuer_name": {
+      "type": "string",
+      "title": "Issuer Name"
+    },
+    "issuer_capacity": {
+      "type": "string",
+      "title": "Issuer Capacity"
+    },
+    "issue_date": {
+      "type": "string",
+      "title": "Issue Date",
+      "format": "date"
+    },
+    "effective_date": {
+      "type": "string",
+      "title": "Effective Date",
+      "format": "date"
+    },
+    "expiry_date": {
+      "type": "string",
+      "title": "Expiry Date",
+      "format": "date"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+    },
+    "official_reference": {
+      "type": "string",
+      "title": "Official Reference"
+    },
+    "publication_reference": {
+      "type": "string",
+      "title": "Publication Reference"
+    },
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "enum": [
+        "ar",
+        "en",
+        "bilingual",
+        "other"
+      ],
+      "default": "ar"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "confidentiality_restrictions": {
+      "type": "string",
+      "title": "Confidentiality Restrictions"
+    },
+    "document_status": {
+      "type": "string",
+      "title": "Document Status",
+      "enum": [
+        "draft",
+        "verified",
+        "approved",
+        "superseded",
+        "repealed",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "parent_instrument_id": {
+      "type": "string",
+      "title": "Parent Instrument ID"
+    },
+    "supersedes_instrument_id": {
+      "type": "string",
+      "title": "Supersedes Instrument ID"
+    },
+    "amended_instrument_id": {
+      "type": "string",
+      "title": "Amended Instrument ID"
+    },
+    "file_url": {
+      "type": "string",
+      "title": "File URL",
+      "format": "uri"
+    },
+    "original_filename": {
+      "type": "string",
+      "title": "Original Filename"
+    },
+    "mime_type": {
+      "type": "string",
+      "title": "MIME Type"
+    },
+    "file_size": {
+      "type": "number",
+      "title": "File Size (bytes)"
+    },
+    "content_hash": {
+      "type": "string",
+      "title": "Content Hash"
+    },
+    "uploaded_by_user_id": {
+      "type": "string",
+      "title": "Uploaded By User ID"
+    },
+    "uploaded_by_name": {
+      "type": "string",
+      "title": "Uploaded By Name"
+    },
+    "verified_by_user_id": {
+      "type": "string",
+      "title": "Verified By User ID"
+    },
+    "verified_by_name": {
+      "type": "string",
+      "title": "Verified By Name"
+    },
+    "verified_at": {
+      "type": "string",
+      "title": "Verified At",
+      "format": "date-time"
+    },
+    "approved_by_user_id": {
+      "type": "string",
+      "title": "Approved By User ID"
+    },
+    "approved_by_name": {
+      "type": "string",
+      "title": "Approved By Name"
+    },
+    "signature_detected": {
+      "type": "boolean",
+      "title": "Signature Detected",
+      "default": false
+    },
+    "signature_verified": {
+      "type": "boolean",
+      "title": "Signature Independently Verified",
+      "default": false
+    },
+    "extraction_status": {
+      "type": "string",
+      "title": "AI Extraction Status",
+      "enum": [
+        "not_started",
+        "processing",
+        "extracted",
+        "confirmed",
+        "rejected"
+      ],
+      "default": "not_started"
+    },
+    "extracted_data": {
+      "type": "string",
+      "title": "Extracted Data (JSON)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "version": {
+      "type": "number",
+      "title": "Version",
+      "default": 1
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "instrument_type",
+    "title_ar",
+    "document_status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

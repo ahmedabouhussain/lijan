@@ -8,7 +8,7 @@ import {
   Lock, UserCircle, AlertTriangle, Menu, X, ArrowLeftRight,
   ClipboardList, Package, UserCheck, PenLine, FileCheck, GitBranch,
   TrendingUp, Brain, Bot, ScrollText, BookOpen, Plug, Bell, Award,
-  Users2, ShieldOff, UserCog,
+  Users2, ShieldOff, UserCog, History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -70,6 +70,14 @@ const NAV_GROUPS = [
       { to: "/memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain },
       { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot },
       { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck },
+    ],
+  },
+  {
+    label: "الحوكمة والدستور", labelEn: "Governance & Constitution",
+    items: [
+      { to: "/establishment", label: "التأسيس والسندات", labelEn: "Establishment", icon: ScrollText },
+      { to: "/formation-history", label: "سجل التشكيل", labelEn: "Formation History", icon: History },
+      { to: "/amendments", label: "التعديلات المحوَّكة", labelEn: "Amendments", icon: GitBranch },
     ],
   },
   {

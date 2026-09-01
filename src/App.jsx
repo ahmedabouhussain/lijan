@@ -36,6 +36,9 @@ import CommitteeLayout from '@/components/raqeem/CommitteeLayout';
 import CommitteeHome from '@/pages/committee/CommitteeHome';
 import CommitteeMembers from '@/pages/committee/CommitteeMembers';
 import CommitteeFormation from '@/pages/committee/CommitteeFormation';
+import CommitteeEstablishment from '@/pages/committee/CommitteeEstablishment';
+import FormationHistory from '@/pages/committee/FormationHistory';
+import CommitteeAmendments from '@/pages/committee/CommitteeAmendments';
 import CommitteeRoles from '@/pages/committee/CommitteeRoles';
 import CommitteeDelegations from '@/pages/committee/CommitteeDelegations';
 import CommitteeAlternates from '@/pages/committee/CommitteeAlternates';
@@ -111,6 +114,9 @@ const AuthenticatedApp = () => {
           {/* People */}
           <Route path="/o/:orgRef/c/:committeeRef/members" element={<CommitteeMembers />} />
           <Route path="/o/:orgRef/c/:committeeRef/formation" element={<CommitteeFormation />} />
+          <Route path="/o/:orgRef/c/:committeeRef/establishment" element={<CommitteeEstablishment />} />
+          <Route path="/o/:orgRef/c/:committeeRef/formation-history" element={<FormationHistory />} />
+          <Route path="/o/:orgRef/c/:committeeRef/amendments" element={<CommitteeAmendments />} />
           <Route path="/o/:orgRef/c/:committeeRef/roles" element={<CommitteeRoles />} />
           <Route path="/o/:orgRef/c/:committeeRef/delegations" element={<CommitteeDelegations />} />
           <Route path="/o/:orgRef/c/:committeeRef/alternates" element={<CommitteeAlternates />} />
