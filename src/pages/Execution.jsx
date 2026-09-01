@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { CheckSquare, AlertTriangle, Clock } from "lucide-react";
+import { CheckSquare, AlertTriangle, Clock, ShieldCheck } from "lucide-react";
 import { ACTION_STATUS, PRIORITY, formatDate, isOverdue, daysUntil } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import ActionTrackerChat from "@/components/raqeem/ActionTrackerChat";
+import ActionManager from "@/components/raqeem/ActionManager";
+import { ESCALATION_LEVEL } from "@/lib/raqeemUtils";
 
 export default function Execution() {
   const [loading, setLoading] = useState(true);
   const [actions, setActions] = useState([]);
   const [view, setView] = useState("all");
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -23,6 +26,11 @@ export default function Execution() {
     }
     load();
   }, []);
+
+  const refresh = (updated) => {
+    setActions((prev) => prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a)));
+    setSelected((s) => (s && s.id === updated.id ? { ...s, ...updated } : s));
+  };
 
   const overdue = actions.filter((a) => isOverdue(a.deadline) && a.status !== "closed" && a.status !== "verified");
   const active = actions.filter((a) => ["assigned", "in_progress", "blocked", "evidence_pending"].includes(a.status));
@@ -91,8 +99,14 @@ export default function Execution() {
               {list.map((a) => {
                 const days = daysUntil(a.deadline);
                 return (
-                  <tr key={a.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
-                    <td className="py-3 px-4 font-medium text-foreground max-w-xs truncate">{a.title}</td>
+                  <tr key={a.id} onClick={() => setSelected(a)} className="border-b border-border last:border-0 hover:bg-secondary/40 cursor-pointer transition-colors">
+                    <td className="py-3 px-4 font-medium text-foreground max-w-xs truncate">
+                      <div className="flex items-center gap-1.5">
+                        {a.title}
+                        {a.extension_status === "requested" && <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                        {a.compliance_verified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                      </div>
+                    </td>
                     <td className="py-3 px-4 text-muted-foreground hidden md:table-cell">{a.owner_name || "—"}</td>
                     <td className={`py-3 px-4 hidden lg:table-cell font-medium ${PRIORITY[a.priority]?.color || ""}`}>
                       {PRIORITY[a.priority]?.ar || a.priority}
@@ -103,7 +117,14 @@ export default function Execution() {
                         <div className="text-xs text-destructive">متأخر {Math.abs(days)} يوم</div>
                       )}
                     </td>
-                    <td className="py-3 px-4"><StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} /></td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                        {a.escalation_level && a.escalation_level !== "none" && (
+                          <StatusBadge label={ESCALATION_LEVEL[a.escalation_level]?.ar} colorClass="text-destructive bg-red-50" />
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -111,6 +132,8 @@ export default function Execution() {
           </table>
         </div>
       )}
+
+      <ActionManager action={selected} open={!!selected} onOpenChange={(o) => !o && setSelected(null)} onUpdate={refresh} />
     </div>
   );
 }

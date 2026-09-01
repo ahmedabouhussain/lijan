@@ -75,6 +75,49 @@
       ],
       "default": "none"
     },
+    "extension_status": {
+      "type": "string",
+      "title": "Extension Status",
+      "enum": [
+        "none",
+        "requested",
+        "approved",
+        "rejected"
+      ],
+      "default": "none"
+    },
+    "extension_reason": {
+      "type": "string",
+      "title": "Extension Reason"
+    },
+    "extension_new_deadline": {
+      "type": "string",
+      "title": "Requested New Deadline",
+      "format": "date"
+    },
+    "extension_reviewed_by": {
+      "type": "string",
+      "title": "Extension Reviewed By"
+    },
+    "last_reminder_at": {
+      "type": "string",
+      "title": "Last Reminder At",
+      "format": "date-time"
+    },
+    "reminder_count": {
+      "type": "number",
+      "title": "Reminder Count",
+      "default": 0
+    },
+    "compliance_verified": {
+      "type": "boolean",
+      "title": "Compliance Verified",
+      "default": false
+    },
+    "compliance_notes": {
+      "type": "string",
+      "title": "Compliance Notes"
+    },
     "status": {
       "type": "string",
       "title": "Status",
