@@ -18,6 +18,7 @@ import { COMMITTEE_TYPES, COMMITTEE_STATUS, MEMBER_ROLE, MEETING_STATUS, DECISIO
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import MemberManager from "@/components/raqeem/MemberManager";
 import MeetingScheduler from "@/components/raqeem/MeetingScheduler";
+import SecretaryPanel from "@/components/raqeem/SecretaryPanel";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -39,22 +40,25 @@ export default function CommitteeDetail() {
   const [meetings, setMeetings] = useState([]);
   const [decisions, setDecisions] = useState([]);
   const [actions, setActions] = useState([]);
+  const [minutes, setMinutes] = useState([]);
   const [activating, setActivating] = useState(false);
 
   async function load() {
     try {
-      const [c, m, meets, decs, acts] = await Promise.all([
+      const [c, m, meets, decs, acts, mins] = await Promise.all([
         base44.entities.Committee.get(id),
         base44.entities.CommitteeMember.filter({ committee_id: id }).catch(() => []),
         base44.entities.Meeting.filter({ committee_id: id }).catch(() => []),
         base44.entities.Decision.filter({ committee_id: id }).catch(() => []),
         base44.entities.Action.filter({ committee_id: id }).catch(() => []),
+        base44.entities.MeetingMinutes.filter({ committee_id: id }).catch(() => []),
       ]);
       setCommittee(c);
       setMembers(m || []);
       setMeetings(meets || []);
       setDecisions(decs || []);
       setActions(acts || []);
+      setMinutes(mins || []);
     } finally {
       setLoading(false);
     }
@@ -171,6 +175,9 @@ export default function CommitteeDetail() {
 
         {/* Right: Tabs content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Secretary Board */}
+          <SecretaryPanel committeeId={id} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
+
           {/* Members */}
           <div className="raqeem-card p-5">
             <div className="flex items-center justify-between mb-3">

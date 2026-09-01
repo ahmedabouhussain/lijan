@@ -1,0 +1,64 @@
+{
+  "name": "Attendance",
+  "type": "object",
+  "properties": {
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "member_id": {
+      "type": "string",
+      "title": "Committee Member ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "member_role": {
+      "type": "string",
+      "title": "Member Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "observer",
+        "advisor"
+      ],
+      "default": "member"
+    },
+    "attendance_status": {
+      "type": "string",
+      "title": "Attendance Status",
+      "enum": [
+        "present",
+        "absent",
+        "apologies",
+        "proxy",
+        "late"
+      ],
+      "default": "present"
+    },
+    "arrival_time": {
+      "type": "string",
+      "title": "Arrival Time"
+    },
+    "proxy_for": {
+      "type": "string",
+      "title": "Proxy For (Member Name)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "meeting_id",
+    "member_name",
+    "attendance_status"
+  ]
+}

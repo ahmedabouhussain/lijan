@@ -1,0 +1,110 @@
+{
+  "name": "MeetingMinutes",
+  "type": "object",
+  "properties": {
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "minutes_number": {
+      "type": "string",
+      "title": "Minutes Number"
+    },
+    "call_to_order": {
+      "type": "string",
+      "title": "Call to Order",
+      "format": "date-time"
+    },
+    "adjournment": {
+      "type": "string",
+      "title": "Adjournment",
+      "format": "date-time"
+    },
+    "present_count": {
+      "type": "number",
+      "title": "Present Count",
+      "default": 0
+    },
+    "absent_count": {
+      "type": "number",
+      "title": "Absent Count",
+      "default": 0
+    },
+    "apologies_count": {
+      "type": "number",
+      "title": "Apologies Count",
+      "default": 0
+    },
+    "quorum_met": {
+      "type": "boolean",
+      "title": "Quorum Met",
+      "default": false
+    },
+    "previous_minutes_approved": {
+      "type": "boolean",
+      "title": "Previous Minutes Approved",
+      "default": false
+    },
+    "body": {
+      "type": "string",
+      "title": "Minutes Body (Markdown)"
+    },
+    "summary_ar": {
+      "type": "string",
+      "title": "\u0645\u0644\u062e\u0635 \u0627\u0644\u0645\u062d\u0636\u0631"
+    },
+    "generated_by_ai": {
+      "type": "boolean",
+      "title": "AI Generated Draft",
+      "default": false
+    },
+    "drafted_by_name": {
+      "type": "string",
+      "title": "Drafted By"
+    },
+    "reviewed_by_name": {
+      "type": "string",
+      "title": "Reviewed By"
+    },
+    "approved_by_name": {
+      "type": "string",
+      "title": "Approved By (Chair)"
+    },
+    "approved_date": {
+      "type": "string",
+      "title": "Approval Date",
+      "format": "date"
+    },
+    "issued_date": {
+      "type": "string",
+      "title": "Issued Date",
+      "format": "date"
+    },
+    "next_meeting_date": {
+      "type": "string",
+      "title": "Next Meeting Date",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "in_review",
+        "approved",
+        "issued",
+        "amended"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "meeting_id",
+    "committee_id",
+    "status"
+  ]
+}

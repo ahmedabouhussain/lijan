@@ -95,6 +95,22 @@ export const CLASSIFICATION = {
   highly_restricted: { ar: "سري للغاية", en: "Highly Restricted" },
 };
 
+export const MINUTES_STATUS = {
+  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
+  in_review: { ar: "قيد المراجعة", en: "In Review", color: "text-blue-700 bg-blue-50" },
+  approved: { ar: "معتمد", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
+  issued: { ar: "صادر", en: "Issued", color: "text-primary bg-primary/10" },
+  amended: { ar: "معدل", en: "Amended", color: "text-amber-700 bg-amber-50" },
+};
+
+export const ATTENDANCE_STATUS = {
+  present: { ar: "حاضر", en: "Present", color: "text-emerald-700 bg-emerald-50" },
+  absent: { ar: "غائب", en: "Absent", color: "text-destructive bg-red-50" },
+  apologies: { ar: "اعتذر", en: "Apologies", color: "text-amber-700 bg-amber-50" },
+  proxy: { ar: "بالنيابة", en: "Proxy", color: "text-blue-700 bg-blue-50" },
+  late: { ar: "متأخر", en: "Late", color: "text-amber-700 bg-amber-50" },
+};
+
 export const MEMBER_ROLE = {
   chair: { ar: "الرئيس", en: "Chair" },
   vice_chair: { ar: "نائب الرئيس", en: "Vice Chair" },

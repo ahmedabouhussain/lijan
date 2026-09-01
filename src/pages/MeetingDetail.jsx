@@ -5,6 +5,7 @@ import { ChevronRight, Calendar, Clock, Users, Gavel, Play, Pause, Square, Ban, 
 import { MEETING_STATUS, DECISION_STATUS, CLASSIFICATION, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AgendaManager from "@/components/raqeem/AgendaManager";
+import MinutesManager from "@/components/raqeem/MinutesManager";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,9 @@ export default function MeetingDetail() {
   const [committee, setCommittee] = useState(null);
   const [agendaItems, setAgendaItems] = useState([]);
   const [decisions, setDecisions] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [attendance, setAttendance] = useState([]);
+  const [minutes, setMinutes] = useState(null);
   const [showDecisionForm, setShowDecisionForm] = useState(false);
   const [savingDecision, setSavingDecision] = useState(false);
   const [decisionForm, setDecisionForm] = useState({
@@ -40,12 +44,18 @@ export default function MeetingDetail() {
         const c = await base44.entities.Committee.get(m.committee_id).catch(() => null);
         setCommittee(c);
       }
-      const [agenda, decs] = await Promise.all([
+      const [agenda, decs, att, mins, mems] = await Promise.all([
         base44.entities.AgendaItem.filter({ meeting_id: id }).catch(() => []),
         base44.entities.Decision.filter({ meeting_id: id }).catch(() => []),
+        base44.entities.Attendance.filter({ meeting_id: id }).catch(() => []),
+        base44.entities.MeetingMinutes.filter({ meeting_id: id }).catch(() => []),
+        m.committee_id ? base44.entities.CommitteeMember.filter({ committee_id: m.committee_id }).catch(() => []) : Promise.resolve([]),
       ]);
       setAgendaItems(agenda || []);
       setDecisions(decs || []);
+      setAttendance(att || []);
+      setMinutes(mins && mins.length > 0 ? mins[0] : null);
+      setMembers(mems || []);
     } finally {
       setLoading(false);
     }
@@ -246,6 +256,9 @@ export default function MeetingDetail() {
           )}
         </div>
       </div>
+
+      {/* Minutes & Attendance */}
+      <MinutesManager meeting={meeting} committee={committee} members={members} attendance={attendance} minutes={minutes} onChanged={load} />
     </div>
   );
 }
