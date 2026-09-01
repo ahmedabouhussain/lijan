@@ -66,7 +66,7 @@ export default function CommitteeAudit() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <ShieldCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("التدقيق وإعادة البناء", "Audit & Reconstruction")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("التدقيق وإعادة البناء", "Audit & Reconstruction", lang)}</h1>
       </div>
 
       {/* Decision Time Machine */}

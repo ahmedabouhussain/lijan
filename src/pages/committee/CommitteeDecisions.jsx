@@ -47,7 +47,7 @@ export default function CommitteeDecisions() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Gavel className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{t("قرارات اللجنة", "Committee Decisions")}</h1>
+          <h1 className="text-lg font-bold">{getTitle("قرارات اللجنة", "Committee Decisions", lang)}</h1>
           <span className="text-sm text-muted-foreground">({decisions.length})</span>
         </div>
         {canCreate && (

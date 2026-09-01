@@ -47,7 +47,7 @@ export default function CommitteeAttendance() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <UserCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("سجل الحضور", "Attendance")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("سجل الحضور", "Attendance", lang)}</h1>
       </div>
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>

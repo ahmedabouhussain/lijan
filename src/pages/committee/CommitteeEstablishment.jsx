@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle, Check, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ const STATUS_COLORS = {
 
 export default function CommitteeEstablishment() {
   const { data, reload } = useCommittee();
+  const { getTitle } = usePageConfig("establishment");
   const [instruments, setInstruments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -154,7 +156,7 @@ export default function CommitteeEstablishment() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ScrollText className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">التأسيس والسندات · Establishment & Instruments</h1>
+          <h1 className="text-lg font-bold">{getTitle("التأسيس والسندات", "Establishment & Instruments")}</h1>
         </div>
         <Button size="sm" onClick={() => setShowForm((s) => !s)}>
           <Upload className="w-4 h-4" /> تسجيل سند

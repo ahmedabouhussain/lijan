@@ -38,7 +38,7 @@ export default function CommitteeVoting() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <CheckSquare className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("التصويت", "Voting")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("التصويت", "Voting", lang)}</h1>
       </div>
 
       {/* Authority Lens for voting capability */}

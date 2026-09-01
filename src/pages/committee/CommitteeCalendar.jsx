@@ -26,7 +26,7 @@ export default function CommitteeCalendar() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Calendar className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("تقويم الاجتماعات", "Meeting Calendar")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("تقويم الاجتماعات", "Meeting Calendar", lang)}</h1>
       </div>
       {all.length === 0 ? (
         <EmptyState icon={Calendar} title={t("لا توجد اجتماعات", "No Meetings")} description={t("لم يتم جدولة أي اجتماعات لهذه اللجنة.", "No meetings scheduled for this committee.")} />

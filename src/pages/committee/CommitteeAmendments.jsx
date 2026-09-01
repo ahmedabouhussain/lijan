@@ -200,7 +200,7 @@ export default function CommitteeAmendments() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <GitBranch className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">التعديلات المحوَّكة · Governed Amendments</h1>
+          <h1 className="text-lg font-bold">{getTitle("التعديلات المحوَّكة", "Governed Amendments")}</h1>
         </div>
         <Button size="sm" onClick={() => setShowForm((s) => !s)}>
           <Plus className="w-4 h-4" /> اقتراح تعديل

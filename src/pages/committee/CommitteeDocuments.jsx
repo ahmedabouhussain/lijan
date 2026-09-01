@@ -27,7 +27,7 @@ export default function CommitteeDocuments() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <FileText className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("وثائق اللجنة", "Committee Documents")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("وثائق اللجنة", "Committee Documents", lang)}</h1>
       </div>
       {docs.length === 0 ? (
         <EmptyState icon={FileText} title={t("لا توجد وثائق", "No Documents")} description={t("لم يتم إصدار وثائق رسمية لهذه اللجنة.", "No official documents issued for this committee.")} />

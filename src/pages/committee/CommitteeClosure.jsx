@@ -39,7 +39,7 @@ export default function CommitteeClosure() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Lock className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("إغلاق اللجنة", "Committee Closure")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("إغلاق اللجنة", "Committee Closure", lang)}</h1>
       </div>
       {isClosed ? (
         <div className="raqeem-card p-6 text-center">

@@ -30,7 +30,7 @@ export default function CommitteeActions() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <CheckSquare className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("إجراءات اللجنة", "Committee Actions")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("إجراءات اللجنة", "Committee Actions", lang)}</h1>
         <span className="text-sm text-muted-foreground">({actions.length})</span>
       </div>
 

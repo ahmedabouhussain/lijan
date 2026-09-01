@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -13,6 +14,7 @@ const ROLE_LABELS = {
 
 export default function FormationHistory() {
   const { data } = useCommittee();
+  const { getTitle } = usePageConfig("formation-history");
   const [versions, setVersions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState({});
@@ -45,7 +47,7 @@ export default function FormationHistory() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <History className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">سجل التشكيل · Formation Register</h1>
+          <h1 className="text-lg font-bold">{getTitle("سجل التشكيل", "Formation Register")}</h1>
         </div>
         {versions.length >= 2 && (
           <Button size="sm" variant={compareMode ? "default" : "outline"} onClick={() => { setCompareMode((c) => !c); setSelA(null); setSelB(null); }} className="inline-flex items-center gap-1.5">

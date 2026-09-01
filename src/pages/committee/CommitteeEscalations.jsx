@@ -27,7 +27,7 @@ export default function CommitteeEscalations() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <TrendingUp className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("التصعيدات", "Escalations")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("التصعيدات", "Escalations", lang)}</h1>
       </div>
       {actions.length === 0 ? (
         <EmptyState icon={TrendingUp} title={t("لا توجد تصعيدات", "No Escalations")} description={t("لم يتم تصعيد أي إجراء.", "No actions have been escalated.")} />

@@ -49,7 +49,7 @@ export default function CommitteeReports() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <BarChart3 className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("تقارير اللجنة", "Committee Reports")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("تقارير اللجنة", "Committee Reports", lang)}</h1>
       </div>
 
       {/* Governance Maturity */}

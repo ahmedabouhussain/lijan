@@ -15,7 +15,7 @@ export default function CommitteeRisks() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Network className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("المخاطر والتبعيات", "Risks & Dependencies")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("المخاطر والتبعيات", "Risks & Dependencies", lang)}</h1>
       </div>
 
       <div className="raqeem-card p-4">
