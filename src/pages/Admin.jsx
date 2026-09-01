@@ -18,7 +18,7 @@ export default function Admin() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Link to="/institutions/new" className="raqeem-card p-5 hover:border-primary/40 transition-colors group">
+        <Link to="/institutions/new" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <div className="flex items-center justify-between mb-3">
             <Building2 className="w-5 h-5 text-primary" />
             <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
@@ -27,36 +27,36 @@ export default function Admin() {
           <p className="text-xs text-muted-foreground mb-3">الملف والهوية والسياسات</p>
           <div className="text-xs text-muted-foreground">{institutions.length} مؤسسة مسجلة · إنشاء جديدة</div>
         </Link>
-        <div className="raqeem-card p-5">
+        <Link to="/admin/users" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <Users className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">المستخدمون · Users</h3>
           <p className="text-xs text-muted-foreground mb-3">الأدوار والصلاحيات</p>
           <div className="text-xs text-muted-foreground">دعوة وإدارة المستخدمين</div>
-        </div>
-        <div className="raqeem-card p-5">
+        </Link>
+        <Link to="/admin/permissions" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <Shield className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">الصلاحيات · Permissions</h3>
           <p className="text-xs text-muted-foreground mb-3">مصفوفة الصلاحيات والتصنيفات</p>
           <div className="text-xs text-muted-foreground">التحكم في الوصول</div>
-        </div>
-        <div className="raqeem-card p-5">
+        </Link>
+        <Link to="/admin/notifications" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <Bell className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">التنبيهات · Notifications</h3>
           <p className="text-xs text-muted-foreground mb-3">إعدادات الإشعارات والتنبيهات</p>
           <div className="text-xs text-muted-foreground">قواعد التصعيد</div>
-        </div>
-        <div className="raqeem-card p-5">
+        </Link>
+        <Link to="/integrations" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <Link2 className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">التكاملات · Integrations</h3>
           <p className="text-xs text-muted-foreground mb-3">مزودو الاجتماعات والتقويم والهوية</p>
           <div className="text-xs text-muted-foreground">طبقة التجريد · Integration Fabric</div>
-        </div>
-        <div className="raqeem-card p-5">
+        </Link>
+        <Link to="/admin/settings" className="raqeem-card p-5 hover:border-primary/40 hover:shadow-sm transition-all group">
           <Settings className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">الإعدادات · Settings</h3>
           <p className="text-xs text-muted-foreground mb-3">الإعدادات العامة والسياسات</p>
           <div className="text-xs text-muted-foreground">الاحتفاظ والتصنيف</div>
-        </div>
+        </Link>
       </div>
     </div>
   );

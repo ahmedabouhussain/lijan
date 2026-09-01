@@ -23,6 +23,10 @@ import Execution from '@/pages/Execution';
 import CalendarPage from '@/pages/CalendarPage';
 import Memory from '@/pages/Memory';
 import Admin from '@/pages/Admin';
+import UsersAdmin from '@/pages/admin/UsersAdmin';
+import PermissionsAdmin from '@/pages/admin/PermissionsAdmin';
+import NotificationsAdmin from '@/pages/admin/NotificationsAdmin';
+import SettingsAdmin from '@/pages/admin/SettingsAdmin';
 import Integrations from '@/pages/Integrations';
 import FounderVault from '@/pages/FounderVault';
 import InstitutionCreate from '@/pages/InstitutionCreate';
@@ -74,6 +78,10 @@ const AuthenticatedApp = () => {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/memory" element={<Memory />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/users" element={<UsersAdmin />} />
+          <Route path="/admin/permissions" element={<PermissionsAdmin />} />
+          <Route path="/admin/notifications" element={<NotificationsAdmin />} />
+          <Route path="/admin/settings" element={<SettingsAdmin />} />
           <Route path="/institutions/new" element={<InstitutionCreate />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/integrations" element={<Integrations />} />
