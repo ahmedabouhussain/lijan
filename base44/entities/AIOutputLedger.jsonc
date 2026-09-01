@@ -2,6 +2,10 @@
   "name": "AIOutputLedger",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
     "output_type": {
       "type": "string",
       "title": "Output Type",
@@ -10,6 +14,7 @@
         "governance_doc",
         "decision_draft",
         "policy_scenario",
+        "institutional_memory",
         "summary",
         "other"
       ],
@@ -102,7 +107,18 @@
     "status"
   ],
   "rls": {
-    "read": {},
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "create": {},
     "update": {
       "$or": [

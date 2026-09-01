@@ -113,6 +113,24 @@ ${decisionsText || 'لا توجد قرارات'}
       status: 'draft',
     });
 
+    // AIOutputLedger — every AI operation must be logged
+    await base44.asServiceRole.entities.AIOutputLedger.create({
+      organization_id: committee?.organization_id || null,
+      output_type: 'meeting_minutes',
+      source_entity_type: 'MeetingMinutes',
+      source_entity_id: minutes.id,
+      source_title: `محضر ${meeting.title || ''}`,
+      committee_id: committeeId,
+      model_used: 'automatic',
+      prompt_summary: 'توليد مسودة محضر اجتماع بالذكاء الاصطناعي',
+      output_summary: (minutesBody || '').substring(0, 500),
+      generated_at: new Date().toISOString(),
+      generated_by_user_id: user.id,
+      generated_by_name: user.full_name || user.email,
+      human_reviewed: false,
+      status: 'generated',
+    });
+
     // Audit log
     await base44.asServiceRole.entities.AuditLog.create({
       action: 'create',

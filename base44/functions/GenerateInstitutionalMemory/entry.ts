@@ -76,7 +76,8 @@ ${actionSummaries}
 
     // Create AIOutputLedger entry
     const ledgerEntry = await base44.asServiceRole.entities.AIOutputLedger.create({
-      output_type: 'summary',
+      organization_id: auth.organization_id,
+      output_type: 'institutional_memory',
       source_entity_type: 'Committee',
       source_entity_id: committee_id,
       source_title: committee.name_ar || committee.name_en,

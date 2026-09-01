@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Lock, ShieldCheck, AlertTriangle, CheckCircle2, Sparkles, Archive, FileText, ArrowRight } from "lucide-react";
+import { Lock, AlertTriangle, CheckCircle2, Sparkles, Archive, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import StatusBadge from "@/components/raqeem/StatusBadge";
-import { DECISION_STATUS, ACTION_STATUS, MINUTES_STATUS } from "@/lib/raqeemUtils";
 
 export default function CommitteeClosure({ committee, members, meetings, decisions, actions, minutes, onChanged }) {
   const [extracting, setExtracting] = useState(false);
@@ -11,7 +9,7 @@ export default function CommitteeClosure({ committee, members, meetings, decisio
   const [memorySummary, setMemorySummary] = useState(null);
   const [error, setError] = useState("");
 
-  const isClosed = committee.status === "closed" || committee.status === "closing";
+  const isClosed = committee.status === "closed";
 
   // Closure readiness gate
   const openDecisions = decisions.filter((d) => !["approved", "rejected", "completed", "closed", "superseded", "deferred"].includes(d.status));
@@ -25,38 +23,11 @@ export default function CommitteeClosure({ committee, members, meetings, decisio
   ];
   const allReady = readinessChecks.every((c) => c.ready);
 
-  // AI memory extraction
+  // AI memory extraction — delegates to governed backend function
   const extractMemory = async () => {
     setExtracting(true);
     setError("");
     try {
-      const decisionSummaries = decisions.map((d) => `- ${d.title} (${DECISION_STATUS[d.status]?.ar || d.status}): ${d.outcome || d.proposal || "—"}`).join("\n");
-      const actionSummaries = actions.map((a) => `- ${a.title}: ${a.owner_name} (${ACTION_STATUS[a.status]?.ar || a.status})`).join("\n");
-      const meetingCount = meetings.length;
-      const memberCount = members.length;
-
-      const prompt = `أنت مؤرشف مؤسسي. استخرج الذاكرة المؤسسية للجنة التالية بصيغة احترافية رسمية باللغة العربية:
-
-اللجنة: ${committee.name_ar || committee.name_en}
-الصلاحية: ${committee.mandate || "—"}
-النطاق: ${committee.scope || "—"}
-عدد الأعضاء: ${memberCount}
-عدد الاجتماعات: ${meetingCount}
-
-القرارات (${decisions.length}):
-${decisionSummaries}
-
-الإجراءات (${actions.length}):
-${actionSummaries}
-
-قدم ملخص الذاكرة المؤسسية يشمل:
-1. الإنجازات الرئيسية (key_achievements): 3-5 إنجازات بارزة
-2. الدروس المستفادة (lessons_learned): 3-5 دروس
-3. الأنماط الملاحظة (patterns): 2-3 أنماط في اتخاذ القرار
-4. التوصيات للجنة الخلف (recommendations): 2-3 توصيات
-
-أعد النتيجة بصيغة JSON بالحقول: key_achievements, lessons_learned, patterns, recommendations (كل حقل نص متعدد الأسطر)`;
-
       const res = await base44.functions.invoke("GenerateInstitutionalMemory", { committee_id: committee.id });
       const data = res.data || res;
       if (data.error) {
@@ -87,17 +58,21 @@ ${actionSummaries}
         sequence: 0,
       });
 
-      // Mark committee as closed
-      await base44.entities.Committee.update(committee.id, { status: "closed" });
-
-      // Audit log
-      await base44.entities.AuditLog.create({
-        action: "close",
-        entity_type: "Committee",
-        entity_id: committee.id,
-        entity_title: committee.name_ar || committee.name_en,
-        description: "إغلاق اللجنة ونقل الذاكرة المؤسسية إلى الخزنة",
+      // Governed closure: transition active → closing → closed via backend command
+      if (committee.status === "active") {
+        await base44.functions.invoke("TransitionCommitteeStatus", {
+          committee_id: committee.id,
+          target_status: "closing",
+          expected_version: committee.version || 1,
+        });
+      }
+      const closeRes = await base44.functions.invoke("TransitionCommitteeStatus", {
+        committee_id: committee.id,
+        target_status: "closed",
+        expected_version: (committee.version || 1) + 1,
       });
+      const closeData = closeRes.data || closeRes;
+      if (closeData.error) throw new Error(closeData.error);
 
       onChanged();
     } catch (e) {

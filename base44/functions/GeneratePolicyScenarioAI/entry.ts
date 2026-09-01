@@ -17,6 +17,13 @@ export default async function(req) {
     const scenario = await base44.asServiceRole.entities.PolicyScenario.get(scenario_id);
     if (!scenario) return Response.json({ error: 'Scenario not found' }, { status: 404 });
 
+    // Resolve organization_id from committee if available
+    let orgId = null;
+    if (committee_id) {
+      const committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
+      if (committee) orgId = committee.organization_id;
+    }
+
     const prompt = `أنت محلل سياسات مؤسسي. قيّم السيناريو التالي واقترح الأثر والتكلفة والجدول الزمني والمخاطر بصيغة احترافية:
 
 العنوان: ${scenario.title || scenario.title_ar}
@@ -49,6 +56,7 @@ export default async function(req) {
 
     // AIOutputLedger
     await base44.asServiceRole.entities.AIOutputLedger.create({
+      organization_id: orgId,
       output_type: 'policy_scenario',
       source_entity_type: 'PolicyScenario',
       source_entity_id: scenario_id,

@@ -84,6 +84,24 @@ Return ONLY the JSON object matching the schema. Be precise, formal, and institu
       response_json_schema: responseSchema,
     });
 
+    // AIOutputLedger — every AI operation must be logged
+    await base44.asServiceRole.entities.AIOutputLedger.create({
+      organization_id: null,
+      output_type: 'governance_doc',
+      source_entity_type: 'Committee',
+      source_entity_id: null,
+      source_title: `${committee_name_ar || committee_name_en} (pre-creation)`,
+      committee_id: null,
+      model_used: 'automatic',
+      prompt_summary: 'توليد هيكل حوكمة للجنة جديدة قبل الإنشاء',
+      output_summary: JSON.stringify(result).substring(0, 500),
+      generated_at: new Date().toISOString(),
+      generated_by_user_id: user.id,
+      generated_by_name: user.full_name || user.email,
+      human_reviewed: false,
+      status: 'generated',
+    });
+
     return Response.json(result);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

@@ -13,10 +13,16 @@ export async function resolveAuthority(base44, opts) {
 
   // Platform admins bypass membership checks but still get logged
   if (user.role === "admin") {
+    // Resolve organization_id from committee if not explicitly provided
+    let resolvedOrgId = organization_id || null;
+    if (!resolvedOrgId && committee_id) {
+      const committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
+      if (committee) resolvedOrgId = committee.organization_id;
+    }
     return {
       allowed: true,
       user,
-      organization_id: organization_id || null,
+      organization_id: resolvedOrgId,
       committee_id: committee_id || null,
       effective_role: "platform_admin",
       authority_context: "platform_admin",
