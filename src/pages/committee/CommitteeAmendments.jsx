@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { base44 } from "@/api/base44Client";
-import { GitBranch, Loader2, Plus, Check, X, AlertTriangle, Send, RotateCcw, CalendarClock } from "lucide-react";
+import { GitBranch, Loader2, Plus, Check, X, AlertTriangle, Send, RotateCcw, CalendarClock, ArrowRightCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,12 @@ const AMENDMENT_TYPES = [
   { value: "other", label: "أخرى" },
 ];
 
+const REVIEW_STAGES = [
+  { key: "secretary_review", label: "مراجعة الأمين", seq: 1 },
+  { key: "governance_review", label: "مراجعة الحوكمة", seq: 2 },
+  { key: "legal_review", label: "المراجعة القانونية", seq: 3 },
+];
+
 const STATUS_COLORS = {
   draft: "bg-secondary text-secondary-foreground",
   pending_approval: "bg-amber-100 text-amber-700",
@@ -31,6 +37,17 @@ const STATUS_COLORS = {
   returned: "bg-orange-100 text-orange-700",
   cancelled: "bg-secondary text-muted-foreground",
   superseded: "bg-secondary text-muted-foreground",
+  secretary_review: "bg-blue-100 text-blue-700",
+  governance_review: "bg-indigo-100 text-indigo-700",
+  legal_review: "bg-violet-100 text-violet-700",
+  scheduled: "bg-cyan-100 text-cyan-700",
+};
+
+const STATUS_LABELS = {
+  draft: "مسودة", pending_approval: "بانتظار الاعتماد", approved: "معتمد", effective: "نافذ",
+  rejected: "مرفوض", returned: "مُرجَع", cancelled: "ملغي", superseded: "مُستبدَل",
+  secretary_review: "مراجعة الأمين", governance_review: "مراجعة الحوكمة",
+  legal_review: "مراجعة قانونية", scheduled: "مجدول للنفاذ",
 };
 
 export default function CommitteeAmendments() {
@@ -40,6 +57,8 @@ export default function CommitteeAmendments() {
   const [showForm, setShowForm] = useState(false);
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
+  const [reviewStages, setReviewStages] = useState({});
+  const [reviewForm, setReviewForm] = useState({ amendmentId: null, comments: "" });
 
   const urlParams = new URLSearchParams(window.location.search);
   const presetType = urlParams.get("type");
@@ -64,6 +83,21 @@ export default function CommitteeAmendments() {
         committee_id: data.committee.id,
       }, "-created_date", 50);
       setAmendments(res || []);
+      // Fetch review stages for amendments in review
+      const inReview = (res || []).filter((a) =>
+        ["secretary_review", "governance_review", "legal_review", "pending_approval", "effective"].includes(a.status)
+      );
+      if (inReview.length > 0) {
+        const stages = await base44.entities.AmendmentReviewStage.filter({
+          committee_id: data.committee.id,
+        }, "sequence_order", 100).catch(() => []);
+        const byAmendment = {};
+        (stages || []).forEach((s) => {
+          if (!byAmendment[s.amendment_id]) byAmendment[s.amendment_id] = [];
+          byAmendment[s.amendment_id].push(s);
+        });
+        setReviewStages(byAmendment);
+      }
     } catch (e) {}
     setLoading(false);
   };
@@ -124,7 +158,11 @@ export default function CommitteeAmendments() {
   };
 
   const transition = async (id, action, extra = {}) => {
-    const labels = { submit: "إرسال للاعتماد", return: "إرجاع للتصحيح", schedule: "جدولة للنفاذ المستقبلي" };
+    const labels = {
+      submit: "إرسال للاعتماد", submit_for_review: "إرسال للمراجعة متعددة المراحل",
+      advance_review: "تجاوز مرحلة المراجعة", return: "إرجاع للتصحيح",
+      schedule: "جدولة للنفاذ المستقبلي", cancel: "إلغاء",
+    };
     if (action === "schedule") {
       const date = prompt("تاريخ النفاذ المستقبلي (YYYY-MM-DD):");
       if (!date) return;
@@ -135,6 +173,20 @@ export default function CommitteeAmendments() {
       const res = await base44.functions.invoke("TransitionAmendmentStatus", { amendment_id: id, transition: action, ...extra });
       const d = res.data || res;
       if (d.error) setMsg(d.error); else { setMsg(`${labels[action]} — الحالة: ${d.new_status}`); load(); }
+    } catch (e) { setMsg(e?.message || "خطأ"); }
+    setBusy("");
+  };
+
+  const advanceReview = async (id) => {
+    const comments = reviewForm.amendmentId === id ? reviewForm.comments : "";
+    setBusy(`advance_review-${id}`);
+    try {
+      const res = await base44.functions.invoke("TransitionAmendmentStatus", {
+        amendment_id: id, transition: "advance_review", review_notes: comments,
+      });
+      const d = res.data || res;
+      if (d.error) setMsg(d.error);
+      else { setMsg(`تجاوز مرحلة المراجعة — الحالة: ${d.new_status}`); load(); setReviewForm({ amendmentId: null, comments: "" }); }
     } catch (e) { setMsg(e?.message || "خطأ"); }
     setBusy("");
   };
@@ -203,7 +255,7 @@ export default function CommitteeAmendments() {
         <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
       ) : amendments.length === 0 ? (
         <div className="raqeem-card p-6 text-center text-sm text-muted-foreground">
-          لا توجد تعديلات. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح → تحليل أثر → اعتماد → نفاذ.
+          لا توجد تعديلات. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح → تحليل أثر → مراجعة متعددة المراحل → اعتماد → نفاذ.
         </div>
       ) : (
         <div className="space-y-2">
@@ -218,7 +270,7 @@ export default function CommitteeAmendments() {
                   {a.source_instrument_ref && <div className="text-xs text-muted-foreground">السند: {a.source_instrument_ref}</div>}
                   {a.effective_date && <div className="text-xs text-muted-foreground">نفاذ: {a.effective_date}</div>}
                 </div>
-                <StatusBadge label={a.status} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
+                <StatusBadge label={STATUS_LABELS[a.status] || a.status} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
               </div>
               {a.impact_summary && (
                 <div className="flex items-start gap-1.5 p-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
@@ -229,11 +281,30 @@ export default function CommitteeAmendments() {
               {a.proposed_by_name && (
                 <div className="text-xs text-muted-foreground">اقترح: {a.proposed_by_name}</div>
               )}
+
+              {/* Review chain progress for amendments in review */}
+              {["secretary_review", "governance_review", "legal_review", "pending_approval"].includes(a.status) && (
+                <ReviewChain
+                  amendment={a}
+                  stages={reviewStages[a.id] || []}
+                  reviewForm={reviewForm}
+                  setReviewForm={setReviewForm}
+                  onAdvance={() => advanceReview(a.id)}
+                  onReturn={() => transition(a.id, "return")}
+                  onReject={() => reject(a.id)}
+                  busy={busy}
+                />
+              )}
+
               {a.status === "draft" && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <Button size="sm" variant="default" disabled={busy === `submit_for_review-${a.id}`} onClick={() => transition(a.id, "submit_for_review")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    إرسال للمراجعة متعددة المراحل
+                  </Button>
                   <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
                     {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إرسال للاعتماد
+                    إرسال مباشر للاعتماد
                   </Button>
                   <Button size="sm" variant="ghost" disabled={busy === `reject-${a.id}`} onClick={() => reject(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
                     {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
@@ -242,10 +313,14 @@ export default function CommitteeAmendments() {
                 </div>
               )}
               {a.status === "returned" && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <Button size="sm" variant="default" disabled={busy === `submit_for_review-${a.id}`} onClick={() => transition(a.id, "submit_for_review")} className="inline-flex items-center gap-1.5 h-7 text-xs">
+                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    إعادة إرسال للمراجعة
+                  </Button>
                   <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
                     {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إعادة إرسال
+                    إعادة إرسال مباشر
                   </Button>
                 </div>
               )}
@@ -273,8 +348,97 @@ export default function CommitteeAmendments() {
                   </Button>
                 </div>
               )}
+              {a.status === "scheduled" && (
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="text-xs text-cyan-700 inline-flex items-center gap-1">
+                    <CalendarClock className="w-3.5 h-3.5" /> سيُنفَّذ تلقائيًا في {a.effective_date}
+                  </span>
+                  <Button size="sm" variant="ghost" disabled={busy === `cancel-${a.id}`} onClick={() => transition(a.id, "cancel")} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
+                    {busy === `cancel-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
+                    إلغاء الجدولة
+                  </Button>
+                </div>
+              )}
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReviewChain({ amendment, stages, reviewForm, setReviewForm, onAdvance, onReturn, onReject, busy }) {
+  const currentSeq = REVIEW_STAGES.find((s) => s.key === amendment.status)?.seq;
+  const isReviewStage = ["secretary_review", "governance_review", "legal_review"].includes(amendment.status);
+
+  return (
+    <div className="p-2.5 rounded-md bg-secondary/30 space-y-2.5">
+      {/* Stage progress indicator */}
+      <div className="flex items-center gap-1.5">
+        {REVIEW_STAGES.map((stage, i) => {
+          const stageRecord = stages.find((s) => s.stage === stage.key);
+          const isDone = stageRecord && stageRecord.status === "completed";
+          const isCurrent = amendment.status === stage.key;
+          const isPast = currentSeq && stage.seq < currentSeq;
+          return (
+            <React.Fragment key={stage.key}>
+              <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs ${
+                isCurrent ? "bg-primary text-primary-foreground font-medium" :
+                isDone || isPast ? "bg-green-100 text-green-700" :
+                "bg-secondary text-muted-foreground"
+              }`}>
+                {isDone || isPast ? <Check className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center text-[10px]">{stage.seq}</span>}
+                {stage.label}
+              </div>
+              {i < REVIEW_STAGES.length - 1 && <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" />}
+            </React.Fragment>
+          );
+        })}
+        <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" />
+        <div className={`px-2 py-1 rounded text-xs ${
+          amendment.status === "pending_approval" ? "bg-amber-100 text-amber-700 font-medium" : "bg-secondary text-muted-foreground"
+        }`}>
+          اعتماد
+        </div>
+      </div>
+
+      {/* Completed stage details */}
+      {stages.length > 0 && (
+        <div className="space-y-1">
+          {stages.filter((s) => s.status === "completed").map((s) => (
+            <div key={s.id} className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Check className="w-3 h-3 text-green-600" />
+              <span className="font-medium">{s.stage_label}</span>
+              <span>— {s.reviewer_name}</span>
+              {s.comments && <span className="truncate">· {s.comments}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Advance review form */}
+      {isReviewStage && (
+        <div className="space-y-2 pt-1">
+          <Input
+            placeholder="ملاحظات المراجعة (اختياري)..."
+            value={reviewForm.amendmentId === amendment.id ? reviewForm.comments : ""}
+            onChange={(e) => setReviewForm({ amendmentId: amendment.id, comments: e.target.value })}
+            className="h-7 text-xs"
+          />
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button size="sm" variant="default" disabled={busy === `advance_review-${amendment.id}`} onClick={onAdvance} className="inline-flex items-center gap-1.5 h-7 text-xs">
+              {busy === `advance_review-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+              تجاوز هذه المرحلة
+            </Button>
+            <Button size="sm" variant="ghost" disabled={busy === `return-${amendment.id}`} onClick={onReturn} className="inline-flex items-center gap-1.5 h-7 text-xs">
+              {busy === `return-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+              إرجاع للتصحيح
+            </Button>
+            <Button size="sm" variant="ghost" disabled={busy === `reject-${amendment.id}`} onClick={onReject} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
+              {busy === `reject-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
+              رفض
+            </Button>
+          </div>
         </div>
       )}
     </div>

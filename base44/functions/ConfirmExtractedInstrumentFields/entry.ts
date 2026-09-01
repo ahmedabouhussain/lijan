@@ -34,6 +34,17 @@ export default async function(req) {
       verified_at: new Date().toISOString(),
     });
 
+    // Mark all pending extracted fields as confirmed (granular field review tracking)
+    await base44.asServiceRole.entities.ExtractedInstrumentField.updateMany(
+      { instrument_id, review_status: 'pending' },
+      { $set: {
+        review_status: 'confirmed',
+        reviewed_by_name: auth.user.full_name || auth.user.email,
+        reviewed_by_user_id: auth.user.id,
+        reviewed_at: new Date().toISOString(),
+      }}
+    ).catch(() => {});
+
     await base44.asServiceRole.entities.AuditEvent.create({
       organization_id: auth.organization_id, committee_id: instrument.committee_id,
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,

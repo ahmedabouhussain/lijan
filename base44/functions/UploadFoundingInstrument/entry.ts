@@ -70,6 +70,26 @@ export default async function(req) {
       version: 1,
     });
 
+    // Create initial instrument version record (granular version tracking)
+    await base44.asServiceRole.entities.InstrumentVersion.create({
+      organization_id: auth.organization_id,
+      committee_id,
+      instrument_id: instrument.id,
+      version_number: 1,
+      file_url: file_url || null,
+      original_filename: original_filename || null,
+      mime_type: mime_type || null,
+      file_size: file_size || null,
+      content_hash: content_hash || null,
+      change_summary: 'النسخة الأولى — تسجيل السند التأسيسي',
+      language: language || 'ar',
+      uploaded_by_user_id: auth.user.id,
+      uploaded_by_name: auth.user.full_name || auth.user.email,
+      uploaded_at: new Date().toISOString(),
+      is_current: true,
+      status: 'active',
+    });
+
     await base44.asServiceRole.entities.AuditEvent.create({
       organization_id: auth.organization_id, committee_id,
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,

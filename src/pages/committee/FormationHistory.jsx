@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { base44 } from "@/api/base44Client";
-import { History, Loader2, ChevronDown, ChevronUp, Users, Crown } from "lucide-react";
+import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { Button } from "@/components/ui/button";
+import FormationDiff from "@/components/raqeem/FormationDiff";
 
 const ROLE_LABELS = {
   chair: "رئيس", vice_chair: "نائب رئيس", secretary: "أمين",
@@ -14,6 +16,9 @@ export default function FormationHistory() {
   const [versions, setVersions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState({});
+  const [compareMode, setCompareMode] = useState(false);
+  const [selA, setSelA] = useState(null);
+  const [selB, setSelB] = useState(null);
 
   const load = async () => {
     if (!data?.committee) return;
@@ -37,10 +42,22 @@ export default function FormationHistory() {
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="flex items-center gap-2">
-        <History className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">سجل التشكيل · Formation Register</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <History className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold">سجل التشكيل · Formation Register</h1>
+        </div>
+        {versions.length >= 2 && (
+          <Button size="sm" variant={compareMode ? "default" : "outline"} onClick={() => { setCompareMode((c) => !c); setSelA(null); setSelB(null); }} className="inline-flex items-center gap-1.5">
+            <GitCompare className="w-4 h-4" /> {compareMode ? "إنهاء المقارنة" : "مقارنة النسخ"}
+          </Button>
+        )}
       </div>
+
+      {/* Comparison panel */}
+      {compareMode && selA && selB && (
+        <FormationDiff versionA={versions.find((v) => v.id === selA)} versionB={versions.find((v) => v.id === selB)} />
+      )}
 
       {/* Current formation */}
       {current && (
@@ -78,22 +95,41 @@ export default function FormationHistory() {
             const isOpen = expanded[v.id];
             return (
               <div key={v.id} className="raqeem-card p-3">
-                <button
-                  onClick={() => toggle(v.id)}
-                  className="w-full flex items-center justify-between text-right"
-                >
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium">
-                      نسخة #{v.version_number}
-                      {v.is_current && <span className="text-green-600 mr-2">· الحالية</span>}
+                <div className="flex items-center gap-2">
+                  {compareMode && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => setSelA((s) => (s === v.id ? null : v.id))}
+                        className={`w-7 h-7 rounded text-xs font-bold border transition-colors ${
+                          selA === v.id ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-secondary"
+                        }`}
+                      >A</button>
+                      <button
+                        onClick={() => setSelB((s) => (s === v.id ? null : v.id))}
+                        className={`w-7 h-7 rounded text-xs font-bold border transition-colors ${
+                          selB === v.id ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-secondary"
+                        }`}
+                      >B</button>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {v.effective_date} → {v.end_date || "الآن"}
-                      {v.member_count ? ` · ${v.member_count} أعضاء` : ""}
+                  )}
+                  <button
+                    onClick={() => !compareMode && toggle(v.id)}
+                    disabled={compareMode}
+                    className="flex-1 flex items-center justify-between text-right"
+                  >
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium">
+                        نسخة #{v.version_number}
+                        {v.is_current && <span className="text-green-600 mr-2">· الحالية</span>}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {v.effective_date} → {v.end_date || "الآن"}
+                        {v.member_count ? ` · ${v.member_count} أعضاء` : ""}
+                      </div>
                     </div>
-                  </div>
-                  {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
+                    {!compareMode && (isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />)}
+                  </button>
+                </div>
                 {isOpen && (
                   <div className="mt-3 space-y-2">
                     {v.reason_for_change && (

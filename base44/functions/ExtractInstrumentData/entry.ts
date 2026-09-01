@@ -34,6 +34,20 @@ export default async function(req) {
       extraction_status: 'processing',
     });
 
+    // Create AI extraction job record (granular job tracking)
+    const extractionJob = await base44.asServiceRole.entities.AIExtractionJob.create({
+      organization_id: auth.organization_id,
+      instrument_id,
+      instrument_version_id: null,
+      job_type: 'field_extraction',
+      job_status: 'processing',
+      model_used: 'gemini_3_flash',
+      prompt_summary: 'استخراج بيانات السند التأسيسي — حقول السند واللجنة والتشكيل والحوكمة',
+      started_at: new Date().toISOString(),
+      triggered_by_user_id: auth.user.id,
+      triggered_by_name: auth.user.full_name || auth.user.email,
+    });
+
     const prompt = `You are a legal document analyst specializing in Arabic and English government instruments.
 Analyze the attached document and extract structured data about a committee establishment.
 
@@ -119,6 +133,63 @@ CRITICAL RULES:
       extraction_status: 'extracted',
       extracted_data: JSON.stringify(extracted),
       signature_detected: extracted.signature_detected === true,
+    });
+
+    // Flatten extracted data into individual ExtractedInstrumentField records (granular field tracking)
+    const confidenceMap = { high: 0.9, medium: 0.7, low: 0.4 };
+    const fieldLabels = {
+      'instrument.instrument_type': 'نوع السند', 'instrument.instrument_number': 'رقم السند',
+      'instrument.issuing_authority': 'جهة الإصدار', 'instrument.issue_date': 'تاريخ الإصدار',
+      'instrument.effective_date': 'تاريخ النفاذ', 'instrument.expiry_date': 'تاريخ الانتهاء',
+      'committee.name_ar': 'اسم اللجنة (عربي)', 'committee.name_en': 'اسم اللجنة (إنجليزي)',
+      'committee.committee_type': 'نوع اللجنة', 'committee.purpose': 'الغرض',
+      'committee.mandate': 'الصلاحية', 'committee.powers': 'الصلاحيات',
+      'committee.reporting_authority': 'جهة الرفع', 'committee.meeting_frequency': 'تواتر الاجتماعات',
+      'formation.chair': 'الرئيس', 'formation.deputy_chair': 'نائب الرئيس',
+      'formation.secretary': 'الأمين', 'formation.members': 'الأعضاء',
+      'formation.alternates': 'البدلاء', 'formation.observers': 'المراقبون',
+      'governance.quorum': 'النصاب', 'governance.voting_threshold': 'عتبة التصويت',
+      'governance.casting_vote_rule': 'قاعدة التصويت الحاسم', 'governance.recusal_rule': 'قاعدة التنحي',
+      'governance.delegation_rule': 'قاعدة التفويض', 'governance.alternate_rule': 'قاعدة البدلاء',
+    };
+
+    const flatFields = [];
+    for (const [section, fields] of Object.entries(extracted)) {
+      if (section === 'signature_detected' || typeof fields !== 'object' || fields === null) continue;
+      for (const [key, val] of Object.entries(fields || {})) {
+        if (typeof val !== 'object' || val === null) continue;
+        const value = val.value;
+        const conf = val.confidence;
+        if (!value || conf === 'not_found') continue;
+        const fieldKey = `${section}.${key}`;
+        flatFields.push({
+          organization_id: auth.organization_id,
+          instrument_id,
+          extraction_job_id: extractionJob.id,
+          field_key: fieldKey,
+          field_label: fieldLabels[fieldKey] || fieldKey,
+          extracted_value: String(value).slice(0, 2000),
+          confidence: confidenceMap[conf] || 0.5,
+          source_snippet: val.source_excerpt || null,
+          review_status: 'pending',
+          field_type: key.includes('date') ? 'date' : key.includes('members') ? 'entity_reference' : 'text',
+        });
+      }
+    }
+
+    if (flatFields.length > 0) {
+      await base44.asServiceRole.entities.ExtractedInstrumentField.bulkCreate(flatFields);
+    }
+
+    // Update extraction job with results
+    const avgConfidence = flatFields.length > 0
+      ? flatFields.reduce((sum, f) => sum + f.confidence, 0) / flatFields.length
+      : 0;
+    await base44.asServiceRole.entities.AIExtractionJob.update(extractionJob.id, {
+      job_status: 'completed',
+      completed_at: new Date().toISOString(),
+      field_count: flatFields.length,
+      average_confidence: Math.round(avgConfidence * 100) / 100,
     });
 
     await base44.asServiceRole.entities.AuditEvent.create({
