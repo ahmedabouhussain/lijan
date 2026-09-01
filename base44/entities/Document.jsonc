@@ -33,6 +33,8 @@
         "evidence",
         "correspondence",
         "draft_decision",
+        "establishing_decision",
+        "charter",
         "other"
       ],
       "default": "memo"

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import EstablishingDocumentSection from "@/components/raqeem/EstablishingDocumentSection";
+import SupportingDocumentsSection from "@/components/raqeem/SupportingDocumentsSection";
 
 const COMMITTEE_TYPES = [
   { value: "permanent_council", label: "مجلس دائم" },
@@ -47,6 +49,8 @@ export default function CommitteeCreateV2() {
     quorum_count: 3, voting_rule: "simple_majority", meeting_cadence: "monthly",
   });
   const [newMember, setNewMember] = useState({ full_name: "", role: "member", institution_name: "" });
+  const [establishingDoc, setEstablishingDoc] = useState({ type: "", reference: "", date: "", file_url: "", file_name: "" });
+  const [supportingDocs, setSupportingDocs] = useState([]);
 
   const publicId = orgRef?.split("--").pop() || orgRef;
 
@@ -59,6 +63,31 @@ export default function CommitteeCreateV2() {
   }, [publicId]);
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  const applyExtracted = (data) => {
+    setForm((f) => ({
+      ...f,
+      name_ar: data.name_ar || f.name_ar,
+      name_en: data.name_en || f.name_en,
+      type: data.type || f.type,
+      mandate: data.mandate || f.mandate,
+      appointing_authority: data.appointing_authority || f.appointing_authority,
+      term_start: data.term_start || f.term_start,
+      term_end: data.term_end || f.term_end,
+      chair_name: data.chair_name || f.chair_name,
+      secretary_name: data.secretary_name || f.secretary_name,
+      quorum_count: data.quorum_count || f.quorum_count,
+      voting_rule: data.voting_rule || f.voting_rule,
+      meeting_cadence: data.meeting_cadence || f.meeting_cadence,
+      classification: data.classification || f.classification,
+    }));
+    setEstablishingDoc((d) => ({
+      ...d,
+      type: data.establishing_doc_type || d.type,
+      reference: data.establishing_doc_reference || d.reference,
+      date: data.establishing_doc_date || d.date,
+    }));
+  };
 
   const addMember = () => {
     if (!newMember.full_name.trim()) return;
@@ -74,7 +103,13 @@ export default function CommitteeCreateV2() {
     setSubmitting(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("CreateCommittee", { ...form, organization_id: orgId, members });
+      const res = await base44.functions.invoke("CreateCommittee", {
+        ...form,
+        organization_id: orgId,
+        members,
+        establishing_doc: establishingDoc,
+        supporting_docs: supportingDocs,
+      });
       const data = res.data || res;
       if (data.error) {
         setError(data.error);
@@ -209,6 +244,20 @@ export default function CommitteeCreateV2() {
             </select>
             <Button size="sm" variant="outline" onClick={addMember}><Plus className="w-4 h-4" /></Button>
           </div>
+        </div>
+
+        {/* Establishing document */}
+        <div className="space-y-3 pt-4 border-t border-border">
+          <EstablishingDocumentSection
+            value={establishingDoc}
+            onChange={setEstablishingDoc}
+            onExtracted={applyExtracted}
+          />
+        </div>
+
+        {/* Supporting documents */}
+        <div className="space-y-3 pt-4 border-t border-border">
+          <SupportingDocumentsSection value={supportingDocs} onChange={setSupportingDocs} />
         </div>
 
         <div className="p-3 rounded-md bg-secondary/40 text-xs text-muted-foreground">

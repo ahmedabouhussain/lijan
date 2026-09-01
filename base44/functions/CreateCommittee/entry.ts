@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
 // CreateCommittee — governed committee creation command.
 // Verifies org ownership/admin, creates Committee + CommitteeMandate + CommitteeMembership records.
+// Optionally stores the establishing document (decision/charter) and supporting documents.
 // Committee remains Draft until activation readiness is satisfied and TransitionCommitteeStatus is called.
 
 export default async function(req) {
@@ -15,6 +16,7 @@ export default async function(req) {
       organization_id, name_ar, name_en, type, mandate, appointing_authority,
       term_start, term_end, classification, chair_name, secretary_name,
       quorum_count, voting_rule, meeting_cadence, members,
+      establishing_doc, supporting_docs,
     } = body;
 
     if (!organization_id || !name_ar || !name_en) {
@@ -45,6 +47,9 @@ export default async function(req) {
       public_id: publicId,
       mandate: mandate || null,
       appointing_authority: appointing_authority || null,
+      establishing_doc_type: establishing_doc?.type || null,
+      establishing_doc_reference: establishing_doc?.reference || null,
+      establishing_doc_date: establishing_doc?.date || null,
       chair_name: chair_name || null,
       secretary_name: secretary_name || null,
       quorum_count: quorum_count || 3,
@@ -118,6 +123,67 @@ export default async function(req) {
         term_end: term_end || null,
         protocol_order: m.protocol_order || 99,
         institution_name: m.institution_name || null,
+      });
+    }
+
+    // Store establishing document (decision / charter) if a file was uploaded
+    if (establishing_doc && establishing_doc.file_url) {
+      const doc = await base44.asServiceRole.entities.Document.create({
+        organization_id,
+        committee_id: committee.id,
+        title: establishing_doc.file_name || 'مستند التأسيس',
+        document_type: 'establishing_decision',
+        classification: classification || 'internal',
+        owner_name: user.full_name || user.email,
+        owner_user_id: user.id,
+        status: 'published',
+      });
+      const version = await base44.asServiceRole.entities.DocumentVersion.create({
+        organization_id,
+        committee_id: committee.id,
+        document_id: doc.id,
+        version_number: 1,
+        file_url: establishing_doc.file_url,
+        file_name: establishing_doc.file_name || null,
+        uploaded_by_name: user.full_name || user.email,
+        uploaded_by_user_id: user.id,
+        uploaded_at: new Date().toISOString(),
+        status: 'current',
+      });
+      await base44.asServiceRole.entities.Document.update(doc.id, {
+        current_version_id: version.id,
+        current_version_number: 1,
+      });
+    }
+
+    // Store supporting documents
+    for (const sd of (supporting_docs || [])) {
+      if (!sd.file_url) continue;
+      const doc = await base44.asServiceRole.entities.Document.create({
+        organization_id,
+        committee_id: committee.id,
+        title: sd.title || sd.file_name || 'مستند داعم',
+        document_type: sd.document_type || 'other',
+        classification: classification || 'internal',
+        owner_name: user.full_name || user.email,
+        owner_user_id: user.id,
+        status: 'draft',
+      });
+      const version = await base44.asServiceRole.entities.DocumentVersion.create({
+        organization_id,
+        committee_id: committee.id,
+        document_id: doc.id,
+        version_number: 1,
+        file_url: sd.file_url,
+        file_name: sd.file_name || null,
+        uploaded_by_name: user.full_name || user.email,
+        uploaded_by_user_id: user.id,
+        uploaded_at: new Date().toISOString(),
+        status: 'current',
+      });
+      await base44.asServiceRole.entities.Document.update(doc.id, {
+        current_version_id: version.id,
+        current_version_number: 1,
       });
     }
 

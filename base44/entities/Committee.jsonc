@@ -57,6 +57,28 @@
       "type": "string",
       "title": "Establishing Authority"
     },
+    "establishing_doc_type": {
+      "type": "string",
+      "title": "Establishing Document Type",
+      "enum": [
+        "decision",
+        "circular",
+        "decree",
+        "resolution",
+        "charter",
+        "other"
+      ],
+      "default": "other"
+    },
+    "establishing_doc_reference": {
+      "type": "string",
+      "title": "Establishing Document Reference"
+    },
+    "establishing_doc_date": {
+      "type": "string",
+      "title": "Establishing Document Date",
+      "format": "date"
+    },
     "appointing_authority": {
       "type": "string",
       "title": "Appointing Authority (V2)"
