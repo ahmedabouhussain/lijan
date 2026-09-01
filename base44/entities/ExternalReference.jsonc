@@ -1,0 +1,93 @@
+{
+  "name": "ExternalReference",
+  "type": "object",
+  "properties": {
+    "raqeem_entity_type": {
+      "type": "string",
+      "title": "RAQEEM Entity Type",
+      "enum": [
+        "Meeting",
+        "Decision",
+        "Action",
+        "Committee",
+        "Institution",
+        "Document"
+      ]
+    },
+    "raqeem_record_id": {
+      "type": "string",
+      "title": "RAQEEM Record ID"
+    },
+    "external_system": {
+      "type": "string",
+      "title": "External System",
+      "enum": [
+        "teams",
+        "zoom",
+        "webex",
+        "google_meet",
+        "outlook",
+        "google_calendar",
+        "gmail",
+        "sharepoint",
+        "google_drive",
+        "erp",
+        "hr",
+        "dms",
+        "esign",
+        "government_api",
+        "sovereign_channel",
+        "other"
+      ]
+    },
+    "external_record_id": {
+      "type": "string",
+      "title": "External Record ID"
+    },
+    "external_record_type": {
+      "type": "string",
+      "title": "External Record Type"
+    },
+    "external_url": {
+      "type": "string",
+      "title": "External URL",
+      "format": "uri"
+    },
+    "mapping_type": {
+      "type": "string",
+      "title": "Mapping Type",
+      "enum": [
+        "created_in",
+        "synced_to",
+        "linked",
+        "mirrored",
+        "propagated_to"
+      ],
+      "default": "linked"
+    },
+    "sync_status": {
+      "type": "string",
+      "title": "Sync Status",
+      "enum": [
+        "synced",
+        "pending",
+        "failed",
+        "stale",
+        "manual",
+        "not_configured"
+      ],
+      "default": "not_configured"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "title": "Last Synced At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "raqeem_entity_type",
+    "raqeem_record_id",
+    "external_system",
+    "sync_status"
+  ]
+}

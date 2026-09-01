@@ -1,0 +1,71 @@
+{
+  "name": "FounderVaultEntry",
+  "type": "object",
+  "properties": {
+    "entry_type": {
+      "type": "string",
+      "title": "Entry Type",
+      "enum": [
+        "adr",
+        "principle",
+        "non_negotiable",
+        "book_chapter",
+        "moat",
+        "roadmap_item",
+        "ip_register"
+      ],
+      "default": "adr"
+    },
+    "code": {
+      "type": "string",
+      "title": "Code"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title (English)"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0639\u0646\u0648\u0627\u0646"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "content": {
+      "type": "string",
+      "title": "Content"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "superseded",
+        "deprecated",
+        "planned",
+        "in_progress",
+        "completed"
+      ],
+      "default": "active"
+    },
+    "supersedes": {
+      "type": "string",
+      "title": "Supersedes"
+    },
+    "superseded_by": {
+      "type": "string",
+      "title": "Superseded By"
+    },
+    "sequence": {
+      "type": "number",
+      "title": "Sequence",
+      "default": 0
+    }
+  },
+  "required": [
+    "entry_type",
+    "title",
+    "status"
+  ]
+}

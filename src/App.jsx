@@ -17,6 +17,8 @@ import Execution from '@/pages/Execution';
 import CalendarPage from '@/pages/CalendarPage';
 import Memory from '@/pages/Memory';
 import Admin from '@/pages/Admin';
+import Integrations from '@/pages/Integrations';
+import FounderVault from '@/pages/FounderVault';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -54,6 +56,8 @@ const AuthenticatedApp = () => {
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/memory" element={<Memory />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/integrations" element={<Integrations />} />
+        <Route path="/founder-vault" element={<FounderVault />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

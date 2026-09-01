@@ -11,6 +11,8 @@ import {
   Menu,
   X,
   ShieldCheck,
+  Plug,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +23,12 @@ const NAV_ITEMS = [
   { to: "/decisions", label: "القرارات", labelEn: "Decisions", icon: Gavel },
   { to: "/execution", label: "التنفيذ", labelEn: "Execution", icon: CheckSquare },
   { to: "/memory", label: "الذاكرة المؤسسية", labelEn: "Memory", icon: Archive },
+  { to: "/integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug },
   { to: "/admin", label: "الإدارة", labelEn: "Administration", icon: Settings },
+];
+
+const VAULT_ITEMS = [
+  { to: "/founder-vault", label: "خزنة المؤسس", labelEn: "Founder Vault", icon: Lock },
 ];
 
 export default function Layout() {
@@ -71,6 +78,29 @@ export default function Layout() {
           );
         })}
       </nav>
+
+      {/* Founder Vault */}
+      <div className="px-3 py-2 border-t border-sidebar-border">
+        {VAULT_ITEMS.map((item) => {
+          const active = location.pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                active
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground"
+              )}
+            >
+              <Lock className="w-4 h-4 shrink-0" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Footer */}
       <div className="px-5 py-4 border-t border-sidebar-border">
