@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { PenLine } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -16,7 +17,8 @@ const INTENT = {
 
 export default function CommitteeSignatures() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("signatures");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 

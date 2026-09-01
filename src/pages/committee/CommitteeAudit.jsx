@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ACTION_STATUS, MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -8,7 +9,8 @@ import { ShieldCheck, Clock, History, Calendar } from "lucide-react";
 
 export default function CommitteeAudit() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("audit");
   const [events, setEvents] = useState([]);
   const [timeMachineDate, setTimeMachineDate] = useState("");
   const [reconstructedState, setReconstructedState] = useState(null);

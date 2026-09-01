@@ -1,13 +1,15 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import { Settings } from "lucide-react";
 
 export default function CommitteeSettings() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("settings");
   if (!data) return null;
   const { committee, mandate, my_role, is_oversight } = data;
 
@@ -15,7 +17,7 @@ export default function CommitteeSettings() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Settings className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("إعدادات اللجنة", "Committee Settings")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("إعدادات اللجنة", "Committee Settings", lang)}</h1>
       </div>
 
       {is_oversight && (

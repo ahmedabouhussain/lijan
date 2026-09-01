@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { Brain } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -9,7 +10,8 @@ import { formatDate } from "@/lib/raqeemUtils";
 
 export default function CommitteeMemory() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("memory");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 

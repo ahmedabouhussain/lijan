@@ -1,11 +1,13 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { Network, Lock } from "lucide-react";
 
 export default function CommitteeRisks() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("risks");
   if (!data) return null;
   const delegations = data.registers.delegations || [];
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { useNavigate, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
@@ -48,7 +49,8 @@ const STATUS_COLORS = {
 
 export default function CommitteeFormation() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("formation");
   const navigate = useNavigate();
   const { orgRef, committeeRef } = useParams();
   const [amendments, setAmendments] = useState([]);

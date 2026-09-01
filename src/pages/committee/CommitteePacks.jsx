@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { Package } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
@@ -8,7 +9,8 @@ import { formatDate } from "@/lib/raqeemUtils";
 
 export default function CommitteePacks() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("packs");
   if (!data) return null;
   const upcoming = data.meetings?.upcoming || [];
 
@@ -16,7 +18,7 @@ export default function CommitteePacks() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Package className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("حزم الاجتماعات", "Meeting Packs")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("حزم الاجتماعات", "Meeting Packs", lang)}</h1>
       </div>
       {upcoming.length === 0 ? (
         <EmptyState icon={Package} title={t("لا توجد حزم", "No Meeting Packs")} description={t("لا توجد اجتماعات قادمة.", "No upcoming meetings.")} />

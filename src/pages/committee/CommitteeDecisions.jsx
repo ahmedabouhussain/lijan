@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS } from "@/lib/raqeemUtils";
@@ -13,7 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function CommitteeDecisions() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("decisions");
   const { orgRef, committeeRef } = useParams();
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: "", proposal: "", legal_basis: "" });

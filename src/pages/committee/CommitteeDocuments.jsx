@@ -1,13 +1,15 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { FileText, Download } from "lucide-react";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { formatDate } from "@/lib/raqeemUtils";
 
 export default function CommitteeDocuments() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("documents");
   if (!data) return null;
 
   // Documents are represented by issued minutes, decisions with proposals, and actions with evidence

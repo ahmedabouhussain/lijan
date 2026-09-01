@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
@@ -11,7 +12,8 @@ import { Button } from "@/components/ui/button";
 
 export default function CommitteeVoting() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("voting");
   const { orgRef, committeeRef } = useParams();
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");

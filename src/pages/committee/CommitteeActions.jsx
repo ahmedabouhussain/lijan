@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
@@ -12,7 +13,8 @@ import { Label } from "@/components/ui/label";
 
 export default function CommitteeActions() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("actions");
   const [updating, setUpdating] = useState(null);
   const [closeModal, setCloseModal] = useState(null);
   const [evidenceUrl, setEvidenceUrl] = useState("");

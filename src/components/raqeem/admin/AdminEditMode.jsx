@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { X, Save, Eye, History, Send, AlertTriangle, Check } from "lucide-react";
+import { X, Save, Eye, History, Send, AlertTriangle, Check, RotateCcw, Building2 } from "lucide-react";
 import AdminEditForm from "./AdminEditForm";
 import AdminVersionHistory from "./AdminVersionHistory";
 
@@ -32,6 +32,10 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
   const [effectiveFrom, setEffectiveFrom] = useState("");
   const [conflict, setConflict] = useState(null);
   const [toast, setToast] = useState("");
+  const [isInherited, setIsInherited] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetReason, setResetReason] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   const loadConfig = useCallback(async () => {
     try {
@@ -47,6 +51,9 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
       setVersions(d.versions || []);
       setDraftVersion(d.draft?.draft_version || 1);
       setDirty(!!d.draft);
+      // Inheritance: if the effective config's committee_id doesn't match, it's inherited from org or system default
+      const effConfig = d.config || {};
+      setIsInherited(!effConfig.committee_id || effConfig.committee_id !== committeeId);
     } catch (e) {
       setConfig({ page_key: pageKey, sections: [], labels: {}, visible: true, sidebar_visible: true });
     }
@@ -149,6 +156,24 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
     }
   };
 
+  const resetToOrgDefault = async () => {
+    setResetting(true);
+    try {
+      await base44.functions.invoke("ResetPageConfigurationToOrganization", {
+        committee_id: committeeId,
+        page_key: pageKey,
+        reason: resetReason,
+      });
+      setToast(t("تم إعادة التعيين", "Reset to org default"));
+      setShowResetDialog(false);
+      setResetReason("");
+      await loadConfig();
+    } catch (e) {
+      setToast(t("خطأ في إعادة التعيين", "Reset error"));
+    }
+    setResetting(false);
+  };
+
   const handleConfigChange = (newConfig) => {
     setConfig(newConfig);
     setDirty(true);
@@ -221,6 +246,19 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         <div className="max-w-2xl mx-auto">
+          {/* Inheritance Indicator */}
+          {view === "edit" && isInherited && !dirty && (
+            <div className="mb-3 p-3 rounded-md bg-blue-50 border border-blue-200 flex items-center gap-2 text-xs text-blue-800">
+              <Building2 className="w-4 h-4 shrink-0" />
+              <span className="flex-1">{t("هذا التكوين موروث من مستوى المنظمة. أي تعديل سينشئ تجاوزاً خاصاً باللجنة.", "This configuration is inherited from organization level. Any edit will create a committee-specific override.")}</span>
+            </div>
+          )}
+          {view === "edit" && !isInherited && !dirty && (
+            <div className="mb-3 p-3 rounded-md bg-amber-50 border border-amber-200 flex items-center gap-2 text-xs text-amber-800">
+              <Check className="w-4 h-4 shrink-0" />
+              <span className="flex-1">{t("هذا التكوين خاص بهذه اللجنة (تجاوز).", "This configuration is committee-specific (override).")}</span>
+            </div>
+          )}
           {view === "edit" && <AdminEditForm config={config} onChange={handleConfigChange} tab={tab} />}
           {view === "preview" && (
             <div className="space-y-4">
@@ -254,6 +292,11 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
             {dirty ? t("تغييرات غير محفوظة", "Unsaved changes") : t("محفوظ", "Saved")}
           </div>
           <div className="flex items-center gap-2">
+            {canRestore && !isInherited && (
+              <Button variant="ghost" size="sm" onClick={() => setShowResetDialog(true)} disabled={dirty || resetting} className="min-h-[44px] text-destructive">
+                <RotateCcw className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t("إعادة لتكوين المنظمة", "Reset to Org")}</span>
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={() => saveDraft(false)} disabled={!dirty || saving} className="min-h-[44px]">
               <Save className="w-3.5 h-3.5" /> {t("حفظ المسودة", "Save Draft")}
             </Button>
@@ -297,6 +340,31 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
               <Button variant="ghost" size="sm" onClick={() => setShowPublishDialog(false)}>{t("إلغاء", "Cancel")}</Button>
               <Button size="sm" onClick={publish} disabled={!changeReason.trim() || publishing} className="min-h-[44px]">
                 {publishing ? t("جارٍ النشر...", "Publishing...") : t("نشر", "Publish")}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset to Org Default Dialog */}
+      {showResetDialog && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={() => setShowResetDialog(false)}>
+          <div className="bg-card rounded-lg p-5 max-w-md w-full space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 text-destructive">
+              <RotateCcw className="w-5 h-5" />
+              <h3 className="text-sm font-bold">{t("إعادة تعيين التكوين", "Reset Configuration")}</h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {t("سيتم حذف التكوين الخاص بهذه اللجنة والعودة إلى تكوين المنظمة الافتراضي. لا يمكن التراجع عن هذا الإجراء.", "This will remove the committee-specific configuration and revert to the organization default. This action cannot be undone.")}
+            </p>
+            <div>
+              <Label className="text-xs text-muted-foreground">{t("سبب إعادة التعيين", "Reset Reason")} *</Label>
+              <Textarea value={resetReason} onChange={(e) => setResetReason(e.target.value)} placeholder={t("مثال: التكوين الخاص لم يعد ضرورياً", "e.g., Committee-specific config no longer needed")} rows={2} />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="ghost" size="sm" onClick={() => setShowResetDialog(false)}>{t("إلغاء", "Cancel")}</Button>
+              <Button variant="destructive" size="sm" onClick={resetToOrgDefault} disabled={!resetReason.trim() || resetting} className="min-h-[44px]">
+                {resetting ? t("جارٍ إعادة التعيين...", "Resetting...") : t("إعادة التعيين", "Reset")}
               </Button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { TrendingUp } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
@@ -17,7 +18,8 @@ const ESCALATION = {
 
 export default function CommitteeEscalations() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("escalations");
   if (!data) return null;
   const actions = (data.registers?.actions || []).filter((a) => a.escalation_level && a.escalation_level !== "none");
 

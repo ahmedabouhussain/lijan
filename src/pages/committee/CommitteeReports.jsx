@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { cn } from "@/lib/utils";
 import { BarChart3, TrendingUp, ShieldCheck, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { isOverdue } from "@/lib/raqeemUtils";
@@ -21,7 +22,8 @@ function MaturityBar({ label, value, color }) {
 
 export default function CommitteeReports() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("reports");
   if (!data) return null;
   const { counters, committee, registers, meetings, members } = data;
 

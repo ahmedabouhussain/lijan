@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { Bell } from "lucide-react";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function CommitteeNotifications() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("notifications");
   const [configs, setConfigs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +22,7 @@ export default function CommitteeNotifications() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Bell className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("إعدادات الإشعارات", "Notification Settings")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("إعدادات الإشعارات", "Notification Settings", lang)}</h1>
       </div>
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>

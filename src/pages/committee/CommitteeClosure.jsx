@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { Lock, Loader2, X } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -12,7 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function CommitteeClosure() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("closure");
   const [showClose, setShowClose] = useState(false);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);

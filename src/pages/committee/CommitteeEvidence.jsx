@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { FileCheck } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
@@ -8,7 +9,8 @@ import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 
 export default function CommitteeEvidence() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("evidence");
   if (!data) return null;
   const actions = (data.registers?.actions || []).filter((a) => a.status === "evidence_pending" || (a.status === "under_review" && !a.compliance_verified));
 
@@ -16,7 +18,7 @@ export default function CommitteeEvidence() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <FileCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("الأدلة والتحقق", "Evidence & Verification")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("الأدلة والتحقق", "Evidence & Verification", lang)}</h1>
       </div>
       {actions.length === 0 ? (
         <EmptyState icon={FileCheck} title={t("لا توجد أدلة بانتظار التحقق", "No Evidence Pending")} description={t("جميع الإجراءات إما مكتملة أو لا تتطلب أدلة.", "All actions are either complete or don't require evidence.")} />

@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -16,7 +17,8 @@ const MEETING_STATUS = {
 
 export default function CommitteeCalendar() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("calendar");
   if (!data) return null;
   const all = [...(data.meetings?.upcoming || []), ...(data.meetings?.previous || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
 

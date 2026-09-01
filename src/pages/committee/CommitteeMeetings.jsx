@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -12,7 +13,8 @@ import { Label } from "@/components/ui/label";
 
 export default function CommitteeMeetings() {
   const { data, reload } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("meetings");
   const { orgRef, committeeRef } = useParams();
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: "", date: "", mode: "hybrid", provider: "none", location: "" });

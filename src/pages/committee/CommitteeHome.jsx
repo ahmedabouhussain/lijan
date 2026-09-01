@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { useAuth } from "@/lib/AuthContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -17,7 +18,8 @@ import {
 
 export default function CommitteeHome() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("home");
   const { orgRef, committeeRef } = useParams();
   const { user } = useAuth();
 

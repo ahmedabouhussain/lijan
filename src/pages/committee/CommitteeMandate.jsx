@@ -1,13 +1,15 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { ScrollText } from "lucide-react";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { formatDate } from "@/lib/raqeemUtils";
 
 export default function CommitteeMandate() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("mandate");
   if (!data) return null;
   const { committee, mandate } = data;
 
@@ -15,7 +17,7 @@ export default function CommitteeMandate() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <ScrollText className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("الصلاحية والاختصاص", "Mandate & Charter")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("الصلاحية والاختصاص", "Mandate & Charter", lang)}</h1>
       </div>
       <div className="raqeem-card p-5 space-y-4">
         <div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { Bot } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -19,7 +20,8 @@ const OUTPUT_TYPE = {
 
 export default function CommitteeAI() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("ai");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 

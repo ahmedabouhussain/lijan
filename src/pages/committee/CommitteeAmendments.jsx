@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { GitBranch, Loader2, Plus, Check, X, AlertTriangle, Send, RotateCcw, CalendarClock, ArrowRightCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ const STATUS_LABELS = {
 
 export default function CommitteeAmendments() {
   const { data, reload } = useCommittee();
+  const { getTitle } = usePageConfig("amendments");
   const [amendments, setAmendments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

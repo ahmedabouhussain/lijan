@@ -1,6 +1,7 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { FileText } from "lucide-react";
 
 const STATUS_LABELS = {
@@ -13,7 +14,8 @@ const STATUS_LABELS = {
 
 export default function CommitteeMinutes() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("minutes");
 
   if (!data) return null;
   const minutes = data.registers.minutes || [];
@@ -22,7 +24,7 @@ export default function CommitteeMinutes() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <FileText className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("محاضر اللجنة", "Committee Minutes")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("محاضر اللجنة", "Committee Minutes", lang)}</h1>
         <span className="text-sm text-muted-foreground">({minutes.length})</span>
       </div>
 

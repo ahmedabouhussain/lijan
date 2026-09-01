@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import { Plug } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function CommitteeIntegrations() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("integrations");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +23,7 @@ export default function CommitteeIntegrations() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Plug className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("التكاملات", "Integrations")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("التكاملات", "Integrations", lang)}</h1>
       </div>
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>

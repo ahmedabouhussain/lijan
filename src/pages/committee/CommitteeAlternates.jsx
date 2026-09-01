@@ -1,13 +1,15 @@
 import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import { Users2 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 
 export default function CommitteeAlternates() {
   const { data } = useCommittee();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { getTitle, getDescription } = usePageConfig("alternates");
   if (!data) return null;
   const alternates = (data.members || []).filter((m) => m.role === "alternate");
   const activated = alternates.filter((a) => a.activated);
@@ -16,7 +18,7 @@ export default function CommitteeAlternates() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Users2 className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("الأعضاء البدلاء", "Alternate Members")}</h1>
+        <h1 className="text-lg font-bold">{getTitle("الأعضاء البدلاء", "Alternate Members", lang)}</h1>
       </div>
       {alternates.length === 0 ? (
         <EmptyState icon={Users2} title={t("لا يوجد بدلاء", "No Alternates")} description={t("لم يتم تعيين بدلاء لهذه اللجنة.", "No alternate members assigned to this committee.")} />
