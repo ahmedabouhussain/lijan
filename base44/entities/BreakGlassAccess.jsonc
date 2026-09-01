@@ -1,0 +1,104 @@
+{
+  "name": "BreakGlassAccess",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Target Organization ID"
+    },
+    "organization_name": {
+      "type": "string",
+      "title": "Organization Name"
+    },
+    "initiated_by_user_id": {
+      "type": "string",
+      "title": "Initiated By User ID"
+    },
+    "initiated_by_name": {
+      "type": "string",
+      "title": "Initiated By Name"
+    },
+    "initiated_by_email": {
+      "type": "string",
+      "title": "Initiated By Email"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason for Break-Glass Access"
+    },
+    "approved_by_user_id": {
+      "type": "string",
+      "title": "Approved By User ID (if dual-control)"
+    },
+    "access_scope": {
+      "type": "string",
+      "title": "Access Scope",
+      "enum": [
+        "read_only",
+        "read_write"
+      ],
+      "default": "read_only"
+    },
+    "started_at": {
+      "type": "string",
+      "title": "Started At",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At",
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": "string",
+      "title": "Revoked At",
+      "format": "date-time"
+    },
+    "organization_notified": {
+      "type": "boolean",
+      "title": "Organization Notified",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "expired",
+        "revoked"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "initiated_by_user_id",
+    "reason",
+    "access_scope",
+    "started_at",
+    "expires_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -7,45 +7,42 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { LanguageProvider } from '@/lib/LanguageContext';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
-// Add page imports here
-import Layout from '@/components/raqeem/Layout';
+// Page imports
 import EntryPortal from '@/pages/EntryPortal';
-import Home from '@/pages/Home';
-import Committees from '@/pages/Committees';
-import CommitteeCreate from '@/pages/CommitteeCreate';
-import CommitteeDetail from '@/pages/CommitteeDetail';
-import Decisions from '@/pages/Decisions';
-import Minutes from '@/pages/Minutes';
-import Execution from '@/pages/Execution';
-import CalendarPage from '@/pages/CalendarPage';
-import Memory from '@/pages/Memory';
-import Admin from '@/pages/Admin';
-import UsersAdmin from '@/pages/admin/UsersAdmin';
-import PermissionsAdmin from '@/pages/admin/PermissionsAdmin';
-import NotificationsAdmin from '@/pages/admin/NotificationsAdmin';
-import SettingsAdmin from '@/pages/admin/SettingsAdmin';
-import Integrations from '@/pages/Integrations';
-import FounderVault from '@/pages/FounderVault';
-import InstitutionCreate from '@/pages/InstitutionCreate';
+import CreatePortal from '@/pages/CreatePortal';
 import Profile from '@/pages/Profile';
+import FounderVault from '@/pages/FounderVault';
 import MeetingDetail from '@/pages/MeetingDetail';
 import DecisionDetail from '@/pages/DecisionDetail';
-import Dependencies from '@/pages/Dependencies';
-import PolicyScenarios from '@/pages/PolicyScenarios';
-import AIOutputLedger from '@/pages/AIOutputLedger';
-import CreatePortal from '@/pages/CreatePortal';
+
+// Organization Portal (Level 2)
+import OrgLayout from '@/components/raqeem/OrgLayout';
 import OrgPortal from '@/pages/OrgPortal';
-import CommitteeMiniPortal from '@/pages/CommitteeMiniPortal';
+import OrgCommittees from '@/pages/OrgCommittees';
 import CommitteeCreateV2 from '@/pages/CommitteeCreateV2';
+
+// Committee Workspace (Level 3)
+import CommitteeLayout from '@/components/raqeem/CommitteeLayout';
+import CommitteeHome from '@/pages/committee/CommitteeHome';
+import CommitteeMembers from '@/pages/committee/CommitteeMembers';
+import CommitteeMeetings from '@/pages/committee/CommitteeMeetings';
+import CommitteeMinutes from '@/pages/committee/CommitteeMinutes';
+import CommitteeDecisions from '@/pages/committee/CommitteeDecisions';
+import CommitteeActions from '@/pages/committee/CommitteeActions';
+import CommitteeVoting from '@/pages/committee/CommitteeVoting';
+import CommitteeRisks from '@/pages/committee/CommitteeRisks';
+import CommitteeReports from '@/pages/committee/CommitteeReports';
+import CommitteeAudit from '@/pages/committee/CommitteeAudit';
+import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -54,18 +51,15 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
       <Route path="/" element={<EntryPortal />} />
@@ -74,52 +68,67 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Home />} />
-          <Route path="/committees" element={<Committees />} />
-          <Route path="/committees/new" element={<CommitteeCreate />} />
-          <Route path="/committees/:id" element={<CommitteeDetail />} />
-          <Route path="/meetings/:id" element={<MeetingDetail />} />
-          <Route path="/decisions" element={<Decisions />} />
-          <Route path="/decisions/:id" element={<DecisionDetail />} />
-          <Route path="/minutes" element={<Minutes />} />
-          <Route path="/execution" element={<Execution />} />
-          <Route path="/dependencies" element={<Dependencies />} />
-          <Route path="/scenarios" element={<PolicyScenarios />} />
-          <Route path="/ai-ledger" element={<AIOutputLedger />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/memory" element={<Memory />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/users" element={<UsersAdmin />} />
-          <Route path="/admin/permissions" element={<PermissionsAdmin />} />
-          <Route path="/admin/notifications" element={<NotificationsAdmin />} />
-          <Route path="/admin/settings" element={<SettingsAdmin />} />
-          <Route path="/institutions/new" element={<InstitutionCreate />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/integrations" element={<Integrations />} />
-          <Route path="/founder-vault" element={<FounderVault />} />
+        {/* Organization Portal (Level 2) */}
+        <Route element={<OrgLayout />}>
           <Route path="/o/:orgRef" element={<OrgPortal />} />
+          <Route path="/o/:orgRef/committees" element={<OrgCommittees />} />
           <Route path="/o/:orgRef/create-committee" element={<CommitteeCreateV2 />} />
-          <Route path="/o/:orgRef/c/:committeeRef" element={<CommitteeMiniPortal />} />
         </Route>
+
+        {/* Committee Workspace (Level 3) */}
+        <Route element={<CommitteeLayout />}>
+          <Route path="/o/:orgRef/c/:committeeRef" element={<CommitteeHome />} />
+          <Route path="/o/:orgRef/c/:committeeRef/members" element={<CommitteeMembers />} />
+          <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<CommitteeMeetings />} />
+          <Route path="/o/:orgRef/c/:committeeRef/minutes" element={<CommitteeMinutes />} />
+          <Route path="/o/:orgRef/c/:committeeRef/decisions" element={<CommitteeDecisions />} />
+          <Route path="/o/:orgRef/c/:committeeRef/actions" element={<CommitteeActions />} />
+          <Route path="/o/:orgRef/c/:committeeRef/voting" element={<CommitteeVoting />} />
+          <Route path="/o/:orgRef/c/:committeeRef/risks" element={<CommitteeRisks />} />
+          <Route path="/o/:orgRef/c/:committeeRef/reports" element={<CommitteeReports />} />
+          <Route path="/o/:orgRef/c/:committeeRef/audit" element={<CommitteeAudit />} />
+          <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
+        </Route>
+
+        {/* Legacy detail routes (still accessible) */}
+        <Route path="/meetings/:id" element={<MeetingDetail />} />
+        <Route path="/decisions/:id" element={<DecisionDetail />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/founder-vault" element={<FounderVault />} />
+
+        {/* Legacy flat routes → redirect to org portal */}
+        <Route path="/dashboard" element={<Navigate to="/" replace />} />
+        <Route path="/committees" element={<Navigate to="/" replace />} />
+        <Route path="/decisions" element={<Navigate to="/" replace />} />
+        <Route path="/minutes" element={<Navigate to="/" replace />} />
+        <Route path="/execution" element={<Navigate to="/" replace />} />
+        <Route path="/calendar" element={<Navigate to="/" replace />} />
+        <Route path="/memory" element={<Navigate to="/" replace />} />
+        <Route path="/ai-ledger" element={<Navigate to="/" replace />} />
+        <Route path="/dependencies" element={<Navigate to="/" replace />} />
+        <Route path="/scenarios" element={<Navigate to="/" replace />} />
+        <Route path="/integrations" element={<Navigate to="/" replace />} />
+        <Route path="/admin" element={<Navigate to="/" replace />} />
       </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <ScrollToTop />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
+        <LanguageProvider>
+          <Router>
+            <ScrollToTop />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </LanguageProvider>
       </QueryClientProvider>
     </AuthProvider>
   )

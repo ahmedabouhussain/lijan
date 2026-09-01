@@ -55,6 +55,24 @@ export default async function(req) {
       .catch(() => []);
     const theme = (themes || [])[0];
 
+    // Get user's committee memberships (to distinguish "My Committees" from oversight)
+    const myCommitteeMemberships = await base44.asServiceRole.entities.CommitteeMembership
+      .filter({ organization_id: org.id, user_id: user.id, status: 'active' })
+      .catch(() => []);
+    const myCommitteeIds = new Set((myCommitteeMemberships || []).map((m) => m.committee_id));
+    const myCommitteeRoles = {};
+    (myCommitteeMemberships || []).forEach((m) => {
+      if (!myCommitteeRoles[m.committee_id] || m.role === 'chair') {
+        myCommitteeRoles[m.committee_id] = m.role;
+      }
+    });
+
+    // Tag each committee with the user's role (or null if not a member)
+    const tagCommittees = (list) => (list || []).map((c) => ({
+      ...c,
+      my_role_in_committee: myCommitteeIds.has(c.id) ? (myCommitteeRoles[c.id] || 'member') : null,
+    }));
+
     // Set user's active_org_id context for RLS
     await base44.auth.updateMe({ active_org_id: org.id }).catch(() => {});
 
@@ -69,12 +87,13 @@ export default async function(req) {
       my_role: membership?.role || 'admin_oversight',
       my_membership: membership || null,
       theme: theme || null,
+      my_committee_ids: Array.from(myCommitteeIds),
       committees: {
         total: cmList.length,
-        active: activeCommittees,
-        draft: draftCommittees,
-        suspended: suspendedCommittees,
-        closing: closingCommittees,
+        active: tagCommittees(activeCommittees),
+        draft: tagCommittees(draftCommittees),
+        suspended: tagCommittees(suspendedCommittees),
+        closing: tagCommittees(closingCommittees),
       },
     });
   } catch (error) {
