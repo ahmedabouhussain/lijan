@@ -5,6 +5,7 @@ import { ChevronRight, Gavel, FileText, User, Clock, Scale, CheckSquare, Message
 import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
+import ProofChain from "@/components/raqeem/ProofChain";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -104,104 +105,45 @@ export default function DecisionDetail() {
         <DecisionWorkflow decision={decision} onChanged={load} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Details */}
+      {/* Proof-Carrying Decision — the decision carries its own proof */}
+      <ProofChain
+        decision={decision}
+        committee={committee}
+        meeting={meeting}
+        votes={votes}
+        actions={actions}
+        supersedingDecision={supersedingDecision}
+      />
+
+      {/* Dependencies & Execution Actions */}
+      {decision.dependencies && (
         <div className="raqeem-card p-5">
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-primary" /> تفاصيل القرار · Details
+            <Link2 className="w-4 h-4 text-primary" /> التبعيات · Dependencies
           </h2>
-          <DetailRow icon={FileText} label="المقترح / المسودة" value={decision.proposal} />
-          <DetailRow icon={Scale} label="الأساس القانوني" value={decision.legal_basis} />
-          <DetailRow icon={MessageSquare} label="البدائل المطروحة" value={decision.alternatives} />
-          <DetailRow icon={MessageSquare} label="ملخص المناقشة" value={decision.deliberation_summary} />
-          <DetailRow icon={User} label="مسؤول التنفيذ" value={decision.owner_name} />
-          <DetailRow icon={Clock} label="موعد التنفيذ" value={formatDate(decision.deadline)} />
-          <DetailRow icon={Link2} label="التبعيات" value={decision.dependencies} />
-          <DetailRow icon={FileText} label="النتيجة" value={decision.outcome} />
-          <DetailRow icon={FileText} label="تقييم الأثر" value={decision.impact} />
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{decision.dependencies}</p>
         </div>
+      )}
 
-        {/* Voting + Actions */}
-        <div className="space-y-6">
-          {/* Votes */}
-          <div className="raqeem-card p-5">
-            <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-primary" /> التصويت · Voting
-            </h2>
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="bg-emerald-50 rounded-md p-3">
-                <div className="text-2xl font-bold text-emerald-700">{decision.vote_for || 0}</div>
-                <div className="text-xs text-emerald-700 mt-1">موافق</div>
-              </div>
-              <div className="bg-red-50 rounded-md p-3">
-                <div className="text-2xl font-bold text-destructive">{decision.vote_against || 0}</div>
-                <div className="text-xs text-destructive mt-1">رافض</div>
-              </div>
-              <div className="bg-secondary rounded-md p-3">
-                <div className="text-2xl font-bold text-muted-foreground">{decision.vote_abstain || 0}</div>
-                <div className="text-xs text-muted-foreground mt-1">ممتنع</div>
-              </div>
-            </div>
-            {decision.dissent && (
-              <div className="mt-3 p-3 bg-amber-50 rounded-md">
-                <div className="text-xs text-amber-700 font-medium mb-1">المخالفة المُسجلة · Dissent</div>
-                <p className="text-sm text-amber-800">{decision.dissent}</p>
-              </div>
-            )}
-            {votes.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-border">
-                <div className="text-xs text-muted-foreground font-medium mb-2">سجل التصويت الفردي · Roll-Call Record</div>
-                <div className="space-y-1.5 max-h-40 overflow-y-auto">
-                  {votes.map((v) => {
-                    const choiceConfig = {
-                      for: { label: "موافق", color: "text-emerald-700 bg-emerald-50" },
-                      against: { label: "رافض", color: "text-destructive bg-red-50" },
-                      abstain: { label: "ممتنع", color: "text-muted-foreground bg-secondary" },
-                    };
-                    const cfg = choiceConfig[v.vote_choice] || choiceConfig.abstain;
-                    return (
-                      <div key={v.id} className="flex items-center justify-between gap-2 text-xs">
-                        <span className="text-foreground font-medium truncate">{v.voter_name}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${cfg.color}`}>{cfg.label}</span>
-                      </div>
-                    );
-                  })}
+      <div className="raqeem-card p-5">
+        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+          <CheckSquare className="w-4 h-4 text-primary" /> إجراءات التنفيذ · Execution Actions
+        </h2>
+        {actions.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">لا توجد إجراءات تنفيذية مسندة</p>
+        ) : (
+          <div className="space-y-2">
+            {actions.map((a) => (
+              <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
+                  <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
                 </div>
+                <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
               </div>
-            )}
-            {supersedingDecision && (
-              <div className="mt-3 p-3 bg-secondary/50 rounded-md flex items-center gap-2">
-                <GitBranch className="w-4 h-4 text-muted-foreground shrink-0" />
-                <div className="text-xs">
-                  <span className="text-muted-foreground">أُلغي بقرار لاحق: </span>
-                  <Link to={`/decisions/${supersedingDecision.id}`} className="text-primary hover:underline font-medium">{supersedingDecision.title}</Link>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
-
-          {/* Actions */}
-          <div className="raqeem-card p-5">
-            <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-primary" /> إجراءات التنفيذ · Actions
-            </h2>
-            {actions.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">لا توجد إجراءات</p>
-            ) : (
-              <div className="space-y-2">
-                {actions.map((a) => (
-                  <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
-                      <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
-                    </div>
-                    <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

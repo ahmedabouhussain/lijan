@@ -22,6 +22,7 @@ import SecretaryPanel from "@/components/raqeem/SecretaryPanel";
 import CommitteeHome from "@/components/raqeem/CommitteeHome";
 import ChairRoom from "@/components/raqeem/rooms/ChairRoom";
 import MemberRoom from "@/components/raqeem/rooms/MemberRoom";
+import AuthorityGraph from "@/components/raqeem/AuthorityGraph";
 import { useCommitteeRole } from "@/hooks/useCommitteeRole";
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -45,6 +46,7 @@ export default function CommitteeDetail() {
   const [decisions, setDecisions] = useState([]);
   const [actions, setActions] = useState([]);
   const [minutes, setMinutes] = useState([]);
+  const [delegations, setDelegations] = useState([]);
   const [activating, setActivating] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -56,13 +58,14 @@ export default function CommitteeDetail() {
 
   async function load() {
     try {
-      const [c, m, meets, decs, acts, mins] = await Promise.all([
+      const [c, m, meets, decs, acts, mins, delegs] = await Promise.all([
         base44.entities.Committee.get(id),
         base44.entities.CommitteeMember.filter({ committee_id: id }).catch(() => []),
         base44.entities.Meeting.filter({ committee_id: id }).catch(() => []),
         base44.entities.Decision.filter({ committee_id: id }).catch(() => []),
         base44.entities.Action.filter({ committee_id: id }).catch(() => []),
         base44.entities.MeetingMinutes.filter({ committee_id: id }).catch(() => []),
+        base44.entities.AuthorityDelegation.filter({ committee_id: id }).catch(() => []),
       ]);
       setCommittee(c);
       setMembers(m || []);
@@ -70,6 +73,7 @@ export default function CommitteeDetail() {
       setDecisions(decs || []);
       setActions(acts || []);
       setMinutes(mins || []);
+      setDelegations(delegs || []);
     } finally {
       setLoading(false);
     }
@@ -144,6 +148,9 @@ export default function CommitteeDetail() {
       ) : (
         <MemberRoom meetings={meetings} decisions={decisions} actions={actions} currentUser={currentUser} />
       )}
+
+      {/* Authority Graph — who decides/executes/reviews with delegation & recusal */}
+      <AuthorityGraph committee={committee} members={members} delegations={delegations} onChanged={load} />
 
       {/* Committee Info — shared reference */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,0 +1,114 @@
+{
+  "name": "AuthorityDelegation",
+  "type": "object",
+  "properties": {
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type",
+      "enum": [
+        "delegation",
+        "recusal",
+        "proxy"
+      ],
+      "default": "delegation"
+    },
+    "from_member_name": {
+      "type": "string",
+      "title": "From Member"
+    },
+    "from_member_role": {
+      "type": "string",
+      "title": "From Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "observer",
+        "advisor"
+      ],
+      "default": "chair"
+    },
+    "to_member_name": {
+      "type": "string",
+      "title": "To Member"
+    },
+    "to_member_role": {
+      "type": "string",
+      "title": "To Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member",
+        "observer",
+        "advisor"
+      ],
+      "default": "member"
+    },
+    "scope": {
+      "type": "string",
+      "title": "Scope of Authority Transfer"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Related Decision ID"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason (Recusal / Justification)"
+    },
+    "start_date": {
+      "type": "string",
+      "title": "Start Date",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "title": "End Date",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "expired",
+        "revoked",
+        "completed"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "committee_id",
+    "type",
+    "from_member_name",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "create": {},
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

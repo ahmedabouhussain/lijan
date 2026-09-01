@@ -120,6 +120,15 @@ export const MEMBER_ROLE = {
   advisor: { ar: "مستشار", en: "Advisor" },
 };
 
+export const AUTHORITY_LEVELS = {
+  decision: { ar: "سلطة القرار", en: "Decision Authority" },
+  approval: { ar: "سلطة الاعتماد", en: "Approval Authority" },
+  execution: { ar: "سلطة التنفيذ", en: "Execution Authority" },
+  oversight: { ar: "سلطة الرقابة", en: "Oversight Authority" },
+  escalation: { ar: "سلطة التصعيد", en: "Escalation Authority" },
+  advisory: { ar: "سلطة الاستشارة", en: "Advisory Authority" },
+};
+
 export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {

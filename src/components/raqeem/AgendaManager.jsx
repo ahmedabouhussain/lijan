@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Lock, ShieldCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +55,20 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
         entity_id: itemId,
         new_value: status,
         description: `تغيير حالة بند الجدول إلى ${AGENDA_ITEM_STATUS[status]?.ar}`,
+      });
+      onChanged();
+    } catch {}
+  };
+
+  const updateReadiness = async (itemId, readiness) => {
+    try {
+      await base44.entities.AgendaItem.update(itemId, { readiness });
+      await base44.entities.AuditLog.create({
+        action: "update",
+        entity_type: "AgendaItem",
+        entity_id: itemId,
+        new_value: readiness,
+        description: `تحديث جاهزية البند إلى ${READINESS[readiness]?.ar}`,
       });
       onChanged();
     } catch {}
@@ -151,6 +165,28 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                   </button>
                 </div>
               </div>
+              {/* Evidence Readiness Gate */}
+              {item.status === "in_discussion" && item.readiness !== "ready" && (
+                <div className="mt-2 pt-2 border-t border-border">
+                  <div className="flex items-center gap-2 p-2 rounded-md bg-amber-50 border border-amber-200">
+                    <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span className="text-[10px] text-amber-800 font-medium">بوابة الجاهزية مغلقة — البند غير جاهز للقرار. حدّث الجاهزية إلى "جاهز" لفتح البوابة.</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                    <span className="text-[10px] text-muted-foreground">تحديث الجاهزية:</span>
+                    {Object.entries(READINESS).map(([k, v]) => (
+                      <button
+                        key={k}
+                        onClick={() => updateReadiness(item.id, k)}
+                        className={`text-[10px] px-2 py-1 rounded border ${item.readiness === k ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-secondary"}`}
+                      >
+                        {v.ar}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {item.status !== "decided" && item.status !== "withdrawn" && (
                 <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border flex-wrap">
                   {item.status === "pending" && (
@@ -160,7 +196,16 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                   )}
                   {item.status === "in_discussion" && (
                     <>
-                      <button onClick={() => changeStatus(item.id, "decided")} className="text-[10px] px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
+                      <button
+                        onClick={() => changeStatus(item.id, "decided")}
+                        disabled={item.readiness !== "ready"}
+                        className={`text-[10px] px-2 py-1 rounded inline-flex items-center gap-1 ${
+                          item.readiness === "ready"
+                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                            : "bg-secondary text-muted-foreground/50 cursor-not-allowed"
+                        }`}
+                      >
+                        {item.readiness === "ready" ? <ShieldCheck className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
                         تم القرار
                       </button>
                       <button onClick={() => changeStatus(item.id, "deferred")} className="text-[10px] px-2 py-1 rounded bg-amber-50 text-amber-700 hover:bg-amber-100">
