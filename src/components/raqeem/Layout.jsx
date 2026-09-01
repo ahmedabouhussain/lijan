@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Plug,
   Lock,
+  UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -100,6 +101,23 @@ export default function Layout() {
             </Link>
           );
         })}
+      </div>
+
+      {/* User profile */}
+      <div className="px-3 py-2 border-t border-sidebar-border">
+        <Link
+          to="/profile"
+          onClick={() => setMobileOpen(false)}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+            location.pathname === "/profile"
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground"
+          )}
+        >
+          <UserCircle className="w-4 h-4 shrink-0" />
+          <span>الملف الشخصي</span>
+        </Link>
       </div>
 
       {/* Footer */}

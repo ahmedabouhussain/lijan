@@ -12,9 +12,12 @@ import {
   Clock,
   Vote,
   ShieldCheck,
+  Play,
 } from "lucide-react";
 import { COMMITTEE_TYPES, COMMITTEE_STATUS, MEMBER_ROLE, MEETING_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import MemberManager from "@/components/raqeem/MemberManager";
+import MeetingScheduler from "@/components/raqeem/MeetingScheduler";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -36,28 +39,49 @@ export default function CommitteeDetail() {
   const [meetings, setMeetings] = useState([]);
   const [decisions, setDecisions] = useState([]);
   const [actions, setActions] = useState([]);
+  const [activating, setActivating] = useState(false);
+
+  async function load() {
+    try {
+      const [c, m, meets, decs, acts] = await Promise.all([
+        base44.entities.Committee.get(id),
+        base44.entities.CommitteeMember.filter({ committee_id: id }).catch(() => []),
+        base44.entities.Meeting.filter({ committee_id: id }).catch(() => []),
+        base44.entities.Decision.filter({ committee_id: id }).catch(() => []),
+        base44.entities.Action.filter({ committee_id: id }).catch(() => []),
+      ]);
+      setCommittee(c);
+      setMembers(m || []);
+      setMeetings(meets || []);
+      setDecisions(decs || []);
+      setActions(acts || []);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [c, m, meets, decs, acts] = await Promise.all([
-          base44.entities.Committee.get(id),
-          base44.entities.CommitteeMember.filter({ committee_id: id }).catch(() => []),
-          base44.entities.Meeting.filter({ committee_id: id }).catch(() => []),
-          base44.entities.Decision.filter({ committee_id: id }).catch(() => []),
-          base44.entities.Action.filter({ committee_id: id }).catch(() => []),
-        ]);
-        setCommittee(c);
-        setMembers(m || []);
-        setMeetings(meets || []);
-        setDecisions(decs || []);
-        setActions(acts || []);
-      } finally {
-        setLoading(false);
-      }
-    }
     load();
   }, [id]);
+
+  const activateCommittee = async () => {
+    setActivating(true);
+    try {
+      await base44.entities.Committee.update(id, { status: "active", governance_complete: true });
+      await base44.entities.AuditLog.create({
+        action: "activate",
+        entity_type: "Committee",
+        entity_id: id,
+        entity_title: committee.name_ar || committee.name_en,
+        description: "تفعيل اللجنة بعد استكمال متطلبات الحوكمة",
+      });
+      load();
+    } catch {
+    }
+    setActivating(false);
+  };
+
+  const governanceReady = members.length >= (committee.quorum_count || 3) && committee.mandate && committee.chair_name;
 
   if (loading) {
     return (
@@ -101,9 +125,20 @@ export default function CommitteeDetail() {
 
       {/* Mandate-to-Impact chain indicator */}
       {!committee.governance_complete && (
-        <div className="bg-amber-50 border border-amber-200 rounded-md p-3 flex items-center gap-2 text-sm text-amber-800">
-          <ShieldCheck className="w-4 h-4 shrink-0" />
-          <span>هذه اللجنة في حالة مسودة — استكمل متطلبات الحوكمة للتفعيل</span>
+        <div className="bg-amber-50 border border-amber-200 rounded-md p-3 flex items-center justify-between gap-2 text-sm text-amber-800">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span>هذه اللجنة في حالة مسودة — استكمل متطلبات الحوكمة للتفعيل</span>
+          </div>
+          {governanceReady && (
+            <button
+              onClick={activateCommittee}
+              disabled={activating}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary-dark shrink-0"
+            >
+              <Play className="w-3.5 h-3.5" /> {activating ? "جارٍ التفعيل..." : "تفعيل اللجنة"}
+            </button>
+          )}
         </div>
       )}
 
@@ -139,34 +174,22 @@ export default function CommitteeDetail() {
         <div className="lg:col-span-2 space-y-6">
           {/* Members */}
           <div className="raqeem-card p-5">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" /> الأعضاء · Members
               </h2>
-              <span className="text-xs text-muted-foreground">{members.length} عضو</span>
             </div>
-            {members.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">لا يوجد أعضاء مسجلون</p>
-            ) : (
-              <div className="space-y-2">
-                {members.map((m) => (
-                  <div key={m.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{m.full_name_ar || m.full_name}</div>
-                      {m.institution_name && <div className="text-xs text-muted-foreground">{m.institution_name}</div>}
-                    </div>
-                    <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass="bg-secondary text-secondary-foreground" />
-                  </div>
-                ))}
-              </div>
-            )}
+            <MemberManager committeeId={id} members={members} onChanged={load} />
           </div>
 
           {/* Meetings */}
           <div className="raqeem-card p-5">
-            <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-primary" /> الاجتماعات · Meetings
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-primary" /> الاجتماعات · Meetings
+              </h2>
+              <MeetingScheduler committeeId={id} onCreated={load} />
+            </div>
             {meetings.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">لا توجد اجتماعات مجدولة</p>
             ) : (

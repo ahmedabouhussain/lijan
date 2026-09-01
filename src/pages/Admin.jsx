@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Settings, Users, Building2, Shield, Bell, Link2 } from "lucide-react";
+import { Settings, Users, Building2, Shield, Bell, Link2, Plus } from "lucide-react";
 
 export default function Admin() {
   const [institutions, setInstitutions] = useState([]);
@@ -17,12 +18,15 @@ export default function Admin() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="raqeem-card p-5">
-          <Building2 className="w-5 h-5 text-primary mb-3" />
+        <Link to="/institutions/new" className="raqeem-card p-5 hover:border-primary/40 transition-colors group">
+          <div className="flex items-center justify-between mb-3">
+            <Building2 className="w-5 h-5 text-primary" />
+            <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+          </div>
           <h3 className="text-sm font-semibold mb-1">المؤسسة · Institution</h3>
           <p className="text-xs text-muted-foreground mb-3">الملف والهوية والسياسات</p>
-          <div className="text-xs text-muted-foreground">{institutions.length} مؤسسة مسجلة</div>
-        </div>
+          <div className="text-xs text-muted-foreground">{institutions.length} مؤسسة مسجلة · إنشاء جديدة</div>
+        </Link>
         <div className="raqeem-card p-5">
           <Users className="w-5 h-5 text-primary mb-3" />
           <h3 className="text-sm font-semibold mb-1">المستخدمون · Users</h3>

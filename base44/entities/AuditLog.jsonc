@@ -1,0 +1,67 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "actor_name": {
+      "type": "string",
+      "title": "Actor Name"
+    },
+    "actor_id": {
+      "type": "string",
+      "title": "Actor ID"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "create",
+        "update",
+        "delete",
+        "status_change",
+        "login",
+        "logout",
+        "vote",
+        "approve",
+        "reject",
+        "sign",
+        "issue",
+        "escalate",
+        "close",
+        "activate"
+      ],
+      "default": "create"
+    },
+    "entity_type": {
+      "type": "string",
+      "title": "Entity Type"
+    },
+    "entity_id": {
+      "type": "string",
+      "title": "Entity ID"
+    },
+    "entity_title": {
+      "type": "string",
+      "title": "Entity Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "old_value": {
+      "type": "string",
+      "title": "Old Value"
+    },
+    "new_value": {
+      "type": "string",
+      "title": "New Value"
+    },
+    "authority_context": {
+      "type": "string",
+      "title": "Authority Context"
+    }
+  },
+  "required": [
+    "action",
+    "entity_type"
+  ]
+}

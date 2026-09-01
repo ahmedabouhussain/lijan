@@ -1,11 +1,16 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 // Add page imports here
 import Layout from '@/components/raqeem/Layout';
 import Home from '@/pages/Home';
@@ -19,6 +24,8 @@ import Memory from '@/pages/Memory';
 import Admin from '@/pages/Admin';
 import Integrations from '@/pages/Integrations';
 import FounderVault from '@/pages/FounderVault';
+import InstitutionCreate from '@/pages/InstitutionCreate';
+import Profile from '@/pages/Profile';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -46,18 +53,26 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/committees" element={<Committees />} />
-        <Route path="/committees/new" element={<CommitteeCreate />} />
-        <Route path="/committees/:id" element={<CommitteeDetail />} />
-        <Route path="/decisions" element={<Decisions />} />
-        <Route path="/execution" element={<Execution />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/memory" element={<Memory />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/integrations" element={<Integrations />} />
-        <Route path="/founder-vault" element={<FounderVault />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/committees" element={<Committees />} />
+          <Route path="/committees/new" element={<CommitteeCreate />} />
+          <Route path="/committees/:id" element={<CommitteeDetail />} />
+          <Route path="/decisions" element={<Decisions />} />
+          <Route path="/execution" element={<Execution />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/memory" element={<Memory />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/institutions/new" element={<InstitutionCreate />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/integrations" element={<Integrations />} />
+          <Route path="/founder-vault" element={<FounderVault />} />
+        </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
