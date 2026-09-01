@@ -1,0 +1,105 @@
+{
+  "name": "Annotation",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "document_id": {
+      "type": "string",
+      "title": "Document ID"
+    },
+    "document_version_id": {
+      "type": "string",
+      "title": "Document Version ID"
+    },
+    "author_user_id": {
+      "type": "string",
+      "title": "Author User ID"
+    },
+    "author_name": {
+      "type": "string",
+      "title": "Author Name"
+    },
+    "author_role": {
+      "type": "string",
+      "title": "Author Role"
+    },
+    "is_private": {
+      "type": "boolean",
+      "title": "Private (visible only to author)",
+      "default": true
+    },
+    "anchor_text": {
+      "type": "string",
+      "title": "Anchored Text Selection"
+    },
+    "body": {
+      "type": "string",
+      "title": "Annotation Body"
+    },
+    "page_number": {
+      "type": "number",
+      "title": "Page Number"
+    },
+    "created_at": {
+      "type": "string",
+      "title": "Created At",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "title": "Updated At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "resolved",
+        "deleted"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "document_id",
+    "author_name",
+    "body",
+    "created_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

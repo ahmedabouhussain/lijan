@@ -1,0 +1,123 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Related Agenda Item ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Document Title"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0645\u0633\u062a\u0646\u062f"
+    },
+    "document_type": {
+      "type": "string",
+      "title": "Document Type",
+      "enum": [
+        "memo",
+        "report",
+        "analysis",
+        "proposal",
+        "evidence",
+        "correspondence",
+        "draft_decision",
+        "other"
+      ],
+      "default": "memo"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "current_version_id": {
+      "type": "string",
+      "title": "Current Version ID"
+    },
+    "current_version_number": {
+      "type": "number",
+      "title": "Current Version Number",
+      "default": 1
+    },
+    "owner_name": {
+      "type": "string",
+      "title": "Owner"
+    },
+    "owner_user_id": {
+      "type": "string",
+      "title": "Owner User ID"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "tags": {
+      "type": "string",
+      "title": "Tags (comma-separated)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "in_review",
+        "approved",
+        "published",
+        "superseded",
+        "archived"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "title",
+    "document_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

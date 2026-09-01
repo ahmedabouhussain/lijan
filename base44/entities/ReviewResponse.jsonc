@@ -1,0 +1,101 @@
+{
+  "name": "ReviewResponse",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "review_request_id": {
+      "type": "string",
+      "title": "Review Request ID"
+    },
+    "document_id": {
+      "type": "string",
+      "title": "Document ID"
+    },
+    "document_version_id": {
+      "type": "string",
+      "title": "Document Version ID"
+    },
+    "reviewer_name": {
+      "type": "string",
+      "title": "Reviewer Name"
+    },
+    "reviewer_user_id": {
+      "type": "string",
+      "title": "Reviewer User ID"
+    },
+    "verdict": {
+      "type": "string",
+      "title": "Verdict",
+      "enum": [
+        "approved",
+        "approved_with_comments",
+        "return_for_revision",
+        "rejected"
+      ],
+      "default": "approved_with_comments"
+    },
+    "comments": {
+      "type": "string",
+      "title": "Review Comments"
+    },
+    "comments_ar": {
+      "type": "string",
+      "title": "\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629"
+    },
+    "responded_at": {
+      "type": "string",
+      "title": "Responded At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "submitted",
+        "amended"
+      ],
+      "default": "submitted"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "review_request_id",
+    "reviewer_name",
+    "verdict",
+    "responded_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

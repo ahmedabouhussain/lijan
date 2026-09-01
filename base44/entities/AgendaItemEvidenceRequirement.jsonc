@@ -1,0 +1,109 @@
+{
+  "name": "AgendaItemEvidenceRequirement",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Agenda Item ID"
+    },
+    "requirement_type": {
+      "type": "string",
+      "title": "Requirement Type",
+      "enum": [
+        "financial_impact",
+        "legal_review",
+        "risk_assessment",
+        "stakeholder_consultation",
+        "technical_analysis",
+        "policy_alignment",
+        "other"
+      ],
+      "default": "other"
+    },
+    "requirement_name": {
+      "type": "string",
+      "title": "Requirement Name"
+    },
+    "requirement_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0645\u062a\u0637\u0644\u0628"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "is_mandatory": {
+      "type": "boolean",
+      "title": "Mandatory",
+      "default": true
+    },
+    "document_id": {
+      "type": "string",
+      "title": "Satisfying Document ID"
+    },
+    "satisfied": {
+      "type": "boolean",
+      "title": "Satisfied",
+      "default": false
+    },
+    "satisfied_at": {
+      "type": "string",
+      "title": "Satisfied At",
+      "format": "date-time"
+    },
+    "waived": {
+      "type": "boolean",
+      "title": "Waived",
+      "default": false
+    },
+    "waiver_reason": {
+      "type": "string",
+      "title": "Waiver Reason"
+    },
+    "sequence": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "agenda_item_id",
+    "requirement_type",
+    "requirement_name"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

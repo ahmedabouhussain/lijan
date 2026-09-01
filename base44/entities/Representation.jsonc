@@ -1,0 +1,100 @@
+{
+  "name": "Representation",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "membership_id": {
+      "type": "string",
+      "title": "Committee Membership ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "representing_institution_id": {
+      "type": "string",
+      "title": "Representing Institution ID"
+    },
+    "representing_institution_name": {
+      "type": "string",
+      "title": "Representing Institution Name"
+    },
+    "representing_institution_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u062c\u0647\u0629 \u0627\u0644\u0645\u064f\u0645\u062b\u064e\u0651\u0644\u0629"
+    },
+    "representation_type": {
+      "type": "string",
+      "title": "Representation Type",
+      "enum": [
+        "permanent",
+        "rotational",
+        "ad_hoc",
+        "ex_officio"
+      ],
+      "default": "permanent"
+    },
+    "authority_scope": {
+      "type": "string",
+      "title": "Authority Scope of Representation"
+    },
+    "start_date": {
+      "type": "string",
+      "title": "Start Date",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "title": "End Date",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "inactive",
+        "expired"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "member_name",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

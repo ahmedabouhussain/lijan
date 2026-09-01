@@ -1,0 +1,117 @@
+{
+  "name": "ConflictDeclaration",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "member_id": {
+      "type": "string",
+      "title": "Member ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "conflict_type": {
+      "type": "string",
+      "title": "Conflict Type",
+      "enum": [
+        "financial",
+        "personal",
+        "family",
+        "professional",
+        "other"
+      ],
+      "default": "financial"
+    },
+    "description": {
+      "type": "string",
+      "title": "Conflict Description"
+    },
+    "description_ar": {
+      "type": "string",
+      "title": "\u0648\u0635\u0641 \u0627\u0644\u062a\u0639\u0627\u0631\u0636"
+    },
+    "related_entity": {
+      "type": "string",
+      "title": "Related Entity / Party"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Related Agenda Item ID (optional)"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Related Decision ID (optional)"
+    },
+    "declared_at": {
+      "type": "string",
+      "title": "Declared At",
+      "format": "date-time"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "title": "Reviewed By"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "title": "Reviewed At",
+      "format": "date-time"
+    },
+    "review_notes": {
+      "type": "string",
+      "title": "Review Notes"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "declared",
+        "under_review",
+        "confirmed",
+        "dismissed",
+        "expired"
+      ],
+      "default": "declared"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "member_name",
+    "conflict_type",
+    "declared_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

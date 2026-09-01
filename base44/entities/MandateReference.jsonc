@@ -1,0 +1,102 @@
+{
+  "name": "MandateReference",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "mandate_id": {
+      "type": "string",
+      "title": "Committee Mandate ID"
+    },
+    "reference_type": {
+      "type": "string",
+      "title": "Reference Type",
+      "enum": [
+        "law",
+        "decree",
+        "regulation",
+        "policy",
+        "resolution",
+        "other"
+      ],
+      "default": "law"
+    },
+    "reference_number": {
+      "type": "string",
+      "title": "Reference Number"
+    },
+    "reference_title": {
+      "type": "string",
+      "title": "Reference Title"
+    },
+    "reference_title_ar": {
+      "type": "string",
+      "title": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0645\u0631\u062c\u0639"
+    },
+    "issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority"
+    },
+    "issue_date": {
+      "type": "string",
+      "title": "Issue Date",
+      "format": "date"
+    },
+    "article_number": {
+      "type": "string",
+      "title": "Article / Clause Number"
+    },
+    "url": {
+      "type": "string",
+      "title": "Reference URL",
+      "format": "uri"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "superseded",
+        "repealed"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "reference_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

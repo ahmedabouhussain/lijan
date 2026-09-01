@@ -1,0 +1,97 @@
+{
+  "name": "CommitteeLifecycleEvent",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "created",
+        "submitted_for_approval",
+        "activated",
+        "suspended",
+        "resumed",
+        "term_extended",
+        "renewed",
+        "closure_initiated",
+        "closed",
+        "archived"
+      ],
+      "default": "created"
+    },
+    "from_status": {
+      "type": "string",
+      "title": "From Status"
+    },
+    "to_status": {
+      "type": "string",
+      "title": "To Status"
+    },
+    "actor_user_id": {
+      "type": "string",
+      "title": "Actor User ID"
+    },
+    "actor_name": {
+      "type": "string",
+      "title": "Actor Name"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason / Justification"
+    },
+    "reason_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0633\u0628\u0628"
+    },
+    "metadata": {
+      "type": "object",
+      "title": "Additional Metadata"
+    },
+    "effective_date": {
+      "type": "string",
+      "title": "Effective Date",
+      "format": "date"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Audit Correlation ID"
+    },
+    "occurred_at": {
+      "type": "string",
+      "title": "Occurred At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "event_type",
+    "occurred_at"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

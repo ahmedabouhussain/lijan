@@ -1,0 +1,103 @@
+{
+  "name": "DocumentAccessGrant",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "document_id": {
+      "type": "string",
+      "title": "Document ID"
+    },
+    "document_version_id": {
+      "type": "string",
+      "title": "Document Version ID"
+    },
+    "grantee_user_id": {
+      "type": "string",
+      "title": "Grantee User ID"
+    },
+    "grantee_name": {
+      "type": "string",
+      "title": "Grantee Name"
+    },
+    "grantee_role": {
+      "type": "string",
+      "title": "Grantee Committee Role"
+    },
+    "access_level": {
+      "type": "string",
+      "title": "Access Level",
+      "enum": [
+        "read",
+        "comment",
+        "review",
+        "full"
+      ],
+      "default": "read"
+    },
+    "granted_by_name": {
+      "type": "string",
+      "title": "Granted By"
+    },
+    "granted_at": {
+      "type": "string",
+      "title": "Granted At",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "expired",
+        "revoked"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "document_id",
+    "grantee_name",
+    "access_level",
+    "granted_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
