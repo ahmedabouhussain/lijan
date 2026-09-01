@@ -19,6 +19,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import MemberManager from "@/components/raqeem/MemberManager";
 import MeetingScheduler from "@/components/raqeem/MeetingScheduler";
 import SecretaryPanel from "@/components/raqeem/SecretaryPanel";
+import CommitteeHome from "@/components/raqeem/CommitteeHome";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -114,17 +115,8 @@ export default function CommitteeDetail() {
         <span className="text-foreground truncate">{committee.name_ar || committee.name_en}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-foreground">{committee.name_ar || committee.name_en}</h1>
-            <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
-          </div>
-          <p className="text-sm text-muted-foreground">{committee.name_en}</p>
-          <p className="text-xs text-muted-foreground mt-1">{COMMITTEE_TYPES[committee.type]?.ar} — {COMMITTEE_TYPES[committee.type]?.en}</p>
-        </div>
-      </div>
+      {/* Committee Home — role-based landing */}
+      <CommitteeHome committee={committee} members={members} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
 
       {/* Mandate-to-Impact chain indicator */}
       {!committee.governance_complete && (
@@ -145,10 +137,29 @@ export default function CommitteeDetail() {
         </div>
       )}
 
+      {/* In-committee navigation */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <a href="#info" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+          <FileText className="w-3.5 h-3.5" /> المعلومات
+        </a>
+        <a href="#members" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+          <Users className="w-3.5 h-3.5" /> الأعضاء
+        </a>
+        <a href="#meetings" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+          <Calendar className="w-3.5 h-3.5" /> الاجتماعات
+        </a>
+        <a href="#decisions" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+          <Gavel className="w-3.5 h-3.5" /> القرارات
+        </a>
+        <a href="#actions" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+          <CheckSquare className="w-3.5 h-3.5" /> الإجراءات
+        </a>
+      </div>
+
       {/* Two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Committee info */}
-        <div className="space-y-6">
+        <div id="info" className="space-y-6 scroll-mt-4">
           <div className="raqeem-card p-5">
             <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <FileText className="w-4 h-4 text-primary" /> معلومات اللجنة
@@ -179,7 +190,7 @@ export default function CommitteeDetail() {
           <SecretaryPanel committeeId={id} meetings={meetings} decisions={decisions} actions={actions} minutes={minutes} />
 
           {/* Members */}
-          <div className="raqeem-card p-5">
+          <div id="members" className="raqeem-card p-5 scroll-mt-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" /> الأعضاء · Members
@@ -189,7 +200,7 @@ export default function CommitteeDetail() {
           </div>
 
           {/* Meetings */}
-          <div className="raqeem-card p-5">
+          <div id="meetings" className="raqeem-card p-5 scroll-mt-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-primary" /> الاجتماعات · Meetings
@@ -214,7 +225,7 @@ export default function CommitteeDetail() {
           </div>
 
           {/* Decisions */}
-          <div className="raqeem-card p-5">
+          <div id="decisions" className="raqeem-card p-5 scroll-mt-4">
             <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
               <Gavel className="w-4 h-4 text-primary" /> القرارات · Decisions
             </h2>
@@ -236,7 +247,7 @@ export default function CommitteeDetail() {
           </div>
 
           {/* Actions */}
-          <div className="raqeem-card p-5">
+          <div id="actions" className="raqeem-card p-5 scroll-mt-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <CheckSquare className="w-4 h-4 text-primary" /> الإجراءات · Actions
