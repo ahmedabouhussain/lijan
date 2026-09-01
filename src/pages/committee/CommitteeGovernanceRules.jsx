@@ -1,43 +1,144 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { BookOpen } from "lucide-react";
+import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
+import { base44 } from "@/api/base44Client";
+import { Scale, Edit3, X, Loader2, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const VOTING_RULES = [
+  { value: "simple_majority", label_ar: "أغلبية بسيطة", label_en: "Simple Majority" },
+  { value: "two_thirds", label_ar: "ثلثان", label_en: "Two Thirds" },
+  { value: "unanimous", label_ar: "إجماع", label_en: "Unanimous" },
+  { value: "chair_decides", label_ar: "الرئيس يقرر", label_en: "Chair Decides" },
+];
+
+const CADENCE = [
+  { value: "weekly", label_ar: "أسبوعي", label_en: "Weekly" },
+  { value: "biweekly", label_ar: "كل أسبوعين", label_en: "Biweekly" },
+  { value: "monthly", label_ar: "شهري", label_en: "Monthly" },
+  { value: "quarterly", label_ar: "ربع سنوي", label_en: "Quarterly" },
+  { value: "ad_hoc", label_ar: "حسب الحاجة", label_en: "Ad Hoc" },
+];
+
+const CLASSIFICATION = [
+  { value: "public", label_ar: "عام", label_en: "Public" },
+  { value: "internal", label_ar: "داخلي", label_en: "Internal" },
+  { value: "confidential", label_ar: "سري", label_en: "Confidential" },
+  { value: "restricted", label_ar: "مقيّد", label_en: "Restricted" },
+];
 
 export default function CommitteeGovernanceRules() {
-  const { data } = useCommittee();
+  const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle, getDescription } = usePageConfig("governance-rules");
+  const { canManageGovernance } = useCommitteeAdmin();
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   if (!data) return null;
-  const { committee } = data;
+  const { committee, is_oversight } = data;
+
+  const startEdit = () => {
+    setForm({
+      quorum_count: committee.quorum_count || 3,
+      voting_rule: committee.voting_rule || "simple_majority",
+      meeting_cadence: committee.meeting_cadence || "monthly",
+      classification: committee.classification || "internal",
+    });
+    setEditing(true);
+    setError("");
+  };
+
+  const submit = async () => {
+    setSubmitting(true); setError("");
+    try {
+      await base44.entities.Committee.update(committee.id, {
+        quorum_count: Number(form.quorum_count),
+        voting_rule: form.voting_rule,
+        meeting_cadence: form.meeting_cadence,
+        classification: form.classification,
+      });
+      setEditing(false);
+      reload();
+    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    setSubmitting(false);
+  };
 
   const rules = [
-    { label: t("نوع اللجنة", "Committee Type"), value: committee.type?.replace(/_/g, " ") },
-    { label: t("قاعدة التصويت", "Voting Rule"), value: { simple_majority: t("أغلبية بسيطة", "Simple Majority"), two_thirds: t("ثلثين", "Two-Thirds"), unanimous: t("إجماع", "Unanimous"), chair_decides: t("الرئيس يقرر", "Chair Decides") }[committee.voting_rule] },
-    { label: t("النصاب القانوني", "Quorum"), value: `${committee.quorum_count} ${t("أعضاء", "members")}` },
-    { label: t("وتيرة الاجتماعات", "Meeting Cadence"), value: { weekly: t("أسبوعي", "Weekly"), biweekly: t("كل أسبوعين", "Biweekly"), monthly: t("شهري", "Monthly"), quarterly: t("ربع سنوي", "Quarterly"), ad_hoc: t("حسب الحاجة", "Ad Hoc") }[committee.meeting_cadence] },
-    { label: t("التصنيف الأمني", "Classification"), value: { public: t("عام", "Public"), internal: t("داخلي", "Internal"), confidential: t("سري", "Confidential"), restricted: t("مقيّد", "Restricted"), highly_restricted: t("عالي التقييد", "Highly Restricted") }[committee.classification] },
-    { label: t("متطلبات التقارير", "Reporting Requirements"), value: committee.reporting_requirements || "—" },
+    { label: t("قاعدة التصويت", "Voting Rule"), value: committee.voting_rule },
+    { label: t("النصاب", "Quorum"), value: committee.quorum_count },
+    { label: t("دورة الاجتماعات", "Meeting Cadence"), value: committee.meeting_cadence },
+    { label: t("التصنيف", "Classification"), value: committee.classification },
   ];
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <BookOpen className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("قواعد الحوكمة", "Governance Rules", lang)}</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Scale className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold">{getTitle("قواعد الحوكمة", "Governance Rules", lang)}</h1>
+        </div>
+        {canManageGovernance && !editing && !is_oversight && (
+          <Button size="sm" variant="outline" onClick={startEdit}>
+            <Edit3 className="w-4 h-4" />
+            {t("تحرير القواعد", "Edit Rules")}
+          </Button>
+        )}
       </div>
-      {(() => {
-        const desc = getDescription("", "", lang);
-        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
-      })()}
-      <div className="raqeem-card p-5 space-y-3">
-        {rules.map((r, i) => (
-          <div key={i} className="flex items-start justify-between py-2 border-b border-border last:border-0">
-            <span className="text-sm text-muted-foreground">{r.label}</span>
-            <span className="text-sm font-medium text-right capitalize">{r.value || "—"}</span>
+
+      {editing ? (
+        <div className="raqeem-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">{t("تحرير قواعد الحوكمة", "Edit Governance Rules")}</h3>
+            <button onClick={() => setEditing(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
           </div>
-        ))}
-      </div>
+          {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
+          <div className="p-2 rounded-md bg-secondary/60 text-xs text-muted-foreground flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5 shrink-0" />
+            {t("لا تؤثر التغييرات بأثر رجعي على الاجتماعات أو التصويتات المكتملة.", "Changes do not retroactively affect completed meetings or votes.")}
+          </div>
+          <div>
+            <Label>{t("النصاب", "Quorum Count")}</Label>
+            <Input type="number" value={form.quorum_count} onChange={(e) => setForm(f => ({ ...f, quorum_count: e.target.value }))} />
+          </div>
+          <div>
+            <Label>{t("قاعدة التصويت", "Voting Rule")}</Label>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.voting_rule} onChange={(e) => setForm(f => ({ ...f, voting_rule: e.target.value }))}>
+              {VOTING_RULES.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
+            </select>
+          </div>
+          <div>
+            <Label>{t("دورة الاجتماعات", "Meeting Cadence")}</Label>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.meeting_cadence} onChange={(e) => setForm(f => ({ ...f, meeting_cadence: e.target.value }))}>
+              {CADENCE.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
+            </select>
+          </div>
+          <div>
+            <Label>{t("التصنيف", "Classification")}</Label>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.classification} onChange={(e) => setForm(f => ({ ...f, classification: e.target.value }))}>
+              {CLASSIFICATION.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
+            </select>
+          </div>
+          <Button onClick={submit} disabled={submitting} className="w-full min-h-[44px]">
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("حفظ", "Save")}
+          </Button>
+        </div>
+      ) : (
+        <div className="raqeem-card p-4 space-y-3">
+          {rules.map((r, i) => (
+            <div key={i} className="flex justify-between text-sm py-1 border-b border-border last:border-0">
+              <span className="text-muted-foreground">{r.label}</span>
+              <span className="font-medium">{r.value || "—"}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
