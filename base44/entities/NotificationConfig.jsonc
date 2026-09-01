@@ -1,0 +1,23 @@
+{
+  "name": "NotificationConfig",
+  "type": "object",
+  "properties": {
+    "config_key": {
+      "type": "string",
+      "title": "Config Key",
+      "enum": [
+        "escalation_rules",
+        "channels",
+        "events"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "title": "Payload"
+    }
+  },
+  "required": [
+    "config_key",
+    "payload"
+  ]
+}
