@@ -15,8 +15,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import NotificationCenter from "@/components/raqeem/NotificationCenter";
-import BrandLogo from "@/components/raqeem/BrandLogo";
-import BrandWordmark from "@/components/brand/BrandWordmark";
+import PlatformBrandLogo from "@/components/brand/PlatformBrandLogo";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 
@@ -43,7 +42,8 @@ function CommitteeShell() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-6">
+        <PlatformBrandLogo size="large" placement="auth" linked={false} />
         <div className="w-8 h-8 border-4 border-secondary border-t-primary rounded-full animate-spin" />
       </div>
     );
@@ -51,7 +51,8 @@ function CommitteeShell() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen flex-col gap-3">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <PlatformBrandLogo size="large" placement="auth" linked={false} />
         <AlertTriangle className="w-8 h-8 text-destructive" />
         <p className="text-sm text-muted-foreground">{error}</p>
         <Link to={`/o/${orgRef}`} className="text-primary hover:underline text-sm">
@@ -75,12 +76,7 @@ function CommitteeShell() {
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="px-4 py-2.5 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
-            <BrandLogo className="w-full h-full" />
-          </div>
-          <BrandWordmark variant="light" className="text-sm" />
-        </Link>
+        <PlatformBrandLogo size="standard" placement="sidebar" />
       </div>
 
       {/* Committee identity — collapsible */}
@@ -188,12 +184,7 @@ function CommitteeShell() {
           <button onClick={() => setMobileOpen(true)}>
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
-              <BrandLogo className="w-full h-full" />
-            </div>
-            <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>
-          </div>
+          <PlatformBrandLogo size="mobile" placement="header" linked={false} />
           <div className="flex items-center gap-2">
             <NotificationCenter />
             <Link to={`/o/${orgRef}`} className="text-primary">

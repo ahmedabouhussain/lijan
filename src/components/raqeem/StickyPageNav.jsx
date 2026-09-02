@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Home, ChevronLeft } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
+import PlatformBrandLogo from "@/components/brand/PlatformBrandLogo";
 
 /**
  * StickyPageNav — lightweight sticky navigation bar for standalone pages
@@ -24,7 +25,7 @@ export default function StickyPageNav({ crumbs = [] }) {
     }
   };
 
-  const allCrumbs = [{ label: t("لِجان", "LIJAN"), to: "/" }, ...crumbs];
+  const allCrumbs = [...crumbs];
 
   return (
     <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border">
@@ -65,14 +66,7 @@ export default function StickyPageNav({ crumbs = [] }) {
           </div>
         </div>
 
-        <Link
-          to="/"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors shrink-0"
-          title={t("الرئيسية", "Home")}
-        >
-          <Home className="w-4 h-4" />
-          <span className="hidden md:inline">{t("الرئيسية", "Home")}</span>
-        </Link>
+        <PlatformBrandLogo size="mobile" placement="header" />
       </div>
     </div>
   );

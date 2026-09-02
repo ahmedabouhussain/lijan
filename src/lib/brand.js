@@ -3,7 +3,7 @@
 
 // ── Official brand assets (approved lockup + intro) ──
 export const BRAND_LOGO_URL =
-  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png";
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/a6183da5e_LijanLogo.png";
 
 export const BRAND_INTRO_VIDEO_URL =
   "https://media.base44.com/videos/public/6a96a0e0cd5dac701b62b7f5/f43411a16_Cq91lW4B.mp4";
