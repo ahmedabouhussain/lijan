@@ -10,7 +10,6 @@
  *   Strategy: Generate PDF client-side, upload via UploadFile, persist file_url.
  */
 
-import { jsPDF } from 'jspdf';
 import { base44 } from '@/api/base44Client';
 
 const MAROON = [138, 21, 56];
@@ -23,7 +22,8 @@ const GOLD = [181, 154, 91];
  * Render a branded PDF with structured sections.
  * Browser handles Arabic text shaping natively.
  */
-export function renderPDF(sections, meta, lang = 'ar') {
+export async function renderPDF(sections, meta, lang = 'ar') {
+  const { jsPDF } = await import('jspdf');
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = 210;
   const pageHeight = 297;
@@ -155,7 +155,7 @@ export async function generateAndUploadPDF(product, lang = 'ar') {
     verification_id: product.id,
   };
 
-  const doc = renderPDF(sections, meta, lang);
+  const doc = await renderPDF(sections, meta, lang);
   const blob = doc.output('blob');
   const fileName = `${product.product_type}_${product.id || Date.now()}.pdf`;
   const file = new File([blob], fileName, { type: 'application/pdf' });
