@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import LocalizedFileUpload from "@/components/raqeem/LocalizedFileUpload";
 
 const INSTRUMENT_TYPES = [
   { value: "law", label: "قانون / لائحة" },
@@ -216,8 +217,17 @@ export default function CommitteeEstablishment() {
           )}
           <div>
             <Label className="text-xs">الملف الرسمي (PDF / صورة / Word)</Label>
-            <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={handleFile} className="text-sm" />
-            {form.original_filename && <span className="text-xs text-muted-foreground block mt-1">{form.original_filename}</span>}
+            <LocalizedFileUpload
+              value={{ file_url: form.file_url, file_name: form.original_filename, file_size: form.file_size }}
+              onUpload={async (file) => {
+                setUploading(true);
+                try {
+                  const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                  setForm((f) => ({ ...f, file_url, original_filename: file.name, mime_type: file.type, file_size: file.size }));
+                } catch { setMsg("تعذّر رفع الملف"); }
+                setUploading(false);
+              }}
+            />
           </div>
           <Button size="sm" disabled={uploading || !form.file_url} onClick={submit} className="inline-flex items-center gap-2">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}

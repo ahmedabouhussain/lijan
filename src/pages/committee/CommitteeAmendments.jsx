@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import AmendmentFormBuilder from "@/components/raqeem/AmendmentFormBuilder";
 
 const AMENDMENT_TYPES = [
   { value: "add_member", label: "إضافة عضو" },
@@ -70,7 +71,7 @@ export default function CommitteeAmendments() {
     description: "",
     source_instrument_ref: "",
     effective_date: "",
-    after_state: "",
+    after_state: {},
   });
 
   useEffect(() => {
@@ -111,10 +112,7 @@ export default function CommitteeAmendments() {
     setBusy("propose");
     setMsg("");
     try {
-      let afterState = {};
-      if (form.after_state) {
-        try { afterState = JSON.parse(form.after_state); } catch { afterState = { note: form.after_state }; }
-      }
+      const afterState = form.after_state || {};
       const res = await base44.functions.invoke("ProposeCommitteeAmendment", {
         committee_id: data.committee.id,
         amendment_type: form.amendment_type,
@@ -128,7 +126,7 @@ export default function CommitteeAmendments() {
       else {
         setMsg(`تم إنشاء مقترح التعديل. الأثر: ${d.impact_summary}`);
         setShowForm(false);
-        setForm({ amendment_type: "add_member", description: "", source_instrument_ref: "", effective_date: "", after_state: "" });
+        setForm({ amendment_type: "add_member", description: "", source_instrument_ref: "", effective_date: "", after_state: {} });
         load();
       }
     } catch (e) { setMsg(e?.message || "خطأ"); }
@@ -236,14 +234,11 @@ export default function CommitteeAmendments() {
             <Label className="text-xs">مرجع السند الرسمي</Label>
             <Input value={form.source_instrument_ref} onChange={(e) => setForm((f) => ({ ...f, source_instrument_ref: e.target.value }))} placeholder="رقم القرار / المرسوم" />
           </div>
-          <div>
-            <Label className="text-xs">الحالة المستهدفة (JSON أو نص)</Label>
-            <Textarea
+          <div className="rounded-md border border-border p-3 bg-secondary/20">
+            <AmendmentFormBuilder
+              type={form.amendment_type}
               value={form.after_state}
-              onChange={(e) => setForm((f) => ({ ...f, after_state: e.target.value }))}
-              rows={3}
-              placeholder='{"name_ar":"...","members":[{"full_name":"...","role":"member"}]}'
-              dir="ltr"
+              onChange={(after_state) => setForm((f) => ({ ...f, after_state }))}
             />
           </div>
           <Button size="sm" disabled={busy === "propose"} onClick={propose} className="inline-flex items-center gap-2">

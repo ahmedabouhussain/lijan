@@ -46,7 +46,12 @@
     },
     "output_summary": {
       "type": "string",
-      "title": "Output Summary"
+      "title": "Output Summary (plain text \u2014 no HTML/Markdown)"
+    },
+    "structured_content": {
+      "type": "string",
+      "title": "Structured Content (JSON-serialized sections)",
+      "description": "Safe structured JSON \u2014 array of section objects with title, summary, source_references, evidence_status, confidence. Never HTML or raw Markdown."
     },
     "output_url": {
       "type": "string",

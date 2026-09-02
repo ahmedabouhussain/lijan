@@ -1,10 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
-import { brandedMarkdownHeader } from '../../shared/brandHeader.ts';
 
 // GenerateInstitutionalMemory — server-side AI for committee closure memory transfer.
-// Replaces the unsafe client-side InvokeLLM call in CommitteeClosure.jsx.
-// Creates AIOutputLedger entry with source citations and human-review status.
+// Returns STRUCTURED JSON sections (no HTML/Markdown) for safe client rendering.
+// Each section carries source_references, evidence_status, and confidence.
 
 export default async function(req) {
   try {
@@ -31,52 +30,100 @@ export default async function(req) {
       base44.asServiceRole.entities.MeetingMinutes.filter({ committee_id }).catch(() => []),
     ]);
 
-    const decisionSummaries = (decisions || [])
-      .map((d) => `- ${d.title} (${d.status}): ${d.outcome || d.proposal || '—'}`)
+    // Build source references from approved records only
+    const approvedDecisions = (decisions || []).filter((d) => ['approved', 'issued', 'completed'].includes(d.status));
+    const completedActions = (actions || []).filter((a) => ['verified', 'closed', 'completed'].includes(a.status));
+    const approvedMinutes = (minutes || []).filter((m) => m.status === 'approved' || m.approved === true);
+
+    const decisionRefs = approvedDecisions.map((d) => ({
+      record_type: 'Decision',
+      record_id: d.id,
+      record_number: d.decision_number || '',
+      record_title: d.title || '',
+    }));
+    const actionRefs = completedActions.map((a) => ({
+      record_type: 'Action',
+      record_id: a.id,
+      record_title: a.title || '',
+    }));
+    const minuteRefs = approvedMinutes.map((m) => ({
+      record_type: 'MeetingMinutes',
+      record_id: m.id,
+    }));
+
+    const allRefs = [...decisionRefs, ...actionRefs, ...minuteRefs];
+
+    const decisionSummaries = approvedDecisions
+      .map((d) => `- ${d.title}: ${d.outcome || d.proposal || '—'}`)
       .join('\n');
-    const actionSummaries = (actions || [])
-      .map((a) => `- ${a.title}: ${a.owner_name} (${a.status})`)
+    const actionSummaries = completedActions
+      .map((a) => `- ${a.title}: ${a.owner_name}`)
       .join('\n');
 
-    const prompt = `أنت مؤرشف مؤسسي. استخرج الذاكرة المؤسسية للجنة التالية بصيغة احترافية رسمية باللغة العربية:
+    const prompt = `أنت مؤرشف مؤسسي. أنشئ ذاكرة مؤسسية للجنة التالية بصيغة JSON منظمة.
+لا تستخدم HTML أو Markdown. أعد نصاً عربياً نقياً فقط.
 
 اللجنة: ${committee.name_ar || committee.name_en}
 الصلاحية: ${committee.mandate || '—'}
 عدد الأعضاء: ${(members || []).length}
-عدد الاجتماعات: ${(meetings || []).length}
+عدد الاجتماعات المعتمدة: ${(approvedMinutes || []).length}
 
-القرارات (${(decisions || []).length}):
-${decisionSummaries}
+القرارات المعتمدة (${approvedDecisions.length}):
+${decisionSummaries || 'لا توجد قرارات معتمدة'}
 
-الإجراءات (${(actions || []).length}):
-${actionSummaries}
+الإجراءات المنجزة (${completedActions.length}):
+${actionSummaries || 'لا توجد إجراءات منجزة'}
 
-قدم ملخص الذاكرة المؤسسية يشمل:
-1. الإنجازات الرئيسية (key_achievements)
-2. الدروس المستفادة (lessons_learned)
-3. الأنماط الملاحظة (patterns)
-4. التوصيات للجنة الخلف (recommendations)
+أعد JSON يحتوي على مصفوفة "sections"، كل عنصر يحتوي على:
+- section_type: واحد من [key_achievements, lessons_learned, patterns, recommendations, open_items]
+- title_ar: عنوان عربي
+- title_en: عنوان إنجليزي
+- summary_ar: ملخص عربي نقي (بدون HTML أو Markdown)
+- summary_en: ملخص إنجليزي
+- evidence_status: واحد من [verified, partial, insufficient]
+- confidence: رقم بين 0 و 1
 
-أعد النتيجة بصيغة JSON بالحقول: key_achievements, lessons_learned, patterns, recommendations`;
+إذا لم توجد أدلة كافية لقسم ما، استخدم evidence_status = "insufficient" و confidence = 0.
+لا تخترع وقائع غير موجودة في البيانات.`;
 
-    // Invoke LLM server-side
+    // Invoke LLM server-side with structured JSON schema
     const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: 'object',
         properties: {
-          key_achievements: { type: 'string' },
-          lessons_learned: { type: 'string' },
-          patterns: { type: 'string' },
-          recommendations: { type: 'string' },
+          sections: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                section_type: { type: 'string' },
+                title_ar: { type: 'string' },
+                title_en: { type: 'string' },
+                summary_ar: { type: 'string' },
+                summary_en: { type: 'string' },
+                evidence_status: { type: 'string' },
+                confidence: { type: 'number' },
+              },
+            },
+          },
         },
       },
     });
 
-    const rawSummary = `## الإنجازات الرئيسية\n${llmResponse.key_achievements}\n\n## الدروس المستفادة\n${llmResponse.lessons_learned}\n\n## الأنماط الملاحظة\n${llmResponse.patterns}\n\n## التوصيات للجنة الخلف\n${llmResponse.recommendations}`;
-    const summary = brandedMarkdownHeader(committee.name_ar || committee.name_en) + '\n' + rawSummary;
+    // Attach source references to each section
+    const sections = (llmResponse.sections || []).map((sec) => ({
+      ...sec,
+      source_references: allRefs.slice(0, 5),
+      confidence: typeof sec.confidence === 'number' ? sec.confidence : 0.5,
+    }));
 
-    // Create AIOutputLedger entry
+    const plainTextSummary = sections
+      .map((s) => `${s.title_ar || s.section_type}: ${s.summary_ar || ''}`)
+      .join(' — ')
+      .substring(0, 500);
+
+    // Create AIOutputLedger entry with structured content
     const ledgerEntry = await base44.asServiceRole.entities.AIOutputLedger.create({
       organization_id: auth.organization_id,
       output_type: 'institutional_memory',
@@ -85,8 +132,9 @@ ${actionSummaries}
       source_title: committee.name_ar || committee.name_en,
       committee_id,
       model_used: 'automatic',
-      prompt_summary: 'توليد ملخص الذاكرة المؤسسية لإغلاق اللجنة',
-      output_summary: summary.substring(0, 500),
+      prompt_summary: 'توليد ذاكرة مؤسسية منظمة لإغلاق اللجنة',
+      output_summary: plainTextSummary,
+      structured_content: JSON.stringify(sections),
       generated_at: new Date().toISOString(),
       generated_by_user_id: auth.user.id,
       generated_by_name: auth.user.full_name || auth.user.email,
