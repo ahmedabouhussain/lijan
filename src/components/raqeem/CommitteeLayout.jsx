@@ -20,18 +20,25 @@ import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 
+// Role-Adaptive Navigation — admin roles see all; members/observers see only what serves their role.
+const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
+
 const NAV_GROUPS = [
   {
-    label: "نظرة عامة", labelEn: "Overview",
+    label: "الرئيسية", labelEn: "Home",
     items: [{ to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard }],
   },
   {
-    label: "الأشخاص", labelEn: "People",
+    label: "الأشخاص والتشكيل", labelEn: "People & Formation",
     items: [
       { to: "/members", label: "الأعضاء", labelEn: "Members", icon: Users },
-      { to: "/roles", label: "الأدوار", labelEn: "Roles", icon: Award },
-      { to: "/delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight },
-      { to: "/alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2 },
+      { to: "/formation", label: "التشكيل", labelEn: "Formation", icon: GitBranch, roles: ADMIN_ROLES },
+      { to: "/establishment", label: "التأسيس والسندات", labelEn: "Establishment", icon: ScrollText, roles: ADMIN_ROLES },
+      { to: "/formation-history", label: "سجل التشكيل", labelEn: "Formation History", icon: History, roles: ADMIN_ROLES },
+      { to: "/amendments", label: "التعديلات", labelEn: "Amendments", icon: GitBranch, roles: ADMIN_ROLES },
+      { to: "/roles", label: "الأدوار", labelEn: "Roles", icon: Award, roles: ADMIN_ROLES },
+      { to: "/delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight, roles: ADMIN_ROLES },
+      { to: "/alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2, roles: ADMIN_ROLES },
       { to: "/recusals", label: "التنحي والتعارض", labelEn: "Conflicts & Recusals", icon: ShieldOff },
     ],
   },
@@ -41,7 +48,7 @@ const NAV_GROUPS = [
       { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar },
       { to: "/calendar", label: "التقويم", labelEn: "Calendar", icon: Calendar },
       { to: "/agenda", label: "جدول الأعمال", labelEn: "Agenda", icon: ClipboardList },
-      { to: "/packs", label: "حزم الاجتماعات", labelEn: "Meeting Packs", icon: Package },
+      { to: "/packs", label: "حزم الاجتماعات", labelEn: "Meeting Packs", icon: Package, roles: ADMIN_ROLES },
       { to: "/attendance", label: "الحضور", labelEn: "Attendance", icon: UserCheck },
     ],
   },
@@ -56,43 +63,34 @@ const NAV_GROUPS = [
     ],
   },
   {
-    label: "التنفيذ", labelEn: "Execution",
+    label: "التنفيذ والمتابعة", labelEn: "Execution & Follow-up",
     items: [
       { to: "/actions", label: "الإجراءات", labelEn: "Actions", icon: CheckSquare },
       { to: "/evidence", label: "الأدلة", labelEn: "Evidence", icon: FileCheck },
-      { to: "/risks", label: "المخاطر", labelEn: "Risks", icon: Network },
-      { to: "/dependencies", label: "التبعيات", labelEn: "Dependencies", icon: GitBranch },
-      { to: "/escalations", label: "التصعيدات", labelEn: "Escalations", icon: TrendingUp },
+      { to: "/risks", label: "المخاطر", labelEn: "Risks", icon: Network, roles: ADMIN_ROLES },
+      { to: "/dependencies", label: "التبعيات", labelEn: "Dependencies", icon: GitBranch, roles: ADMIN_ROLES },
+      { to: "/escalations", label: "التصعيدات", labelEn: "Escalations", icon: TrendingUp, roles: ADMIN_ROLES },
     ],
   },
   {
-    label: "الذكاء والتقارير", labelEn: "Intelligence & Reporting",
+    label: "الذكاء والتقارير", labelEn: "Intelligence & Reports",
     items: [
-      { to: "/products", label: "مصنع المنتجات", labelEn: "Product Factory", icon: Package },
+      { to: "/products", label: "مصنع المنتجات", labelEn: "Product Factory", icon: Package, roles: ADMIN_ROLES },
       { to: "/reports", label: "مركز التقارير", labelEn: "Report Center", icon: BarChart3 },
       { to: "/memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain },
-      { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot },
-      { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck },
+      { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot, roles: ADMIN_ROLES },
+      { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck, roles: ADMIN_ROLES },
     ],
   },
   {
-    label: "الحوكمة والدستور", labelEn: "Governance & Constitution",
-    items: [
-      { to: "/formation", label: "التشكيل والتعديلات", labelEn: "Formation & Amendments", icon: GitBranch },
-      { to: "/establishment", label: "التأسيس والسندات", labelEn: "Establishment", icon: ScrollText },
-      { to: "/formation-history", label: "سجل التشكيل", labelEn: "Formation History", icon: History },
-      { to: "/amendments", label: "التعديلات المحوَّكة", labelEn: "Amendments", icon: GitBranch },
-    ],
-  },
-  {
-    label: "إدارة اللجنة", labelEn: "Administration",
+    label: "الحوكمة والإدارة", labelEn: "Governance & Administration",
     items: [
       { to: "/mandate", label: "الصلاحية", labelEn: "Mandate", icon: ScrollText },
-      { to: "/governance-rules", label: "قواعد الحوكمة", labelEn: "Governance Rules", icon: BookOpen },
-      { to: "/integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug },
-      { to: "/notifications", label: "الإشعارات", labelEn: "Notifications", icon: Bell },
-      { to: "/closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock },
-      { to: "/settings", label: "الإعدادات", labelEn: "Settings", icon: Settings },
+      { to: "/governance-rules", label: "قواعد الحوكمة", labelEn: "Governance Rules", icon: BookOpen, roles: ADMIN_ROLES },
+      { to: "/integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug, roles: ADMIN_ROLES },
+      { to: "/notifications", label: "الإشعارات", labelEn: "Notifications", icon: Bell, roles: ADMIN_ROLES },
+      { to: "/closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock, roles: ["chair", "vice_chair"] },
+      { to: "/settings", label: "الإعدادات", labelEn: "Settings", icon: Settings, roles: ADMIN_ROLES },
     ],
   },
 ];
@@ -179,12 +177,19 @@ function CommitteeShell() {
         </Link>
       </div>
 
-      {/* Navigation with progressive disclosure */}
+      {/* Navigation with progressive disclosure — role-adaptive */}
       <nav className="flex-1 px-3 py-3 overflow-y-auto">
         {NAV_GROUPS.map((group) => {
+          // Filter items by role — members/observers don't see admin tools
+          const visibleItems = group.items.filter((item) => {
+            if (!item.roles) return true;
+            return item.roles.includes(my_role);
+          });
+          if (visibleItems.length === 0) return null;
+
           const collapsed = collapsedGroups[group.label];
-          // Auto-expand if any item in this group is active
-          const hasActive = group.items.some((item) => {
+          // Auto-expand if any visible item in this group is active
+          const hasActive = visibleItems.some((item) => {
             const to = item.to === "" ? base : `${base}${item.to}`;
             return item.to === "" ? location.pathname === base : (location.pathname === to || location.pathname.startsWith(to + "/"));
           });
@@ -198,7 +203,7 @@ function CommitteeShell() {
                 <span>{t(group.label, group.labelEn)}</span>
                 <ChevronDown className={cn("w-3 h-3 transition-transform", show ? "" : "-rotate-90")} />
               </button>
-              {show && group.items.map((item) => {
+              {show && visibleItems.map((item) => {
                 const to = item.to === "" ? base : `${base}${item.to}`;
                 const active = item.to === ""
                   ? location.pathname === base

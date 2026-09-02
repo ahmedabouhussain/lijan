@@ -6,6 +6,8 @@ import { useAuth } from "@/lib/AuthContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import SovereignCard from "@/components/raqeem/SovereignCard";
 import WorkInbox from "@/components/raqeem/WorkInbox";
+import ChairBrief from "@/components/raqeem/ChairBrief";
+import SecretaryOperations from "@/components/raqeem/SecretaryOperations";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import ChairHomeEnhanced from "@/components/raqeem/homes/ChairHomeEnhanced";
 import SecretaryHomeEnhanced from "@/components/raqeem/homes/SecretaryHomeEnhanced";
@@ -83,6 +85,10 @@ export default function CommitteeHome() {
           )}
         </div>
       </SovereignCard>
+
+      {/* Role-specific calm brief — appears above WorkInbox */}
+      <ChairBrief data={data} base={base} />
+      <SecretaryOperations data={data} base={base} />
 
       {/* ما المطلوب مني الآن؟ — primary screen */}
       <div>
