@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LocalizedFileUpload from "@/components/raqeem/LocalizedFileUpload";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 const INSTRUMENT_TYPES = [
   { value: "law", label: "قانون / لائحة" },
@@ -198,11 +199,11 @@ export default function CommitteeEstablishment() {
             </div>
             <div>
               <Label className="text-xs">تاريخ الإصدار</Label>
-              <Input type="date" value={form.issue_date} onChange={(e) => setForm((f) => ({ ...f, issue_date: e.target.value }))} />
+              <LocalizedDatePicker value={form.issue_date} onChange={(v) => setForm((f) => ({ ...f, issue_date: v }))} />
             </div>
             <div>
               <Label className="text-xs">تاريخ النفاذ</Label>
-              <Input type="date" value={form.effective_date} onChange={(e) => setForm((f) => ({ ...f, effective_date: e.target.value }))} />
+              <LocalizedDatePicker value={form.effective_date} onChange={(v) => setForm((f) => ({ ...f, effective_date: v }))} />
             </div>
             <div>
               <Label className="text-xs">المرجع الرسمي</Label>

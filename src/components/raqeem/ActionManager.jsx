@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { base44 } from "@/api/base44Client";
 import { ACTION_STATUS, PRIORITY, ESCALATION_LEVEL, formatDate, isOverdue, daysUntil } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { Save, TrendingUp, AlertTriangle, Clock, ShieldCheck, Bell, FileCheck } from "lucide-react";
 
 const STATUS_OPTIONS = Object.entries(ACTION_STATUS).map(([k, v]) => ({ value: k, ar: v.ar }));
@@ -249,7 +250,7 @@ export default function ActionManager({ action, open, onOpenChange, onUpdate }) 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="mb-1.5">الموعد النهائي</Label>
-                  <Input type="date" value={form.deadline || ""} onChange={(e) => set("deadline", e.target.value)} />
+                  <LocalizedDatePicker value={form.deadline || ""} onChange={(v) => set("deadline", v)} />
                 </div>
                 <div>
                   <Label className="mb-1.5">الأولوية</Label>
@@ -329,7 +330,7 @@ export default function ActionManager({ action, open, onOpenChange, onUpdate }) 
                 </div>
                 <div>
                   <Label className="mb-1.5">الموعد المقترح الجديد</Label>
-                  <Input type="date" value={extDeadline} onChange={(e) => setExtDeadline(e.target.value)} />
+                  <LocalizedDatePicker value={extDeadline} onChange={setExtDeadline} />
                 </div>
                 <Button size="sm" variant="outline" onClick={requestExtension} disabled={saving || !extReason.trim() || !extDeadline} className="w-full">تقديم طلب التمديد</Button>
               </div>

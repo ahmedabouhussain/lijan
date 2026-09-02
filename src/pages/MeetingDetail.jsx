@@ -14,6 +14,7 @@ import { useCommittee } from "@/lib/CommitteeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 const MEETING_MODES = {
   physical: "حضوري",
@@ -283,7 +284,7 @@ export default function MeetingDetail() {
               </div>
               <div>
                 <Label className="text-xs">موعد التنفيذ</Label>
-                <Input type="date" value={decisionForm.deadline} onChange={(e) => setDecisionForm((f) => ({ ...f, deadline: e.target.value }))} />
+                <LocalizedDatePicker value={decisionForm.deadline} onChange={(v) => setDecisionForm((f) => ({ ...f, deadline: v }))} />
               </div>
               <Button size="sm" onClick={createDecision} disabled={savingDecision || !decisionForm.title.trim()}>
                 {savingDecision ? "جارٍ الحفظ..." : "إنشاء القرار"}

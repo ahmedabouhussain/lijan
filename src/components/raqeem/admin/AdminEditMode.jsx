@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { X, Save, Eye, History, Send, AlertTriangle, Check, RotateCcw, Building2 } from "lucide-react";
 import AdminEditForm from "./AdminEditForm";
 import AdminVersionHistory from "./AdminVersionHistory";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 // AdminEditMode — full-screen page configuration editor.
 // Appears when an authorized user clicks "Edit Page".
@@ -334,7 +335,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
             </div>
             <div>
               <Label className="text-xs text-muted-foreground">{t("تاريخ السريان", "Effective From")}</Label>
-              <Input type="date" value={effectiveFrom} onChange={(e) => setEffectiveFrom(e.target.value)} />
+              <LocalizedDatePicker value={effectiveFrom} onChange={setEffectiveFrom} />
             </div>
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" size="sm" onClick={() => setShowPublishDialog(false)}>{t("إلغاء", "Cancel")}</Button>
