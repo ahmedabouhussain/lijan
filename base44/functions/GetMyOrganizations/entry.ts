@@ -22,16 +22,45 @@ export default async function(req) {
       (a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99)
     );
 
-    // 2) Build org list with details
+    // 2) Build org list with details — EXCLUDE merged duplicates, redirect to canonical
     const seenOrgIds = new Set();
     const organizations = [];
     for (const m of sortedOrgMemberships) {
       if (seenOrgIds.has(m.organization_id)) continue;
-      seenOrgIds.add(m.organization_id);
-      const org = await base44.asServiceRole.entities.Organization
+      let org = await base44.asServiceRole.entities.Organization
         .get(m.organization_id)
         .catch(() => null);
       if (!org) continue;
+
+      // If this org was merged, follow the redirect to the canonical org
+      if (org.status === 'merged_duplicate' || org.merge_status === 'merged_duplicate') {
+        if (org.merged_into_organization_id) {
+          const canonical = await base44.asServiceRole.entities.Organization
+            .get(org.merged_into_organization_id)
+            .catch(() => null);
+          if (canonical) {
+            // Move the membership to the canonical org if not already there
+            const existingInCanonical = await base44.asServiceRole.entities.OrganizationMembership
+              .filter({ organization_id: canonical.id, user_id: user.id })
+              .catch(() => []);
+            if (!existingInCanonical || existingInCanonical.length === 0) {
+              await base44.asServiceRole.entities.OrganizationMembership.update(m.id, {
+                organization_id: canonical.id,
+              }).catch(() => {});
+            }
+            org = canonical;
+          } else {
+            continue; // canonical gone — skip
+          }
+        } else {
+          continue; // merged but no canonical — skip
+        }
+      }
+
+      // Deduplicate by canonical org id
+      if (seenOrgIds.has(org.id)) continue;
+      seenOrgIds.add(org.id);
+
       organizations.push({
         id: org.id,
         public_id: org.public_id,
@@ -40,6 +69,7 @@ export default async function(req) {
         name_en: org.name_en,
         type: org.type,
         status: org.status,
+        directory_key: org.directory_key,
         branding_primary_color: org.branding_primary_color,
         logo_url: org.logo_url,
         my_role: m.role,
@@ -88,27 +118,49 @@ export default async function(req) {
 
     // 7) Also include orgs where the user has committees but no org membership
     //    (edge case: invited to a committee without explicit org membership)
+    //    Skip merged duplicates — follow redirect to canonical
     for (const c of myCommittees) {
       if (!seenOrgIds.has(c.organization_id)) {
-        const org = await base44.asServiceRole.entities.Organization
+        let org = await base44.asServiceRole.entities.Organization
           .get(c.organization_id)
           .catch(() => null);
-        if (org) {
-          seenOrgIds.add(c.organization_id);
-          organizations.push({
-            id: org.id,
-            public_id: org.public_id,
-            slug: org.slug,
-            name_ar: org.name_ar,
-            name_en: org.name_en,
-            type: org.type,
-            status: org.status,
-            branding_primary_color: org.branding_primary_color,
-            logo_url: org.logo_url,
-            my_role: 'committee_member',
-            committees: committeesByOrg[org.id] || [],
-          });
+        if (!org) continue;
+
+        // Follow merge redirect
+        if (org.status === 'merged_duplicate' || org.merge_status === 'merged_duplicate') {
+          if (org.merged_into_organization_id) {
+            org = await base44.asServiceRole.entities.Organization
+              .get(org.merged_into_organization_id)
+              .catch(() => null);
+            if (!org) continue;
+          } else {
+            continue;
+          }
         }
+
+        if (seenOrgIds.has(org.id)) {
+          // Already listed — just attach committees
+          const existing = organizations.find((o) => o.id === org.id);
+          if (existing && !existing.committees) {
+            existing.committees = committeesByOrg[c.organization_id] || [];
+          }
+          continue;
+        }
+        seenOrgIds.add(org.id);
+        organizations.push({
+          id: org.id,
+          public_id: org.public_id,
+          slug: org.slug,
+          name_ar: org.name_ar,
+          name_en: org.name_en,
+          type: org.type,
+          status: org.status,
+          directory_key: org.directory_key,
+          branding_primary_color: org.branding_primary_color,
+          logo_url: org.logo_url,
+          my_role: 'committee_member',
+          committees: committeesByOrg[c.organization_id] || [],
+        });
       }
     }
 

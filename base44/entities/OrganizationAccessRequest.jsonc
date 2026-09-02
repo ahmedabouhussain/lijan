@@ -1,0 +1,138 @@
+{
+  "name": "OrganizationAccessRequest",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "directory_key": {
+      "type": "string",
+      "title": "Directory Key (if resolved from registry)"
+    },
+    "requester_user_id": {
+      "type": "string",
+      "title": "Requester User ID"
+    },
+    "requester_email": {
+      "type": "string",
+      "title": "Requester Email",
+      "format": "email"
+    },
+    "requester_name": {
+      "type": "string",
+      "title": "Requester Name"
+    },
+    "requested_role": {
+      "type": "string",
+      "title": "Requested Role",
+      "enum": [
+        "member",
+        "admin",
+        "auditor"
+      ],
+      "default": "member"
+    },
+    "job_title": {
+      "type": "string",
+      "title": "Job Title"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "justification": {
+      "type": "string",
+      "title": "Justification"
+    },
+    "official_domain_match": {
+      "type": "boolean",
+      "title": "Official Domain Match",
+      "default": false
+    },
+    "verification_method": {
+      "type": "string",
+      "title": "Verification Method",
+      "enum": [
+        "email_domain",
+        "manual_review",
+        "invitation"
+      ],
+      "default": "email_domain"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "pending_email_verification",
+        "pending_review",
+        "approved",
+        "rejected",
+        "expired",
+        "cancelled"
+      ],
+      "default": "pending_review"
+    },
+    "reviewed_by_user_id": {
+      "type": "string",
+      "title": "Reviewed By User ID"
+    },
+    "reviewed_by_name": {
+      "type": "string",
+      "title": "Reviewed By Name"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "title": "Reviewed At",
+      "format": "date-time"
+    },
+    "decision_reason": {
+      "type": "string",
+      "title": "Decision Reason"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "organization_id",
+    "requester_user_id",
+    "requester_email",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.requester_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "$or": [
+        {
+          "data.requester_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "name": "OrganizationDirectory",
+  "type": "object",
+  "properties": {
+    "directory_key": {
+      "type": "string",
+      "title": "Directory Key (canonical, immutable)",
+      "description": "Stable institutional identity key \u2014 e.g. knowledge_ministry. One active Organization per key."
+    },
+    "canonical_name_ar": {
+      "type": "string",
+      "title": "Canonical Name (Arabic)"
+    },
+    "canonical_name_en": {
+      "type": "string",
+      "title": "Canonical Name (English)"
+    },
+    "organization_type": {
+      "type": "string",
+      "title": "Organization Type",
+      "enum": [
+        "ministry",
+        "authority",
+        "council",
+        "organization",
+        "agency",
+        "committee",
+        "bank",
+        "insurance",
+        "private",
+        "other"
+      ],
+      "default": "organization"
+    },
+    "official_domain": {
+      "type": "string",
+      "title": "Official Domain"
+    },
+    "secondary_domains": {
+      "type": "string",
+      "title": "Secondary Domains (comma-separated)"
+    },
+    "legal_identifier": {
+      "type": "string",
+      "title": "Legal Identifier"
+    },
+    "country_code": {
+      "type": "string",
+      "title": "Country Code",
+      "default": "QA"
+    },
+    "registry_source": {
+      "type": "string",
+      "title": "Registry Source",
+      "enum": [
+        "qatari_entities_registry",
+        "manual_entry",
+        "verified_external"
+      ],
+      "default": "qatari_entities_registry"
+    },
+    "aliases_ar": {
+      "type": "string",
+      "title": "Aliases (Arabic, comma-separated)"
+    },
+    "aliases_en": {
+      "type": "string",
+      "title": "Aliases (English, comma-separated)"
+    },
+    "verification_status": {
+      "type": "string",
+      "title": "Verification Status",
+      "enum": [
+        "unverified",
+        "pending",
+        "verified",
+        "rejected"
+      ],
+      "default": "unverified"
+    },
+    "canonical_organization_id": {
+      "type": "string",
+      "title": "Canonical Organization ID (linked Organization record)"
+    }
+  },
+  "required": [
+    "directory_key",
+    "canonical_name_ar",
+    "canonical_name_en"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

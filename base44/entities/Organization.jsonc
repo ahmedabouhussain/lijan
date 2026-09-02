@@ -24,6 +24,11 @@
       ],
       "default": "organization"
     },
+    "directory_key": {
+      "type": "string",
+      "title": "Directory Key (canonical institutional identity)",
+      "description": "Stable key from OrganizationDirectory \u2014 prevents duplicate portals for the same entity"
+    },
     "slug": {
       "type": "string",
       "title": "Portal Slug (human-readable)"
@@ -55,9 +60,28 @@
         "sandbox_active",
         "official_active",
         "suspended",
-        "closed"
+        "closed",
+        "merged_duplicate"
       ],
       "default": "draft"
+    },
+    "merge_status": {
+      "type": "string",
+      "title": "Merge Status",
+      "enum": [
+        "active",
+        "merged_duplicate"
+      ],
+      "default": "active"
+    },
+    "merged_into_organization_id": {
+      "type": "string",
+      "title": "Merged Into Organization ID"
+    },
+    "merged_at": {
+      "type": "string",
+      "title": "Merged At",
+      "format": "date-time"
     },
     "classification_policy": {
       "type": "string",
