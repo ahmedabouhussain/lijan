@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LocalizedFileUpload from "@/components/raqeem/LocalizedFileUpload";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const INSTRUMENT_TYPES = [
   { value: "law", label: "قانون / لائحة" },
@@ -151,7 +152,7 @@ export default function CommitteeEstablishment() {
     setCreatingDraft("");
   };
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   return (
     <div className="space-y-4" dir="rtl">

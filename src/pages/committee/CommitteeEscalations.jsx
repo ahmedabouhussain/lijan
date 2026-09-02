@@ -10,6 +10,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import { TrendingUp, Plus, ArrowUpCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const ESCALATION = {
   none: { ar: "لا يوجد", en: "None", color: "bg-secondary text-muted-foreground" },
@@ -37,7 +38,7 @@ export default function CommitteeEscalations() {
   const [showCreate, setShowCreate] = useState(false);
   const [escalatingId, setEscalatingId] = useState(null);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const actions = (data.registers?.actions || []).filter((a) => a.escalation_level && a.escalation_level !== "none");
   const openActions = (data.registers?.actions || []).filter((a) => !["closed", "verified"].includes(a.status));
   const committeeId = data.committee.id;

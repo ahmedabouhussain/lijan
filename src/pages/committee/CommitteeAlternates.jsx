@@ -8,6 +8,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { Users2, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeAlternates() {
   const { data, reload } = useCommittee();
@@ -17,7 +18,7 @@ export default function CommitteeAlternates() {
   const { submitting, execute } = useCrudAction();
   const [activatingId, setActivatingId] = useState(null);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const alternates = (data.members || []).filter((m) => m.role === "alternate");
   const activated = alternates.filter((a) => a.activated);
   const committeeId = data.committee.id;

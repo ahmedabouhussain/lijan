@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { formatDate } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeEvidence() {
   const { data, reload } = useCommittee();
@@ -22,7 +23,7 @@ export default function CommitteeEvidence() {
   const [uploadingFor, setUploadingFor] = useState(null);
   const [evidenceUrl, setEvidenceUrl] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const actions = (data.registers?.actions || []).filter((a) => a.status === "evidence_pending" || (a.status === "under_review" && !a.compliance_verified));
   const committeeId = data.committee.id;
 

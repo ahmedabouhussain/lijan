@@ -7,6 +7,7 @@ import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Award, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const ROLE_INFO = {
   chair: { ar: "الرئيس", en: "Chair", color: "bg-primary/10 text-primary" },
@@ -46,7 +47,7 @@ export default function CommitteeRoles() {
   const { canManageMembership } = useCommitteeAdmin();
   const [showCreate, setShowCreate] = useState(false);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const members = data.members || [];
   const committee = data.committee;
 

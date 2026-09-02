@@ -9,6 +9,7 @@ import AuthorityLens from "@/components/raqeem/AuthorityLens";
 import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { CheckSquare, Gavel, Loader2, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeVoting() {
   const { data, reload } = useCommittee();
@@ -18,7 +19,7 @@ export default function CommitteeVoting() {
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { my_role, is_oversight, is_recused, committee } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
   const votingDecisions = (data.registers.decisions || []).filter((d) => d.status === "voting" || d.status === "proposed");
@@ -30,7 +31,7 @@ export default function CommitteeVoting() {
     try {
       await base44.functions.invoke(fn, payload);
       reload();
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setVoting(false);
   };
 

@@ -9,6 +9,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import { Package, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteePacks() {
   const { data, reload } = useCommittee();
@@ -18,7 +19,7 @@ export default function CommitteePacks() {
   const { submitting, execute } = useCrudAction();
   const [generatingId, setGeneratingId] = useState(null);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const upcoming = data.meetings?.upcoming || [];
   const committeeId = data.committee.id;
 

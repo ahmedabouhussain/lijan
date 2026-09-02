@@ -6,6 +6,7 @@ import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } fr
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Button } from "@/components/ui/button";
 import FormationDiff from "@/components/raqeem/FormationDiff";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const ROLE_LABELS = {
   chair: "رئيس", vice_chair: "نائب رئيس", secretary: "أمين",
@@ -38,7 +39,7 @@ export default function FormationHistory() {
 
   const toggle = (id) => setExpanded((e) => ({ ...e, [id]: !e[id] }));
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   const current = versions.find((v) => v.is_current);
 

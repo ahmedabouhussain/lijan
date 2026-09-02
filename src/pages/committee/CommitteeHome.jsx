@@ -17,6 +17,7 @@ import ObserverHomeEnhanced from "@/components/raqeem/homes/ObserverHomeEnhanced
 import {
   UserCircle, ArrowLeft, Lock, ChevronDown, ChevronUp, History,
 } from "lucide-react";
+import { CardSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeHome() {
   const { data } = useCommittee();
@@ -25,7 +26,15 @@ export default function CommitteeHome() {
   const { user } = useAuth();
   const [timeMachineOpen, setTimeMachineOpen] = useState(false);
 
-  if (!data) return null;
+  if (!data) return (
+    <div className="space-y-4">
+      <CardSkeleton />
+      <div className="grid gap-4 md:grid-cols-2">
+        <CardSkeleton />
+        <CardSkeleton />
+      </div>
+    </div>
+  );
 
   const { committee, my_role, is_recused } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;

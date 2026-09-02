@@ -9,6 +9,7 @@ import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { FileText, Plus, CheckCircle, ArrowLeftCircle, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const STATUS_LABELS = {
   draft: { ar: "مسودة", en: "Draft", color: "bg-secondary text-muted-foreground" },
@@ -31,7 +32,7 @@ export default function CommitteeMinutes() {
   const [actionId, setActionId] = useState(null);
   const [actionType, setActionType] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const minutes = data.registers?.minutes || [];
   const meetings = [...(data.meetings?.upcoming || []), ...(data.meetings?.previous || [])];
 

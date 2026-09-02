@@ -10,6 +10,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import { Network, Plus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const RISK_LEVEL = {
   low: { ar: "منخفض", en: "Low", color: "bg-emerald-50 text-emerald-700" },
@@ -50,7 +51,7 @@ export default function CommitteeRisks() {
 
   useEffect(() => { fetchRisks(); }, [committeeId]);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const delegations = data.registers?.delegations || [];
 
   return (

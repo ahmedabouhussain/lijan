@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AmendmentFormBuilder from "@/components/raqeem/AmendmentFormBuilder";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const AMENDMENT_TYPES = [
   { value: "add_member", label: "إضافة عضو" },
@@ -192,7 +193,7 @@ export default function CommitteeAmendments() {
     setBusy("");
   };
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   return (
     <div className="space-y-4" dir="rtl">

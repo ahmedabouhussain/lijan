@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES, MEMBER_ROLE, MEETING_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
@@ -74,7 +75,7 @@ export default function CommitteeMiniPortal() {
     );
   }
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   const { committee, mandate, my_role, is_oversight, is_recused, members, meetings, registers, counters } = data;
   const orgRef2 = orgRef;

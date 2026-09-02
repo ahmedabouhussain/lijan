@@ -5,13 +5,14 @@ import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Plus, ChevronLeft, Users, Building2, ShieldCheck, Lock } from "lucide-react";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function OrgPortal() {
   const { data } = useOrg();
   const { orgRef } = useParams();
   const { t } = useLanguage();
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   const { organization: org, portal, my_role, my_membership, committees } = data;
   const allCommittees = [...committees.active, ...committees.draft, ...committees.suspended, ...committees.closing];

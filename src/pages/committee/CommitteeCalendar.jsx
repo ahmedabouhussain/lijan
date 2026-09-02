@@ -7,6 +7,7 @@ import { Calendar, Filter } from "lucide-react";
 import { formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const MEETING_STATUS = {
   scheduled: { ar: "مجدول", en: "Scheduled", color: "bg-secondary text-muted-foreground" },
@@ -30,7 +31,7 @@ export default function CommitteeCalendar() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [modeFilter, setModeFilter] = useState("all");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const base = `/o/${orgRef}/c/${committeeRef}`;
   let all = [...(data.meetings?.upcoming || []), ...(data.meetings?.previous || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
 

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeClosure() {
   const { data, reload } = useCommittee();
@@ -19,7 +20,7 @@ export default function CommitteeClosure() {
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { committee, my_role, is_oversight } = data;
   const canClose = !is_oversight && (my_role === "chair" || my_role === "secretary");
   const isClosed = ["closed", "archived"].includes(committee.status);
@@ -31,7 +32,7 @@ export default function CommitteeClosure() {
     try {
       await base44.functions.invoke("CloseCommittee", { committee_id: committee.id, reason, initiate_only: initiateOnly });
       setShowClose(false); setReason(""); reload();
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setSubmitting(false);
   };
 

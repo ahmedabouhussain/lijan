@@ -6,6 +6,7 @@ import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ACTION_STATUS, MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
 import { ShieldCheck, Clock, History, Calendar } from "lucide-react";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeAudit() {
   const { data } = useCommittee();
@@ -60,7 +61,7 @@ export default function CommitteeAudit() {
     });
   }, [timeMachineDate, data]);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   return (
     <div className="space-y-4">

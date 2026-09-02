@@ -5,13 +5,14 @@ import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Gavel, ChevronLeft, Users } from "lucide-react";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function OrgCommittees() {
   const { data } = useOrg();
   const { orgRef } = useParams();
   const { t } = useLanguage();
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { committees, my_role } = data;
   const all = [...committees.active, ...committees.draft, ...committees.suspended, ...committees.closing];
   const isAdmin = my_role === "owner" || my_role === "admin";

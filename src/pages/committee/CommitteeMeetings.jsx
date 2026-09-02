@@ -30,7 +30,7 @@ export default function CommitteeMeetings() {
   const canCreate = !is_oversight && ["chair", "vice_chair", "secretary"].includes(my_role);
 
   const submit = async () => {
-    if (!form.title.trim() || !form.date) { setError("Title and date are required"); return; }
+    if (!form.title.trim() || !form.date) { setError(t("العنوان والتاريخ مطلوبان", "Title and date are required")); return; }
     setSubmitting(true); setError("");
     try {
       const payload = { ...form, date: new Date(form.date).toISOString() };
@@ -46,7 +46,7 @@ export default function CommitteeMeetings() {
       if (res?.instances_created > 0) {
         setError("");
       }
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setSubmitting(false);
   };
 

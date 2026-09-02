@@ -94,7 +94,7 @@ export default function NotificationPreferences() {
       }
       toast({ title: t("تم الحفظ", "Saved"), description: t("تم تحديث تفضيلات الإشعارات", "Notification preferences updated") });
     } catch (e) {
-      toast({ title: t("خطأ", "Error"), description: e?.message || "Failed", variant: "destructive" });
+      toast({ title: t("خطأ", "Error"), description: e?.message || t("فشلت العملية", "Operation failed"), variant: "destructive" });
     }
     setSaving(false);
   };

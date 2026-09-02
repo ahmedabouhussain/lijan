@@ -11,6 +11,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import { FileText, Download, Plus, Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const DOC_TYPES = [
   { value: "memo", label_ar: "مذكرة", label_en: "Memo" },
@@ -54,7 +55,7 @@ export default function CommitteeDocuments() {
 
   useEffect(() => { fetchDocs(); }, [committeeId]);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
 
   return (
     <div className="space-y-4">

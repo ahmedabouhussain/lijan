@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { BarChart3, TrendingUp, ShieldCheck, CheckCircle, AlertTriangle, Clock, Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isOverdue } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 function MaturityBar({ label, value, color }) {
   return (
@@ -30,7 +31,7 @@ export default function CommitteeReports() {
   const { canManageGovernance } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { counters, committee, registers, meetings, members } = data;
   const committeeId = committee.id;
 

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import FormationImpactPreview from "@/components/raqeem/FormationImpactPreview";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
@@ -79,7 +80,7 @@ export default function CommitteeFormation() {
     return () => { cancelled = true; };
   }, [data?.committee?.id]);
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { committee, members } = data;
   const ordered = [...members].sort((a, b) => (ROLE_ORDER[a.role] || 99) - (ROLE_ORDER[b.role] || 99));
 

@@ -8,6 +8,7 @@ import { Scale, Edit3, X, Loader2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const VOTING_RULES = [
   { value: "simple_majority", label_ar: "أغلبية بسيطة", label_en: "Simple Majority" },
@@ -41,7 +42,7 @@ export default function CommitteeGovernanceRules() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { committee, is_oversight } = data;
 
   const startEdit = () => {
@@ -66,7 +67,7 @@ export default function CommitteeGovernanceRules() {
       });
       setEditing(false);
       reload();
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setSubmitting(false);
   };
 
