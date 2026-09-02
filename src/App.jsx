@@ -72,6 +72,13 @@ import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 import ProductCatalog from '@/pages/committee/ProductCatalog';
 import ReportCenter from '@/pages/committee/ReportCenter';
+import PeopleHub from '@/pages/committee/hubs/PeopleHub';
+import FormationHub from '@/pages/committee/hubs/FormationHub';
+import MeetingsHub from '@/pages/committee/hubs/MeetingsHub';
+import RecordsHub from '@/pages/committee/hubs/RecordsHub';
+import ExecutionHub from '@/pages/committee/hubs/ExecutionHub';
+import IntelligenceHub from '@/pages/committee/hubs/IntelligenceHub';
+import GovernanceHub from '@/pages/committee/hubs/GovernanceHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -127,7 +134,13 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/alternates" element={<CommitteeAlternates />} />
           <Route path="/o/:orgRef/c/:committeeRef/recusals" element={<CommitteeRecusals />} />
           {/* Meetings */}
-          <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<CommitteeMeetings />} />
+          <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<MeetingsHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/people" element={<PeopleHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/charter" element={<FormationHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/records" element={<RecordsHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/execution" element={<ExecutionHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/intelligence" element={<IntelligenceHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/governance" element={<GovernanceHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/meetings/:id" element={<MeetingDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/calendar" element={<CommitteeCalendar />} />
           <Route path="/o/:orgRef/c/:committeeRef/agenda" element={<CommitteeAgenda />} />

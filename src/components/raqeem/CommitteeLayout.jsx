@@ -23,76 +23,15 @@ import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 // Role-Adaptive Navigation — admin roles see all; members/observers see only what serves their role.
 const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
 
-const NAV_GROUPS = [
-  {
-    label: "الرئيسية", labelEn: "Home",
-    items: [{ to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard }],
-  },
-  {
-    label: "الأشخاص والتشكيل", labelEn: "People & Formation",
-    items: [
-      { to: "/members", label: "الأعضاء", labelEn: "Members", icon: Users },
-      { to: "/formation", label: "التشكيل", labelEn: "Formation", icon: GitBranch, roles: ADMIN_ROLES },
-      { to: "/establishment", label: "التأسيس والسندات", labelEn: "Establishment", icon: ScrollText, roles: ADMIN_ROLES },
-      { to: "/formation-history", label: "سجل التشكيل", labelEn: "Formation History", icon: History, roles: ADMIN_ROLES },
-      { to: "/amendments", label: "التعديلات", labelEn: "Amendments", icon: GitBranch, roles: ADMIN_ROLES },
-      { to: "/roles", label: "الأدوار", labelEn: "Roles", icon: Award, roles: ADMIN_ROLES },
-      { to: "/delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight, roles: ADMIN_ROLES },
-      { to: "/alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2, roles: ADMIN_ROLES },
-      { to: "/recusals", label: "التنحي والتعارض", labelEn: "Conflicts & Recusals", icon: ShieldOff },
-    ],
-  },
-  {
-    label: "الاجتماعات", labelEn: "Meetings",
-    items: [
-      { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar },
-      { to: "/calendar", label: "التقويم", labelEn: "Calendar", icon: Calendar },
-      { to: "/agenda", label: "جدول الأعمال", labelEn: "Agenda", icon: ClipboardList },
-      { to: "/packs", label: "حزم الاجتماعات", labelEn: "Meeting Packs", icon: Package, roles: ADMIN_ROLES },
-      { to: "/attendance", label: "الحضور", labelEn: "Attendance", icon: UserCheck },
-    ],
-  },
-  {
-    label: "السجلات الرسمية", labelEn: "Official Records",
-    items: [
-      { to: "/documents", label: "الوثائق", labelEn: "Documents", icon: FileText },
-      { to: "/minutes", label: "المحاضر", labelEn: "Minutes", icon: FileText },
-      { to: "/voting", label: "التصويت", labelEn: "Voting", icon: CheckSquare },
-      { to: "/decisions", label: "القرارات", labelEn: "Decisions", icon: Gavel },
-      { to: "/signatures", label: "التواقيع", labelEn: "Signatures", icon: PenLine },
-    ],
-  },
-  {
-    label: "التنفيذ والمتابعة", labelEn: "Execution & Follow-up",
-    items: [
-      { to: "/actions", label: "الإجراءات", labelEn: "Actions", icon: CheckSquare },
-      { to: "/evidence", label: "الأدلة", labelEn: "Evidence", icon: FileCheck },
-      { to: "/risks", label: "المخاطر", labelEn: "Risks", icon: Network, roles: ADMIN_ROLES },
-      { to: "/dependencies", label: "التبعيات", labelEn: "Dependencies", icon: GitBranch, roles: ADMIN_ROLES },
-      { to: "/escalations", label: "التصعيدات", labelEn: "Escalations", icon: TrendingUp, roles: ADMIN_ROLES },
-    ],
-  },
-  {
-    label: "الذكاء والتقارير", labelEn: "Intelligence & Reports",
-    items: [
-      { to: "/products", label: "مصنع المنتجات", labelEn: "Product Factory", icon: Package, roles: ADMIN_ROLES },
-      { to: "/reports", label: "مركز التقارير", labelEn: "Report Center", icon: BarChart3 },
-      { to: "/memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain },
-      { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot, roles: ADMIN_ROLES },
-      { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck, roles: ADMIN_ROLES },
-    ],
-  },
-  {
-    label: "الحوكمة والإدارة", labelEn: "Governance & Administration",
-    items: [
-      { to: "/mandate", label: "الصلاحية", labelEn: "Mandate", icon: ScrollText },
-      { to: "/governance-rules", label: "قواعد الحوكمة", labelEn: "Governance Rules", icon: BookOpen, roles: ADMIN_ROLES },
-      { to: "/integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug, roles: ADMIN_ROLES },
-      { to: "/notifications", label: "الإشعارات", labelEn: "Notifications", icon: Bell, roles: ADMIN_ROLES },
-      { to: "/closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock, roles: ["chair", "vice_chair"] },
-      { to: "/settings", label: "الإعدادات", labelEn: "Settings", icon: Settings, roles: ADMIN_ROLES },
-    ],
-  },
+const NAV_ITEMS = [
+  { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
+  { to: "/people", label: "الأشخاص", labelEn: "People", icon: Users },
+  { to: "/charter", label: "التشكيل", labelEn: "Formation", icon: GitBranch, roles: ADMIN_ROLES },
+  { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar },
+  { to: "/records", label: "السجلات", labelEn: "Records", icon: FileText },
+  { to: "/execution", label: "التنفيذ", labelEn: "Execution", icon: CheckSquare },
+  { to: "/intelligence", label: "الذكاء", labelEn: "Intelligence", icon: Brain },
+  { to: "/governance", label: "الحوكمة", labelEn: "Governance", icon: ShieldCheck },
 ];
 
 function CommitteeShell() {
@@ -101,7 +40,6 @@ function CommitteeShell() {
   const { data, loading, error } = useCommittee();
   const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsedGroups, setCollapsedGroups] = useState({});
 
   if (loading) {
     return (
@@ -132,8 +70,6 @@ function CommitteeShell() {
     { chair: "رئيس اللجنة", vice_chair: "نائب الرئيس", secretary: "أمين السر", committee_administrator: "مدير اللجنة", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
     { chair: "Committee Chair", vice_chair: "Vice Chair", secretary: "Secretary", committee_administrator: "Committee Administrator", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor" }[my_role] || my_role
   );
-
-  const toggleGroup = (label) => setCollapsedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -177,55 +113,29 @@ function CommitteeShell() {
         </Link>
       </div>
 
-      {/* Navigation with progressive disclosure — role-adaptive */}
+      {/* Navigation */}
       <nav className="flex-1 px-3 py-3 overflow-y-auto">
-        {NAV_GROUPS.map((group) => {
-          // Filter items by role — members/observers don't see admin tools
-          const visibleItems = group.items.filter((item) => {
-            if (!item.roles) return true;
-            return item.roles.includes(my_role);
-          });
-          if (visibleItems.length === 0) return null;
-
-          const collapsed = collapsedGroups[group.label];
-          // Auto-expand if any visible item in this group is active
-          const hasActive = visibleItems.some((item) => {
-            const to = item.to === "" ? base : `${base}${item.to}`;
-            return item.to === "" ? location.pathname === base : (location.pathname === to || location.pathname.startsWith(to + "/"));
-          });
-          const show = !collapsed || hasActive;
+        {NAV_ITEMS.map((item) => {
+          if (item.roles && !item.roles.includes(my_role)) return null;
+          const to = item.to === "" ? base : `${base}${item.to}`;
+          const active = item.to === ""
+            ? location.pathname === base
+            : location.pathname === to || location.pathname.startsWith(to + "/");
           return (
-            <div key={group.label} className="mb-2">
-              <button
-                onClick={() => toggleGroup(group.label)}
-                className="w-full flex items-center justify-between px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
-              >
-                <span>{t(group.label, group.labelEn)}</span>
-                <ChevronDown className={cn("w-3 h-3 transition-transform", show ? "" : "-rotate-90")} />
-              </button>
-              {show && visibleItems.map((item) => {
-                const to = item.to === "" ? base : `${base}${item.to}`;
-                const active = item.to === ""
-                  ? location.pathname === base
-                  : location.pathname === to || location.pathname.startsWith(to + "/");
-                return (
-                  <Link
-                    key={item.to}
-                    to={to}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-colors",
-                      active
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
-                    )}
-                  >
-                    <item.icon className="w-4 h-4 shrink-0" />
-                    <span>{t(item.label, item.labelEn)}</span>
-                  </Link>
-                );
-              })}
-            </div>
+            <Link
+              key={item.to}
+              to={to}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors mb-0.5",
+                active
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+              )}
+            >
+              <item.icon className="w-4 h-4 shrink-0" />
+              <span>{t(item.label, item.labelEn)}</span>
+            </Link>
           );
         })}
       </nav>
