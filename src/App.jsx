@@ -72,8 +72,7 @@ import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 import ProductCatalog from '@/pages/committee/ProductCatalog';
 import ReportCenter from '@/pages/committee/ReportCenter';
-import PeopleHub from '@/pages/committee/hubs/PeopleHub';
-import FormationHub from '@/pages/committee/hubs/FormationHub';
+import PeopleFormationHub from '@/pages/committee/hubs/PeopleFormationHub';
 import MeetingsHub from '@/pages/committee/hubs/MeetingsHub';
 import RecordsHub from '@/pages/committee/hubs/RecordsHub';
 import ExecutionHub from '@/pages/committee/hubs/ExecutionHub';
@@ -135,8 +134,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/recusals" element={<CommitteeRecusals />} />
           {/* Meetings */}
           <Route path="/o/:orgRef/c/:committeeRef/meetings" element={<MeetingsHub />} />
-          <Route path="/o/:orgRef/c/:committeeRef/people" element={<PeopleHub />} />
-          <Route path="/o/:orgRef/c/:committeeRef/charter" element={<FormationHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/people" element={<PeopleFormationHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/records" element={<RecordsHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/execution" element={<ExecutionHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/intelligence" element={<IntelligenceHub />} />

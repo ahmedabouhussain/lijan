@@ -13,13 +13,16 @@ const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrato
 export default function GovernanceHub() {
   return (
     <CommitteeHubTabs
+      hubKey="governance"
+      hubLabel="إدارة اللجنة"
+      hubLabelEn="Committee Management"
       tabs={[
         { key: "mandate", label: "الصلاحية", labelEn: "Mandate", icon: ScrollText, component: CommitteeMandate },
         { key: "governance-rules", label: "قواعد الحوكمة", labelEn: "Governance Rules", icon: BookOpen, component: CommitteeGovernanceRules, roles: ADMIN_ROLES },
         { key: "integrations", label: "التكاملات", labelEn: "Integrations", icon: Plug, component: CommitteeIntegrations, roles: ADMIN_ROLES },
         { key: "notifications", label: "الإشعارات", labelEn: "Notifications", icon: Bell, component: CommitteeNotifications, roles: ADMIN_ROLES },
-        { key: "closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock, component: CommitteeClosure, roles: ["chair", "vice_chair"] },
         { key: "settings", label: "الإعدادات", labelEn: "Settings", icon: Settings, component: CommitteeSettings, roles: ADMIN_ROLES },
+        { key: "closure", label: "إغلاق اللجنة", labelEn: "Closure", icon: Lock, component: CommitteeClosure, roles: ["chair", "vice_chair"] },
       ]}
     />
   );

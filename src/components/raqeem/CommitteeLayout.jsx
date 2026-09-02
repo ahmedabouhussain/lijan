@@ -24,14 +24,13 @@ import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
 
 const NAV_ITEMS = [
-  { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
-  { to: "/people", label: "الأشخاص", labelEn: "People", icon: Users },
-  { to: "/charter", label: "التشكيل", labelEn: "Formation", icon: GitBranch, roles: ADMIN_ROLES },
-  { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar },
-  { to: "/records", label: "السجلات", labelEn: "Records", icon: FileText },
-  { to: "/execution", label: "التنفيذ", labelEn: "Execution", icon: CheckSquare },
-  { to: "/intelligence", label: "الذكاء", labelEn: "Intelligence", icon: Brain },
-  { to: "/governance", label: "الحوكمة", labelEn: "Governance", icon: ShieldCheck },
+  { to: "", label: "الرئيسية", labelEn: "Home", shortLabel: "الرئيسية", shortLabelEn: "Home", icon: LayoutDashboard },
+  { to: "/people", label: "الأشخاص والتشكيل", labelEn: "People & Formation", shortLabel: "الأشخاص", shortLabelEn: "People", icon: Users },
+  { to: "/meetings", label: "الاجتماعات", labelEn: "Meetings", shortLabel: "الاجتماعات", shortLabelEn: "Meetings", icon: Calendar },
+  { to: "/records", label: "السجلات الرسمية", labelEn: "Official Records", shortLabel: "السجلات", shortLabelEn: "Records", icon: FileText },
+  { to: "/execution", label: "التنفيذ والمتابعة", labelEn: "Execution & Follow-up", shortLabel: "التنفيذ", shortLabelEn: "Execution", icon: CheckSquare },
+  { to: "/intelligence", label: "التقارير والذاكرة", labelEn: "Reports & Memory", shortLabel: "التقارير", shortLabelEn: "Reports", icon: BarChart3 },
+  { to: "/governance", label: "إدارة اللجنة", labelEn: "Committee Management", shortLabel: "الإدارة", shortLabelEn: "Manage", icon: Settings },
 ];
 
 function CommitteeShell() {
@@ -40,6 +39,7 @@ function CommitteeShell() {
   const { data, loading, error } = useCommittee();
   const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [infoCollapsed, setInfoCollapsed] = useState(false);
 
   if (loading) {
     return (
@@ -83,34 +83,43 @@ function CommitteeShell() {
         </Link>
       </div>
 
-      {/* Committee identity */}
+      {/* Committee identity — collapsible */}
       <div className="px-4 py-3 border-b border-sidebar-border">
         <Link to={`/o/${orgRef}`} className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50 mb-2 hover:text-sidebar-foreground/80">
           <ChevronLeft className="w-3 h-3" />
           {t("بوابة المنظمة", "Organization Portal")}
         </Link>
-        <h1 className="text-sm font-bold text-sidebar-foreground leading-tight">{committee.name_ar || committee.name_en}</h1>
-        <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">{committee.name_en}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="sm" />
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sidebar-accent/30 text-sidebar-accent-foreground">
-            <UserCircle className="w-3 h-3" />
-            {roleLabel}
-          </span>
-        </div>
-        {is_recused && (
-          <div className="mt-2 px-2 py-1 rounded bg-red-900/30 text-[11px] text-red-200">
-            {t("متتنحّ من هذه اللجنة", "Recused from this committee")}
-          </div>
-        )}
-        {/* Switch Committee */}
-        <Link
-          to={`/o/${orgRef}/committees`}
-          className="mt-2 flex items-center gap-1.5 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+        <button
+          onClick={() => setInfoCollapsed(!infoCollapsed)}
+          className="w-full flex items-center justify-between"
         >
-          <ArrowLeftRight className="w-3 h-3" />
-          {t("تبديل اللجنة", "Switch Committee")}
-        </Link>
+          <h1 className="text-sm font-bold text-sidebar-foreground leading-tight text-right">{committee.name_ar || committee.name_en}</h1>
+          <ChevronDown className={cn("w-4 h-4 text-sidebar-foreground/40 transition-transform shrink-0", infoCollapsed ? "" : "rotate-180")} />
+        </button>
+        {!infoCollapsed && (
+          <>
+            <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">{committee.name_en}</p>
+            <div className="flex items-center gap-2 mt-2">
+              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="sm" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sidebar-accent/30 text-sidebar-accent-foreground">
+                <UserCircle className="w-3 h-3" />
+                {roleLabel}
+              </span>
+            </div>
+            {is_recused && (
+              <div className="mt-2 px-2 py-1 rounded bg-red-900/30 text-[11px] text-red-200">
+                {t("متتنحّ من هذه اللجنة", "Recused from this committee")}
+              </div>
+            )}
+            <Link
+              to={`/o/${orgRef}/committees`}
+              className="mt-2 flex items-center gap-1.5 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+            >
+              <ArrowLeftRight className="w-3 h-3" />
+              {t("تبديل اللجنة", "Switch Committee")}
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Navigation */}
@@ -193,13 +202,39 @@ function CommitteeShell() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <PageNav />
             <Outlet />
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border">
+        <div className="flex items-center justify-around px-1 py-1 max-w-md mx-auto">
+          {NAV_ITEMS.map((item) => {
+            const to = item.to === "" ? base : `${base}${item.to}`;
+            const active = item.to === ""
+              ? location.pathname === base
+              : location.pathname === to || location.pathname.startsWith(to + "/");
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={to}
+                className={cn(
+                  "flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-md min-w-[44px] transition-colors",
+                  active ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[9px] leading-tight">{t(item.shortLabel || item.label, item.shortLabelEn || item.labelEn)}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }

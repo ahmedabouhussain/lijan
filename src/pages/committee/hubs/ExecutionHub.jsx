@@ -12,6 +12,9 @@ const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrato
 export default function ExecutionHub() {
   return (
     <CommitteeHubTabs
+      hubKey="execution"
+      hubLabel="التنفيذ والمتابعة"
+      hubLabelEn="Execution & Follow-up"
       tabs={[
         { key: "actions", label: "الإجراءات", labelEn: "Actions", icon: CheckSquare, component: CommitteeActions },
         { key: "evidence", label: "الأدلة", labelEn: "Evidence", icon: FileCheck, component: CommitteeEvidence },

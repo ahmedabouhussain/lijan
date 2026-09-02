@@ -12,6 +12,9 @@ const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrato
 export default function MeetingsHub() {
   return (
     <CommitteeHubTabs
+      hubKey="meetings"
+      hubLabel="الاجتماعات"
+      hubLabelEn="Meetings"
       tabs={[
         { key: "meetings", label: "الاجتماعات", labelEn: "Meetings", icon: Calendar, component: CommitteeMeetings },
         { key: "calendar", label: "التقويم", labelEn: "Calendar", icon: Calendar, component: CommitteeCalendar },

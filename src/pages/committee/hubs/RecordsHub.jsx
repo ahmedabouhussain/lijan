@@ -10,6 +10,9 @@ import { FileText, CheckSquare, Gavel, PenLine } from "lucide-react";
 export default function RecordsHub() {
   return (
     <CommitteeHubTabs
+      hubKey="records"
+      hubLabel="السجلات الرسمية"
+      hubLabelEn="Official Records"
       tabs={[
         { key: "documents", label: "الوثائق", labelEn: "Documents", icon: FileText, component: CommitteeDocuments },
         { key: "minutes", label: "المحاضر", labelEn: "Minutes", icon: FileText, component: CommitteeMinutes },
