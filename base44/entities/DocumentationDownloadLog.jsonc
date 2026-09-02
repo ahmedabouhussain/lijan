@@ -1,0 +1,114 @@
+{
+  "name": "DocumentationDownloadLog",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (optional)"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "user_name": {
+      "type": "string",
+      "title": "User Name"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email",
+      "format": "email"
+    },
+    "document_key": {
+      "type": "string",
+      "title": "Document Key"
+    },
+    "document_title": {
+      "type": "string",
+      "title": "Document Title"
+    },
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "enum": [
+        "ar",
+        "en"
+      ],
+      "default": "ar"
+    },
+    "format": {
+      "type": "string",
+      "title": "File Format",
+      "enum": [
+        "pdf",
+        "docx",
+        "pptx",
+        "xlsx",
+        "zip"
+      ],
+      "default": "pdf"
+    },
+    "version": {
+      "type": "string",
+      "title": "Document Version",
+      "default": "1.0"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "download",
+        "preview",
+        "pack_download"
+      ],
+      "default": "download"
+    },
+    "file_size_bytes": {
+      "type": "number",
+      "title": "File Size (bytes)"
+    },
+    "downloaded_at": {
+      "type": "string",
+      "title": "Downloaded At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "document_key",
+    "format",
+    "action"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
