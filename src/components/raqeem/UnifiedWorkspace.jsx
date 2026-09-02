@@ -7,7 +7,10 @@ import {
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import BrandLogo from "@/components/raqeem/BrandLogo";
+import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
+import { BRAND } from "@/lib/brand";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { cn } from "@/lib/utils";

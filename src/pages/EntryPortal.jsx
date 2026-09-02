@@ -6,7 +6,8 @@ import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
-import PlatformBrandLogo from "@/components/brand/PlatformBrandLogo";
+import BrandLogo from "@/components/raqeem/BrandLogo";
+import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
 import { BRAND } from "@/lib/brand";
@@ -39,8 +40,7 @@ export default function EntryPortal() {
   // Show spinner while auth is loading
   if (isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background gap-6">
-        <PlatformBrandLogo size="large" placement="auth" linked={false} />
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-7 h-7 text-primary animate-spin" />
           <p className="text-sm text-muted-foreground">{t("جارٍ التحميل", "Loading…")}</p>
@@ -57,7 +57,10 @@ export default function EntryPortal() {
         <header className="border-b border-border bg-card sticky top-0 z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <PlatformBrandLogo size="mobile" placement="header" linked={false} />
+              <div className="w-9 h-9 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
+                <BrandLogo className="w-full h-full" />
+              </div>
+              <BrandWordmark variant="dark" className="hidden sm:block" />
             </div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <button
@@ -152,8 +155,20 @@ export default function EntryPortal() {
         </div>
 
         <div className="relative z-10">
-          <div className="mb-12">
-            <PlatformBrandLogo size="large" placement="sidebar" linked={false} />
+          <div className="flex items-center gap-3 mb-12">
+            <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
+              <BrandLogo className="w-full h-full" />
+            </div>
+            <div className="leading-tight">
+              <div dir="rtl" className="font-bold text-2xl tracking-tight flex items-start gap-0.5">
+                {BRAND.nameAr}
+                <sup className="text-xs mt-1">™</sup>
+              </div>
+              <div dir="ltr" className="text-xs text-primary-foreground/60 uppercase tracking-wider flex items-start gap-0.5">
+                {BRAND.nameEn}
+                <sup className="text-[8px] mt-0.5">™</sup>
+              </div>
+            </div>
           </div>
 
           <h1 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">

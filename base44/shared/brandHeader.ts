@@ -4,7 +4,7 @@
 // Powered by CONNECTION™ — parent platform identity.
 
 export const BRAND_LOGO_URL =
-  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/a6183da5e_LijanLogo.png";
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png";
 
 export function brandedMarkdownHeader(titleAr?: string, titleEn?: string): string {
   const title = titleAr || titleEn ? `\n### ${titleAr || titleEn}\n` : "";
