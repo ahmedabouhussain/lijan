@@ -3,52 +3,67 @@ import { useNavigate } from "react-router-dom";
 import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2 } from "lucide-react";
 import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
+import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
 import { BRAND } from "@/lib/brand";
 
 export default function EntryPortal() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoadingAuth, user } = useAuth();
+  const { t, lang } = useLanguage();
   const [entityId, setEntityId] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [redirecting, setRedirecting] = useState(false);
 
   const grouped = getEntitiesByCategory();
 
-  // Authenticated users → redirect to their org portal (or create-portal if no org)
-  useEffect(() => {
-    if (isLoadingAuth || !isAuthenticated || !user || redirecting) return;
-    setRedirecting(true);
-    (async () => {
-      try {
-        const res = await base44.functions.invoke("GetMyOrganizations", {});
-        const data = res.data || res;
-        if (data.has_org && data.organizations?.length > 0) {
-          const org = data.organizations[0];
-          const orgRef = org.slug ? `${org.slug}--${org.public_id}` : org.public_id;
-          navigate(`/o/${orgRef}`, { replace: true });
-        } else {
-          navigate("/create-portal", { replace: true });
-        }
-      } catch (e) {
-        console.error("Failed to resolve organizations:", e);
-        navigate("/create-portal", { replace: true });
-      }
-    })();
-  }, [isAuthenticated, isLoadingAuth, user, redirecting, navigate]);
-
-  // Show spinner while auth is loading or while redirecting
-  if (isLoadingAuth || redirecting) {
+  // Show spinner while auth is loading
+  if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-7 h-7 text-primary animate-spin" />
-          <p className="text-sm text-muted-foreground">جارٍ التحويل · Redirecting…</p>
+          <p className="text-sm text-muted-foreground">{t("جارٍ التحميل", "Loading…")}</p>
         </div>
+      </div>
+    );
+  }
+
+  // Authenticated users → show unified workspace with all their orgs + committees
+  if (isAuthenticated && user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+        {/* Top bar */}
+        <header className="border-b border-border bg-card">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
+                <BrandLogo className="w-full h-full" />
+              </div>
+              <BrandWordmark variant="dark" />
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground hidden sm:block">{user.email}</span>
+              <button
+                onClick={() => navigate("/profile")}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                {t("الملف الشخصي", "Profile")}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+            <UnifiedWorkspace />
+          </div>
+        </main>
       </div>
     );
   }

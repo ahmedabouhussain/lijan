@@ -1,8 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
-// GetMyOrganizations — resolves the current user's organization memberships.
-// Returns org details (public_id, slug, name, branding) for each active membership.
-// Used by EntryPortal to redirect authenticated users to their org portal.
+// GetMyOrganizations — resolves the current user's organization memberships
+// AND committee memberships across ALL organizations.
+// Returns org details + committees (grouped by org) for each active membership.
+// Used by EntryPortal to show a unified cross-org workspace.
 
 export default async function(req) {
   try {
@@ -10,25 +11,21 @@ export default async function(req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Get all active org memberships for the user
-    const memberships = await base44.asServiceRole.entities.OrganizationMembership
+    // 1) Get all active ORG memberships for the user
+    const orgMemberships = await base44.asServiceRole.entities.OrganizationMembership
       .filter({ user_id: user.id, status: 'active' })
       .catch(() => []);
 
-    if (!memberships || memberships.length === 0) {
-      return Response.json({ organizations: [], has_org: false });
-    }
-
     // Sort: owner first, then admin, then member
     const rolePriority = { owner: 1, admin: 2, member: 3, auditor: 4 };
-    const sortedMemberships = memberships.sort(
+    const sortedOrgMemberships = (orgMemberships || []).sort(
       (a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99)
     );
 
-    // Get org details for each unique org
+    // 2) Build org list with details
     const seenOrgIds = new Set();
     const organizations = [];
-    for (const m of sortedMemberships) {
+    for (const m of sortedOrgMemberships) {
       if (seenOrgIds.has(m.organization_id)) continue;
       seenOrgIds.add(m.organization_id);
       const org = await base44.asServiceRole.entities.Organization
@@ -49,6 +46,72 @@ export default async function(req) {
       });
     }
 
+    // 3) Get all active COMMITTEE memberships for the user (across all orgs)
+    const committeeMemberships = await base44.asServiceRole.entities.CommitteeMembership
+      .filter({ user_id: user.id, status: 'active' })
+      .catch(() => []);
+
+    // 4) Fetch committee details for each membership
+    const seenCommitteeIds = new Set();
+    const myCommittees = [];
+    for (const cm of (committeeMemberships || [])) {
+      if (seenCommitteeIds.has(cm.committee_id)) continue;
+      seenCommitteeIds.add(cm.committee_id);
+      const committee = await base44.asServiceRole.entities.Committee
+        .get(cm.committee_id)
+        .catch(() => null);
+      if (!committee) continue;
+      myCommittees.push({
+        id: committee.id,
+        name_ar: committee.name_ar,
+        name_en: committee.name_en,
+        slug: committee.slug,
+        public_id: committee.public_id,
+        type: committee.type,
+        status: committee.status,
+        organization_id: committee.organization_id,
+        my_role: cm.role,
+      });
+    }
+
+    // 5) Group committees by organization_id
+    const committeesByOrg = {};
+    for (const c of myCommittees) {
+      if (!committeesByOrg[c.organization_id]) committeesByOrg[c.organization_id] = [];
+      committeesByOrg[c.organization_id].push(c);
+    }
+
+    // 6) Attach committees to each org in the list
+    for (const org of organizations) {
+      org.committees = committeesByOrg[org.id] || [];
+    }
+
+    // 7) Also include orgs where the user has committees but no org membership
+    //    (edge case: invited to a committee without explicit org membership)
+    for (const c of myCommittees) {
+      if (!seenOrgIds.has(c.organization_id)) {
+        const org = await base44.asServiceRole.entities.Organization
+          .get(c.organization_id)
+          .catch(() => null);
+        if (org) {
+          seenOrgIds.add(c.organization_id);
+          organizations.push({
+            id: org.id,
+            public_id: org.public_id,
+            slug: org.slug,
+            name_ar: org.name_ar,
+            name_en: org.name_en,
+            type: org.type,
+            status: org.status,
+            branding_primary_color: org.branding_primary_color,
+            logo_url: org.logo_url,
+            my_role: 'committee_member',
+            committees: committeesByOrg[org.id] || [],
+          });
+        }
+      }
+    }
+
     // Set active_org_id on user profile if not already set
     if (organizations.length > 0) {
       const currentActiveOrg = user.data?.active_org_id;
@@ -60,6 +123,7 @@ export default async function(req) {
     return Response.json({
       organizations,
       has_org: organizations.length > 0,
+      total_committees: myCommittees.length,
       active_org_id: user.data?.active_org_id || organizations[0]?.id,
     });
   } catch (error) {

@@ -122,6 +122,14 @@ function OrgShell() {
       {/* Profile + Create Portal */}
       <div className="px-3 py-2 border-t border-sidebar-border space-y-1">
         <Link
+          to="/"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors"
+        >
+          <LayoutDashboard className="w-4 h-4 shrink-0" />
+          <span>{t("مساحتي", "My Workspace")}</span>
+        </Link>
+        <Link
           to="/create-portal"
           onClick={() => setMobileOpen(false)}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors"
