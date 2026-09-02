@@ -23,6 +23,11 @@
       "title": "Date & Time",
       "format": "date-time"
     },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Duration (minutes)",
+      "default": 60
+    },
     "location": {
       "type": "string",
       "title": "Location"
@@ -76,6 +81,72 @@
         "cancelled"
       ],
       "default": "scheduled"
+    },
+    "series_id": {
+      "type": "string",
+      "title": "Series ID (groups recurring instances)"
+    },
+    "is_series_master": {
+      "type": "boolean",
+      "title": "Is Series Master (template)",
+      "default": false
+    },
+    "parent_meeting_id": {
+      "type": "string",
+      "title": "Parent Meeting ID (series master for exceptions)"
+    },
+    "recurrence_type": {
+      "type": "string",
+      "title": "Recurrence Type",
+      "enum": [
+        "none",
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly"
+      ],
+      "default": "none"
+    },
+    "recurrence_rrule": {
+      "type": "string",
+      "title": "RFC 5545 RRULE String"
+    },
+    "recurrence_interval": {
+      "type": "number",
+      "title": "Recurrence Interval (every N units)",
+      "default": 1
+    },
+    "recurrence_count": {
+      "type": "number",
+      "title": "Total Occurrences (null = until recurrence_until)"
+    },
+    "recurrence_until": {
+      "type": "string",
+      "title": "Recurrence End Date",
+      "format": "date-time"
+    },
+    "recurrence_days_of_week": {
+      "type": "string",
+      "title": "Days of Week (comma-separated 0-6, for weekly)"
+    },
+    "recurrence_month_day": {
+      "type": "number",
+      "title": "Day of Month (for monthly)"
+    },
+    "is_exception": {
+      "type": "boolean",
+      "title": "Is Exception (modified from series pattern)",
+      "default": false
+    },
+    "is_cancelled_exception": {
+      "type": "boolean",
+      "title": "Is Cancelled Exception (removed from series)",
+      "default": false
+    },
+    "series_instance_number": {
+      "type": "number",
+      "title": "Instance Number in Series",
+      "default": 1
     }
   },
   "required": [

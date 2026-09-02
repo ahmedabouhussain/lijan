@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ChevronRight, Calendar, Clock, Users, Gavel, Play, Pause, Square, Ban, Plus, X, MapPin, Video } from "lucide-react";
+import { ChevronRight, Calendar, Clock, Users, Gavel, Play, Pause, Square, Ban, Plus, X, MapPin, Video, Repeat, RefreshCw, Loader2 } from "lucide-react";
 import { MEETING_STATUS, DECISION_STATUS, CLASSIFICATION, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AgendaManager from "@/components/raqeem/AgendaManager";
@@ -36,6 +36,8 @@ export default function MeetingDetail() {
     owner_name: "",
     deadline: "",
   });
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const [generatingInstances, setGeneratingInstances] = useState(false);
 
   async function load() {
     try {
@@ -65,17 +67,37 @@ export default function MeetingDetail() {
   useEffect(() => { load(); }, [id]);
 
   const updateMeetingStatus = async (newStatus) => {
+    setStatusUpdating(true);
     try {
-      await base44.entities.Meeting.update(id, { status: newStatus });
-      await base44.entities.AuditLog.create({
-        action: "status_change",
-        entity_type: "Meeting",
-        entity_id: id,
-        entity_title: meeting.title,
-        description: `تغيير حالة الاجتماع إلى ${MEETING_STATUS[newStatus]?.ar}`,
-      });
+      const fnMap = {
+        in_progress: "StartMeeting",
+        adjourned: "AdjournMeeting",
+        completed: "AdjournMeeting",
+        cancelled: "CancelMeeting",
+      };
+      const fn = fnMap[newStatus];
+      if (fn) {
+        await base44.functions.invoke(fn, { meeting_id: id });
+      } else {
+        await base44.entities.Meeting.update(id, { status: newStatus });
+      }
       load();
-    } catch {}
+    } catch (e) {
+      console.error("Status update failed:", e);
+    }
+    setStatusUpdating(false);
+  };
+
+  const generateMoreInstances = async () => {
+    if (!meeting?.is_series_master) return;
+    setGeneratingInstances(true);
+    try {
+      await base44.functions.invoke("GenerateMeetingInstances", { series_master_id: id });
+      load();
+    } catch (e) {
+      console.error("Generate failed:", e);
+    }
+    setGeneratingInstances(false);
   };
 
   const createDecision = async () => {
@@ -145,35 +167,51 @@ export default function MeetingDetail() {
             {meeting.provider && meeting.provider !== "none" && (
               <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> {meeting.provider}</span>
             )}
+            {meeting.is_series_master && (
+              <span className="flex items-center gap-1.5 text-accent font-medium">
+                <Repeat className="w-3.5 h-3.5" /> سلسلة متكررة — {meeting.recurrence_type === "weekly" ? "أسبوعي" : meeting.recurrence_type === "monthly" ? "شهري" : meeting.recurrence_type === "daily" ? "يومي" : meeting.recurrence_type === "quarterly" ? "ربع سنوي" : meeting.recurrence_type}
+              </span>
+            )}
+            {meeting.series_id && !meeting.is_series_master && (
+              <span className="flex items-center gap-1.5 text-muted-foreground">
+                <Repeat className="w-3.5 h-3.5" /> نسخة #{meeting.series_instance_number} من السلسلة
+              </span>
+            )}
           </div>
         </div>
 
         {/* Meeting status controls */}
         <div className="flex items-center gap-2 flex-wrap">
           <MeetingCopilot meetingId={id} committeeId={meeting.committee_id} />
+          {meeting.is_series_master && (
+            <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
+              {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              توليد نسخ إضافية
+            </Button>
+          )}
           {status === "scheduled" && (
-            <Button size="sm" onClick={() => updateMeetingStatus("in_progress")}>
-              <Play className="w-3.5 h-3.5" /> بدء الاجتماع
+            <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} بدء الاجتماع
             </Button>
           )}
           {status === "in_progress" && (
             <>
-              <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")}>
-                <Pause className="w-3.5 h-3.5" /> تأجيل
+              <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")} disabled={statusUpdating}>
+                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} تأجيل
               </Button>
-              <Button size="sm" onClick={() => updateMeetingStatus("completed")}>
-                <Square className="w-3.5 h-3.5" /> إنهاء
+              <Button size="sm" onClick={() => updateMeetingStatus("completed")} disabled={statusUpdating}>
+                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Square className="w-3.5 h-3.5" />} إنهاء
               </Button>
             </>
           )}
           {status === "adjourned" && (
-            <Button size="sm" onClick={() => updateMeetingStatus("in_progress")}>
-              <Play className="w-3.5 h-3.5" /> استئناف
+            <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} استئناف
             </Button>
           )}
           {(status === "scheduled" || status === "in_progress" || status === "adjourned") && (
-            <Button size="sm" variant="destructive" onClick={() => updateMeetingStatus("cancelled")}>
-              <Ban className="w-3.5 h-3.5" /> إلغاء
+            <Button size="sm" variant="destructive" onClick={() => updateMeetingStatus("cancelled")} disabled={statusUpdating}>
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Ban className="w-3.5 h-3.5" />} إلغاء
             </Button>
           )}
         </div>

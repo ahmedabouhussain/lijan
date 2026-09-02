@@ -5,8 +5,9 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import RecurrenceConfig from "@/components/raqeem/RecurrenceConfig";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
-import { Calendar, Plus, X, Loader2 } from "lucide-react";
+import { Calendar, Plus, X, Loader2, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ export default function CommitteeMeetings() {
   const { getTitle, getDescription } = usePageConfig("meetings");
   const { orgRef, committeeRef } = useParams();
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ title: "", date: "", mode: "hybrid", provider: "none", location: "" });
+  const [form, setForm] = useState({ title: "", date: "", mode: "hybrid", provider: "none", location: "", recurrence_type: "none", recurrence_interval: 1 });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,9 +31,19 @@ export default function CommitteeMeetings() {
     if (!form.title.trim() || !form.date) { setError("Title and date are required"); return; }
     setSubmitting(true); setError("");
     try {
-      await base44.functions.invoke("CreateMeeting", { committee_id: committee.id, ...form, date: new Date(form.date).toISOString() });
-      setShowCreate(false); setForm({ title: "", date: "", mode: "hybrid", provider: "none", location: "" });
+      const payload = { ...form, date: new Date(form.date).toISOString() };
+      // Only send recurrence fields if a pattern is selected
+      if (form.recurrence_type === "none") {
+        delete payload.recurrence_type;
+        delete payload.recurrence_interval;
+      }
+      const res = await base44.functions.invoke("CreateMeeting", { committee_id: committee.id, ...payload });
+      setShowCreate(false);
+      setForm({ title: "", date: "", mode: "hybrid", provider: "none", location: "", recurrence_type: "none", recurrence_interval: 1 });
       reload();
+      if (res?.instances_created > 0) {
+        setError("");
+      }
     } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
     setSubmitting(false);
   };
@@ -65,6 +76,17 @@ export default function CommitteeMeetings() {
             <div><Label>{t("الوضع", "Mode")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">Physical</option><option value="online">Online</option><option value="hybrid">Hybrid</option></select></div>
             <div><Label>{t("المزود", "Provider")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">None</option><option value="teams">Teams</option><option value="zoom">Zoom</option><option value="external_link">External Link</option></select></div>
           </div>
+          <RecurrenceConfig
+            value={{
+              recurrence_type: form.recurrence_type,
+              recurrence_interval: form.recurrence_interval,
+              recurrence_count: form.recurrence_count,
+              recurrence_until: form.recurrence_until,
+              recurrence_days_of_week: form.recurrence_days_of_week,
+              recurrence_month_day: form.recurrence_month_day,
+            }}
+            onChange={(patch) => setForm(f => ({ ...f, ...patch }))}
+          />
           <Button onClick={submit} disabled={submitting} className="w-full">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("إنشاء", "Create")}</Button>
         </div>
       )}
@@ -78,9 +100,14 @@ export default function CommitteeMeetings() {
           <div className="space-y-2">
             {meetings.upcoming.map((m) => (
               <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
-                <div>
-                  <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
-                  <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
+                <div className="flex items-center gap-2">
+                  {(m.is_series_master || m.series_id) && (
+                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" />
+                  )}
+                  <div>
+                    <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                    <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
+                  </div>
                 </div>
                 <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
               </Link>
@@ -98,9 +125,14 @@ export default function CommitteeMeetings() {
           <div className="space-y-2">
             {meetings.previous.map((m) => (
               <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
-                <div>
-                  <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
-                  <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
+                <div className="flex items-center gap-2">
+                  {(m.is_series_master || m.series_id) && (
+                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" />
+                  )}
+                  <div>
+                    <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                    <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
+                  </div>
                 </div>
                 <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
               </Link>
