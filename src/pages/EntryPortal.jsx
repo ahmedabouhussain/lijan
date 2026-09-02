@@ -117,23 +117,31 @@ export default function EntryPortal() {
     localStorage.setItem("lijan_pending_entity", JSON.stringify(selected));
     localStorage.setItem("lijan_pending_email", email);
 
-    // Check if this entity+email matches a saved profile affiliation → go to login
-    const savedAffiliation = localStorage.getItem("lijan_profile_affiliation");
-    if (savedAffiliation) {
-      try {
-        const aff = JSON.parse(savedAffiliation);
-        const emailMatch = (aff.institution_email || "").toLowerCase().trim() === email.toLowerCase().trim();
-        const entityMatch = aff.institution_id === entityId;
-        if (emailMatch && entityMatch) {
-          // Returning user with matching affiliation → login
-          navigate(`/login?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
-          return;
-        }
-      } catch {}
+    // Server-side check: is this email already registered?
+    let isRegistered = false;
+    try {
+      const res = await base44.functions.invoke("CheckUserRegistration", { email });
+      isRegistered = res.data?.registered === true;
+    } catch {
+      // Fallback: check localStorage affiliation
+      const savedAffiliation = localStorage.getItem("lijan_profile_affiliation");
+      if (savedAffiliation) {
+        try {
+          const aff = JSON.parse(savedAffiliation);
+          const emailMatch = (aff.institution_email || "").toLowerCase().trim() === email.toLowerCase().trim();
+          const entityMatch = aff.institution_id === entityId;
+          isRegistered = emailMatch && entityMatch;
+        } catch {}
+      }
     }
 
-    // New user or mismatch → register
-    navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
+    if (isRegistered) {
+      // Registered user → login
+      navigate(`/login?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
+    } else {
+      // Not registered → account creation / onboarding
+      navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
+    }
   };
 
   return (

@@ -185,6 +185,11 @@ export const QATARI_ENTITIES = [
   { id: "al_khaleej_takaful", ar: "الخليج للتكافل", en: "Al Khaleej Takaful Insurance", category: "insurance" },
   { id: "qlm", ar: "كيو إل إم للتأمين على الحياة والطبي", en: "QLM Life & Medical Insurance", category: "insurance" },
 
+  // === Elan Group ===
+  { id: "elan_holding", ar: "إعلان القابضة", en: "Elan Holding", category: "holding" },
+  { id: "elan_media", ar: "إعلان ميديا", en: "Elan Media", category: "holding" },
+  { id: "elan_qatar", ar: "إعلان قطر", en: "Elan Qatar", category: "holding" },
+
   // === Family Groups & Private Companies ===
   { id: "al_faisal_holding", ar: "القابضة الفيصلية (مجموعة الفيصلية)", en: "Al Faisal Holding", category: "private" },
   { id: "power_intl", ar: "باور إنترناشيونال القابضة", en: "Power International Holding", category: "private" },
