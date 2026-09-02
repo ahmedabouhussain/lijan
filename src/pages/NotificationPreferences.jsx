@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import PageHeader from "@/components/raqeem/PageHeader";
+import StickyPageNav from "@/components/raqeem/StickyPageNav";
 import { Bell, Mail, MessageSquare, Smartphone, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -108,6 +109,7 @@ export default function NotificationPreferences() {
 
   return (
     <div className="space-y-4 max-w-2xl">
+      <StickyPageNav crumbs={[{ label: t("تفضيلات الإشعارات", "Notification Preferences"), to: "/notification-preferences" }]} />
       <PageHeader
         icon={Bell}
         title={t("تفضيلات الإشعارات", "Notification Preferences")}
