@@ -115,7 +115,7 @@ export const QATARI_ENTITIES = [
   { id: "qapco", ar: "قطر للبتروكيماويات", en: "Qatar Petrochemical Company (Qapco)", category: "holding" },
   { id: "qsteel", ar: "قطر للصلب", en: "Qatar Steel", category: "holding" },
   { id: "qatalum", ar: "قطر للألمنيوم", en: "Qatalum", category: "holding" },
-  { id: "qncc", ar: "شركة قطر الوطنية للإسمنت", en: "Qatar National Cement Company", category: "holding" },
+  { id: "qncc_cement", ar: "شركة قطر الوطنية للإسمنت", en: "Qatar National Cement Company", category: "holding" },
   { id: "qatar_airways", ar: "قطر للطيران", en: "Qatar Airways", category: "holding" },
   { id: "ooredoo", ar: "أوريدو", en: "Ooredoo", category: "holding" },
   { id: "vodafone_qatar", ar: "اتصالات قطر (فودافون قطر)", en: "Vodafone Qatar", category: "holding" },

@@ -29,6 +29,9 @@ const CATEGORY_TO_TYPE = {
   authority: "authority",
   semi_government: "organization",
   holding: "organization",
+  bank: "organization",
+  insurance: "organization",
+  private: "organization",
   judicial: "authority",
 };
 
