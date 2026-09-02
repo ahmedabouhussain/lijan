@@ -6,7 +6,10 @@ import { MEETING_STATUS, DECISION_STATUS, CLASSIFICATION, formatDate } from "@/l
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AgendaManager from "@/components/raqeem/AgendaManager";
 import MinutesManager from "@/components/raqeem/MinutesManager";
+import AttendancePanel from "@/components/raqeem/AttendancePanel";
+import LiveVotingWidget from "@/components/raqeem/LiveVotingWidget";
 import MeetingCopilot from "@/components/raqeem/MeetingCopilot";
+import { useCommittee } from "@/lib/CommitteeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +41,13 @@ export default function MeetingDetail() {
   });
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [generatingInstances, setGeneratingInstances] = useState(false);
+  const { data: cData } = useCommittee();
+  const myRole = cData?.my_role;
+  const isOversight = cData?.is_oversight;
+  const isRecused = cData?.is_recused;
+  const canCertify = !isOversight && !isRecused && ["chair", "vice_chair", "secretary"].includes(myRole);
+  const canCallVote = !isOversight && !isRecused && ["chair", "vice_chair"].includes(myRole);
+  const canCastVote = !isOversight && !isRecused && ["chair", "vice_chair", "secretary", "member"].includes(myRole);
 
   async function load() {
     try {
@@ -284,20 +294,26 @@ export default function MeetingDetail() {
           ) : (
             <div className="space-y-2">
               {decisions.map((d) => (
-                <Link key={d.id} to={`/decisions/${d.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
-                    {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
-                  </div>
-                  <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
-                </Link>
+                <div key={d.id} className="border border-border rounded-md p-3">
+                  <Link to={`/decisions/${d.id}`} className="flex items-center justify-between hover:bg-secondary/30 -mx-1 px-1 rounded">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                      {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
+                    </div>
+                    <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                  </Link>
+                  <LiveVotingWidget decision={d} canCallVote={canCallVote} canCastVote={canCastVote} onVoted={load} />
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Minutes & Attendance */}
+      {/* Live Attendance & Quorum */}
+      <AttendancePanel meeting={meeting} members={members} attendance={attendance} canCertify={canCertify} onChanged={load} />
+
+      {/* Minutes */}
       <MinutesManager meeting={meeting} committee={committee} members={members} attendance={attendance} minutes={minutes} onChanged={load} />
     </div>
   );
