@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2 } from "lucide-react";
+import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut } from "lucide-react";
 import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -19,6 +19,10 @@ export default function EntryPortal() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleLogout = async () => {
+    await base44.auth.logout("/");
+  };
 
   const grouped = getEntitiesByCategory();
 
@@ -39,21 +43,38 @@ export default function EntryPortal() {
     return (
       <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
         {/* Top bar */}
-        <header className="border-b border-border bg-card">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <header className="border-b border-border bg-card sticky top-0 z-30">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-9 h-9 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
                 <BrandLogo className="w-full h-full" />
               </div>
-              <BrandWordmark variant="dark" />
+              <BrandWordmark variant="dark" className="hidden sm:block" />
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-muted-foreground hidden sm:block">{user.email}</span>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <button
+                onClick={() => navigate("/")}
+                className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                title={t("الرئيسية", "Home")}
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">{t("الرئيسية", "Home")}</span>
+              </button>
               <button
                 onClick={() => navigate("/profile")}
-                className="text-sm text-primary hover:underline font-medium"
+                className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                title={t("الملف الشخصي", "Profile")}
               >
-                {t("الملف الشخصي", "Profile")}
+                <span className="text-xs text-muted-foreground hidden md:block">{user.email}</span>
+                <span className="sm:hidden">{t("الملف", "Profile")}</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                title={t("تسجيل الخروج", "Logout")}
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">{t("خروج", "Logout")}</span>
               </button>
             </div>
           </div>
