@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   User as UserIcon, Mail, Shield, Save, Camera, Phone, Briefcase,
-  CheckCircle2, LogOut, PenLine, Building2, ChevronDown,
+  CheckCircle2, LogOut, PenLine, Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,8 @@ import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 import { Image } from "@/components/ui/image";
 import SignaturePad from "@/components/raqeem/SignaturePad";
 import PageNav from "@/components/raqeem/PageNav";
-import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory, findEntity } from "@/lib/qatariEntities";
+import { findEntity } from "@/lib/qatariEntities";
+import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -34,8 +35,6 @@ export default function Profile() {
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [department, setDepartment] = useState("");
   const fileRef = useRef(null);
-
-  const grouped = getEntitiesByCategory();
 
   useEffect(() => {
     base44.auth
@@ -193,25 +192,11 @@ export default function Profile() {
 
         <div>
           <Label className="text-xs mb-1.5 block">الجهة · Institution</Label>
-          <div className="relative">
-            <select
-              value={institutionId}
-              onChange={(e) => setInstitutionId(e.target.value)}
-              className="w-full appearance-none px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring pr-9"
-            >
-              <option value="">— اختر الجهة · Select entity —</option>
-              {Object.entries(grouped).map(([catKey, entities]) => (
-                <optgroup key={catKey} label={`${ENTITY_CATEGORIES[catKey].ar} — ${ENTITY_CATEGORIES[catKey].en}`}>
-                  {entities.map((entity) => (
-                    <option key={entity.id} value={entity.id}>
-                      {entity.ar} — {entity.en}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 text-muted-foreground absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none" />
-          </div>
+          <EntitySearchSelect
+            value={institutionId}
+            onChange={setInstitutionId}
+            placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

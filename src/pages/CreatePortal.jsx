@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory,
-} from "@/lib/qatariEntities";
+import { QATARI_ENTITIES } from "@/lib/qatariEntities";
+import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { BRAND } from "@/lib/brand";
 
 const ORG_TYPES = [
@@ -50,7 +49,6 @@ export default function CreatePortal() {
   const [checking, setChecking] = useState(false);
   const [joining, setJoining] = useState(false);
 
-  const grouped = useMemo(() => getEntitiesByCategory(), []);
   const selectedEntity = QATARI_ENTITIES.find((e) => e.id === entityId);
   const isOther = entityId === OTHER_ID;
 
@@ -182,26 +180,12 @@ export default function CreatePortal() {
             <Label htmlFor="entity">
               الجهة · Organization <span className="text-destructive">*</span>
             </Label>
-            <select
-              id="entity"
+            <EntitySearchSelect
               value={entityId}
-              onChange={handleEntityChange}
-              className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-            >
-              <option value="">— اختر الجهة · Select entity —</option>
-              {Object.entries(ENTITY_CATEGORIES).map(([catKey, cat]) => (
-                <optgroup key={catKey} label={`${cat.ar} · ${cat.en}`}>
-                  {(grouped[catKey] || []).map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.ar} · {e.en}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-              <optgroup label="أخرى · Other">
-                <option value={OTHER_ID}>جهة أخرى غير مدرجة · Other entity not listed</option>
-              </optgroup>
-            </select>
+              onChange={(val) => handleEntityChange({ target: { value: val } })}
+              includeOther
+              placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+            />
             <p className="text-xs text-muted-foreground">
               الجهات الحكومية وشبه الحكومية والقابضة والخاصة المعتمدة في قطر
             </p>

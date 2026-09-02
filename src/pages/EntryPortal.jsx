@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, ChevronDown, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut } from "lucide-react";
-import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory } from "@/lib/qatariEntities";
+import { ShieldCheck, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut } from "lucide-react";
+import { QATARI_ENTITIES } from "@/lib/qatariEntities";
+import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
@@ -35,8 +36,6 @@ export default function EntryPortal() {
       } catch {}
     }
   }, []);
-
-  const grouped = getEntitiesByCategory();
 
   // Show spinner while auth is loading
   if (isLoadingAuth) {
@@ -211,25 +210,11 @@ export default function EntryPortal() {
                 <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
                 الجهة المؤسسية · Institution
               </label>
-              <div className="relative">
-                <select
-                  value={entityId}
-                  onChange={(e) => setEntityId(e.target.value)}
-                  className="w-full appearance-none px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring pr-9"
-                >
-                  <option value="">— اختر الجهة · Select entity —</option>
-                  {Object.entries(grouped).map(([catKey, entities]) => (
-                    <optgroup key={catKey} label={`${ENTITY_CATEGORIES[catKey].ar} — ${ENTITY_CATEGORIES[catKey].en}`}>
-                      {entities.map((entity) => (
-                        <option key={entity.id} value={entity.id}>
-                          {entity.ar} — {entity.en}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-muted-foreground absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none" />
-              </div>
+              <EntitySearchSelect
+                value={entityId}
+                onChange={setEntityId}
+                placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+              />
             </div>
 
             {/* Email */}
