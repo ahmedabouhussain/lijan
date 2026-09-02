@@ -5,7 +5,8 @@ import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
 import GenerateWizard from "@/components/raqeem/GenerateWizard";
-import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive } from "lucide-react";
+import LivingProductDelta from "@/components/raqeem/LivingProductDelta";
+import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -55,6 +56,7 @@ export default function ProductCatalog({ onGenerate }) {
   const [generating, setGenerating] = useState("");
   const [category, setCategory] = useState("all");
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [lastProductDate, setLastProductDate] = useState(null);
 
   const orgId = data?.committee?.organization_id;
   const committeeId = data?.committee?.id;
@@ -76,6 +78,23 @@ export default function ProductCatalog({ onGenerate }) {
   };
 
   useEffect(() => { fetchTemplates(); }, [orgId]);
+
+  // Fetch last product generation date for Living Product Delta™
+  useEffect(() => {
+    if (!committeeId) return;
+    (async () => {
+      try {
+        const products = await base44.entities.ProductInstance.filter(
+          { committee_id: committeeId },
+          "-generated_at",
+          1
+        );
+        if (products && products[0]?.generated_at) {
+          setLastProductDate(products[0].generated_at);
+        }
+      } catch {}
+    })();
+  }, [committeeId]);
 
   const handleGenerate = async (template) => {
     setGenerating(template.product_type);
@@ -139,6 +158,16 @@ export default function ProductCatalog({ onGenerate }) {
         onGenerate={handleWizardGenerate}
         committeeName={data?.committee?.name_ar || data?.committee?.name_en}
       />
+
+      {/* Living Institutional Product™ — Section 6: what changed since last version */}
+      {lastProductDate && (
+        <div className="raqeem-card p-4">
+          <LivingProductDelta
+            committeeId={committeeId}
+            lastGeneratedAt={lastProductDate}
+          />
+        </div>
+      )}
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

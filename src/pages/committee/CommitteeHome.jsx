@@ -8,13 +8,14 @@ import SovereignCard from "@/components/raqeem/SovereignCard";
 import WorkInbox from "@/components/raqeem/WorkInbox";
 import ChairBrief from "@/components/raqeem/ChairBrief";
 import SecretaryOperations from "@/components/raqeem/SecretaryOperations";
+import InstitutionalTimeMachine from "@/components/raqeem/InstitutionalTimeMachine";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import ChairHomeEnhanced from "@/components/raqeem/homes/ChairHomeEnhanced";
 import SecretaryHomeEnhanced from "@/components/raqeem/homes/SecretaryHomeEnhanced";
 import MemberHomeEnhanced from "@/components/raqeem/homes/MemberHomeEnhanced";
 import ObserverHomeEnhanced from "@/components/raqeem/homes/ObserverHomeEnhanced";
 import {
-  UserCircle, ArrowLeft, Lock, ChevronDown, ChevronUp,
+  UserCircle, ArrowLeft, Lock, ChevronDown, ChevronUp, History,
 } from "lucide-react";
 
 export default function CommitteeHome() {
@@ -22,11 +23,13 @@ export default function CommitteeHome() {
   const { t } = useLanguage();
   const { orgRef, committeeRef } = useParams();
   const { user } = useAuth();
+  const [timeMachineOpen, setTimeMachineOpen] = useState(false);
 
   if (!data) return null;
 
   const { committee, my_role, is_recused } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
+  const isAdminRole = ["chair", "vice_chair", "secretary", "committee_administrator"].includes(my_role);
 
   const roleLabel = t(
     { chair: "رئيس اللجنة", vice_chair: "نائب الرئيس", secretary: "أمين السر", committee_administrator: "مدير اللجنة", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
@@ -75,6 +78,16 @@ export default function CommitteeHome() {
                 <UserCircle className="w-4 h-4" aria-hidden="true" />
                 {roleLabel}
               </span>
+              {isAdminRole && (
+                <button
+                  onClick={() => setTimeMachineOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
+                  title={t("عرض اللجنة كما كانت في تاريخ…", "View committee as of date…")}
+                >
+                  <History className="w-4 h-4" aria-hidden="true" />
+                  {t("آلة الزمن", "Time Machine")}
+                </button>
+              )}
             </div>
           </div>
           {is_recused && (
@@ -105,6 +118,16 @@ export default function CommitteeHome() {
       <RoleDetailsToggle>
         {renderRoleHome()}
       </RoleDetailsToggle>
+
+      {/* Institutional Time Machine™ — Section 9 */}
+      {isAdminRole && (
+        <InstitutionalTimeMachine
+          open={timeMachineOpen}
+          onClose={() => setTimeMachineOpen(false)}
+          committeeId={committee.id}
+          committeeName={committee.name_ar || committee.name_en}
+        />
+      )}
     </div>
   );
 }

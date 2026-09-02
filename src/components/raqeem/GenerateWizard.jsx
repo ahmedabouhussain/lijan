@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import SovereignCard from "@/components/raqeem/SovereignCard";
+import PreflightChecklist, { runPreflightChecks } from "@/components/raqeem/PreflightChecklist";
 import { Button } from "@/components/ui/button";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter,
@@ -50,12 +51,19 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
     classification: "internal",
   });
   const [generating, setGenerating] = useState(false);
-  const [gaps, setGaps] = useState([]);
+
+  // Preflight Engine™ — Section 8: run real checks when on step 3
+  const preflightResults = step === 3
+    ? runPreflightChecks(
+        { organization_id: committeeName, generated_content: "", classification: scope.classification },
+        scope
+      )
+    : [];
+  const hasFailures = preflightResults.some((r) => r.status === "fail");
 
   const reset = () => {
     setStep(1);
     setSelectedType(null);
-    setGaps([]);
     setGenerating(false);
   };
 
@@ -67,12 +75,10 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      // Preflight check (Section 8)
-      const preflightGaps = runPreflight(selectedType, scope);
-      setGaps(preflightGaps);
-      if (preflightGaps.length > 0) {
+      // Preflight Engine™ — Section 8: block issuance if failures exist
+      if (hasFailures) {
         setGenerating(false);
-        return; // Don't issue if preflight fails
+        return;
       }
       await onGenerate?.({ type: selectedType, scope, format: getFormat(selectedType) });
       handleClose();
@@ -284,28 +290,12 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
               </div>
             )}
 
-            {/* Preflight gaps */}
-            {gaps.length > 0 ? (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-primary">
-                  <AlertCircle className="w-4 h-4" aria-hidden="true" />
-                  {t("كشف النواقص", "Gap Detection")}
-                </div>
-                {gaps.map((gap, i) => (
-                  <div key={i} className="flex items-start gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200">
-                    <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
-                    <p className="text-[11px] text-red-800">{gap}</p>
-                  </div>
-                ))}
-                <p className="text-[10px] text-muted-foreground">
-                  {t("لا يمكن إصدار الوثيقة الرسمية حتى تُعالج النواقص", "Cannot issue official document until gaps are resolved")}
-                </p>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
-                <p className="text-xs text-emerald-800">{t("الفحص ناجح — جاهز للإصدار", "Preflight passed — ready to issue")}</p>
-              </div>
+            {/* Preflight Engine™ — Section 8: real pre-issuance checks */}
+            <PreflightChecklist results={preflightResults} />
+            {hasFailures && (
+              <p className="text-[10px] text-muted-foreground">
+                {t("لا يمكن إصدار الوثيقة الرسمية حتى تُعالج النواقص", "Cannot issue official document until gaps are resolved")}
+              </p>
             )}
           </div>
         )}
@@ -323,7 +313,7 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
               <ChevronLeft className="w-3.5 h-3.5 rotate-180" aria-hidden="true" />
             </Button>
           )}
-          {step === 3 && gaps.length === 0 && (
+          {step === 3 && !hasFailures && (
             <Button size="sm" onClick={handleGenerate} disabled={generating} className="flex-1">
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t("جارٍ التوليد...", "Generating...")}</>
@@ -332,7 +322,7 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
               )}
             </Button>
           )}
-          {step === 3 && gaps.length > 0 && (
+          {step === 3 && hasFailures && (
             <Button variant="outline" size="sm" onClick={() => setStep(2)} className="flex-1">
               {t("معالجة النواقص", "Fix Gaps")}
             </Button>
@@ -341,17 +331,6 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
       </SheetContent>
     </Sheet>
   );
-}
-
-/**
- * Document Preflight Engine — Section 8
- * Checks before issuing: completeness, no placeholders, no test data, etc.
- */
-function runPreflight(productType, scope) {
-  const gaps = [];
-  // These would be real checks against actual data in production
-  // For now, return empty (preflight passes) — the real checks happen server-side
-  return gaps;
 }
 
 function getFormat(productType) {
