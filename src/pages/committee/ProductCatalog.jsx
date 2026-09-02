@@ -4,6 +4,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
+import GenerateWizard from "@/components/raqeem/GenerateWizard";
 import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,7 @@ export default function ProductCatalog({ onGenerate }) {
   const [search, setSearch] = useState("");
   const [generating, setGenerating] = useState("");
   const [category, setCategory] = useState("all");
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   const orgId = data?.committee?.organization_id;
   const committeeId = data?.committee?.id;
@@ -92,6 +94,24 @@ export default function ProductCatalog({ onGenerate }) {
     setGenerating("");
   };
 
+  const handleWizardGenerate = async ({ type, scope, format }) => {
+    setGenerating(type);
+    try {
+      const res = await base44.functions.invoke("GenerateProduct", {
+        product_type: type,
+        organization_id: orgId,
+        committee_id: committeeId,
+        title: t("منتج جديد", "New Product"),
+        export_format: format,
+        scope,
+      });
+      const d = res.data || res;
+      if (d.error) { alert(d.error); }
+      else if (onGenerate) { onGenerate(d); }
+    } catch (e) { alert(e?.message || "Error"); }
+    setGenerating("");
+  };
+
   const filtered = templates.filter((tmpl) => {
     if (category !== "all" && tmpl.category !== category) return false;
     if (search) {
@@ -107,7 +127,18 @@ export default function ProductCatalog({ onGenerate }) {
         <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
         <h1 className="text-lg font-bold">{t("مصنع المنتجات", "Product Factory")}</h1>
         <span className="text-sm text-muted-foreground">({templates.length})</span>
+        <Button size="sm" onClick={() => setWizardOpen(true)} className="mr-auto">
+          <Sparkles className="w-3.5 h-3.5" />
+          {t("معالج التوليد", "Generate Wizard")}
+        </Button>
       </div>
+
+      <GenerateWizard
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onGenerate={handleWizardGenerate}
+        committeeName={data?.committee?.name_ar || data?.committee?.name_en}
+      />
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

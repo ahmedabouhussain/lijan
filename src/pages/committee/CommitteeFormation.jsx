@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import FormationImpactPreview from "@/components/raqeem/FormationImpactPreview";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
@@ -166,6 +167,14 @@ export default function CommitteeFormation() {
           ))
         )}
       </div>
+
+ {/* Formation Impact Preview™ — Section 11: shows impact before execution */}
+      {proposed.length > 0 && proposed[0] && (
+        <FormationImpactPreview
+          change={{ type: proposed[0].amendment_type, member_name: proposed[0].member_name }}
+          data={data}
+        />
+      )}
 
       {/* Charter & Mandate (read-only) */}
       <div className="raqeem-card p-4 space-y-3">

@@ -7,6 +7,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
 import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
+import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -92,6 +93,7 @@ export default function DecisionDetail() {
         <div className="flex items-center gap-3 mb-2 flex-wrap">
           <h1 className="text-2xl font-bold text-foreground">{decision.title}</h1>
           {decision.decision_number && <span className="text-sm text-muted-foreground font-mono">{decision.decision_number}</span>}
+          <ProofChainDrawer entityType="Decision" entityId={decision.id} entityTitle={decision.title} />
         </div>
         {decision.title_ar && decision.title_ar !== decision.title && (
           <p className="text-sm text-muted-foreground">{decision.title_ar}</p>

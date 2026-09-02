@@ -6,6 +6,7 @@ import {
   Gavel, CalendarClock, Vote, FileSignature, AlertTriangle,
   FileText, Clock, CheckCircle2, Inbox, ChevronLeft,
 } from "lucide-react";
+import { detectSilentFailures } from "@/components/raqeem/SilentFailureRadar";
 
 /**
  * WorkInbox — «ما المطلوب مني الآن؟»
@@ -144,6 +145,16 @@ export default function WorkInbox({ data, base }) {
       reason: t(`${expiringMembers.length} عضو خلال 30 يوماً`, `${expiringMembers.length} members within 30 days`),
     });
   }
+
+  // Silent Failure Radar™ — Section 13: hidden problems
+  const silentFailures = detectSilentFailures(data);
+  silentFailures.forEach((sf) => {
+    attentionItems.push({
+      icon: sf.icon,
+      title: lang === "ar" ? sf.title.ar : sf.title.en,
+      reason: lang === "ar" ? sf.detail.ar : sf.detail.en,
+    });
+  });
 
   const hasNoItems = nowItemsCapped.length === 0 && upcoming.length === 0 && attentionItems.length === 0;
 
