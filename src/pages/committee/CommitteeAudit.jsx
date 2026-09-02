@@ -5,8 +5,10 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ACTION_STATUS, MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
-import { ShieldCheck, Clock, History, Calendar } from "lucide-react";
+import { ShieldCheck, Clock, History, Calendar, CheckCircle2 } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import CompletionLedger from "@/components/raqeem/CompletionLedger";
+import TraceabilityMatrix from "@/components/raqeem/TraceabilityMatrix";
 
 export default function CommitteeAudit() {
   const { data } = useCommittee();
@@ -127,6 +129,24 @@ export default function CommitteeAudit() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Completion Ledger */}
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          {t("سجل الاكتمال", "Completion Ledger")}
+        </h3>
+        <CompletionLedger committeeId={data?.committee?.id} />
+      </div>
+
+      {/* Traceability Matrix */}
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+          <History className="w-3.5 h-3.5" />
+          {t("مصفوفة التتبع", "Traceability Matrix")}
+        </h3>
+        <TraceabilityMatrix />
       </div>
 
       {/* Audit trail */}
