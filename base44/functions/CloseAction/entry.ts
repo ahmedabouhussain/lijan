@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchNotification } from '../../shared/notificationEngine.ts';
 
 // CloseAction — closes an action after evidence verification.
 export default async function(req) {
@@ -40,6 +41,34 @@ export default async function(req) {
       description: `Action closed with verified evidence`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Notify the action owner that their action has been closed/verified
+    if (action.owner_user_id && action.owner_user_id !== auth.user.id) {
+      try {
+        const deepLink = `/o/${auth.organization_id}/c/${action.committee_id}/actions`;
+        await dispatchNotification(base44, {
+          organization_id: auth.organization_id,
+          committee_id: action.committee_id,
+          recipient_user_id: action.owner_user_id,
+          recipient_name: action.owner_name || '',
+          event_type: 'action_reminder',
+          context: {
+            action_title: action.title,
+            status: 'verified',
+            actor_name: auth.user.full_name || auth.user.email,
+            message: `تم إغلاق الإجراء الخاص بك بعد التحقق من الأدلة`,
+            deep_link: deepLink,
+          },
+          source_entity_type: 'Action',
+          source_entity_id: action_id,
+          source_title: action.title,
+          priority: 'normal',
+          correlation_id: auth.correlation_id,
+          actor_name: auth.user.full_name || auth.user.email,
+          deep_link: deepLink,
+        });
+      } catch {}
+    }
 
     return Response.json({ status: 'ok', action_id, correlation_id: auth.correlation_id });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // ActivateCommittee — wraps TransitionCommitteeStatus for the specific activation path.
 // Performs the full activation readiness gate.
@@ -65,6 +66,37 @@ export default async function(req) {
       old_value: oldStatus, new_value: 'active',
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Notify all committee members that the committee has been activated
+    try {
+      const actorName = auth.user.full_name || auth.user.email;
+      const deepLink = `/o/${auth.organization_id}/c/${committee_id}`;
+      const notifParams = (members || [])
+        .filter((m) => m.user_id && m.user_id !== auth.user.id)
+        .map((m) => ({
+          organization_id: auth.organization_id,
+          committee_id,
+          recipient_user_id: m.user_id,
+          recipient_name: m.full_name || m.full_name_ar || '',
+          event_type: 'committee_activated',
+          context: {
+            committee_name: committee.name_ar || committee.name_en || '',
+            actor_name: actorName,
+            message: `تم تنشيط اللجنة: ${committee.name_ar || committee.name_en}`,
+            deep_link: deepLink,
+          },
+          source_entity_type: 'Committee',
+          source_entity_id: committee_id,
+          source_title: committee.name_ar || committee.name_en,
+          priority: 'high',
+          correlation_id: auth.correlation_id,
+          actor_name: actorName,
+          deep_link: deepLink,
+        }));
+      if (notifParams.length > 0) {
+        await dispatchBatch(base44, notifParams);
+      }
+    } catch {}
 
     return Response.json({ status: 'ok', committee_id, old_status: oldStatus, new_status: 'active', version: newVersion, correlation_id: auth.correlation_id });
   } catch (error) {

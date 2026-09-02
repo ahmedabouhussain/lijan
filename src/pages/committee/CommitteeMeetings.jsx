@@ -6,6 +6,8 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import RecurrenceConfig from "@/components/raqeem/RecurrenceConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
 import { Calendar, Plus, X, Loader2, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +24,7 @@ export default function CommitteeMeetings() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { meetings, committee, my_role, is_oversight } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
   const canCreate = !is_oversight && ["chair", "vice_chair", "secretary"].includes(my_role);
@@ -50,18 +52,17 @@ export default function CommitteeMeetings() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("اجتماعات اللجنة", "Committee Meetings", lang)}</h1>
-        </div>
-        {canCreate && (
+      <PageHeader
+        icon={Calendar}
+        title={getTitle("اجتماعات اللجنة", "Committee Meetings", lang)}
+        subtitle={getDescription("جدول اجتماعات اللجنة وتاريخها", "Committee meeting schedule and history", lang)}
+        actions={canCreate && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
             <Plus className="w-4 h-4" />
             {t("اجتماع جديد", "New Meeting")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && (
         <div className="raqeem-card p-4 space-y-3">

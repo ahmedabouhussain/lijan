@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // OpenVote — opens a voting session for a decision.
 export default async function(req) {
@@ -44,6 +45,38 @@ export default async function(req) {
       description: `Vote opened: ${eligibleVoters.length} eligible voters (frozen)`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Notify all eligible voters that voting is open
+    try {
+      const actorName = auth.user.full_name || auth.user.email;
+      const deepLink = `/o/${auth.organization_id}/c/${committee_id}/voting`;
+      const notifParams = (eligibleVoters || [])
+        .filter((m) => m.user_id && m.user_id !== auth.user.id)
+        .map((m) => ({
+          organization_id: auth.organization_id,
+          committee_id,
+          recipient_user_id: m.user_id,
+          recipient_name: m.full_name || m.full_name_ar || '',
+          event_type: 'decision_voting_open',
+          context: {
+            decision_title: decision.title,
+            decision_number: decision.decision_number || '',
+            actor_name: actorName,
+            message: `تم فتح باب التصويت على القرار: ${decision.title}`,
+            deep_link: deepLink,
+          },
+          source_entity_type: 'Decision',
+          source_entity_id: decision_id,
+          source_title: decision.title,
+          priority: 'urgent',
+          correlation_id: auth.correlation_id,
+          actor_name: actorName,
+          deep_link: deepLink,
+        }));
+      if (notifParams.length > 0) {
+        await dispatchBatch(base44, notifParams);
+      }
+    } catch {}
 
     return Response.json({
       status: 'ok', decision_id,

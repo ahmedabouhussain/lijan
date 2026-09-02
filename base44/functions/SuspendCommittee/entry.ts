@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // SuspendCommittee — temporarily suspends an active committee with documented reason.
 export default async function(req) {
@@ -49,6 +50,40 @@ export default async function(req) {
       old_value: oldStatus, new_value: 'temporarily_suspended',
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Notify all committee members that the committee has been suspended
+    try {
+      const members = await base44.asServiceRole.entities.CommitteeMembership
+        .filter({ committee_id, status: 'active' }).catch(() => []);
+      const actorName = auth.user.full_name || auth.user.email;
+      const deepLink = `/o/${auth.organization_id}/c/${committee_id}`;
+      const notifParams = (members || [])
+        .filter((m) => m.user_id && m.user_id !== auth.user.id)
+        .map((m) => ({
+          organization_id: auth.organization_id,
+          committee_id,
+          recipient_user_id: m.user_id,
+          recipient_name: m.full_name || m.full_name_ar || '',
+          event_type: 'committee_suspended',
+          context: {
+            committee_name: committee.name_ar || committee.name_en || '',
+            reason,
+            actor_name: actorName,
+            message: `تم تعليق اللجنة: ${committee.name_ar || committee.name_en} — السبب: ${reason}`,
+            deep_link: deepLink,
+          },
+          source_entity_type: 'Committee',
+          source_entity_id: committee_id,
+          source_title: committee.name_ar || committee.name_en,
+          priority: 'urgent',
+          correlation_id: auth.correlation_id,
+          actor_name: actorName,
+          deep_link: deepLink,
+        }));
+      if (notifParams.length > 0) {
+        await dispatchBatch(base44, notifParams);
+      }
+    } catch {}
 
     return Response.json({ status: 'ok', committee_id, new_status: 'temporarily_suspended', correlation_id: auth.correlation_id });
   } catch (error) {

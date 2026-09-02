@@ -5,6 +5,8 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import PageHeader from "@/components/raqeem/PageHeader";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { Gavel, ShieldCheck, Plus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +24,7 @@ export default function CommitteeDecisions() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const decisions = data.registers.decisions || [];
   const { my_role, is_oversight, is_recused, committee } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
@@ -44,19 +46,18 @@ export default function CommitteeDecisions() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Gavel className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("قرارات اللجنة", "Committee Decisions", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({decisions.length})</span>
-        </div>
-        {canCreate && (
+      <PageHeader
+        icon={Gavel}
+        title={getTitle("قرارات اللجنة", "Committee Decisions", lang)}
+        subtitle={getDescription("سجل قرارات اللجنة الرسمية", "Official committee decision register", lang)}
+        badge={<span className="text-sm text-muted-foreground">({decisions.length})</span>}
+        actions={canCreate && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
             <Plus className="w-4 h-4" />
             {t("قرار جديد", "New Decision")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && (
         <div className="raqeem-card p-4 space-y-3">

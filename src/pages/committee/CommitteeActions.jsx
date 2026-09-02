@@ -5,6 +5,8 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
+import PageHeader from "@/components/raqeem/PageHeader";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { CheckSquare, AlertTriangle, Clock, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,7 +21,7 @@ export default function CommitteeActions() {
   const [closeModal, setCloseModal] = useState(null);
   const [evidenceUrl, setEvidenceUrl] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={4} />;
   const { my_role, is_oversight, is_recused, committee } = data;
   const actions = data.registers.actions || [];
   const overdue = actions.filter((a) => isOverdue(a.deadline) && a.status !== "closed");
@@ -28,11 +30,12 @@ export default function CommitteeActions() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <CheckSquare className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("إجراءات اللجنة", "Committee Actions", lang)}</h1>
-        <span className="text-sm text-muted-foreground">({actions.length})</span>
-      </div>
+      <PageHeader
+        icon={CheckSquare}
+        title={getTitle("إجراءات اللجنة", "Committee Actions", lang)}
+        subtitle={getDescription("متابعة تنفيذ الإجراءات والتزامات اللجنة", "Track committee action items and commitments", lang)}
+        badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
+      />
 
       {/* Authority Lens for action management */}
       <AuthorityLens

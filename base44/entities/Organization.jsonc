@@ -170,6 +170,9 @@
           "data.owner_user_id": "{{user.id}}"
         },
         {
+          "data.id": "{{user.data.active_org_id}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }

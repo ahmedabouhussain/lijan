@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // CreateMeeting — governed meeting creation inside a committee.
 export default async function(req) {
@@ -104,6 +105,40 @@ export default async function(req) {
         : `Meeting scheduled: ${date}`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Dispatch meeting_scheduled notifications to all active committee members
+    try {
+      const members = await base44.asServiceRole.entities.CommitteeMembership
+        .filter({ committee_id, status: 'active' }).catch(() => []);
+      const actorName = auth.user.full_name || auth.user.email;
+      const deepLink = `/o/${auth.organization_id}/c/${committee_id}/meetings/${meeting.id}`;
+      const notifParams = (members || [])
+        .filter((m) => m.user_id && m.user_id !== auth.user.id)
+        .map((m) => ({
+          organization_id: auth.organization_id,
+          committee_id,
+          recipient_user_id: m.user_id,
+          recipient_name: m.full_name || m.full_name_ar || '',
+          event_type: 'meeting_scheduled',
+          context: {
+            meeting_title: title_ar || title,
+            meeting_date: date,
+            committee_name: '',
+            actor_name: actorName,
+            deep_link: deepLink,
+          },
+          source_entity_type: 'Meeting',
+          source_entity_id: meeting.id,
+          source_title: title,
+          priority: 'high',
+          correlation_id: auth.correlation_id,
+          actor_name: actorName,
+          deep_link: deepLink,
+        }));
+      if (notifParams.length > 0) {
+        await dispatchBatch(base44, notifParams);
+      }
+    } catch {}
 
     return Response.json({ status: 'ok', meeting, instances_created: instancesCreated, correlation_id: auth.correlation_id });
   } catch (error) {

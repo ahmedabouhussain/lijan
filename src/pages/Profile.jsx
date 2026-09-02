@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   User as UserIcon, Mail, Shield, Save, Camera, Phone, Briefcase,
-  CheckCircle2, LogOut, PenLine, Building2,
+  CheckCircle2, LogOut, PenLine, Building2, Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -291,6 +292,20 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Notification preferences link */}
+      <Link to="/notification-preferences" className="raqeem-card p-5 flex items-center justify-between hover:shadow-md transition-all group">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-primary/5 group-hover:bg-primary/10 transition-colors">
+            <Bell className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">تفضيلات الإشعارات · Notification Preferences</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">تحكم في قنوات وتوقيت استلام إشعاراتك · Control how and when you receive notifications</p>
+          </div>
+        </div>
+        <span className="text-muted-foreground group-hover:text-primary text-sm">←</span>
+      </Link>
 
       {/* Signature customization */}
       <div className="raqeem-card p-6 space-y-4">

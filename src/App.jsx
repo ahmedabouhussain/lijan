@@ -22,6 +22,7 @@ import FounderVault from '@/pages/FounderVault';
 import MeetingDetail from '@/pages/MeetingDetail';
 import DecisionDetail from '@/pages/DecisionDetail';
 import MinutesArchive from '@/pages/MinutesArchive';
+import NotificationPreferences from '@/pages/NotificationPreferences';
 
 // Organization Portal (Level 2)
 import OrgLayout from '@/components/raqeem/OrgLayout';
@@ -161,6 +162,9 @@ const AuthenticatedApp = () => {
 
         {/* Deliberations Archive */}
         <Route path="/minutes-archive" element={<MinutesArchive />} />
+
+        {/* Notification Preferences */}
+        <Route path="/notification-preferences" element={<NotificationPreferences />} />
 
         {/* Legacy detail routes (still accessible) */}
         <Route path="/meetings/:id" element={<MeetingDetail />} />

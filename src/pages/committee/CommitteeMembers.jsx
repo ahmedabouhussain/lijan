@@ -7,6 +7,8 @@ import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
+import PageHeader from "@/components/raqeem/PageHeader";
+import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { Users, Plus, UserMinus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +36,7 @@ export default function CommitteeMembers() {
   const [endingId, setEndingId] = useState(null);
   const [endReason, setEndReason] = useState("");
 
-  if (!data) return null;
+  if (!data) return <TableSkeleton rows={5} />;
   const { members, committee } = data;
   const ordered = [...members].sort((a, b) => (ROLE_ORDER[a.role] || 99) - (ROLE_ORDER[b.role] || 99));
 
@@ -51,23 +53,18 @@ export default function CommitteeMembers() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("أعضاء اللجنة", "Committee Members", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({ordered.length})</span>
-        </div>
-        {canManageMembership && (
+      <PageHeader
+        icon={Users}
+        title={getTitle("أعضاء اللجنة", "Committee Members", lang)}
+        subtitle={getDescription("تشكيل اللجنة وأدوار الأعضاء", "Committee composition and member roles", lang)}
+        badge={<span className="text-sm text-muted-foreground">({ordered.length})</span>}
+        actions={canManageMembership && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
             <Plus className="w-4 h-4" />
             {t("دعوة عضو", "Invite Member")}
           </Button>
         )}
-      </div>
-      {(() => {
-        const desc = getDescription("", "", lang);
-        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
-      })()}
+      />
 
       {showCreate && canManageMembership && (
         <CrudFormDialog
