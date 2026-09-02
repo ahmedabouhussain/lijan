@@ -35,9 +35,7 @@ export default async function(req) {
     }, '-date', 200);
 
     const existingDates = new Set(
-      existing
-        .filter(m => !m.is_series_master)
-        .map(m => normalizeDate(m.date))
+      existing.map(m => normalizeDate(m.date))  // include master date to prevent duplicate
     );
 
     const toCreate = [];

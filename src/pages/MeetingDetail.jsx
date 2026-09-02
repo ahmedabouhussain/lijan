@@ -72,13 +72,13 @@ export default function MeetingDetail() {
       const fnMap = {
         in_progress: "StartMeeting",
         adjourned: "AdjournMeeting",
-        completed: "AdjournMeeting",
         cancelled: "CancelMeeting",
       };
       const fn = fnMap[newStatus];
       if (fn) {
         await base44.functions.invoke(fn, { meeting_id: id });
       } else {
+        // "completed" — governed direct update (requires meeting.start capability context)
         await base44.entities.Meeting.update(id, { status: newStatus });
       }
       load();
