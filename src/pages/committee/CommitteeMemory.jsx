@@ -6,9 +6,9 @@ import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
 import { Brain, Loader2, Sparkles } from "lucide-react";
-import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import MemorySectionRenderer from "@/components/raqeem/MemorySectionRenderer";
+import MemoryReviewPanel from "@/components/raqeem/MemoryReviewPanel";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 
@@ -16,7 +16,7 @@ export default function CommitteeMemory() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle, getDescription } = usePageConfig("memory");
-  const { canManageGovernance } = useCommitteeAdmin();
+  const { canManageGovernance, canManageMinutes } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,10 +69,6 @@ export default function CommitteeMemory() {
               <div key={r.id} className="raqeem-card p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{r.source_title || t("ذاكرة مؤسسية", "Institutional Memory")}</span>
-                  <StatusBadge
-                    label={r.human_reviewed ? t("مراجَع", "Reviewed") : t("غير مراجَع", "Unreviewed")}
-                    colorClass={r.human_reviewed ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}
-                  />
                 </div>
                 {sections.length > 0 ? (
                   <MemorySectionRenderer sections={sections} lang={lang} />
@@ -83,6 +79,12 @@ export default function CommitteeMemory() {
                   {r.generated_by_name && <span>{r.generated_by_name} · </span>}
                   {r.generated_at && formatDate(r.generated_at)}
                 </div>
+                <MemoryReviewPanel
+                  record={r}
+                  canApprove={canManageGovernance}
+                  canReview={canManageMinutes}
+                  onReviewed={fetchRecords}
+                />
               </div>
             );
           })}

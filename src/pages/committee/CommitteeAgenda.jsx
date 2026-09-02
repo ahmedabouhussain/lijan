@@ -58,13 +58,13 @@ export default function CommitteeAgenda() {
   useEffect(() => { fetchItems(); }, [committeeId]);
 
   const submit = async () => {
-    if (!form.meeting_id || !form.title.trim()) { setError("Meeting and title are required"); return; }
+    if (!form.meeting_id || !form.title.trim()) { setError(t("الاجتماع والعنوان مطلوبان", "Meeting and title are required")); return; }
     setSubmitting(true); setError("");
     try {
       await base44.functions.invoke("SubmitAgendaItem", { committee_id: committeeId, ...form });
       setShowCreate(false); setForm({ meeting_id: "", title: "", objective: "", presenter: "" });
       fetchItems();
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setSubmitting(false);
   };
 
@@ -92,7 +92,7 @@ export default function CommitteeAgenda() {
           {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
           <div><Label>{t("الاجتماع", "Meeting")}</Label>
             <select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.meeting_id} onChange={(e) => setForm(f => ({ ...f, meeting_id: e.target.value }))}>
-              <option value="">— Select —</option>
+              <option value="">{t("— اختر —", "— Select —")}</option>
               {upcomingMeetings.map((m) => <option key={m.id} value={m.id}>{m.title || m.title_ar} — {new Date(m.date).toLocaleDateString()}</option>)}
             </select>
           </div>

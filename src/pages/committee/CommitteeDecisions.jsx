@@ -34,13 +34,13 @@ export default function CommitteeDecisions() {
   const inProgress = decisions.filter((d) => !["issued", "executing", "completed", "closed", "rejected", "superseded"].includes(d.status));
 
   const submit = async () => {
-    if (!form.title.trim()) { setError("Title is required"); return; }
+    if (!form.title.trim()) { setError(t("العنوان مطلوب", "Title is required")); return; }
     setSubmitting(true); setError("");
     try {
       await base44.functions.invoke("CreateDecisionDraft", { committee_id: committee.id, ...form });
       setShowCreate(false); setForm({ title: "", proposal: "", legal_basis: "" });
       reload();
-    } catch (e) { setError(e?.response?.data?.error || e?.message || "Failed"); }
+    } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
     setSubmitting(false);
   };
 
