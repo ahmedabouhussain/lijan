@@ -147,6 +147,22 @@ function CommitteeShell() {
             </Link>
           );
         })}
+
+        {/* Documentation Hub — bottom of sidebar */}
+        <div className="my-2 border-t border-sidebar-border/50" />
+        <Link
+          to={`${base}/documentation`}
+          onClick={() => setMobileOpen(false)}
+          className={cn(
+            "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors mb-0.5",
+            location.pathname === `${base}/documentation`
+              ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+              : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+          )}
+        >
+          <BookOpen className="w-4 h-4 shrink-0" />
+          <span>{t("مركز الوثائق والعروض", "Documentation & Executive Pack")}</span>
+        </Link>
       </nav>
 
       {/* Language + Notifications + Footer */}

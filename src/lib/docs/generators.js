@@ -63,7 +63,7 @@ export async function generateDOCX(docMeta, content, lang = "ar") {
   const {
     Document, Packer, Paragraph, TextRun, Header, Footer, PageNumber,
     AlignmentType, HeadingLevel, ImageRun, Table, TableRow, TableCell,
-    WidthType, BorderStyle, convertInchesToTwip,
+    WidthType, BorderStyle,
   } = await import("docx");
 
   const isRTL = lang === "ar";
@@ -479,7 +479,7 @@ export async function generatePPTX(docMeta, content, lang = "ar") {
     }
   });
 
-  const blob = await pptx.writeBlob();
+  const blob = await pptx.write({ outputType: "blob" });
   return blob;
 }
 

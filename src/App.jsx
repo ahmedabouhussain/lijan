@@ -78,6 +78,7 @@ import RecordsHub from '@/pages/committee/hubs/RecordsHub';
 import ExecutionHub from '@/pages/committee/hubs/ExecutionHub';
 import IntelligenceHub from '@/pages/committee/hubs/IntelligenceHub';
 import GovernanceHub from '@/pages/committee/hubs/GovernanceHub';
+import DocumentationHub from '@/pages/committee/DocumentationHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -171,6 +172,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
           <Route path="/o/:orgRef/c/:committeeRef/products" element={<ProductCatalog />} />
           <Route path="/o/:orgRef/c/:committeeRef/reports" element={<ReportCenter />} />
+          <Route path="/o/:orgRef/c/:committeeRef/documentation" element={<DocumentationHub />} />
         </Route>
 
         {/* Deliberations Archive */}
