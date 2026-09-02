@@ -7,6 +7,7 @@ import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import IntegrationHealthPanel from "@/components/raqeem/IntegrationHealthPanel";
 import {
   Plug, Plus, Video, Mail, Calendar, Cloud, FileSignature,
   Wifi, WifiOff, Clock, AlertTriangle, CheckCircle2, RefreshCw, Settings2,
@@ -91,6 +92,9 @@ export default function CommitteeIntegrations() {
             : "OAuth-based integrations (Teams, Outlook) show as 'Awaiting Authorization' until an org admin grants consent. We never claim a connection is live without testing it."}
         </p>
       </div>
+
+      {/* Live Integration Health — Microsoft 365, Email, Gateway */}
+      <IntegrationHealthPanel lang={lang} />
 
       {loading ? (
         <TableSkeleton rows={5} />

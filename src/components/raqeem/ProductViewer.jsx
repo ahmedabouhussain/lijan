@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FileText, CheckCircle2, AlertCircle, Clock, Download, Printer, FileCheck, QrCode } from "lucide-react";
+import { FileText, CheckCircle2, AlertCircle, Clock, Download, Printer, FileCheck, QrCode, FileDown, Loader2 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { generateAndUploadPDF, printProduct } from "@/lib/documentEngine";
 
 const SECTION_ICONS = {
   opening: Clock,
@@ -52,12 +53,29 @@ const STATUS_BADGES = {
 };
 
 export default function ProductViewer({ product, lang = "ar" }) {
+  const [generating, setGenerating] = useState(false);
   let sections = [];
   try {
     sections = product.generated_content ? JSON.parse(product.generated_content) : [];
   } catch {}
 
   const statusBadge = STATUS_BADGES[product.status] || STATUS_BADGES.draft;
+
+  const handleGeneratePDF = async () => {
+    setGenerating(true);
+    try {
+      await generateAndUploadPDF(product, lang);
+      // Refresh or update the product to show the new file_url
+      if (product.id) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      alert(lang === 'ar' ? 'فشل توليد PDF' : 'PDF generation failed');
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -150,7 +168,7 @@ export default function ProductViewer({ product, lang = "ar" }) {
       )}
 
       {/* Export Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {(product.status === 'published' || product.status === 'approved') && (
           <Link
             to={`/verify/product/${product.id}`}
@@ -162,12 +180,22 @@ export default function ProductViewer({ product, lang = "ar" }) {
           </Link>
         )}
         <button
-          onClick={() => window.print()}
+          onClick={() => printProduct(product, lang)}
           className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-input text-sm hover:bg-secondary/30"
         >
           <Printer className="w-4 h-4" />
-          {lang === "ar" ? "طباعة" : "Print"}
+          {lang === "ar" ? "طباعة / حفظ PDF" : "Print / Save PDF"}
         </button>
+        {!product.file_url && (
+          <button
+            onClick={handleGeneratePDF}
+            disabled={generating}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 disabled:opacity-50"
+          >
+            {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+            {generating ? (lang === "ar" ? "جاري التوليد..." : "Generating...") : (lang === "ar" ? "توليد PDF" : "Generate PDF")}
+          </button>
+        )}
         {product.file_url && (
           <a
             href={product.file_url}
@@ -176,7 +204,7 @@ export default function ProductViewer({ product, lang = "ar" }) {
             className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90"
           >
             <Download className="w-4 h-4" />
-            {lang === "ar" ? "تحميل" : "Download"}
+            {lang === "ar" ? "تحميل PDF" : "Download PDF"}
           </a>
         )}
       </div>

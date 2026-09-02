@@ -10,6 +10,7 @@ import EstablishingDocumentSection from "@/components/raqeem/EstablishingDocumen
 import SupportingDocumentsSection from "@/components/raqeem/SupportingDocumentsSection";
 import CommitteeLogoSection from "@/components/raqeem/CommitteeLogoSection";
 import SmartFormAssist from "@/components/raqeem/SmartFormAssist";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 const COMMITTEE_TYPES = [
   { value: "permanent_council", label: "مجلس دائم" },
@@ -196,11 +197,11 @@ export default function CommitteeCreateV2() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>بداية المدة · Term Start</Label>
-            <Input type="date" value={form.term_start} onChange={(e) => update("term_start", e.target.value)} />
+            <LocalizedDatePicker value={form.term_start} onChange={(v) => update("term_start", v)} />
           </div>
           <div className="space-y-1.5">
             <Label>نهاية المدة · Term End</Label>
-            <Input type="date" value={form.term_end} onChange={(e) => update("term_end", e.target.value)} />
+            <LocalizedDatePicker value={form.term_end} onChange={(v) => update("term_end", v)} />
           </div>
         </div>
 
