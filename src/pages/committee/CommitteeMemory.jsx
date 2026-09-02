@@ -35,7 +35,7 @@ export default function CommitteeMemory() {
   useEffect(() => { fetchRecords(); }, [committeeId]);
 
   const handleGenerate = async () => {
-    await execute("GenerateInstitutionalMemory", { committee_id: committeeId }, fetchRecords);
+    await execute("CompileCommitteeMemory", { committee_id: committeeId, mode: "incremental" }, fetchRecords);
   };
 
   return (

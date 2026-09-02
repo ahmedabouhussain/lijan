@@ -331,6 +331,24 @@ export default function CommitteeEstablishment() {
 }
 
 function ExtractionView({ data }) {
+  const FIELD_LABELS = {
+    // Instrument fields
+    instrument_type: "نوع السند", instrument_number: "رقم السند", issuing_authority: "جهة الإصدار",
+    issuer_name: "اسم المُصدِر", issuer_capacity: "صفة المُصدِر", issue_date: "تاريخ الإصدار",
+    effective_date: "تاريخ النفاذ", expiry_date: "تاريخ الانتهاء", official_reference: "المرجع الرسمي",
+    jurisdiction: "الاختصاص", title_ar: "العنوان (عربي)", title_en: "العنوان (إنجليزي)",
+    // Committee fields
+    name_ar: "الاسم (عربي)", name_en: "الاسم (إنجليزي)", type: "النوع", mandate: "الصلاحية",
+    appointing_authority: "جهة التعيين", term_start: "بداية المدة", term_end: "نهاية المدة",
+    classification: "التصنيف", quorum_count: "النصاب", voting_rule: "قاعدة التصويت",
+    meeting_cadence: "إيقاع الاجتماعات", chair_name: "اسم الرئيس", secretary_name: "اسم الأمين",
+    // Formation fields
+    members: "الأعضاء", full_name: "الاسم الكامل", role: "الدور", institution_name: "الجهة الممثلة",
+    // Governance fields
+    governance_rules: "قواعد الحوكمة", reporting_requirements: "متطلبات التقارير",
+  };
+  const CONF_LABELS = { high: "عالية", medium: "متوسطة", low: "منخفضة" };
+
   const sections = [
     { title: "بيانات السند", fields: data.instrument },
     { title: "بيانات اللجنة", fields: data.committee },
@@ -353,13 +371,13 @@ function ExtractionView({ data }) {
                 if (!val) return null;
                 return (
                   <div key={k} className="flex items-center gap-1">
-                    <span className="text-muted-foreground">{k}:</span>
-                    <span>{String(val).slice(0, 80)}</span>
+                    <span className="text-muted-foreground">{FIELD_LABELS[k] || k}:</span>
+                    <span className="truncate">{String(val).slice(0, 80)}</span>
                     {conf && (
                       <span className={
                         conf === "high" ? "text-green-600" :
                         conf === "medium" ? "text-amber-600" : "text-destructive"
-                      }>· {conf}</span>
+                      }>· {CONF_LABELS[conf] || conf}</span>
                     )}
                   </div>
                 );

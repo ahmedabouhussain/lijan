@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { gatherCommitteeSources, compileMemorySections, buildPlainTextSummary } from '../../shared/memoryCompiler.ts';
 
 // GenerateInstitutionalMemory — server-side AI for committee closure memory transfer.
 // Returns STRUCTURED JSON sections (no HTML/Markdown) for safe client rendering.
@@ -21,107 +22,13 @@ export default async function(req) {
     const committee = await base44.asServiceRole.entities.Committee.get(committee_id);
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
 
-    // Gather committee data for memory compilation
-    const [members, meetings, decisions, actions, minutes] = await Promise.all([
-      base44.asServiceRole.entities.CommitteeMembership.filter({ committee_id }).catch(() => []),
-      base44.asServiceRole.entities.Meeting.filter({ committee_id }).catch(() => []),
-      base44.asServiceRole.entities.Decision.filter({ committee_id }).catch(() => []),
-      base44.asServiceRole.entities.Action.filter({ committee_id }).catch(() => []),
-      base44.asServiceRole.entities.MeetingMinutes.filter({ committee_id }).catch(() => []),
-    ]);
+    // Gather and filter source data using shared module
+    const sources = await gatherCommitteeSources(base44, committee_id);
 
-    // Build source references from approved records only
-    const approvedDecisions = (decisions || []).filter((d) => ['approved', 'issued', 'completed'].includes(d.status));
-    const completedActions = (actions || []).filter((a) => ['verified', 'closed', 'completed'].includes(a.status));
-    const approvedMinutes = (minutes || []).filter((m) => m.status === 'approved' || m.approved === true);
+    // Compile structured memory sections via LLM
+    const sections = await compileMemorySections(base44, committee, sources);
 
-    const decisionRefs = approvedDecisions.map((d) => ({
-      record_type: 'Decision',
-      record_id: d.id,
-      record_number: d.decision_number || '',
-      record_title: d.title || '',
-    }));
-    const actionRefs = completedActions.map((a) => ({
-      record_type: 'Action',
-      record_id: a.id,
-      record_title: a.title || '',
-    }));
-    const minuteRefs = approvedMinutes.map((m) => ({
-      record_type: 'MeetingMinutes',
-      record_id: m.id,
-    }));
-
-    const allRefs = [...decisionRefs, ...actionRefs, ...minuteRefs];
-
-    const decisionSummaries = approvedDecisions
-      .map((d) => `- ${d.title}: ${d.outcome || d.proposal || '—'}`)
-      .join('\n');
-    const actionSummaries = completedActions
-      .map((a) => `- ${a.title}: ${a.owner_name}`)
-      .join('\n');
-
-    const prompt = `أنت مؤرشف مؤسسي. أنشئ ذاكرة مؤسسية للجنة التالية بصيغة JSON منظمة.
-لا تستخدم HTML أو Markdown. أعد نصاً عربياً نقياً فقط.
-
-اللجنة: ${committee.name_ar || committee.name_en}
-الصلاحية: ${committee.mandate || '—'}
-عدد الأعضاء: ${(members || []).length}
-عدد الاجتماعات المعتمدة: ${(approvedMinutes || []).length}
-
-القرارات المعتمدة (${approvedDecisions.length}):
-${decisionSummaries || 'لا توجد قرارات معتمدة'}
-
-الإجراءات المنجزة (${completedActions.length}):
-${actionSummaries || 'لا توجد إجراءات منجزة'}
-
-أعد JSON يحتوي على مصفوفة "sections"، كل عنصر يحتوي على:
-- section_type: واحد من [key_achievements, lessons_learned, patterns, recommendations, open_items]
-- title_ar: عنوان عربي
-- title_en: عنوان إنجليزي
-- summary_ar: ملخص عربي نقي (بدون HTML أو Markdown)
-- summary_en: ملخص إنجليزي
-- evidence_status: واحد من [verified, partial, insufficient]
-- confidence: رقم بين 0 و 1
-
-إذا لم توجد أدلة كافية لقسم ما، استخدم evidence_status = "insufficient" و confidence = 0.
-لا تخترع وقائع غير موجودة في البيانات.`;
-
-    // Invoke LLM server-side with structured JSON schema
-    const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          sections: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                section_type: { type: 'string' },
-                title_ar: { type: 'string' },
-                title_en: { type: 'string' },
-                summary_ar: { type: 'string' },
-                summary_en: { type: 'string' },
-                evidence_status: { type: 'string' },
-                confidence: { type: 'number' },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    // Attach source references to each section
-    const sections = (llmResponse.sections || []).map((sec) => ({
-      ...sec,
-      source_references: allRefs.slice(0, 5),
-      confidence: typeof sec.confidence === 'number' ? sec.confidence : 0.5,
-    }));
-
-    const plainTextSummary = sections
-      .map((s) => `${s.title_ar || s.section_type}: ${s.summary_ar || ''}`)
-      .join(' — ')
-      .substring(0, 500);
+    const plainTextSummary = buildPlainTextSummary(sections);
 
     // Create AIOutputLedger entry with structured content
     const ledgerEntry = await base44.asServiceRole.entities.AIOutputLedger.create({

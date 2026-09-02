@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
+import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
@@ -67,7 +68,8 @@ const NAV_GROUPS = [
   {
     label: "الذكاء والتقارير", labelEn: "Intelligence & Reporting",
     items: [
-      { to: "/reports", label: "التقارير", labelEn: "Reports", icon: BarChart3 },
+      { to: "/products", label: "مصنع المنتجات", labelEn: "Product Factory", icon: Package },
+      { to: "/reports", label: "مركز التقارير", labelEn: "Report Center", icon: BarChart3 },
       { to: "/memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain },
       { to: "/ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot },
       { to: "/audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck },
@@ -223,9 +225,10 @@ function CommitteeShell() {
         })}
       </nav>
 
-      {/* Language + Footer */}
-      <div className="px-4 py-2 border-t border-sidebar-border">
+      {/* Language + Notifications + Footer */}
+      <div className="px-4 py-2 border-t border-sidebar-border flex items-center justify-between">
         <LanguageSwitcher />
+        <NotificationCenter />
       </div>
       <div className="px-4 py-3 border-t border-sidebar-border space-y-1">
         <div className="text-[10px] text-sidebar-foreground/40">{t("نظام تشغيل المجالس واللجان الوطنية", "National Councils & Committees OS")}</div>
@@ -267,9 +270,12 @@ function CommitteeShell() {
             </div>
             <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>
           </div>
-          <Link to={`/o/${orgRef}`} className="text-primary">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <NotificationCenter />
+            <Link to={`/o/${orgRef}`} className="text-primary">
+              <ChevronLeft className="w-5 h-5" />
+            </Link>
+          </div>
         </header>
 
         <main className="flex-1 overflow-y-auto">

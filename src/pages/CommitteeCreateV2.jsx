@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import EstablishingDocumentSection from "@/components/raqeem/EstablishingDocumentSection";
 import SupportingDocumentsSection from "@/components/raqeem/SupportingDocumentsSection";
 import CommitteeLogoSection from "@/components/raqeem/CommitteeLogoSection";
+import SmartFormAssist from "@/components/raqeem/SmartFormAssist";
 
 const COMMITTEE_TYPES = [
   { value: "permanent_council", label: "مجلس دائم" },
@@ -136,6 +137,22 @@ export default function CommitteeCreateV2() {
       <h1 className="text-xl font-bold">إنشاء لجنة جديدة · Create Committee</h1>
 
       {error && <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-sm text-destructive">{error}</div>}
+
+      <SmartFormAssist
+        fields={[
+          { key: "name_ar", label: "اسم اللجنة (عربي)" },
+          { key: "name_en", label: "Committee Name (English)" },
+          { key: "type", label: "النوع" },
+          { key: "mandate", label: "الصلاحية" },
+          { key: "appointing_authority", label: "جهة التعيين" },
+          { key: "term_start", label: "بداية المدة" },
+          { key: "term_end", label: "نهاية المدة" },
+          { key: "chair_name", label: "اسم الرئيس" },
+          { key: "secretary_name", label: "اسم الأمين" },
+        ]}
+        context={{ form, establishingDoc, orgId }}
+        onApply={(values) => setForm((f) => ({ ...f, ...values }))}
+      />
 
       <div className="raqeem-card p-6 space-y-4">
         <CommitteeLogoSection value={logoUrl} onChange={setLogoUrl} committeeInfo={form} />

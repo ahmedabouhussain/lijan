@@ -1,0 +1,85 @@
+{
+  "name": "NotificationPreference",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (null = global)"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type (null = all events)",
+      "default": null
+    },
+    "email_enabled": {
+      "type": "boolean",
+      "title": "Email Enabled",
+      "default": true
+    },
+    "in_app_enabled": {
+      "type": "boolean",
+      "title": "In-App Enabled",
+      "default": true
+    },
+    "teams_enabled": {
+      "type": "boolean",
+      "title": "Teams Enabled",
+      "default": false
+    },
+    "push_enabled": {
+      "type": "boolean",
+      "title": "Push Enabled",
+      "default": false
+    },
+    "quiet_hours_start": {
+      "type": "string",
+      "title": "Quiet Hours Start (HH:MM)"
+    },
+    "quiet_hours_end": {
+      "type": "string",
+      "title": "Quiet Hours End (HH:MM)"
+    },
+    "digest_frequency": {
+      "type": "string",
+      "title": "Digest Frequency",
+      "enum": [
+        "instant",
+        "hourly",
+        "daily",
+        "weekly",
+        "disabled"
+      ],
+      "default": "instant"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.user_id": "{{user.id}}"
+    },
+    "update": {
+      "data.user_id": "{{user.id}}"
+    },
+    "delete": {
+      "data.user_id": "{{user.id}}"
+    }
+  }
+}

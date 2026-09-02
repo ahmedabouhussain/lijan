@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
+import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
@@ -152,8 +153,9 @@ function OrgShell() {
         </Link>
       </div>
 
-      <div className="px-5 py-2 border-t border-sidebar-border">
+      <div className="px-5 py-2 border-t border-sidebar-border flex items-center justify-between">
         <LanguageSwitcher />
+        <NotificationCenter />
       </div>
       <div className="px-5 py-3 border-t border-sidebar-border space-y-1">
         <div className="text-[10px] text-sidebar-foreground/40">{t("سلطة موثقة · قرار مُسنَد · أثر محفوظ", "Governed Authority · Evidence-Based Decisions · Preserved Impact")}</div>

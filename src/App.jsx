@@ -68,6 +68,8 @@ import CommitteeIntegrations from '@/pages/committee/CommitteeIntegrations';
 import CommitteeNotifications from '@/pages/committee/CommitteeNotifications';
 import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
+import ProductCatalog from '@/pages/committee/ProductCatalog';
+import ReportCenter from '@/pages/committee/ReportCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -153,6 +155,8 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/notifications" element={<CommitteeNotifications />} />
           <Route path="/o/:orgRef/c/:committeeRef/closure" element={<CommitteeClosure />} />
           <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
+          <Route path="/o/:orgRef/c/:committeeRef/products" element={<ProductCatalog />} />
+          <Route path="/o/:orgRef/c/:committeeRef/reports" element={<ReportCenter />} />
         </Route>
 
         {/* Deliberations Archive */}

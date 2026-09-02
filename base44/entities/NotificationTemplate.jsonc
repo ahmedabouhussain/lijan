@@ -1,0 +1,155 @@
+{
+  "name": "NotificationTemplate",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (null = platform default)"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (null = org-level)"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "meeting_scheduled",
+        "meeting_reminder",
+        "meeting_started",
+        "meeting_adjourned",
+        "meeting_cancelled",
+        "agenda_published",
+        "pack_published",
+        "decision_issued",
+        "decision_voting_open",
+        "action_assigned",
+        "action_reminder",
+        "action_overdue",
+        "action_extension_requested",
+        "action_extension_reviewed",
+        "amendment_proposed",
+        "amendment_approved",
+        "amendment_rejected",
+        "minutes_published",
+        "minutes_approval_requested",
+        "invitation_sent",
+        "escalation_triggered",
+        "review_requested",
+        "review_responded",
+        "recusal_recorded",
+        "delegation_granted",
+        "conflict_declared",
+        "committee_activated",
+        "committee_suspended",
+        "committee_closed",
+        "calendar_synced",
+        "calendar_sync_failed",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "channel": {
+      "type": "string",
+      "title": "Channel",
+      "enum": [
+        "email",
+        "in_app",
+        "teams",
+        "push"
+      ],
+      "default": "in_app"
+    },
+    "subject_template_ar": {
+      "type": "string",
+      "title": "Subject Template (Arabic) \u2014 use {{variable}} placeholders"
+    },
+    "subject_template_en": {
+      "type": "string",
+      "title": "Subject Template (English)"
+    },
+    "body_template_ar": {
+      "type": "string",
+      "title": "Body Template (Arabic) \u2014 plain text, use {{variable}} placeholders"
+    },
+    "body_template_en": {
+      "type": "string",
+      "title": "Body Template (English)"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal"
+    },
+    "enabled": {
+      "type": "boolean",
+      "title": "Enabled",
+      "default": true
+    },
+    "deep_link_template": {
+      "type": "string",
+      "title": "Deep Link Template \u2014 use {{variable}} placeholders"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    }
+  },
+  "required": [
+    "event_type",
+    "channel",
+    "enabled"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.organization_id": null
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

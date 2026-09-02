@@ -1,0 +1,161 @@
+{
+  "name": "ProductTemplate",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (null = platform default)"
+    },
+    "name_ar": {
+      "type": "string",
+      "title": "Product Name (Arabic)"
+    },
+    "name_en": {
+      "type": "string",
+      "title": "Product Name (English)"
+    },
+    "product_type": {
+      "type": "string",
+      "title": "Product Type",
+      "enum": [
+        "meeting_minutes",
+        "decision_document",
+        "committee_charter",
+        "formation_decision",
+        "amendment_decision",
+        "action_report",
+        "annual_report",
+        "quarterly_report",
+        "committee_report",
+        "attendance_report",
+        "voting_record",
+        "executive_summary",
+        "policy_brief",
+        "risk_report",
+        "escalation_report",
+        "audit_report",
+        "governance_report",
+        "memory_transfer",
+        "meeting_pack",
+        "agenda",
+        "invitation_letter",
+        "resolution",
+        "compliance_report",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "template_structure": {
+      "type": "string",
+      "title": "Template Structure (JSON \u2014 sections and fields)",
+      "description": "Array of section objects: {key, title_ar, title_en, field_type, required, source_hint}"
+    },
+    "default_format": {
+      "type": "string",
+      "title": "Default Export Format",
+      "enum": [
+        "pdf",
+        "docx",
+        "html",
+        "print"
+      ],
+      "default": "pdf"
+    },
+    "branding_enabled": {
+      "type": "boolean",
+      "title": "Apply LIJAN Branding",
+      "default": true
+    },
+    "classification_default": {
+      "type": "string",
+      "title": "Default Classification",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "enabled": {
+      "type": "boolean",
+      "title": "Enabled",
+      "default": true
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "governance",
+        "meetings",
+        "decisions",
+        "reports",
+        "compliance",
+        "correspondence"
+      ],
+      "default": "governance"
+    },
+    "icon": {
+      "type": "string",
+      "title": "Icon Name (lucide-react)",
+      "default": "FileText"
+    }
+  },
+  "required": [
+    "name_ar",
+    "name_en",
+    "product_type",
+    "enabled"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.organization_id": null
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
