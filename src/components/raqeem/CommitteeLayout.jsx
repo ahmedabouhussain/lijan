@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import { CommitteeProvider, useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -19,6 +19,9 @@ import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
+import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
+import { FOUNDER_EMAIL } from "@/lib/docs/catalog";
 
 // Role-Adaptive Navigation — admin roles see all; members/observers see only what serves their role.
 const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
@@ -40,6 +43,19 @@ function CommitteeShell() {
   const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [infoCollapsed, setInfoCollapsed] = useState(false);
+  const [showDocHub, setShowDocHub] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const isFounder = user?.email === FOUNDER_EMAIL;
+    if (isFounder) { setShowDocHub(true); return; }
+    base44.entities.FeatureFlag.filter({ key: "showDocumentationHubInSidebar" })
+      .then((flags) => {
+        const flag = flags[0];
+        setShowDocHub(flag ? flag.enabled !== false : true);
+      })
+      .catch(() => setShowDocHub(true));
+  }, [user?.email]);
 
   if (loading) {
     return (
@@ -148,21 +164,25 @@ function CommitteeShell() {
           );
         })}
 
-        {/* Documentation Hub — bottom of sidebar */}
-        <div className="my-2 border-t border-sidebar-border/50" />
-        <Link
-          to={`${base}/documentation`}
-          onClick={() => setMobileOpen(false)}
-          className={cn(
-            "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors mb-0.5",
-            location.pathname === `${base}/documentation`
-              ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-              : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
-          )}
-        >
-          <BookOpen className="w-4 h-4 shrink-0" />
-          <span>{t("مركز الوثائق والعروض", "Documentation & Executive Pack")}</span>
-        </Link>
+        {/* Documentation Hub — bottom of sidebar (FeatureFlag controlled) */}
+        {showDocHub && (
+          <>
+            <div className="my-2 border-t border-sidebar-border/50" />
+            <Link
+              to={`${base}/documentation`}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors mb-0.5",
+                location.pathname === `${base}/documentation`
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+              )}
+            >
+              <BookOpen className="w-4 h-4 shrink-0" />
+              <span>{t("مركز الوثائق والعروض", "Documentation & Executive Pack")}</span>
+            </Link>
+          </>
+        )}
       </nav>
 
       {/* Language + Notifications + Footer */}

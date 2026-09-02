@@ -36,6 +36,7 @@ export default function DocumentationHub() {
   const [selectedLang, setSelectedLang] = useState(lang === "ar" ? "ar" : "en");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedFormat, setSelectedFormat] = useState("all");
+  const [selectedView, setSelectedView] = useState("all");
   const [downloading, setDownloading] = useState({});
   const [packDownloading, setPackDownloading] = useState(false);
   const [packProgress, setPackProgress] = useState(0);
@@ -46,8 +47,8 @@ export default function DocumentationHub() {
   const isFounder = user?.email === FOUNDER_EMAIL;
   const isAdmin = user?.role === "admin" || isFounder;
 
-  // Determine role-based priority
-  const roleKey = isAdmin ? "all" : "operations";
+  // Determine role-based priority — user can override via view selector
+  const roleKey = selectedView;
 
   // Load download log
   useEffect(() => {
@@ -87,7 +88,7 @@ export default function DocumentationHub() {
     });
 
     return docs;
-  }, [selectedCategory, selectedFormat, roleKey]);
+  }, [selectedCategory, selectedFormat, roleKey, selectedView]);
 
   // Handle single document download
   const handleDownload = async (docId, format) => {
@@ -231,6 +232,18 @@ export default function DocumentationHub() {
             <option value="pdf">PDF</option>
             <option value="pptx">PPTX</option>
             <option value="xlsx">XLSX</option>
+          </select>
+
+          {/* View filter (role-based priority) */}
+          <select
+            value={selectedView}
+            onChange={(e) => setSelectedView(e.target.value)}
+            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+          >
+            <option value="all">{isRTL ? "كل الوثائق" : "All Documents"}</option>
+            <option value="executive">{isRTL ? "عرض الإدارة العليا" : "Executive View"}</option>
+            <option value="it">{isRTL ? "عرض تقنية المعلومات" : "IT View"}</option>
+            <option value="operations">{isRTL ? "عرض التشغيل" : "Operations View"}</option>
           </select>
 
           <span className="text-sm text-muted-foreground ml-auto">
