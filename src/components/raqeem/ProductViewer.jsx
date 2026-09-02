@@ -1,5 +1,6 @@
 import React from "react";
-import { FileText, CheckCircle2, AlertCircle, Clock, Download, Printer, FileCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { FileText, CheckCircle2, AlertCircle, Clock, Download, Printer, FileCheck, QrCode } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 
 const SECTION_ICONS = {
@@ -150,6 +151,16 @@ export default function ProductViewer({ product, lang = "ar" }) {
 
       {/* Export Actions */}
       <div className="flex items-center gap-2">
+        {(product.status === 'published' || product.status === 'approved') && (
+          <Link
+            to={`/verify/product/${product.id}`}
+            target="_blank"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-primary/30 bg-primary/5 text-primary text-sm hover:bg-primary/10"
+          >
+            <QrCode className="w-4 h-4" />
+            {lang === "ar" ? "تحقق QR" : "Verify QR"}
+          </Link>
+        )}
         <button
           onClick={() => window.print()}
           className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-input text-sm hover:bg-secondary/30"
