@@ -119,7 +119,10 @@ export default function CreatePortal() {
         description,
       });
       const data = res.data || res;
-      if (data.error) {
+      if (data.conflict) {
+        // Server detected a name-based duplicate — show join option
+        setExistingPortal(data);
+      } else if (data.error) {
         setError(data.error);
       } else {
         navigate(data.portal_url);

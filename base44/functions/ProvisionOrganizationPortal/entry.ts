@@ -19,15 +19,51 @@ export default async function(req) {
     }
 
     const normalizedSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+    const normalizeName = (s) => (s || '').trim().toLowerCase();
 
-    // Idempotency + slug uniqueness check (case-insensitive)
+    // NAME-based duplicate check — prevents creating a second portal for the same entity.
+    // Searches ALL orgs (service role bypasses RLS) for case-insensitive name match.
+    const allOrgs = await base44.asServiceRole.entities.Organization.list('-created_date', 500);
+    const nameMatch = (allOrgs || []).find((o) =>
+      normalizeName(o.name_ar) === normalizeName(name_ar) ||
+      normalizeName(o.name_en) === normalizeName(name_en)
+    );
+    if (nameMatch) {
+      const org = nameMatch;
+      if (org.owner_user_id === user.id) {
+        // Idempotent retry — return existing
+        return Response.json({
+          organization_id: org.id,
+          portal_slug: org.slug,
+          public_id: org.public_id,
+          status: 'exists',
+          portal_url: `/o/${org.slug}--${org.public_id}`,
+        });
+      }
+      // Conflict — another user already created a portal for this entity
+      return Response.json({
+        error: 'Organization with this name already exists',
+        conflict: true,
+        organization: {
+          id: org.id,
+          name_ar: org.name_ar,
+          name_en: org.name_en,
+          slug: org.slug,
+          public_id: org.public_id,
+          owner_name: org.owner_name,
+          owner_email: org.owner_email,
+        },
+        portal_url: `/o/${org.slug}--${org.public_id}`,
+      }, { status: 409 });
+    }
+
+    // Slug uniqueness check (case-insensitive)
     const existing = await base44.asServiceRole.entities.Organization
       .filter({ slug: normalizedSlug })
       .catch(() => []);
     if (existing && existing.length > 0) {
       const org = existing[0];
       if (org.owner_user_id === user.id) {
-        // Idempotent retry — return existing
         return Response.json({
           organization_id: org.id,
           portal_slug: org.slug,
