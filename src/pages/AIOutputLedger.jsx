@@ -162,7 +162,7 @@ export default function AIOutputLedgerPage() {
 
                     {/* Provenance */}
                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground pl-10">
-                      <span>توليد: {formatDate(e.generated_at)}</span>
+                      <span>إنشاء: {formatDate(e.generated_at)}</span>
                       {e.generated_by_name && <span>بواسطة: {e.generated_by_name}</span>}
                       {e.human_reviewed && e.reviewed_by_name && (
                         <span className="text-emerald-700">مراجعة: {e.reviewed_by_name}</span>

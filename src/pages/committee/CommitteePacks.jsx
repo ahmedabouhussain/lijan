@@ -65,7 +65,7 @@ export default function CommitteePacks() {
                     className="min-h-[36px]"
                   >
                     {submitting && generatingId === m.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    {t("توليد الحزمة", "Generate Pack")}
+                    {t("إنشاء الحزمة", "Generate Pack")}
                   </Button>
                 )}
               </div>

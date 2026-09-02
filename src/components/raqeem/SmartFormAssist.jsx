@@ -61,7 +61,7 @@ ${JSON.stringify(context, null, 2).substring(0, 2000)}
 
       setSuggestions(res);
     } catch (e) {
-      setError(e?.message || t("تعذّر توليد الاقتراحات", "Failed to generate suggestions"));
+      setError(e?.message || t("تعذّر إنشاء الاقتراحات", "Failed to generate suggestions"));
     }
     setLoading(false);
   }, [fields, context, lang]);
@@ -103,7 +103,7 @@ ${JSON.stringify(context, null, 2).substring(0, 2000)}
           {!suggestions && !loading && (
             <Button size="sm" onClick={generate} className="w-full">
               <Sparkles className="w-4 h-4" />
-              {t("توليد الاقتراحات", "Generate Suggestions")}
+              {t("إنشاء الاقتراحات", "Generate Suggestions")}
             </Button>
           )}
 

@@ -125,7 +125,7 @@ export default function CommitteeCreate() {
       // Jump to review step
       setStep(STEPS.length - 1);
     } catch {
-      setAiError("تعذر التوليد الآن · Could not generate at this time");
+      setAiError("تعذر الإنشاء الآن · Could not generate at this time");
     }
     setGenerating(false);
   };
@@ -271,7 +271,7 @@ export default function CommitteeCreate() {
                   <Sparkles className="w-4 h-4 text-accent" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-foreground">توليد الحوكمة بالذكاء الاصطناعي · AI Auto-Generate</div>
+                  <div className="text-sm font-semibold text-foreground">إنشاء الحوكمة بالذكاء الاصطناعي · AI Auto-Generate</div>
                   <p className="text-xs text-muted-foreground mt-1 mb-3">
                     يولّد AI موثوق الصلاحية والنطاق والجهة المؤسِّسة والنصاب وقواعد التصويت والأعضاء المقترحين — بضغطة واحدة، مع إمكانية التعديل.
                   </p>
@@ -281,9 +281,9 @@ export default function CommitteeCreate() {
                     className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark disabled:opacity-50"
                   >
                     {generating ? (
-                      <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> جارٍ التوليد...</>
+                      <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> جارٍ الإنشاء...</>
                     ) : (
-                      <><Wand2 className="w-4 h-4" /> توليد تلقائي · Auto-Generate</>
+                      <><Wand2 className="w-4 h-4" /> إنشاء تلقائي · Auto-Generate</>
                     )}
                   </button>
                   {aiError && <p className="text-xs text-destructive mt-2">{aiError}</p>}

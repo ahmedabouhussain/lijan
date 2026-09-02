@@ -96,7 +96,7 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
-            {t("توليد منتج", "Generate Product")}
+            {t("إنشاء منتج", "Generate Product")}
           </SheetTitle>
           <SheetDescription>
             {committeeName || t("منتج مؤسسي رسمي", "Official institutional product")}
@@ -316,7 +316,7 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
           {step === 3 && !hasFailures && (
             <Button size="sm" onClick={handleGenerate} disabled={generating} className="flex-1">
               {generating ? (
-                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t("جارٍ التوليد...", "Generating...")}</>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t("جارٍ الإنشاء...", "Generating...")}</>
               ) : (
                 <><Sparkles className="w-3.5 h-3.5" /> {t("إصدار", "Issue")}</>
               )}

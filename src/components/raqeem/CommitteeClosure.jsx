@@ -36,7 +36,7 @@ export default function CommitteeClosure({ committee, members, meetings, decisio
         setMemorySummary(data.summary);
       }
     } catch (e) {
-      setError("تعذّر توليد ملخص الذاكرة. حاول مرة أخرى.");
+      setError("تعذّر إنشاء ملخص الذاكرة. حاول مرة أخرى.");
     }
     setExtracting(false);
   };
@@ -152,7 +152,7 @@ export default function CommitteeClosure({ committee, members, meetings, decisio
               {closing ? "جارٍ النقل والإغلاق..." : "نقل الذاكرة وإغلاق اللجنة"}
             </Button>
             <Button size="sm" variant="outline" onClick={extractMemory} disabled={extracting}>
-              إعادة التوليد
+              إعادة الإنشاء
             </Button>
           </div>
           {error && <p className="text-xs text-destructive">{error}</p>}

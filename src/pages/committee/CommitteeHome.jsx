@@ -94,7 +94,7 @@ export default function CommitteeHome() {
                   title={t("عرض اللجنة كما كانت في تاريخ…", "View committee as of date…")}
                 >
                   <History className="w-4 h-4" aria-hidden="true" />
-                  {t("آلة الزمن", "Time Machine")}
+                  {t("تتبع التغييرات", "Change Tracker")}
                 </button>
               )}
             </div>
@@ -128,7 +128,7 @@ export default function CommitteeHome() {
         {renderRoleHome()}
       </RoleDetailsToggle>
 
-      {/* Institutional Time Machine™ — Section 9 */}
+      {/* Institutional Change Tracker™ — Section 9 */}
       {isAdminRole && (
         <InstitutionalTimeMachine
           open={timeMachineOpen}

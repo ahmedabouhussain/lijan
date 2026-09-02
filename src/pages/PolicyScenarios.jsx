@@ -122,7 +122,7 @@ export default function PolicyScenarios() {
         action: "update",
         entity_type: "PolicyScenario",
         entity_id: scenario.id,
-        description: "توليد تقييم الأثر بالذكاء الاصطناعي",
+        description: "إنشاء تقييم الأثر بالذكاء الاصطناعي",
       });
       load();
     } catch {}
@@ -293,7 +293,7 @@ export default function PolicyScenarios() {
                       {s.status !== "selected" && s.status !== "rejected" && (
                         <button onClick={() => generateImpact(s)} disabled={generating === s.id} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1 disabled:opacity-50">
                           <Sparkles className="w-3 h-3" />
-                          {generating === s.id ? "جارٍ..." : "توليد الأثر"}
+                          {generating === s.id ? "جارٍ..." : "إنشاء الأثر"}
                         </button>
                       )}
                       {s.status !== "selected" && (

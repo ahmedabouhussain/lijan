@@ -25,7 +25,7 @@ export default function CommitteeAudit() {
       .catch(() => setEvents([]));
   }, [data?.committee?.id]);
 
-  // Decision Time Machine — reconstruct state at a past date
+  // Change Tracker — reconstruct state at a past date
   useEffect(() => {
     if (!timeMachineDate || !data?.committee?.id) {
       setReconstructedState(null);
@@ -72,11 +72,11 @@ export default function CommitteeAudit() {
         <h1 className="text-lg font-bold">{getTitle("التدقيق وإعادة البناء", "Audit & Reconstruction", lang)}</h1>
       </div>
 
-      {/* Decision Time Machine */}
+      {/* Change Tracker */}
       <div className="raqeem-card p-4">
         <div className="flex items-center gap-2 mb-3">
           <History className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold">{t("آلة زمن القرارات", "Decision Time Machine")}</h3>
+          <h3 className="text-sm font-semibold">{t("تتبع التغييرات", "Change Tracker")}</h3>
         </div>
         <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
           {t(

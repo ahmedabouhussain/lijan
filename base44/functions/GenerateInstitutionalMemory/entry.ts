@@ -39,7 +39,7 @@ export default async function(req) {
       source_title: committee.name_ar || committee.name_en,
       committee_id,
       model_used: 'automatic',
-      prompt_summary: 'توليد ذاكرة مؤسسية منظمة لإغلاق اللجنة',
+      prompt_summary: 'إنشاء ذاكرة مؤسسية منظمة لإغلاق اللجنة',
       output_summary: plainTextSummary,
       structured_content: JSON.stringify(sections),
       generated_at: new Date().toISOString(),

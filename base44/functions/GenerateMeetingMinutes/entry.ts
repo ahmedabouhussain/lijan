@@ -124,7 +124,7 @@ ${decisionsText || 'لا توجد قرارات'}
       source_title: `محضر ${meeting.title || ''}`,
       committee_id: committeeId,
       model_used: 'automatic',
-      prompt_summary: 'توليد مسودة محضر اجتماع بالذكاء الاصطناعي',
+      prompt_summary: 'إنشاء مسودة محضر اجتماع بالذكاء الاصطناعي',
       output_summary: (minutesBody || '').substring(0, 500),
       generated_at: new Date().toISOString(),
       generated_by_user_id: user.id,

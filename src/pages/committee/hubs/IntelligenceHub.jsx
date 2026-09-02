@@ -19,7 +19,7 @@ export default function IntelligenceHub() {
       tabs={[
         { key: "executive-summary", label: "الملخص التنفيذي", labelEn: "Executive Summary", icon: BarChart3, component: CommitteeReports },
         { key: "reports", label: "تقارير اللجنة", labelEn: "Committee Reports", icon: FileText, component: ReportCenter },
-        { key: "products", label: "مصنع المنتجات", labelEn: "Product Factory", icon: Package, component: ProductCatalog, roles: ADMIN_ROLES },
+        { key: "products", label: "مركز الوثائق", labelEn: "Document Center", icon: Package, component: ProductCatalog, roles: ADMIN_ROLES },
         { key: "memory", label: "ذاكرة اللجنة", labelEn: "Committee Memory", icon: Brain, component: CommitteeMemory },
         { key: "ai", label: "ذكاء اللجنة", labelEn: "Committee AI", icon: Bot, component: CommitteeAI, roles: ADMIN_ROLES },
         { key: "audit", label: "التدقيق", labelEn: "Audit Trail", icon: ShieldCheck, component: CommitteeAudit, roles: ADMIN_ROLES },

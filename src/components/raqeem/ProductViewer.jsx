@@ -71,7 +71,7 @@ export default function ProductViewer({ product, lang = "ar" }) {
       }
     } catch (error) {
       console.error('PDF generation failed:', error);
-      alert(lang === 'ar' ? 'فشل توليد PDF' : 'PDF generation failed');
+      alert(lang === 'ar' ? 'فشل إنشاء PDF' : 'PDF generation failed');
     } finally {
       setGenerating(false);
     }
@@ -193,7 +193,7 @@ export default function ProductViewer({ product, lang = "ar" }) {
             className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 disabled:opacity-50"
           >
             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
-            {generating ? (lang === "ar" ? "جاري التوليد..." : "Generating...") : (lang === "ar" ? "توليد PDF" : "Generate PDF")}
+            {generating ? (lang === "ar" ? "جاري الإنشاء..." : "Generating...") : (lang === "ar" ? "إنشاء PDF" : "Generate PDF")}
           </button>
         )}
         {product.file_url && (

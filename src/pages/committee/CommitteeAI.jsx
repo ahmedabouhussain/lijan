@@ -79,14 +79,14 @@ export default function CommitteeAI() {
         {canManageGovernance && (
           <Button size="sm" onClick={() => setShowGenerate(!showGenerate)}>
             <Sparkles className="w-4 h-4" />
-            {t("توليد جديد", "New Generation")}
+            {t("إنشاء جديد", "New Generation")}
           </Button>
         )}
       </div>
 
       {showGenerate && canManageGovernance && (
         <div className="raqeem-card p-4 space-y-3">
-          <h3 className="text-sm font-semibold">{t("توليد مخرج ذكاء اصطناعي", "Generate AI Output")}</h3>
+          <h3 className="text-sm font-semibold">{t("إنشاء مخرج ذكاء اصطناعي", "Generate AI Output")}</h3>
           <div>
             <label className="text-xs text-muted-foreground">{t("نوع المهمة", "Task Type")}</label>
             <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={taskType} onChange={(e) => setTaskType(e.target.value)}>
@@ -94,11 +94,11 @@ export default function CommitteeAI() {
             </select>
           </div>
           <div className="p-2 rounded-md bg-secondary/60 text-xs text-muted-foreground">
-            {t("سيتم توليد مقترح يحتاج إلى مراجعة بشرية قبل الاعتماد.", "A proposal will be generated requiring human review before approval.")}
+            {t("سيتم إنشاء مقترح يحتاج إلى مراجعة بشرية قبل الاعتماد.", "A proposal will be generated requiring human review before approval.")}
           </div>
           <Button onClick={handleGenerate} disabled={submitting} className="w-full min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {t("توليد", "Generate")}
+            {t("إنشاء", "Generate")}
           </Button>
         </div>
       )}
@@ -106,7 +106,7 @@ export default function CommitteeAI() {
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : records.length === 0 ? (
-        <EmptyState icon={Bot} title={t("لا توجد مخرجات", "No AI Outputs")} description={t("لم يتم توليد مخرجات ذكاء اصطناعي لهذه اللجنة.", "No AI outputs generated for this committee.")} />
+        <EmptyState icon={Bot} title={t("لا توجد مخرجات", "No AI Outputs")} description={t("لم يتم إنشاء مخرجات ذكاء اصطناعي لهذه اللجنة.", "No AI outputs generated for this committee.")} />
       ) : (
         <>
         {/* AI Accuracy Dashboard — Section 15 */}

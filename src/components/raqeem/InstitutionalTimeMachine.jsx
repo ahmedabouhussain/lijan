@@ -10,7 +10,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { cn } from "@/lib/utils";
 
 /**
- * Institutional Time Machine™ — Section 9
+ * Institutional Change Tracker™ — Section 9
  * Read-only drawer: view committee state as of a specific date.
  * Uses versioned records (CommitteeFormationVersion, historical decisions, etc.)
  * Does NOT rewrite history — purely observational.
@@ -92,7 +92,7 @@ export default function InstitutionalTimeMachine({ open, onClose, committeeId, c
         <SheetHeader>
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-primary" />
-            <SheetTitle>{t("آلة الزمن المؤسسية", "Institutional Time Machine")}</SheetTitle>
+            <SheetTitle>{t("تتبع التغييرات المؤسسي", "Institutional Change Tracker")}</SheetTitle>
           </div>
           <SheetDescription>
             {t(

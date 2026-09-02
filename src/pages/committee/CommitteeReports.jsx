@@ -65,7 +65,7 @@ export default function CommitteeReports() {
         {canManageGovernance && (
           <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {t("توليد تقرير", "Generate Report")}
+            {t("إنشاء تقرير", "Generate Report")}
           </Button>
         )}
       </div>
@@ -73,7 +73,7 @@ export default function CommitteeReports() {
       <div className="raqeem-card p-4">
         <div className="flex items-center gap-2 mb-4">
           <ShieldCheck className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold">{t("نضج الحوكمة", "Governance Maturity")}</h3>
+          <h3 className="text-sm font-semibold">{t("حالة الحوكمة", "Governance Status")}</h3>
         </div>
         <div className="flex items-center gap-4 mb-4 pb-4 border-b border-border">
           <div className="relative w-16 h-16 shrink-0">
@@ -86,16 +86,16 @@ export default function CommitteeReports() {
             </div>
           </div>
           <div>
-            <div className="text-sm font-medium text-foreground">{t("النضج الإجمالي", "Overall Maturity")}</div>
+            <div className="text-sm font-medium text-foreground">{t("الحالة الإجمالية", "Overall Status")}</div>
             <div className="text-xs text-muted-foreground mt-0.5">
-              {overallMaturity >= 75 ? t("حوكمة ناضجة", "Mature Governance") : overallMaturity >= 50 ? t("حوكمة متطورة", "Developing Governance") : t("حوكمة ناشئة", "Emerging Governance")}
+              {overallMaturity >= 75 ? t("حوكمة مستقرة", "Stable Governance") : overallMaturity >= 50 ? t("حوكمة قيد التطوير", "Developing Governance") : t("حوكمة ابتدائية", "Initial Governance")}
             </div>
           </div>
         </div>
         <div className="space-y-3">
-          <MaturityBar label={t("نضج القرارات", "Decision Maturity")} value={decisionMaturity} color="bg-primary" />
-          <MaturityBar label={t("نضج التنفيذ", "Execution Maturity")} value={executionMaturity} color="bg-emerald-500" />
-          <MaturityBar label={t("نضج التوثيق", "Documentation Maturity")} value={documentationMaturity} color="bg-accent" />
+          <MaturityBar label={t("حالة القرارات", "Decision Status")} value={decisionMaturity} color="bg-primary" />
+          <MaturityBar label={t("حالة التنفيذ", "Execution Status")} value={executionMaturity} color="bg-emerald-500" />
+          <MaturityBar label={t("حالة التوثيق", "Documentation Status")} value={documentationMaturity} color="bg-accent" />
           <MaturityBar label={t("انتظام الاجتماعات", "Meeting Regularity")} value={meetingRegularity} color="bg-accent" />
         </div>
       </div>

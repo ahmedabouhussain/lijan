@@ -121,7 +121,7 @@ export default function ReportCenter() {
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : filtered.length === 0 ? (
-        <EmptyState icon={FileText} title={t("لا توجد منتجات", "No Products")} description={t("لم يتم توليد أي منتجات بعد.", "No products generated yet.")} />
+        <EmptyState icon={FileText} title={t("لا توجد منتجات", "No Products")} description={t("لم يتم إنشاء أي منتجات بعد.", "No products generated yet.")} />
       ) : (
         <div className="space-y-2">
           {filtered.map((inst) => (

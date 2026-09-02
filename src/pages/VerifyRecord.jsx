@@ -151,7 +151,7 @@ export default function VerifyRecord() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("تاريخ التوليد", "Generated")}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("تاريخ الإنشاء", "Generated")}</p>
                   <p className="text-xs font-medium text-foreground">{formatDate(record.generated_at)}</p>
                 </div>
               </div>

@@ -93,7 +93,7 @@ Return ONLY the JSON object matching the schema. Be precise, formal, and institu
       source_title: `${committee_name_ar || committee_name_en} (pre-creation)`,
       committee_id: null,
       model_used: 'automatic',
-      prompt_summary: 'توليد هيكل حوكمة للجنة جديدة قبل الإنشاء',
+      prompt_summary: 'إنشاء هيكل حوكمة للجنة جديدة قبل الإنشاء',
       output_summary: JSON.stringify(result).substring(0, 500),
       generated_at: new Date().toISOString(),
       generated_by_user_id: user.id,

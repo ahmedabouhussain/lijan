@@ -187,7 +187,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
           <div className="text-center py-6 space-y-3">
             <p className="text-sm text-muted-foreground">لا يوجد محضر بعد — أنشئ مسودة تلقائية من بيانات الاجتماع</p>
             <Button onClick={generateDraft} disabled={generating}>
-              <Sparkles className="w-3.5 h-3.5" /> {generating ? "جارٍ توليد المحضر..." : "توليد مسودة المحضر تلقائياً"}
+              <Sparkles className="w-3.5 h-3.5" /> {generating ? "جارٍ إنشاء المحضر..." : "إنشاء مسودة المحضر تلقائياً"}
             </Button>
           </div>
         )}

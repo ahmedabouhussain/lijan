@@ -199,7 +199,7 @@ export default function MeetingDetail() {
           {meeting.is_series_master && (
             <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
               {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              توليد نسخ إضافية
+              إنشاء نسخ إضافية
             </Button>
           )}
           {status === "scheduled" && (

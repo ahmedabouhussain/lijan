@@ -49,7 +49,7 @@ export default function CommitteeMemory() {
         {canManageGovernance && (
           <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {t("توليد الذاكرة", "Generate Memory")}
+            {t("إنشاء الذاكرة", "Generate Memory")}
           </Button>
         )}
       </div>

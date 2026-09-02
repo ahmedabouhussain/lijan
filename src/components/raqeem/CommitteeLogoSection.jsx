@@ -59,10 +59,10 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
       if (result?.url) {
         onChange(result.url);
       } else {
-        setError("تعذّر توليد الشعار");
+        setError("تعذّر إنشاء الشعار");
       }
     } catch (err) {
-      setError("تعذّر توليد الشعار بالذكاء الاصطناعي");
+      setError("تعذّر إنشاء الشعار بالذكاء الاصطناعي");
     }
     setGenerating(false);
   };
@@ -109,7 +109,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
             className="flex-1 justify-start"
           >
             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {generating ? "جارٍ التوليد..." : "توليد بالذكاء الاصطناعي"}
+            {generating ? "جارٍ الإنشاء..." : "إنشاء بالذكاء الاصطناعي"}
           </Button>
         </div>
       )}
