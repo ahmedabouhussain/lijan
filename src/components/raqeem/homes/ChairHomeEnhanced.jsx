@@ -77,17 +77,22 @@ export default function ChairHome({ data, base }) {
       {/* Governance blockers summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { icon: Gavel, label: t("قرارات بانتظار الإصدار", "Decisions to Issue"), count: decisionsAwaitingCert.length, to: "/decisions" },
-          { icon: AlertTriangle, label: t("إجراءات متأخرة", "Overdue Actions"), count: overdueActions.length, to: "/actions" },
-          { icon: ShieldCheck, label: t("خطر النصاب", "Quorum Risk"), count: quorumRisk ? 1 : 0, to: "/meetings" },
-          { icon: TrendingUp, label: t("إجراءات مفتوحة", "Open Actions"), count: actions.filter((a) => !["closed", "verified"].includes(a.status)).length, to: "/actions" },
+          { icon: Gavel, label: t("قرارات بانتظار الإصدار", "Decisions to Issue"), count: decisionsAwaitingCert.length, to: "/decisions", accent: "hsl(var(--primary))" },
+          { icon: AlertTriangle, label: t("إجراءات متأخرة", "Overdue Actions"), count: overdueActions.length, to: "/actions", accent: overdueActions.length > 0 ? "#ef4444" : "hsl(var(--accent))" },
+          { icon: ShieldCheck, label: t("خطر النصاب", "Quorum Risk"), count: quorumRisk ? 1 : 0, to: "/meetings", accent: quorumRisk ? "#f59e0b" : "hsl(var(--accent))" },
+          { icon: TrendingUp, label: t("إجراءات مفتوحة", "Open Actions"), count: actions.filter((a) => !["closed", "verified"].includes(a.status)).length, to: "/actions", accent: "hsl(var(--accent))" },
         ].map((item, i) => {
           const Icon = item.icon;
           return (
-            <Link key={i} to={`${base}${item.to}`} className="raqeem-card p-3 hover:bg-secondary/30 transition-colors">
-              <Icon className="w-4 h-4 text-muted-foreground mb-1.5" />
-              <div className="text-lg font-bold text-foreground">{item.count}</div>
-              <div className="text-[11px] text-muted-foreground leading-tight">{item.label}</div>
+            <Link key={i} to={`${base}${item.to}`} className="raqeem-card p-3.5 relative overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all group">
+              {item.accent && <div className="absolute top-0 left-0 w-1 h-full" style={{ background: item.accent }} />}
+              <div className="flex items-center gap-2.5 pl-1">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary/5 group-hover:bg-primary/10 transition-colors shrink-0">
+                  <Icon className="w-4 h-4 text-primary" />
+                </div>
+                <div className="text-2xl font-bold text-foreground tabular-nums">{item.count}</div>
+              </div>
+              <div className="text-[11px] text-muted-foreground leading-tight mt-2 pl-1">{item.label}</div>
             </Link>
           );
         })}
