@@ -27,6 +27,10 @@
     --ring: 335 71% 31%;
     --gold: 38 36% 53%;
     --radius: 0.375rem;
+    --card-radius: 20px;
+    --card-shadow: 0 1px 2px rgba(138, 21, 56, 0.04), 0 4px 12px rgba(138, 21, 56, 0.06);
+    --card-shadow-hover: 0 2px 4px rgba(138, 21, 56, 0.06), 0 8px 24px rgba(138, 21, 56, 0.10);
+    --transition-sovereign: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -59,7 +63,22 @@
 
 @layer components {
   .raqeem-card {
-    @apply bg-card border border-border rounded-lg;
+    @apply bg-card border border-border;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign);
+  }
+
+  .raqeem-card-interactive {
+    @apply bg-card border border-border cursor-pointer;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign);
+  }
+
+  .raqeem-card-interactive:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
   }
 
   .raqeem-section-title {
@@ -68,5 +87,25 @@
 
   .status-dot {
     @apply inline-block w-2 h-2 rounded-full;
+  }
+
+  .sovereign-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
+@layer utilities {
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
