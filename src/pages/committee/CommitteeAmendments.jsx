@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AmendmentFormBuilder from "@/components/raqeem/AmendmentFormBuilder";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 const AMENDMENT_TYPES = [
   { value: "add_member", label: "إضافة عضو" },
@@ -222,8 +223,11 @@ export default function CommitteeAmendments() {
               </select>
             </div>
             <div>
-              <Label className="text-xs">تاريخ النفاذ (اختياري — للمستقبلي)</Label>
-              <Input type="date" value={form.effective_date} onChange={(e) => setForm((f) => ({ ...f, effective_date: e.target.value }))} />
+              <LocalizedDatePicker
+                label="تاريخ النفاذ (اختياري — للمستقبلي)"
+                value={form.effective_date}
+                onChange={(v) => setForm((f) => ({ ...f, effective_date: v }))}
+              />
             </div>
           </div>
           <div>

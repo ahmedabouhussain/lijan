@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 
 const MEMBER_ROLES = [
   { value: "chair", label: "رئيس" },
@@ -224,14 +225,16 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Term */}
       {config.fields.includes("term") && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div>
-            <Label className="text-xs">تاريخ بداية المدة</Label>
-            <Input type="date" value={data.new_term_start || ""} onChange={(e) => update("new_term_start", e.target.value)} />
-          </div>
-          <div>
-            <Label className="text-xs">تاريخ نهاية المدة</Label>
-            <Input type="date" value={data.new_term_end || ""} onChange={(e) => update("new_term_end", e.target.value)} />
-          </div>
+          <LocalizedDatePicker
+            label="تاريخ بداية المدة"
+            value={data.new_term_start || ""}
+            onChange={(v) => update("new_term_start", v)}
+          />
+          <LocalizedDatePicker
+            label="تاريخ نهاية المدة"
+            value={data.new_term_end || ""}
+            onChange={(v) => update("new_term_end", v)}
+          />
         </div>
       )}
     </div>

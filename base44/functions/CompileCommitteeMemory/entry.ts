@@ -95,7 +95,7 @@ export default async function(req) {
       status: 'ok',
       ledger_id: ledgerEntry.id,
       sections,
-      source_count: sourceRefs.length,
+      source_count: sources.sourceRefs.length,
       mode: mode || 'full',
     });
   } catch (error) {
