@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   User as UserIcon, Mail, Shield, Save, Camera, Phone, Briefcase,
-  CheckCircle2, LogOut, PenLine,
+  CheckCircle2, LogOut, PenLine, Building2, ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 import { Image } from "@/components/ui/image";
 import SignaturePad from "@/components/raqeem/SignaturePad";
 import PageNav from "@/components/raqeem/PageNav";
+import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory, findEntity } from "@/lib/qatariEntities";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -29,7 +30,12 @@ export default function Profile() {
   const [bio, setBio] = useState("");
   const [sigText, setSigText] = useState("");
   const [sigImage, setSigImage] = useState("");
+  const [institutionId, setInstitutionId] = useState("");
+  const [institutionEmail, setInstitutionEmail] = useState("");
+  const [department, setDepartment] = useState("");
   const fileRef = useRef(null);
+
+  const grouped = getEntitiesByCategory();
 
   useEffect(() => {
     base44.auth
@@ -44,6 +50,9 @@ export default function Profile() {
         setBio(u.bio || "");
         setSigText(u.signature_text || "");
         setSigImage(u.signature_image_url || "");
+        setInstitutionId(u.institution_id || "");
+        setInstitutionEmail(u.institution_email || u.email || "");
+        setDepartment(u.department || "");
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -64,7 +73,8 @@ export default function Profile() {
   const save = async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({
+      const selectedEntity = findEntity(institutionId);
+      const affiliationData = {
         full_name: fullName,
         governance_role: governanceRole,
         avatar_url: avatarUrl,
@@ -73,7 +83,20 @@ export default function Profile() {
         bio,
         signature_text: sigText,
         signature_image_url: sigImage,
-      });
+        institution_id: institutionId,
+        institution_name_ar: selectedEntity?.ar || "",
+        institution_name_en: selectedEntity?.en || "",
+        institution_email: institutionEmail,
+        department,
+      };
+      await base44.auth.updateMe(affiliationData);
+      // Persist affiliation locally so the Entry Portal can match it
+      localStorage.setItem("lijan_profile_affiliation", JSON.stringify({
+        institution_id: institutionId,
+        institution_name_ar: selectedEntity?.ar || "",
+        institution_name_en: selectedEntity?.en || "",
+        institution_email: institutionEmail,
+      }));
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
@@ -156,6 +179,67 @@ export default function Profile() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Institutional Affiliation */}
+      <div className="raqeem-card p-6 space-y-5">
+        <div className="flex items-center gap-2 pb-3 border-b border-border">
+          <Building2 className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">الجهة المؤسسية · Institutional Affiliation</h2>
+        </div>
+        <p className="text-xs text-muted-foreground -mt-2">
+          جهتك التابع لها — تُستخدم لمطابقة دخولك في بوابة الدخول المؤسسية · Your affiliated entity — used to match your entry at the Institutional Portal
+        </p>
+
+        <div>
+          <Label className="text-xs mb-1.5 block">الجهة · Institution</Label>
+          <div className="relative">
+            <select
+              value={institutionId}
+              onChange={(e) => setInstitutionId(e.target.value)}
+              className="w-full appearance-none px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring pr-9"
+            >
+              <option value="">— اختر الجهة · Select entity —</option>
+              {Object.entries(grouped).map(([catKey, entities]) => (
+                <optgroup key={catKey} label={`${ENTITY_CATEGORIES[catKey].ar} — ${ENTITY_CATEGORIES[catKey].en}`}>
+                  {entities.map((entity) => (
+                    <option key={entity.id} value={entity.id}>
+                      {entity.ar} — {entity.en}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-muted-foreground absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-xs mb-1.5 block">البريد المؤسسي · Official Email</Label>
+            <Input
+              type="email"
+              dir="ltr"
+              value={institutionEmail}
+              onChange={(e) => setInstitutionEmail(e.target.value)}
+              placeholder="name@institution.gov.qa"
+            />
+          </div>
+          <div>
+            <Label className="text-xs mb-1.5 block">الإدارة · Department</Label>
+            <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="مثال: إدارة الشؤون القانونية" />
+          </div>
+        </div>
+
+        {institutionId && (
+          <div className="flex items-start gap-2 p-3 bg-primary/5 rounded-md">
+            <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-xs text-foreground">
+              <span className="font-medium">{findEntity(institutionId)?.ar || ""}</span>
+              <span className="text-muted-foreground"> — ستظهر هذه الجهة كمطابقة عند دخولك من بوابة الدخول المؤسسية</span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Details form */}

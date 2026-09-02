@@ -24,6 +24,18 @@ export default function EntryPortal() {
     await base44.auth.logout("/");
   };
 
+  // Pre-fill from saved profile affiliation (returning user)
+  useEffect(() => {
+    const saved = localStorage.getItem("lijan_profile_affiliation");
+    if (saved) {
+      try {
+        const aff = JSON.parse(saved);
+        if (aff.institution_id) setEntityId(aff.institution_id);
+        if (aff.institution_email) setEmail(aff.institution_email);
+      } catch {}
+    }
+  }, []);
+
   const grouped = getEntitiesByCategory();
 
   // Show spinner while auth is loading
@@ -105,7 +117,23 @@ export default function EntryPortal() {
     // Persist the selected institution for post-auth association
     localStorage.setItem("lijan_pending_entity", JSON.stringify(selected));
     localStorage.setItem("lijan_pending_email", email);
-    // Redirect to register with email pre-filled and returnTo dashboard
+
+    // Check if this entity+email matches a saved profile affiliation → go to login
+    const savedAffiliation = localStorage.getItem("lijan_profile_affiliation");
+    if (savedAffiliation) {
+      try {
+        const aff = JSON.parse(savedAffiliation);
+        const emailMatch = (aff.institution_email || "").toLowerCase().trim() === email.toLowerCase().trim();
+        const entityMatch = aff.institution_id === entityId;
+        if (emailMatch && entityMatch) {
+          // Returning user with matching affiliation → login
+          navigate(`/login?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
+          return;
+        }
+      } catch {}
+    }
+
+    // New user or mismatch → register
     navigate(`/register?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent("/")}`);
   };
 
@@ -223,6 +251,26 @@ export default function EntryPortal() {
             {error && (
               <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md">{error}</div>
             )}
+
+            {/* Match indicator */}
+            {entityId && email && (() => {
+              const saved = localStorage.getItem("lijan_profile_affiliation");
+              if (!saved) return null;
+              try {
+                const aff = JSON.parse(saved);
+                const match = aff.institution_id === entityId &&
+                  (aff.institution_email || "").toLowerCase().trim() === email.toLowerCase().trim();
+                if (match) {
+                  return (
+                    <div className="p-3 bg-emerald-50 text-emerald-700 text-sm rounded-md flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 shrink-0" />
+                      <span>جهتك وبريدك مطابقان لملفك — سيتم تحويلك لتسجيل الدخول · Your entity and email match your profile — you'll be redirected to sign in</span>
+                    </div>
+                  );
+                }
+              } catch {}
+              return null;
+            })()}
 
             <button
               type="submit"
