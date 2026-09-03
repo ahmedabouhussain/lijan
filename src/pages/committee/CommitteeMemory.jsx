@@ -9,6 +9,7 @@ import { Brain, Loader2, Sparkles } from "lucide-react";
 import EmptyState from "@/components/raqeem/EmptyState";
 import MemorySectionRenderer from "@/components/raqeem/MemorySectionRenderer";
 import MemoryReviewPanel from "@/components/raqeem/MemoryReviewPanel";
+import MemoryChat from "@/components/raqeem/MemoryChat";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 
@@ -46,12 +47,15 @@ export default function CommitteeMemory() {
           <h1 className="text-lg font-bold">{getTitle("ذاكرة اللجنة", "Committee Memory", lang)}</h1>
           <span className="text-sm text-muted-foreground">({records.length})</span>
         </div>
-        {canManageGovernance && (
-          <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {t("إنشاء الذاكرة", "Generate Memory")}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <MemoryChat />
+          {canManageGovernance && (
+            <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {t("إنشاء الذاكرة", "Generate Memory")}
+            </Button>
+          )}
+        </div>
       </div>
 
       {loading ? (

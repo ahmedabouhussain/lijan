@@ -12,6 +12,7 @@ import { CheckSquare, AlertTriangle, Clock, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ActionTrackerChat from "@/components/raqeem/ActionTrackerChat";
 
 export default function CommitteeActions() {
   const { data, reload } = useCommittee();
@@ -30,12 +31,15 @@ export default function CommitteeActions() {
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        icon={CheckSquare}
-        title={getTitle("إجراءات اللجنة", "Committee Actions", lang)}
-        subtitle={getDescription("متابعة تنفيذ الإجراءات والتزامات اللجنة", "Track committee action items and commitments", lang)}
-        badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
-      />
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <PageHeader
+          icon={CheckSquare}
+          title={getTitle("إجراءات اللجنة", "Committee Actions", lang)}
+          subtitle={getDescription("متابعة تنفيذ الإجراءات والتزامات اللجنة", "Track committee action items and commitments", lang)}
+          badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
+        />
+        <ActionTrackerChat />
+      </div>
 
       {/* Authority Lens for action management */}
       <AuthorityLens
