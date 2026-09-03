@@ -14,6 +14,8 @@ import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { BRAND } from "@/lib/brand";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import EmptyState from "@/components/raqeem/EmptyState";
+import { WorkspaceSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { cn } from "@/lib/utils";
 
 const ROLE_ICONS = {
@@ -69,19 +71,16 @@ export default function UnifiedWorkspace() {
   }, [isDemoMode]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-7 h-7 text-primary animate-spin" />
-      </div>
-    );
+    return <WorkspaceSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <AlertCircle className="w-8 h-8 text-destructive" />
-        <p className="text-sm text-muted-foreground">{error}</p>
-      </div>
+      <EmptyState
+        icon={AlertCircle}
+        title={t("تعذّر تحميل البيانات", "Failed to load data")}
+        description={error}
+      />
     );
   }
 
@@ -101,17 +100,20 @@ export default function UnifiedWorkspace() {
 
   if (organizations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Building2 className="w-12 h-12 text-muted-foreground/30" />
-        <p className="text-sm text-muted-foreground">{t("لم تتم إضافتك إلى أي منظمة بعد", "You haven't been added to any organization yet")}</p>
-        <button
-          onClick={() => navigate("/create-portal")}
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          {t("إنشاء بوابة منظمة", "Create Organization Portal")}
-        </button>
-      </div>
+      <EmptyState
+        icon={Building2}
+        title={t("لم تتم إضافتك إلى أي منظمة بعد", "You haven't been added to any organization yet")}
+        description={t("ابدأ بإنشاء بوابة منظمتك المؤسسية لإدارة المجالس واللجان.", "Start by creating your organization portal to manage councils and committees.")}
+        action={
+          <button
+            onClick={() => navigate("/create-portal")}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            {t("إنشاء بوابة منظمة", "Create Organization Portal")}
+          </button>
+        }
+      />
     );
   }
 
@@ -234,7 +236,10 @@ export default function UnifiedWorkspace() {
                   </div>
                 </div>
               ) : (
-                <div className="border-t border-border px-4 py-3">
+                <div className="border-t border-border px-4 py-4 flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded bg-muted/50 flex items-center justify-center shrink-0">
+                    <Users className="w-3.5 h-3.5 text-muted-foreground/50" />
+                  </div>
                   <p className="text-xs text-muted-foreground">{t("لا توجد لجان لك في هذه المنظمة", "No committees assigned in this organization")}</p>
                 </div>
               )}

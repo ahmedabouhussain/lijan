@@ -108,4 +108,33 @@
     min-height: 44px;
     min-width: 44px;
   }
+
+  /* Sovereign shimmer — smoother, institutional-grade skeleton pulse */
+  .sovereign-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .sovereign-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--background) / 60%),
+      transparent
+    );
+    animation: sovereign-shimmer-slide 1.6s ease-in-out infinite;
+  }
+  [dir="rtl"] .sovereign-shimmer::after {
+    animation: sovereign-shimmer-slide-rtl 1.6s ease-in-out infinite;
+  }
+  @keyframes sovereign-shimmer-slide {
+    100% { transform: translateX(100%); }
+  }
+  @keyframes sovereign-shimmer-slide-rtl {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
 }

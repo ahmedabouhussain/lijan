@@ -6,7 +6,7 @@ export default function PageHeader({ icon: Icon, title, subtitle, actions, badge
     <div className="flex items-start justify-between gap-3 mb-4 pb-3 border-b border-border">
       <div className="flex items-start gap-3 min-w-0">
         {Icon && (
-          <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-primary/5">
+          <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-primary/8 ring-1 ring-primary/12">
             <Icon className="w-5 h-5 text-primary" />
           </div>
         )}
