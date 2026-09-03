@@ -38,6 +38,13 @@ export default function Login() {
   };
 
   const handleDemoExplore = () => {
+    // Clear stale demo context keys before exploring
+    const demoKeys = [
+      "activeOrganizationId", "activeCommitteeId", "activeMembershipId",
+      "activeDemoPersona", "lastCommitteeRoute", "committeeQueryCache",
+      "raqeem_active_org", "raqeem_active_committee",
+    ];
+    demoKeys.forEach((k) => localStorage.removeItem(k));
     navigate("/");
   };
 

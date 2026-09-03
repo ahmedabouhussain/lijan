@@ -15,8 +15,13 @@ export default async function(req) {
 
     let committee;
     if (public_id) {
+      // Try public_id first
       const list = await base44.asServiceRole.entities.Committee.filter({ public_id }).catch(() => []);
       committee = (list || [])[0];
+      // Fallback: try by committee ID (for records without public_id)
+      if (!committee) {
+        committee = await base44.asServiceRole.entities.Committee.get(public_id).catch(() => null);
+      }
     } else if (committee_id) {
       committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
     }

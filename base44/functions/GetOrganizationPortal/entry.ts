@@ -15,10 +15,14 @@ export default async function(req) {
     if (!public_id) return Response.json({ error: 'public_id is required' }, { status: 400 });
 
     // Find organization by public_id (immutable authoritative identity)
-    const orgs = await base44.asServiceRole.entities.Organization
+    let orgs = await base44.asServiceRole.entities.Organization
       .filter({ public_id })
       .catch(() => []);
-    const org = (orgs || [])[0];
+    let org = (orgs || [])[0];
+    // Fallback: try by org ID (for records without public_id)
+    if (!org) {
+      org = await base44.asServiceRole.entities.Organization.get(public_id).catch(() => null);
+    }
     if (!org) return Response.json({ error: 'Organization not found' }, { status: 404 });
 
     // Verify membership server-side

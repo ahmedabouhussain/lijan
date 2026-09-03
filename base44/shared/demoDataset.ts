@@ -1,48 +1,128 @@
-// LIJAN™ — Fahad Al-Fihaidi Multi-Organization Demo Dataset
-// All data is fictional and marked with is_demo_data=true, demo_dataset=FAHAD_MULTI_ORG
+// LIJAN™ — Fahad Al-Fihaidi Approved Demo Dataset V2
+// 3 organizations, 7 committees — Qatar government-inspired fictional data
+// All data is fictional and marked with is_demo_data=true, demo_dataset=FAHAD_QATAR_GOVERNMENT_DEMO_V2
 
 export const DEMO_USER = {
-  id: "6a9926062b05cfe1ef31e6f8",
   email: "F.alfihaidi@lijan.com",
   name_ar: "فهد الفهيدي",
   name_en: "Fahad Al-Fihaidi",
 };
 
-export const DEMO_DATASET = "FAHAD_MULTI_ORG";
-export const DEMO_FLAG_KEY = "fahad_demo_provisioned";
+export const DEMO_DATASET = "FAHAD_QATAR_GOVERNMENT_DEMO_V2";
+export const DEMO_FLAG_KEY = "fahad_demo_v2_provisioned";
 
+// ── Organizations (3) ──
 export const DEMO_ORGS = [
   {
-    name_ar: "الهيئة الوطنية للتنمية المؤسسية",
-    name_en: "National Authority for Institutional Development",
-    type: "authority",
+    public_id: "DEMO-ORG-MIN-KNOWLEDGE",
+    slug: "wizarat-al-maarifa",
+    name_ar: "وزارة المعرفة",
+    name_en: "Ministry of Knowledge",
+    type: "ministry",
     description: "جهة تجريبية لعرض قدرات المنصة — بيانات غير حقيقية · Demo entity — fictional data",
   },
   {
-    name_ar: "المجلس الوطني للتحول الرقمي",
-    name_en: "National Council for Digital Transformation",
-    type: "council",
-    description: "جهة تجريبية لعرض قدرات المنصة — بيانات غير حقيقية · Demo entity — fictional data",
-  },
-  {
+    public_id: "DEMO-ORG-GOV-EXCELLENCE",
+    slug: "moassasat-al-hawkama",
     name_ar: "مؤسسة الحوكمة والتميز",
     name_en: "Governance & Excellence Foundation",
     type: "organization",
     description: "جهة تجريبية لعرض قدرات المنصة — بيانات غير حقيقية · Demo entity — fictional data",
   },
+  {
+    public_id: "DEMO-ORG-NATIONAL-DIGITAL",
+    slug: "majlis-alwatani-tahawol-raqami",
+    name_ar: "المجلس الوطني للتحول الرقمي",
+    name_en: "National Council for Digital Transformation",
+    type: "council",
+    description: "جهة تجريبية لعرض قدرات المنصة — بيانات غير حقيقية · Demo entity — fictional data",
+  },
 ];
 
+// ── Committees (7) — mapped to approved roles ──
 export const DEMO_COMMITTEES = [
-  // Org 0 — National Authority for Institutional Development
-  { orgIndex: 0, name_ar: "لجنة التحول المؤسسي", name_en: "Institutional Transformation Committee", type: "permanent_committee", fahadRole: "chair", scenario: "minutes_pending_approval" },
-  { orgIndex: 0, name_ar: "لجنة السياسات والحوكمة", name_en: "Policy & Governance Committee", type: "permanent_committee", fahadRole: "vice_chair", scenario: "delegation_active", hasDelegation: true },
-  { orgIndex: 0, name_ar: "لجنة متابعة تنفيذ الاستراتيجية", name_en: "Strategic Execution Follow-up Committee", type: "permanent_committee", fahadRole: "member", scenario: "open_voting" },
-  // Org 1 — National Council for Digital Transformation
-  { orgIndex: 1, name_ar: "لجنة البيانات والذكاء المؤسسي", name_en: "Data & Institutional Intelligence Committee", type: "permanent_committee", fahadRole: "secretary", scenario: "pack_preparation" },
-  { orgIndex: 1, name_ar: "لجنة تطوير الخدمات الرقمية", name_en: "Digital Services Development Committee", type: "working_group", fahadRole: "member", scenario: "overdue_action" },
-  // Org 2 — Governance & Excellence Foundation
-  { orgIndex: 2, name_ar: "لجنة المخاطر واستمرارية الأعمال", name_en: "Risk & Business Continuity Committee", type: "permanent_committee", fahadRole: "chair", scenario: "conflict_of_interest" },
-  { orgIndex: 2, name_ar: "لجنة المشتريات والعقود", name_en: "Procurement & Contracts Committee", type: "permanent_committee", fahadRole: "vice_chair", scenario: "executive_report_ready", hasDelegation: false },
+  // Org 0 — وزارة المعرفة (3 committees)
+  {
+    orgIndex: 0,
+    public_id: "DEMO-COMM-FIN-POLICY",
+    slug: "lajnat-al-siyasat-al-maliya",
+    name_ar: "لجنة السياسات المالية",
+    name_en: "Financial Policies Committee",
+    type: "permanent_committee",
+    fahadRole: "chair",
+    scenario: "minutes_pending_approval",
+    topics: ["كفاءة الإنفاق الحكومي", "أولويات الميزانية", "ضوابط المصروفات", "تقارير الأداء المالي", "مراجعة الانحرافات", "التخطيط المالي متوسط المدى"],
+  },
+  {
+    orgIndex: 0,
+    public_id: "DEMO-COMM-DIGITAL-TRANSFORM",
+    slug: "lajnat-al-tahawol-raqami",
+    name_ar: "اللجنة الوطنية للتحول الرقمي",
+    name_en: "National Digital Transformation Committee",
+    type: "national_committee",
+    fahadRole: "vice_chair",
+    scenario: "delegation_active",
+    hasDelegation: true,
+    topics: ["تكامل الخدمات الحكومية", "الهوية الرقمية", "تحسين رحلة المستفيد", "الترابط بين الأنظمة", "مؤشرات التبني الرقمي", "الخدمات الحكومية الاستباقية"],
+  },
+  {
+    orgIndex: 0,
+    public_id: "DEMO-COMM-CYBERSECURITY",
+    slug: "firqan-amn-sibrani",
+    name_ar: "فريق عمل الأمن السيبراني",
+    name_en: "Cybersecurity Task Force",
+    type: "task_force",
+    fahadRole: "member",
+    scenario: "open_voting",
+    topics: ["جاهزية الاستجابة للحوادث", "حماية الأنظمة الحيوية", "اختبار استمرارية الخدمات", "تقييم المخاطر السيبرانية", "التوعية الأمنية", "معالجة الثغرات"],
+  },
+  // Org 1 — مؤسسة الحوكمة والتميز (2 committees)
+  {
+    orgIndex: 1,
+    public_id: "DEMO-COMM-RISK-BCP",
+    slug: "lajnat-al-makhater-amtiyar",
+    name_ar: "لجنة المخاطر واستمرارية الأعمال",
+    name_en: "Risk & Business Continuity Committee",
+    type: "permanent_committee",
+    fahadRole: "chair",
+    scenario: "conflict_of_interest",
+    topics: ["استمرارية الخدمات الحكومية", "سيناريوهات الانقطاع", "جاهزية المرافق", "مخاطر الموردين", "التعافي من الكوارث", "تمارين المحاكاة"],
+  },
+  {
+    orgIndex: 1,
+    public_id: "DEMO-COMM-PROCUREMENT",
+    slug: "lajnat-al-mashariat-uqud",
+    name_ar: "لجنة المشتريات والعقود",
+    name_en: "Procurement & Contracts Committee",
+    type: "permanent_committee",
+    fahadRole: "vice_chair",
+    scenario: "executive_report_ready",
+    hasDelegation: false,
+    topics: ["خطط المشتريات", "تقييم الموردين", "تضارب المصالح", "أوامر التغيير", "مؤشرات تنفيذ العقود", "متابعة التزامات الموردين"],
+  },
+  // Org 2 — المجلس الوطني للتحول الرقمي (2 committees)
+  {
+    orgIndex: 2,
+    public_id: "DEMO-COMM-DATA-INTEL",
+    slug: "lajnat-al-bayanat-thakaa",
+    name_ar: "لجنة البيانات والذكاء المؤسسي",
+    name_en: "Data & Institutional Intelligence Committee",
+    type: "permanent_committee",
+    fahadRole: "secretary",
+    scenario: "pack_preparation",
+    topics: ["حوكمة البيانات", "جودة البيانات", "تصنيف المعلومات", "تبادل البيانات بين الجهات", "استخدام الذكاء الاصطناعي بمسؤولية", "الذاكرة المؤسسية"],
+  },
+  {
+    orgIndex: 2,
+    public_id: "DEMO-COMM-DIGITAL-SERVICES",
+    slug: "lajnat-tatwir-khadamat-raqamiya",
+    name_ar: "لجنة تطوير الخدمات الرقمية",
+    name_en: "Digital Services Development Committee",
+    type: "working_group",
+    fahadRole: "member",
+    scenario: "overdue_action",
+    topics: ["تحسين الخدمات الرقمية", "الوصول الشامل", "تجربة المستخدم", "تبسيط الإجراءات", "الخدمات عبر الهاتف", "قياس رضا المستفيدين"],
+  },
 ];
 
 // Fictional demo member names (no real user accounts)
@@ -51,26 +131,31 @@ export const DEMO_MEMBER_NAMES = [
   "نورة آل علي", "عبدالله الكبيسي", "ريم الأنصاري", "حمد المري",
   "عائشة النعيمي", "ماجد السليطي", "لطيفة آل ثاني", "بدر الكواري",
   "منى الهتمي", "سعود العطية", "دانة آل خليفة", "فيصل آل ثاني",
+  "روضة العبيدلي", "ناصر المحيربي", "هند الكواري", "ثاني آل ثاني",
 ];
 
-// Generate committee members for a committee, ensuring Fahad has the correct role
-// and the committee has a full formation (chair, vice_chair, secretary, members)
+export const DEMO_INSTITUTIONS = [
+  "وزارة المعرفة", "مؤسسة الحوكمة والتميز", "المجلس الوطني للتحول الرقمي",
+  "إدارة تقنية المعلومات", "إدارة التخطيط والجودة", "إدارة الشؤون المالية",
+  "إدارة المخاطر", "إدارة المشتريات", "الشؤون القانونية", "الإدارة التنفيذية",
+];
+
+// ── Generate committee members (8-12 per committee) ──
 export function buildCommitteeMembers(committeeIndex, fahadRole) {
   const members = [];
-  const roles = ["chair", "vice_chair", "secretary", "member", "member", "member", "member"];
+  const baseRoles = ["chair", "vice_chair", "secretary", "member", "member", "member", "member", "member", "alternate", "advisor"];
+  const roles = [...baseRoles];
   
   // Assign Fahad to his role
   const fahadRoleIndex = roles.indexOf(fahadRole);
   if (fahadRoleIndex >= 0) roles[fahadRoleIndex] = "__FAHAD__";
   
-  // Fill remaining roles with fictional members
   let nameIdx = (committeeIndex * 3) % DEMO_MEMBER_NAMES.length;
   for (let i = 0; i < roles.length; i++) {
     if (roles[i] === "__FAHAD__") {
       members.push({
         full_name: DEMO_USER.name_en,
         full_name_ar: DEMO_USER.name_ar,
-        user_id: DEMO_USER.id,
         user_email: DEMO_USER.email,
         role: fahadRole,
         authority_level: fahadRole === "chair" ? "decision" : fahadRole === "vice_chair" ? "approval" : fahadRole === "secretary" ? "execution" : "decision",
@@ -78,7 +163,8 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
         status: "active",
         protocol_order: i + 1,
         term_start: "2026-01-01",
-        institution_name: "Demo Institution",
+        term_end: "2027-12-31",
+        institution_name: DEMO_INSTITUTIONS[committeeIndex % DEMO_INSTITUTIONS.length],
       });
     } else {
       const name = DEMO_MEMBER_NAMES[nameIdx % DEMO_MEMBER_NAMES.length];
@@ -86,59 +172,95 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
       members.push({
         full_name: name,
         full_name_ar: name,
-        user_id: null,
         user_email: `demo.member${nameIdx}@lijan-demo.com`,
         role: roles[i],
         authority_level: roles[i] === "chair" ? "decision" : roles[i] === "vice_chair" ? "approval" : roles[i] === "secretary" ? "execution" : "decision",
-        voting_right: true,
+        voting_right: roles[i] !== "advisor" && roles[i] !== "observer",
         status: "active",
         protocol_order: i + 1,
         term_start: "2026-01-01",
-        institution_name: "Demo Institution",
+        term_end: "2027-12-31",
+        institution_name: DEMO_INSTITUTIONS[(committeeIndex + i) % DEMO_INSTITUTIONS.length],
       });
     }
   }
   return members;
 }
 
-// Meeting data for each committee (1 past + 1 upcoming)
+// ── Meeting data (4 past + 2 upcoming per committee) ──
 export function buildMeetings(committeeId, orgId, committeeIndex) {
-  const pastDate = new Date();
-  pastDate.setDate(pastDate.getDate() - 14 - committeeIndex * 2);
-  const upcomingDate = new Date();
-  upcomingDate.setDate(upcomingDate.getDate() + 7 + committeeIndex * 3);
-
-  return [
-    {
+  const meetings = [];
+  const locations = [
+    "قاعة الاجتماعات الرئيسية — الدوحة",
+    "قاعة المجلس التنفيذي — لوسيل",
+    "مركز التنسيق الحكومي — موقع تجريبي",
+    "قاعة الاجتماعات الافتراضية — عبر المنصة",
+  ];
+  
+  // 4 past meetings
+  for (let p = 4; p >= 1; p--) {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - (p * 21 + committeeIndex * 2));
+    // Adjust to a working day (Sun-Thu)
+    const day = pastDate.getDay();
+    if (day === 5) pastDate.setDate(pastDate.getDate() - 1); // Friday → Thursday
+    if (day === 6) pastDate.setDate(pastDate.getDate() - 2); // Saturday → Thursday
+    
+    meetings.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة السابقة`,
-      title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة السابقة`,
+      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة ${5 - p}`,
+      title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة ${5 - p}`,
       date: pastDate.toISOString(),
       duration_minutes: 90,
-      location: "قاعة الاجتماعات الرئيسية — المقر",
-      mode: "hybrid",
+      location: locations[(p + committeeIndex) % locations.length],
+      mode: p % 2 === 0 ? "hybrid" : "physical",
       provider: "none",
       quorum_required: 4,
       status: "completed",
       is_demo_data: true,
       demo_dataset: DEMO_DATASET,
-    },
-    {
+    });
+  }
+  
+  // 2 upcoming meetings
+  for (let u = 1; u <= 2; u++) {
+    const upcomingDate = new Date();
+    upcomingDate.setDate(upcomingDate.getDate() + (u * 14 + committeeIndex * 3));
+    const day = upcomingDate.getDay();
+    if (day === 5) upcomingDate.setDate(upcomingDate.getDate() + 2); // Friday → Sunday
+    if (day === 6) upcomingDate.setDate(upcomingDate.getDate() + 1); // Saturday → Sunday
+    
+    meetings.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة`,
-      title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة`,
+      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة ${u}`,
+      title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة ${u}`,
       date: upcomingDate.toISOString(),
       duration_minutes: 90,
-      location: "قاعة الاجتماعات الرئيسية — المقر",
+      location: locations[(u + committeeIndex) % locations.length],
       mode: "hybrid",
       provider: "none",
       quorum_required: 4,
-      agenda_ready: false,
+      agenda_ready: u === 1,
       status: "scheduled",
       is_demo_data: true,
       demo_dataset: DEMO_DATASET,
-    },
-  ];
+    });
+  }
+  
+  return meetings;
+}
+
+// ── Generate slug from Arabic name ──
+export function slugifyArabic(name) {
+  return name
+    .replace(/ال/g, "al")
+    .replace(/لجنة/g, "lajnat")
+    .replace(/وزارة/g, "wizarat")
+    .replace(/مؤسسة/g, "moassasat")
+    .replace(/المجلس/g, "almajlis")
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "")
+    .toLowerCase();
 }
