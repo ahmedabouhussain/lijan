@@ -44,7 +44,7 @@ const ROLE_LABELS = {
 export default function UnifiedWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isDemoMode } = useEffectiveActor();
+  const { isDemoMode, effectiveActor } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,6 +87,18 @@ export default function UnifiedWorkspace() {
 
   const { organizations, total_committees, user_profile } = data || { organizations: [], total_committees: 0, user_profile: null };
 
+  // In demo mode, always use the demo persona's identity — never fall back to the real user.
+  // This prevents identity mixing (e.g., showing the founder's name alongside the demo email).
+  const displayName = isDemoMode
+    ? (lang === "ar" ? effectiveActor?.data?.display_name_ar : effectiveActor?.data?.display_name_en) || t("فهد الفهيدي", "Fahad Al-Fihaidi")
+    : (user_profile?.display_name_ar || user?.full_name || t("المستخدم", "User"));
+  const displayJobTitle = isDemoMode
+    ? (lang === "ar" ? effectiveActor?.data?.job_title_ar : effectiveActor?.data?.job_title_en)
+    : (user_profile?.job_title_ar);
+  const displayOrg = isDemoMode
+    ? (lang === "ar" ? effectiveActor?.data?.primary_org_ar : effectiveActor?.data?.primary_org_en)
+    : (user_profile?.primary_org_ar);
+
   if (organizations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -109,13 +121,13 @@ export default function UnifiedWorkspace() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground">
-            {t("مرحبًا", "Welcome")}, {user_profile?.display_name_ar || user?.full_name || t("المستخدم", "User")}
+            {t("مرحبًا", "Welcome")}, {displayName}
           </h1>
-          {user_profile?.job_title_ar && (
+          {displayJobTitle && (
             <p className="text-sm text-muted-foreground mt-0.5">
-              {lang === "ar" ? user_profile.job_title_ar : user_profile.job_title_en}
-              {" — "}
-              {lang === "ar" ? user_profile.primary_org_ar : user_profile.primary_org_en}
+              {displayJobTitle}
+              {displayOrg && " — "}
+              {displayOrg}
             </p>
           )}
           <p className="text-sm text-muted-foreground mt-1">
