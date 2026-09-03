@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { DEMO_USER } from '../../shared/demoDataset.ts';
 
 // GetMyOrganizations — resolves the current user's organization memberships
 // AND committee memberships across ALL organizations.
@@ -10,6 +11,11 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Detect demo persona — if user.data has demo markers OR email matches demo user
+    const isDemoUser = user.data?.is_demo_user === true ||
+                       user.data?.demo_persona_key === DEMO_USER.persona_key ||
+                       user.email === DEMO_USER.email;
 
     // 1) Get all active ORG memberships for the user
     const orgMemberships = await base44.asServiceRole.entities.OrganizationMembership
@@ -165,9 +171,12 @@ export default async function(req) {
     }
 
     // Mark primary org and sort it first
+    // For demo users, the first org in DEMO_ORGS (Audit and Review Council) is primary
     const primaryOrgId = user.data?.primary_org_id;
     for (const org of organizations) {
-      org.is_primary = org.id === primaryOrgId;
+      org.is_primary = isDemoUser
+        ? org.public_id === "DEMO-ORG-AUDIT-COUNCIL"
+        : org.id === primaryOrgId;
     }
     organizations.sort((a, b) => {
       if (a.is_primary) return -1;
@@ -183,21 +192,33 @@ export default async function(req) {
       }
     }
 
+    // Build user profile — use demo persona constants if this is the demo user
+    const userProfile = isDemoUser ? {
+      display_name_ar: DEMO_USER.name_ar,
+      display_name_en: DEMO_USER.name_en,
+      job_title_ar: DEMO_USER.job_title_ar,
+      job_title_en: DEMO_USER.job_title_en,
+      primary_org_ar: DEMO_USER.primary_org_ar,
+      primary_org_en: DEMO_USER.primary_org_en,
+      is_demo_user: true,
+      demo_persona_key: DEMO_USER.persona_key,
+    } : {
+      display_name_ar: user.data?.display_name_ar || user.full_name,
+      display_name_en: user.data?.display_name_en || user.full_name,
+      job_title_ar: user.data?.job_title_ar,
+      job_title_en: user.data?.job_title_en,
+      primary_org_ar: user.data?.primary_org_ar,
+      primary_org_en: user.data?.primary_org_en,
+      is_demo_user: false,
+      demo_persona_key: null,
+    };
+
     return Response.json({
       organizations,
       has_org: organizations.length > 0,
       total_committees: myCommittees.length,
       active_org_id: user.data?.active_org_id || organizations[0]?.id,
-      user_profile: {
-        display_name_ar: user.data?.display_name_ar || user.full_name,
-        display_name_en: user.data?.display_name_en || user.full_name,
-        job_title_ar: user.data?.job_title_ar,
-        job_title_en: user.data?.job_title_en,
-        primary_org_ar: user.data?.primary_org_ar,
-        primary_org_en: user.data?.primary_org_en,
-        is_demo_user: user.data?.is_demo_user,
-        demo_persona_key: user.data?.demo_persona_key,
-      },
+      user_profile: userProfile,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

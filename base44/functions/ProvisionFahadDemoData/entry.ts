@@ -23,7 +23,7 @@ export default async function(req) {
     const sr = base44.asServiceRole;
 
     // ── Step 1: Clean ALL old demo data (by demo_dataset flag) ──
-    const deletedCounts = await cleanAllDemoData(sr);
+    const deletedCounts = await cleanAllDemoData(sr, user.id);
 
     // ── Step 2: Create Organizations with public_id/slug ──
     const orgIds = [];
@@ -296,9 +296,15 @@ export default async function(req) {
   }
 }
 
-// ── Clean ALL demo data by demo_dataset flag ──
-async function cleanAllDemoData(sr) {
+// ── Clean ALL demo data — by is_demo_data flag AND all known dataset keys ──
+async function cleanAllDemoData(sr, userId) {
   const counts = {};
+  const knownDatasetKeys = [
+    DEMO_DATASET,
+    "FAHAD_MULTI_ORG",
+    "FAHAD_QATAR_GOVERNMENT_DEMO",
+    "FAHAD_DEMO_V1",
+  ];
   const entities = [
     'Attendance', 'AgendaItem', 'Action', 'Decision', 'MeetingMinutes',
     'Meeting', 'AuthorityDelegation', 'ConflictDeclaration', 'CommitteeAmendment',
@@ -308,18 +314,38 @@ async function cleanAllDemoData(sr) {
 
   for (const entity of entities) {
     let deleted = 0;
+    const seenIds = new Set();
     try {
-      // Filter by demo_dataset — handles both old and new demo data
-      const records = await sr.entities[entity].filter({ demo_dataset: DEMO_DATASET }).catch(() => []);
-      for (const r of (records || [])) {
+      // 1) Clean by is_demo_data flag (catches all demo data regardless of dataset key)
+      const demoRecords = await sr.entities[entity].filter({ is_demo_data: true }).catch(() => []);
+      for (const r of (demoRecords || [])) {
+        if (seenIds.has(r.id)) continue;
+        seenIds.add(r.id);
         await sr.entities[entity].delete(r.id).catch(() => {});
         deleted++;
       }
-      // Also clean old dataset key
-      const oldRecords = await sr.entities[entity].filter({ demo_dataset: "FAHAD_MULTI_ORG" }).catch(() => []);
-      for (const r of (oldRecords || [])) {
-        await sr.entities[entity].delete(r.id).catch(() => {});
-        deleted++;
+      // 2) Also clean by known dataset keys (fallback for records without is_demo_data)
+      for (const key of knownDatasetKeys) {
+        const records = await sr.entities[entity].filter({ demo_dataset: key }).catch(() => []);
+        for (const r of (records || [])) {
+          if (seenIds.has(r.id)) continue;
+          seenIds.add(r.id);
+          await sr.entities[entity].delete(r.id).catch(() => {});
+          deleted++;
+        }
+      }
+      // 3) For membership entities, also clean by user_id + demo flags (belt-and-suspenders)
+      if (userId && (entity === 'OrganizationMembership' || entity === 'CommitteeMembership')) {
+        const userMemberships = await sr.entities[entity].filter({ user_id: userId }).catch(() => []);
+        for (const r of (userMemberships || [])) {
+          if (seenIds.has(r.id)) continue;
+          // Only delete if it has demo markers
+          if (r.is_demo_data || r.demo_dataset || r.demo_persona_key) {
+            seenIds.add(r.id);
+            await sr.entities[entity].delete(r.id).catch(() => {});
+            deleted++;
+          }
+        }
       }
     } catch {}
     counts[entity] = deleted;
