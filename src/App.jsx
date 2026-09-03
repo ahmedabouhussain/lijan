@@ -5,6 +5,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { EffectiveActorProvider } from '@/lib/EffectiveActorContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import SplashScreen from '@/components/raqeem/SplashScreen';
@@ -213,12 +214,14 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <LanguageProvider>
+          <EffectiveActorProvider>
           <Router>
             <ScrollToTop />
             {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
             <AuthenticatedApp />
           </Router>
           <Toaster />
+          </EffectiveActorProvider>
         </LanguageProvider>
       </QueryClientProvider>
     </AuthProvider>

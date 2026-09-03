@@ -18,8 +18,11 @@ import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { DEMO_USER } from "@/../base44/shared/demoDataset";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import DemoBanner from "@/components/raqeem/DemoBanner";
 
 export default function Profile() {
+  const { isDemoMode, effectiveActor } = useEffectiveActor();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,45 +39,39 @@ export default function Profile() {
   const [institutionId, setInstitutionId] = useState("");
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [department, setDepartment] = useState("");
-  const [isDemo, setIsDemo] = useState(false);
   const fileRef = useRef(null);
 
   useEffect(() => {
-    base44.auth
-      .me()
-      .then((u) => {
-        // Detect demo persona — override displayed identity if demo user
-        const isDemoUser = u.data?.is_demo_user === true ||
-                       u.data?.demo_persona_key === DEMO_USER.persona_key;
-        setIsDemo(isDemoUser);
-        if (isDemoUser) {
-          setUser({
-            ...u,
-            full_name: DEMO_USER.name_ar,
-            email: DEMO_USER.email,
-            data: { ...u.data, ...DEMO_USER },
-          });
-          setFullName(DEMO_USER.name_ar);
-          setTitle(DEMO_USER.job_title_ar);
-          setInstitutionEmail(DEMO_USER.email);
-        } else {
+    if (isDemoMode) {
+      // Demo mode: use effective actor (Fahad) — never touch the real user record
+      setUser(effectiveActor);
+      setFullName(DEMO_USER.name_ar);
+      setTitle(DEMO_USER.job_title_ar);
+      setInstitutionEmail(DEMO_USER.email);
+      setGovernanceRole("member"); // Demo users are never admin
+      setLoading(false);
+    } else {
+      // Normal mode: load real user profile
+      base44.auth
+        .me()
+        .then((u) => {
           setUser(u);
           setFullName(u.full_name || "");
           setTitle(u.title || "");
           setInstitutionEmail(u.institution_email || u.email || "");
-        }
-        setGovernanceRole(u.governance_role || "member");
-        setAvatarUrl(u.avatar_url || "");
-        setPhone(u.phone || "");
-        setBio(u.bio || "");
-        setSigText(u.signature_text || "");
-        setSigImage(u.signature_image_url || "");
-        setInstitutionId(u.institution_id || "");
-        setDepartment(u.department || "");
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+          setGovernanceRole(u.governance_role || "member");
+          setAvatarUrl(u.avatar_url || "");
+          setPhone(u.phone || "");
+          setBio(u.bio || "");
+          setSigText(u.signature_text || "");
+          setSigImage(u.signature_image_url || "");
+          setInstitutionId(u.institution_id || "");
+          setDepartment(u.department || "");
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, [isDemoMode, effectiveActor]);
 
   const handleAvatar = async (e) => {
     const file = e.target.files?.[0];
@@ -89,6 +86,12 @@ export default function Profile() {
   };
 
   const save = async () => {
+    // In demo mode, changes are local only — never written to the real user record
+    if (isDemoMode) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      return;
+    }
     setSaving(true);
     try {
       const selectedEntity = findEntity(institutionId);
@@ -137,10 +140,11 @@ export default function Profile() {
   }
 
   const initials = (user.full_name || "؟").split(" ").map((w) => w[0]).slice(0, 2).join("");
-  const demoPersona = isDemo ? DEMO_USER : null;
+  const demoPersona = isDemoMode ? DEMO_USER : null;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      {isDemoMode && <DemoBanner />}
       <PageNav />
       <div>
         <h1 className="text-2xl font-bold text-foreground">الملف الشخصي · Profile</h1>
@@ -183,14 +187,20 @@ export default function Profile() {
           </div>
 
           <div className="flex items-center gap-2 mt-4 flex-wrap">
-            <StatusBadge
-              label={user.role === "admin" ? "مدير · Admin" : "مستخدم · User"}
-              colorClass={user.role === "admin" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}
-            />
-            <StatusBadge
-              label={`${GOVERNANCE_ROLES[governanceRole]?.ar || "عضو"} · ${GOVERNANCE_ROLES[governanceRole]?.en || "Member"}`}
-              colorClass="bg-accent/15 text-accent-foreground"
-            />
+            {isDemoMode ? (
+              <StatusBadge label="حساب تجريبي · Demo Account" colorClass="bg-accent/15 text-accent-foreground" />
+            ) : (
+              <StatusBadge
+                label={user.role === "admin" ? "مدير · Admin" : "مستخدم · User"}
+                colorClass={user.role === "admin" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}
+              />
+            )}
+            {!isDemoMode && (
+              <StatusBadge
+                label={`${GOVERNANCE_ROLES[governanceRole]?.ar || "عضو"} · ${GOVERNANCE_ROLES[governanceRole]?.en || "Member"}`}
+                colorClass="bg-accent/15 text-accent-foreground"
+              />
+            )}
             {title && (
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <Briefcase className="w-3 h-3" /> {title}

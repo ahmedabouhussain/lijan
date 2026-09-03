@@ -7,6 +7,7 @@ import {
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
@@ -43,6 +44,7 @@ const ROLE_LABELS = {
 export default function UnifiedWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDemoMode } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export default function UnifiedWorkspace() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await base44.functions.invoke("GetMyOrganizations", {});
+        const res = await base44.functions.invoke("GetMyOrganizations", { demo_mode: isDemoMode });
         const d = res.data || res;
         if (d.error) setError(d.error);
         else setData(d);
@@ -60,7 +62,7 @@ export default function UnifiedWorkspace() {
       }
       setLoading(false);
     })();
-  }, []);
+  }, [isDemoMode]);
 
   if (loading) {
     return (

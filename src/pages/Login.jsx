@@ -8,9 +8,11 @@ import { LogIn, Mail, Lock, Loader2, Sparkles } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { enterDemo } = useEffectiveActor();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -45,6 +47,8 @@ export default function Login() {
       "raqeem_active_org", "raqeem_active_committee",
     ];
     demoKeys.forEach((k) => localStorage.removeItem(k));
+    // Establish a proper demo session — Fahad becomes the effective actor
+    enterDemo();
     navigate("/");
   };
 

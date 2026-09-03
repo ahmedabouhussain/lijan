@@ -5,6 +5,8 @@ import { QATARI_ENTITIES } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import DemoBanner from "@/components/raqeem/DemoBanner";
 import { base44 } from "@/api/base44Client";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
@@ -15,6 +17,7 @@ import { BRAND } from "@/lib/brand";
 export default function EntryPortal() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoadingAuth, user } = useAuth();
+  const { isDemoMode, effectiveActor } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [entityId, setEntityId] = useState("");
   const [email, setEmail] = useState("");
@@ -49,10 +52,16 @@ export default function EntryPortal() {
     );
   }
 
-  // Authenticated users → show unified workspace with all their orgs + committees
-  if (isAuthenticated && user) {
+  // Authenticated users OR demo mode → show unified workspace with all their orgs + committees
+  if ((isAuthenticated && user) || isDemoMode) {
+    const displayName = isDemoMode
+      ? (lang === "ar" ? effectiveActor?.data?.display_name_ar : effectiveActor?.data?.display_name_en)
+      : user?.full_name;
+    const displayEmail = isDemoMode ? effectiveActor?.email : user?.email;
     return (
       <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+        {/* Demo banner — shown only in demo mode */}
+        {isDemoMode && <DemoBanner />}
         {/* Top bar */}
         <header className="border-b border-border bg-card sticky top-0 z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
@@ -76,17 +85,28 @@ export default function EntryPortal() {
                 className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
                 title={t("الملف الشخصي", "Profile")}
               >
-                <span className="text-xs text-muted-foreground hidden md:block">{user.email}</span>
+                <span className="text-xs text-muted-foreground hidden md:block">{displayEmail}</span>
                 <span className="sm:hidden">{t("الملف", "Profile")}</span>
               </button>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 px-2.5 py-1.5 rounded-md font-medium transition-colors"
-                title={t("تسجيل الخروج", "Logout")}
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">{t("خروج", "Logout")}</span>
-              </button>
+              {isDemoMode ? (
+                <button
+                  onClick={() => { window.location.href = "/"; }}
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                  title={t("إنهاء الاستكشاف", "Exit Demo")}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t("إنهاء", "Exit")}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                  title={t("تسجيل الخروج", "Logout")}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t("خروج", "Logout")}</span>
+                </button>
+              )}
             </div>
           </div>
         </header>
