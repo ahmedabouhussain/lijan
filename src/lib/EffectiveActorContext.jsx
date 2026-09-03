@@ -7,7 +7,7 @@
 // Demo identity is a client-side session backed by server-verified demo data.
 // The founder's account (name, email, roles, permissions) is never touched.
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { DEMO_USER } from '@/../base44/shared/demoDataset';
 
@@ -17,25 +17,22 @@ const EffectiveActorContext = createContext();
 
 export const EffectiveActorProvider = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
-  const [demoSession, setDemoSession] = useState(null);
-
-  // Load demo session from localStorage on mount
-  useEffect(() => {
+  // Initialize synchronously from localStorage so isDemoMode is correct on first render.
+  // This prevents a race condition where UnifiedWorkspace calls GetMyOrganizations with
+  // demo_mode=false (before the session loads) and triggers an auth error.
+  const [demoSession, setDemoSession] = useState(() => {
     try {
       const raw = localStorage.getItem(DEMO_SESSION_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        // Validate session has required fields
-        if (parsed && parsed.actor_id && parsed.email) {
-          setDemoSession(parsed);
-        } else {
-          localStorage.removeItem(DEMO_SESSION_KEY);
-        }
+        if (parsed && parsed.actor_id && parsed.email) return parsed;
+        localStorage.removeItem(DEMO_SESSION_KEY);
       }
     } catch {
       localStorage.removeItem(DEMO_SESSION_KEY);
     }
-  }, []);
+    return null;
+  });
 
   const enterDemo = useCallback(() => {
     const session = {
