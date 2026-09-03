@@ -216,6 +216,9 @@ export const QATARI_ENTITIES = [
   { id: "cma", ar: "هيئة تنظيم المنشآت المالية", en: "Qatar Financial Markets Authority", category: "judicial" },
   { id: "competition", ar: "هيئة حماية المنافسة", en: "Competition Protection Authority", category: "judicial" },
   { id: "consumer", ar: "هيئة حماية المستهلك", en: "Consumer Protection Department", category: "judicial" },
+
+  // === Audit & Review ===
+  { id: "audit_review_council", ar: "مجلس التدقيق والمراجعة", en: "Audit and Review Council", category: "judicial" },
 ];
 
 // Helper: get entities grouped by category for dropdown

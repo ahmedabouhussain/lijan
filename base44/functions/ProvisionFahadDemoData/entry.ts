@@ -48,19 +48,50 @@ export default async function(req) {
 
     // ── Step 3: Create OrganizationMemberships for current user ──
     const orgMemberships = [];
-    for (const orgId of orgIds) {
+    for (let i = 0; i < orgIds.length; i++) {
       const m = await sr.entities.OrganizationMembership.create({
-        organization_id: orgId,
+        organization_id: orgIds[i],
         user_id: user.id,
         user_email: user.email,
         user_name: user.full_name || user.email,
-        role: 'member',
+        role: i === 0 ? 'admin' : 'member',
         status: 'active',
         joined_at: new Date().toISOString(),
         is_demo_data: true,
         demo_dataset: DEMO_DATASET,
       });
       orgMemberships.push(m);
+    }
+
+    // ── Step 3b: Set Fahad's profile identity (job title, primary org) ──
+    await base44.auth.updateMe({
+      primary_org_id: orgMap[0],
+      job_title_ar: DEMO_USER.job_title_ar,
+      job_title_en: DEMO_USER.job_title_en,
+      primary_org_ar: DEMO_USER.primary_org_ar,
+      primary_org_en: DEMO_USER.primary_org_en,
+      demo_persona_key: DEMO_USER.persona_key,
+      is_demo_user: true,
+      display_name_ar: DEMO_USER.name_ar,
+      display_name_en: DEMO_USER.name_en,
+    }).catch(() => {});
+
+    // ── Step 3c: Register Audit and Review Council in OrganizationDirectory ──
+    const existingDir = await sr.entities.OrganizationDirectory
+      .filter({ directory_key: "audit_review_council" }).catch(() => []);
+    if (!existingDir || existingDir.length === 0) {
+      await sr.entities.OrganizationDirectory.create({
+        directory_key: "audit_review_council",
+        canonical_name_ar: "مجلس التدقيق والمراجعة",
+        canonical_name_en: "Audit and Review Council",
+        organization_type: "council",
+        country_code: "QA",
+        registry_source: "manual_entry",
+        verification_status: "verified",
+        canonical_organization_id: orgMap[0],
+        is_demo_data: true,
+        demo_dataset: DEMO_DATASET,
+      }).catch(() => {});
     }
 
     // ── Step 4: Create Committees + Memberships + Data ──

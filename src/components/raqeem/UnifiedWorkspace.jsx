@@ -79,7 +79,7 @@ export default function UnifiedWorkspace() {
     );
   }
 
-  const { organizations, total_committees } = data || { organizations: [], total_committees: 0 };
+  const { organizations, total_committees, user_profile } = data || { organizations: [], total_committees: 0, user_profile: null };
 
   if (organizations.length === 0) {
     return (
@@ -102,11 +102,20 @@ export default function UnifiedWorkspace() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground">{t("مساحتي", "My Workspace")}</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-xl font-bold text-foreground">
+            {t("مرحبًا", "Welcome")}, {user_profile?.display_name_ar || user?.full_name || t("المستخدم", "User")}
+          </h1>
+          {user_profile?.job_title_ar && (
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {lang === "ar" ? user_profile.job_title_ar : user_profile.job_title_en}
+              {" — "}
+              {lang === "ar" ? user_profile.primary_org_ar : user_profile.primary_org_en}
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground mt-1">
             {t(
-              `${organizations.length} منظمة · ${total_committees} لجنة`,
-              `${organizations.length} organizations · ${total_committees} committees`
+              `تمثل ${organizations.length} جهات وتشارك في ${total_committees} لجان بأدوار ومسؤوليات مختلفة`,
+              `Representing ${organizations.length} organizations · ${total_committees} committees with various roles`
             )}
           </p>
         </div>
@@ -142,10 +151,15 @@ export default function UnifiedWorkspace() {
                   <div className="text-xs text-muted-foreground truncate">{org.name_en}</div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] bg-secondary text-secondary-foreground">
-                    <OrgRoleIcon className="w-3 h-3" />
-                    {orgRoleLabel}
-                  </span>
+                  {org.is_primary && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary font-medium border border-primary/20">
+                      {t("جهتي الأساسية", "Primary Organization")}
+                    </span>
+                  )}
+                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] bg-secondary text-secondary-foreground">
+                     <OrgRoleIcon className="w-3 h-3" />
+                     {orgRoleLabel}
+                   </span>
                   {org.status === "sandbox_active" && (
                     <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800">
                       {t("بيئة تجريبية", "Sandbox")}

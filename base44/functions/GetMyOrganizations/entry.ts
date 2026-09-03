@@ -164,6 +164,17 @@ export default async function(req) {
       }
     }
 
+    // Mark primary org and sort it first
+    const primaryOrgId = user.data?.primary_org_id;
+    for (const org of organizations) {
+      org.is_primary = org.id === primaryOrgId;
+    }
+    organizations.sort((a, b) => {
+      if (a.is_primary) return -1;
+      if (b.is_primary) return 1;
+      return 0;
+    });
+
     // Set active_org_id on user profile if not already set
     if (organizations.length > 0) {
       const currentActiveOrg = user.data?.active_org_id;
@@ -177,6 +188,16 @@ export default async function(req) {
       has_org: organizations.length > 0,
       total_committees: myCommittees.length,
       active_org_id: user.data?.active_org_id || organizations[0]?.id,
+      user_profile: {
+        display_name_ar: user.data?.display_name_ar || user.full_name,
+        display_name_en: user.data?.display_name_en || user.full_name,
+        job_title_ar: user.data?.job_title_ar,
+        job_title_en: user.data?.job_title_en,
+        primary_org_ar: user.data?.primary_org_ar,
+        primary_org_en: user.data?.primary_org_en,
+        is_demo_user: user.data?.is_demo_user,
+        demo_persona_key: user.data?.demo_persona_key,
+      },
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

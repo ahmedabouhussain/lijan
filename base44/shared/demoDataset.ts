@@ -6,6 +6,11 @@ export const DEMO_USER = {
   email: "F.alfihaidi@lijan.com",
   name_ar: "فهد الفهيدي",
   name_en: "Fahad Al-Fihaidi",
+  job_title_ar: "مدير التدقيق",
+  job_title_en: "Director of Audit",
+  primary_org_ar: "مجلس التدقيق والمراجعة",
+  primary_org_en: "Audit and Review Council",
+  persona_key: "FAHAD_AL_FIHAIDI",
 };
 
 export const DEMO_DATASET = "FAHAD_QATAR_GOVERNMENT_DEMO_V2";
@@ -14,11 +19,12 @@ export const DEMO_FLAG_KEY = "fahad_demo_v2_provisioned";
 // ── Organizations (3) ──
 export const DEMO_ORGS = [
   {
-    public_id: "DEMO-ORG-MIN-KNOWLEDGE",
-    slug: "wizarat-al-maarifa",
-    name_ar: "وزارة المعرفة",
-    name_en: "Ministry of Knowledge",
-    type: "ministry",
+    public_id: "DEMO-ORG-AUDIT-COUNCIL",
+    slug: "audit-review-council",
+    name_ar: "مجلس التدقيق والمراجعة",
+    name_en: "Audit and Review Council",
+    type: "council",
+    is_primary: true,
     description: "جهة تجريبية لعرض قدرات المنصة — بيانات غير حقيقية · Demo entity — fictional data",
   },
   {
@@ -41,40 +47,40 @@ export const DEMO_ORGS = [
 
 // ── Committees (7) — mapped to approved roles ──
 export const DEMO_COMMITTEES = [
-  // Org 0 — وزارة المعرفة (3 committees)
+  // Org 0 — مجلس التدقيق والمراجعة (3 committees)
   {
     orgIndex: 0,
-    public_id: "DEMO-COMM-FIN-POLICY",
-    slug: "lajnat-al-siyasat-al-maliya",
-    name_ar: "لجنة السياسات المالية",
-    name_en: "Financial Policies Committee",
+    public_id: "DEMO-COMM-INTERNAL-AUDIT",
+    slug: "lajnat-al-tadqiq-dakhili-jawda",
+    name_ar: "لجنة التدقيق الداخلي وضمان الجودة",
+    name_en: "Internal Audit & Quality Assurance Committee",
     type: "permanent_committee",
     fahadRole: "chair",
     scenario: "minutes_pending_approval",
-    topics: ["كفاءة الإنفاق الحكومي", "أولويات الميزانية", "ضوابط المصروفات", "تقارير الأداء المالي", "مراجعة الانحرافات", "التخطيط المالي متوسط المدى"],
+    topics: ["الخطة السنوية للتدقيق", "التدقيق القائم على المخاطر", "متابعة تنفيذ التوصيات", "جودة أعمال التدقيق", "مراجعة الضوابط الداخلية", "مؤشرات إغلاق الملاحظات"],
   },
   {
     orgIndex: 0,
-    public_id: "DEMO-COMM-DIGITAL-TRANSFORM",
-    slug: "lajnat-al-tahawol-raqami",
-    name_ar: "اللجنة الوطنية للتحول الرقمي",
-    name_en: "National Digital Transformation Committee",
-    type: "national_committee",
+    public_id: "DEMO-COMM-FIN-COMPLIANCE",
+    slug: "lajnat-al-siyasat-al-maliya-imtithal",
+    name_ar: "لجنة السياسات المالية والامتثال",
+    name_en: "Financial Policies & Compliance Committee",
+    type: "permanent_committee",
     fahadRole: "vice_chair",
     scenario: "delegation_active",
     hasDelegation: true,
-    topics: ["تكامل الخدمات الحكومية", "الهوية الرقمية", "تحسين رحلة المستفيد", "الترابط بين الأنظمة", "مؤشرات التبني الرقمي", "الخدمات الحكومية الاستباقية"],
+    topics: ["الالتزام المالي", "الحوكمة والامتثال", "رقابة العقود والمشتريات", "مراجعة الانحرافات المالية", "تقارير الامتثال", "ضوابط الإنفاق"],
   },
   {
     orgIndex: 0,
-    public_id: "DEMO-COMM-CYBERSECURITY",
-    slug: "firqan-amn-sibrani",
-    name_ar: "فريق عمل الأمن السيبراني",
-    name_en: "Cybersecurity Task Force",
+    public_id: "DEMO-COMM-DIGITAL-AUDIT-CYBER",
+    slug: "firqan-al-tadqiq-raqami-amn-sibrani",
+    name_ar: "فريق عمل التدقيق الرقمي والأمن السيبراني",
+    name_en: "Digital Audit & Cybersecurity Task Force",
     type: "task_force",
     fahadRole: "member",
     scenario: "open_voting",
-    topics: ["جاهزية الاستجابة للحوادث", "حماية الأنظمة الحيوية", "اختبار استمرارية الخدمات", "تقييم المخاطر السيبرانية", "التوعية الأمنية", "معالجة الثغرات"],
+    topics: ["التدقيق على الأنظمة الرقمية", "الأمن السيبراني", "تقييم المخاطر السيبرانية", "جاهزية الاستجابة للحوادث", "اختبار استمرارية الخدمات", "مراجعة الضوابط التقنية"],
   },
   // Org 1 — مؤسسة الحوكمة والتميز (2 committees)
   {

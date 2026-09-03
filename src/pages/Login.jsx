@@ -141,6 +141,18 @@ export default function Login() {
       </form>
 
       <div className="mt-6 pt-6 border-t border-border">
+        <div className="text-center mb-3 px-4 py-3 rounded-lg bg-accent/5 border border-accent/20">
+          <div className="text-sm font-semibold text-foreground">فهد الفهيدي · Fahad Al-Fihaidi</div>
+          <div className="text-xs text-muted-foreground mt-0.5">مدير التدقيق · Director of Audit</div>
+          <div className="text-xs text-muted-foreground">مجلس التدقيق والمراجعة · Audit and Review Council</div>
+          <div className="flex items-center justify-center gap-3 mt-2 text-[10px] text-accent font-medium">
+            <span>3 جهات · 3 Orgs</span>
+            <span>·</span>
+            <span>7 لجان · 7 Committees</span>
+            <span>·</span>
+            <span>4 أدوار · 4 Roles</span>
+          </div>
+        </div>
         <Button
           type="button"
           variant="outline"
@@ -148,7 +160,7 @@ export default function Login() {
           onClick={handleDemoExplore}
         >
           <Sparkles className="w-4 h-4 mr-2" />
-          استكشاف التجربة · Explore Demo
+          استكشاف التجربة بشخصية فهد · Explore as Fahad
         </Button>
       </div>
     </AuthLayout>
