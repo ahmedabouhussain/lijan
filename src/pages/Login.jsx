@@ -4,15 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2, Sparkles } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
-import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+
 
 export default function Login() {
   const navigate = useNavigate();
-  const { enterDemo } = useEffectiveActor();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,19 +36,6 @@ export default function Login() {
 
   const handleGoogle = () => {
     base44.auth.loginWithProvider("google", returnTo);
-  };
-
-  const handleDemoExplore = () => {
-    // Clear stale demo context keys before exploring
-    const demoKeys = [
-      "activeOrganizationId", "activeCommitteeId", "activeMembershipId",
-      "activeDemoPersona", "lastCommitteeRoute", "committeeQueryCache",
-      "raqeem_active_org", "raqeem_active_committee",
-    ];
-    demoKeys.forEach((k) => localStorage.removeItem(k));
-    // Establish a proper demo session — Fahad becomes the effective actor
-    enterDemo();
-    navigate("/");
   };
 
   return (
@@ -143,18 +129,6 @@ export default function Login() {
           )}
         </Button>
       </form>
-
-      <div className="mt-6 pt-6 border-t border-border">
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full h-12 text-sm font-medium border-accent/40 text-accent hover:bg-accent/10"
-          onClick={handleDemoExplore}
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          استكشاف التجربة
-        </Button>
-      </div>
     </AuthLayout>
   );
 }

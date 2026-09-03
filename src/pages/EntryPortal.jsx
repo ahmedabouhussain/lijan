@@ -16,7 +16,7 @@ import { BRAND } from "@/lib/brand";
 export default function EntryPortal() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoadingAuth, user } = useAuth();
-  const { isDemoMode, effectiveActor } = useEffectiveActor();
+  const { isDemoMode, effectiveActor, enterDemo } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [entityId, setEntityId] = useState("");
   const [email, setEmail] = useState("");
@@ -303,6 +303,25 @@ export default function EntryPortal() {
               className="text-sm text-primary hover:underline font-medium"
             >
               تسجيل الدخول · Sign in
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                const demoKeys = [
+                  "activeOrganizationId", "activeCommitteeId", "activeMembershipId",
+                  "activeDemoPersona", "lastCommitteeRoute", "committeeQueryCache",
+                  "raqeem_active_org", "raqeem_active_committee",
+                ];
+                demoKeys.forEach((k) => localStorage.removeItem(k));
+                enterDemo();
+                navigate("/");
+              }}
+              className="w-full inline-flex items-center justify-center gap-2 border border-accent/40 text-accent px-5 py-3 rounded-md text-sm font-medium hover:bg-accent/10 transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              استكشاف التجربة · Explore Experience
             </button>
           </div>
 
