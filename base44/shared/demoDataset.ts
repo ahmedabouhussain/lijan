@@ -1,6 +1,11 @@
 // LIJAN™ — Fahad Al-Fihaidi Approved Demo Dataset V2
 // 3 organizations, 7 committees — Qatar government-inspired fictional data
 // All data is fictional and marked with is_demo_data=true, demo_dataset=FAHAD_QATAR_GOVERNMENT_DEMO_V2
+//
+// CRITICAL: Demo data is linked to DEMO_USER_ID (a virtual identity), NOT the founder's real user ID.
+// This ensures complete isolation between the founder account and the demo persona.
+
+export const DEMO_USER_ID = "DEMO-USER-FAHAD-AL-FIHAIDI";
 
 export const DEMO_USER = {
   email: "F.alfihaidi@lijan.com",
@@ -11,6 +16,7 @@ export const DEMO_USER = {
   primary_org_ar: "مجلس التدقيق والمراجعة",
   primary_org_en: "Audit and Review Council",
   persona_key: "FAHAD_AL_FIHAIDI",
+  user_id: DEMO_USER_ID,
 };
 
 export const DEMO_DATASET = "FAHAD_QATAR_GOVERNMENT_DEMO_V2";
@@ -163,6 +169,7 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
         full_name: DEMO_USER.name_en,
         full_name_ar: DEMO_USER.name_ar,
         user_email: DEMO_USER.email,
+        user_id: DEMO_USER_ID,
         role: fahadRole,
         authority_level: fahadRole === "chair" ? "decision" : fahadRole === "vice_chair" ? "approval" : fahadRole === "secretary" ? "execution" : "decision",
         voting_right: true,
@@ -179,6 +186,7 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
         full_name: name,
         full_name_ar: name,
         user_email: `demo.member${nameIdx}@lijan-demo.com`,
+        user_id: null,
         role: roles[i],
         authority_level: roles[i] === "chair" ? "decision" : roles[i] === "vice_chair" ? "approval" : roles[i] === "secretary" ? "execution" : "decision",
         voting_right: roles[i] !== "advisor" && roles[i] !== "observer",

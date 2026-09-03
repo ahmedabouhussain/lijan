@@ -1,13 +1,17 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import {
-  DEMO_USER, DEMO_DATASET, DEMO_FLAG_KEY,
+  DEMO_USER, DEMO_USER_ID, DEMO_DATASET, DEMO_FLAG_KEY,
   DEMO_ORGS, DEMO_COMMITTEES, buildCommitteeMembers, buildMeetings,
 } from "../../shared/demoDataset.ts";
 
 // ProvisionFahadDemoData — Creates comprehensive demo data for Fahad Al-Fihaidi
 // 3 organizations, 7 committees — all ACTIVE, with public_id/slug for routing.
-// Memberships linked to the current admin user so the demo is visible.
-// Idempotent: cleans ALL old demo data by demo_dataset flag before creating.
+//
+// CRITICAL ARCHITECTURE:
+// - All demo memberships are linked to DEMO_USER_ID (virtual identity), NOT the founder's real user ID.
+// - The founder's account is NEVER modified (no updateMe calls).
+// - Uses UPSERT by public_id — running 10 times produces the same 3 orgs and 7 committees.
+// - Clean function only deletes by is_demo_data/demo_dataset flags — never by user_id.
 
 export default async function(req) {
   try {
@@ -17,68 +21,99 @@ export default async function(req) {
     if (user.role !== 'admin') return Response.json({ error: 'Admin only' }, { status: 403 });
 
     let payload = {};
-    try { payload = await req.json(); } catch {}
-    const reset = payload.reset !== false; // Default: reset
+    try { payload = await req.json(); } catch (e) {}
+    const reset = payload.reset !== false;
 
     const sr = base44.asServiceRole;
 
-    // ── Step 1: Clean ALL old demo data (by demo_dataset flag) ──
-    const deletedCounts = await cleanAllDemoData(sr, user.id);
+    // Step 1: Clean ALL old demo data (by demo_dataset flag ONLY — never by user_id)
+    const deletedCounts = reset ? await cleanAllDemoData(sr) : {};
 
-    // ── Step 2: Create Organizations with public_id/slug ──
+    // Step 2: Create or UPDATE Organizations (UPSERT by public_id)
     const orgIds = [];
     const orgMap = {};
     for (let i = 0; i < DEMO_ORGS.length; i++) {
       const org = DEMO_ORGS[i];
-      const created = await sr.entities.Organization.create({
-        ...org,
-        status: 'sandbox_active',
-        classification_policy: 'internal',
-        branding_primary_color: '#8A1538',
-        country: 'QA',
-        timezone: 'Asia/Qatar',
-        default_locale: 'ar',
-        retention_policy_years: 7,
-        is_demo_data: true,
-        demo_dataset: DEMO_DATASET,
-      });
-      orgIds.push(created.id);
-      orgMap[i] = created.id;
+      const existing = await sr.entities.Organization
+        .filter({ public_id: org.public_id })
+        .catch(() => { return []; });
+
+      if (existing && existing.length > 0) {
+        // UPDATE existing
+        const updated = await sr.entities.Organization.update(existing[0].id, {
+          slug: org.slug,
+          name_ar: org.name_ar,
+          name_en: org.name_en,
+          type: org.type,
+          status: 'sandbox_active',
+          classification_policy: 'internal',
+          branding_primary_color: '#8A1538',
+          country: 'QA',
+          timezone: 'Asia/Qatar',
+          default_locale: 'ar',
+          retention_policy_years: 7,
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+        orgIds.push(updated.id);
+        orgMap[i] = updated.id;
+      } else {
+        // CREATE new
+        const created = await sr.entities.Organization.create({
+          public_id: org.public_id,
+          slug: org.slug,
+          name_ar: org.name_ar,
+          name_en: org.name_en,
+          type: org.type,
+          status: 'sandbox_active',
+          classification_policy: 'internal',
+          branding_primary_color: '#8A1538',
+          country: 'QA',
+          timezone: 'Asia/Qatar',
+          default_locale: 'ar',
+          retention_policy_years: 7,
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+        orgIds.push(created.id);
+        orgMap[i] = created.id;
+      }
     }
 
-    // ── Step 3: Create OrganizationMemberships for current user ──
+    // Step 3: Create or UPDATE OrganizationMemberships for DEMO_USER_ID (NOT the founder)
     const orgMemberships = [];
     for (let i = 0; i < orgIds.length; i++) {
-      const m = await sr.entities.OrganizationMembership.create({
-        organization_id: orgIds[i],
-        user_id: user.id,
-        user_email: user.email,
-        user_name: user.full_name || user.email,
-        role: i === 0 ? 'admin' : 'member',
-        status: 'active',
-        joined_at: new Date().toISOString(),
-        is_demo_data: true,
-        demo_dataset: DEMO_DATASET,
-      });
-      orgMemberships.push(m);
+      const existing = await sr.entities.OrganizationMembership
+        .filter({ organization_id: orgIds[i], user_id: DEMO_USER_ID })
+        .catch(() => { return []; });
+
+      if (existing && existing.length > 0) {
+        await sr.entities.OrganizationMembership.update(existing[0].id, {
+          role: i === 0 ? 'admin' : 'member',
+          status: 'active',
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+        orgMemberships.push(existing[0]);
+      } else {
+        const m = await sr.entities.OrganizationMembership.create({
+          organization_id: orgIds[i],
+          user_id: DEMO_USER_ID,
+          user_email: DEMO_USER.email,
+          user_name: DEMO_USER.name_en,
+          role: i === 0 ? 'admin' : 'member',
+          status: 'active',
+          joined_at: new Date().toISOString(),
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+        orgMemberships.push(m);
+      }
     }
 
-    // ── Step 3b: Set Fahad's profile identity (job title, primary org) ──
-    await base44.auth.updateMe({
-      primary_org_id: orgMap[0],
-      job_title_ar: DEMO_USER.job_title_ar,
-      job_title_en: DEMO_USER.job_title_en,
-      primary_org_ar: DEMO_USER.primary_org_ar,
-      primary_org_en: DEMO_USER.primary_org_en,
-      demo_persona_key: DEMO_USER.persona_key,
-      is_demo_user: true,
-      display_name_ar: DEMO_USER.name_ar,
-      display_name_en: DEMO_USER.name_en,
-    }).catch(() => {});
-
-    // ── Step 3c: Register Audit and Review Council in OrganizationDirectory ──
+    // Step 3b: Register Audit and Review Council in OrganizationDirectory (UPSERT)
     const existingDir = await sr.entities.OrganizationDirectory
-      .filter({ directory_key: "audit_review_council" }).catch(() => []);
+      .filter({ directory_key: "audit_review_council" }).catch(() => { return []; });
     if (!existingDir || existingDir.length === 0) {
       await sr.entities.OrganizationDirectory.create({
         directory_key: "audit_review_council",
@@ -94,7 +129,7 @@ export default async function(req) {
       }).catch(() => {});
     }
 
-    // ── Step 4: Create Committees + Memberships + Data ──
+    // Step 4: Create or UPDATE Committees + Memberships + Data (UPSERT by public_id)
     const committeeIds = [];
     let totalMeetings = 0, totalDecisions = 0, totalActions = 0, totalMembers = 0;
 
@@ -102,45 +137,80 @@ export default async function(req) {
       const cdef = DEMO_COMMITTEES[i];
       const orgId = orgMap[cdef.orgIndex];
 
-      // Create committee with public_id/slug
-      const committee = await sr.entities.Committee.create({
-        organization_id: orgId,
-        public_id: cdef.public_id,
-        slug: cdef.slug,
-        name_ar: cdef.name_ar,
-        name_en: cdef.name_en,
-        type: cdef.type,
-        status: 'active',
-        mandate: buildMandate(cdef),
-        scope: buildScope(cdef),
-        establishing_authority: cdef.orgIndex === 0 ? "وزير المعرفة" : cdef.orgIndex === 1 ? "مجلس إدارة المؤسسة" : "رئيس المجلس",
-        establishing_doc_type: "decision",
-        establishing_doc_reference: `DEMO-${i + 1}-2026`,
-        establishing_doc_date: "2026-01-01",
-        quorum_count: 4,
-        voting_rule: "simple_majority",
-        meeting_cadence: "monthly",
-        classification: "internal",
-        term_start: "2026-01-01",
-        term_end: "2027-12-31",
-        chair_name: cdef.fahadRole === 'chair' ? DEMO_USER.name_ar : "أحمد المنصوري",
-        secretary_name: cdef.fahadRole === 'secretary' ? DEMO_USER.name_ar : "سارة الكواري",
-        governance_complete: true,
-        is_demo_data: true,
-        demo_dataset: DEMO_DATASET,
-      });
+      // UPSERT committee by public_id
+      const existingComm = await sr.entities.Committee
+        .filter({ public_id: cdef.public_id })
+        .catch(() => { return []; });
+
+      let committee;
+      if (existingComm && existingComm.length > 0) {
+        committee = await sr.entities.Committee.update(existingComm[0].id, {
+          organization_id: orgId,
+          slug: cdef.slug,
+          name_ar: cdef.name_ar,
+          name_en: cdef.name_en,
+          type: cdef.type,
+          status: 'active',
+          mandate: buildMandate(cdef),
+          scope: buildScope(cdef),
+          establishing_authority: cdef.orgIndex === 0 ? "وزير المعرفة" : cdef.orgIndex === 1 ? "مجلس إدارة المؤسسة" : "رئيس المجلس",
+          establishing_doc_type: "decision",
+          establishing_doc_reference: "DEMO-" + (i + 1) + "-2026",
+          establishing_doc_date: "2026-01-01",
+          quorum_count: 4,
+          voting_rule: "simple_majority",
+          meeting_cadence: "monthly",
+          classification: "internal",
+          term_start: "2026-01-01",
+          term_end: "2027-12-31",
+          chair_name: cdef.fahadRole === 'chair' ? DEMO_USER.name_ar : "أحمد المنصوري",
+          secretary_name: cdef.fahadRole === 'secretary' ? DEMO_USER.name_ar : "سارة الكواري",
+          governance_complete: true,
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+      } else {
+        committee = await sr.entities.Committee.create({
+          organization_id: orgId,
+          public_id: cdef.public_id,
+          slug: cdef.slug,
+          name_ar: cdef.name_ar,
+          name_en: cdef.name_en,
+          type: cdef.type,
+          status: 'active',
+          mandate: buildMandate(cdef),
+          scope: buildScope(cdef),
+          establishing_authority: cdef.orgIndex === 0 ? "وزير المعرفة" : cdef.orgIndex === 1 ? "مجلس إدارة المؤسسة" : "رئيس المجلس",
+          establishing_doc_type: "decision",
+          establishing_doc_reference: "DEMO-" + (i + 1) + "-2026",
+          establishing_doc_date: "2026-01-01",
+          quorum_count: 4,
+          voting_rule: "simple_majority",
+          meeting_cadence: "monthly",
+          classification: "internal",
+          term_start: "2026-01-01",
+          term_end: "2027-12-31",
+          chair_name: cdef.fahadRole === 'chair' ? DEMO_USER.name_ar : "أحمد المنصوري",
+          secretary_name: cdef.fahadRole === 'secretary' ? DEMO_USER.name_ar : "سارة الكواري",
+          governance_complete: true,
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        });
+      }
       committeeIds.push(committee.id);
 
-      // Create committee memberships (linked to current user as Fahad)
+      // Create committee memberships — linked to DEMO_USER_ID (NOT the founder)
       const members = buildCommitteeMembers(i, cdef.fahadRole);
-      const memberRecords = members.map((m) => ({
-        ...m,
-        user_id: m.full_name === DEMO_USER.name_en ? user.id : null,
-        organization_id: orgId,
-        committee_id: committee.id,
-        is_demo_data: true,
-        demo_dataset: DEMO_DATASET,
-      }));
+      const memberRecords = members.map(function(m) {
+        return {
+          ...m,
+          user_id: m.full_name === DEMO_USER.name_en ? DEMO_USER_ID : null,
+          organization_id: orgId,
+          committee_id: committee.id,
+          is_demo_data: true,
+          demo_dataset: DEMO_DATASET,
+        };
+      });
       await sr.entities.CommitteeMembership.bulkCreate(memberRecords);
       totalMembers += memberRecords.length;
 
@@ -150,28 +220,28 @@ export default async function(req) {
       totalMeetings += createdMeetings.length;
 
       // Create agenda items for the first upcoming meeting
-      const upcomingMeeting = createdMeetings.find((m) => m.status === 'scheduled');
+      const upcomingMeeting = createdMeetings.find(function(m) { return m.status === 'scheduled'; });
       if (upcomingMeeting) {
         const agendaItems = buildAgendaItems(upcomingMeeting.id, committee.id, orgId, i, cdef);
         await sr.entities.AgendaItem.bulkCreate(agendaItems);
       }
 
       // Create attendance for the first past meeting
-      const pastMeeting = createdMeetings.find((m) => m.status === 'completed');
+      const pastMeeting = createdMeetings.find(function(m) { return m.status === 'completed'; });
       if (pastMeeting) {
         const attendance = buildAttendance(pastMeeting.id, committee.id, orgId, members);
         await sr.entities.Attendance.bulkCreate(attendance);
       }
 
       // Create decisions (5 per committee)
-      const decisions = buildDecisions(committee.id, orgId, i, pastMeeting?.id, cdef);
+      const decisions = buildDecisions(committee.id, orgId, i, pastMeeting ? pastMeeting.id : null, cdef);
       for (const d of decisions) {
         await sr.entities.Decision.create(d);
       }
       totalDecisions += decisions.length;
 
-      // Create actions (8 per committee)
-      const actions = buildActions(committee.id, orgId, i, cdef, user);
+      // Create actions (8 per committee) — linked to DEMO_USER_ID
+      const actions = buildActions(committee.id, orgId, i, cdef);
       for (const a of actions) {
         await sr.entities.Action.create(a);
       }
@@ -199,12 +269,12 @@ export default async function(req) {
         }).catch(() => {});
       }
 
-      // Create audit events (20 per committee)
-      const auditEvents = buildAuditEvents(committee.id, orgId, i, cdef, user);
+      // Create audit events (20 per committee) — actor is DEMO_USER_ID
+      const auditEvents = buildAuditEvents(committee.id, orgId, i, cdef);
       await sr.entities.AuditEvent.bulkCreate(auditEvents);
 
-      // Create notifications (5 per committee)
-      const notifications = buildNotifications(committee.id, orgId, i, cdef, user);
+      // Create notifications (5 per committee) — recipient is DEMO_USER_ID
+      const notifications = buildNotifications(committee.id, orgId, i, cdef);
       await sr.entities.NotificationOutbox.bulkCreate(notifications);
 
       // Create authority delegation for vice_chair with delegation
@@ -231,7 +301,7 @@ export default async function(req) {
         });
       }
 
-      // Create conflict declaration for cybersecurity task force
+      // Create conflict declaration for risk committee
       if (cdef.scenario === 'conflict_of_interest') {
         await sr.entities.ConflictDeclaration.create({
           organization_id: orgId,
@@ -247,9 +317,9 @@ export default async function(req) {
       }
     }
 
-    // ── Step 5: Set FeatureFlag ──
-    const existingFlag = await sr.entities.FeatureFlag.filter({ key: DEMO_FLAG_KEY }).catch(() => []);
-    const flagDesc = `Demo V2 provisioned. Org IDs: ${orgIds.join(',')}. User: ${user.email}`;
+    // Step 5: Set FeatureFlag
+    const existingFlag = await sr.entities.FeatureFlag.filter({ key: DEMO_FLAG_KEY }).catch(() => { return []; });
+    const flagDesc = "Demo V2 provisioned. Org IDs: " + orgIds.join(",") + ". Demo User: " + DEMO_USER.email;
     if (existingFlag && existingFlag.length > 0) {
       await sr.entities.FeatureFlag.update(existingFlag[0].id, {
         enabled: true,
@@ -264,8 +334,8 @@ export default async function(req) {
       });
     }
 
-    // Also clean up old flag
-    const oldFlag = await sr.entities.FeatureFlag.filter({ key: "fahad_demo_provisioned" }).catch(() => []);
+    // Clean up old flag
+    const oldFlag = await sr.entities.FeatureFlag.filter({ key: "fahad_demo_provisioned" }).catch(() => { return []; });
     if (oldFlag && oldFlag.length > 0) {
       await sr.entities.FeatureFlag.update(oldFlag[0].id, { enabled: false }).catch(() => {});
     }
@@ -288,6 +358,7 @@ export default async function(req) {
       demo_user: {
         email: DEMO_USER.email,
         name: DEMO_USER.name_en,
+        user_id: DEMO_USER_ID,
         linked_to: user.email,
       },
     });
@@ -296,8 +367,9 @@ export default async function(req) {
   }
 }
 
-// ── Clean ALL demo data — by is_demo_data flag AND all known dataset keys ──
-async function cleanAllDemoData(sr, userId) {
+// Clean ALL demo data — by is_demo_data flag AND known dataset keys ONLY.
+// NEVER deletes by user_id — the founder's real memberships are safe.
+async function cleanAllDemoData(sr) {
   const counts = {};
   const knownDatasetKeys = [
     DEMO_DATASET,
@@ -316,17 +388,17 @@ async function cleanAllDemoData(sr, userId) {
     let deleted = 0;
     const seenIds = new Set();
     try {
-      // 1) Clean by is_demo_data flag (catches all demo data regardless of dataset key)
-      const demoRecords = await sr.entities[entity].filter({ is_demo_data: true }).catch(() => []);
+      // 1) Clean by is_demo_data flag
+      const demoRecords = await sr.entities[entity].filter({ is_demo_data: true }).catch(() => { return []; });
       for (const r of (demoRecords || [])) {
         if (seenIds.has(r.id)) continue;
         seenIds.add(r.id);
         await sr.entities[entity].delete(r.id).catch(() => {});
         deleted++;
       }
-      // 2) Also clean by known dataset keys (fallback for records without is_demo_data)
+      // 2) Also clean by known dataset keys
       for (const key of knownDatasetKeys) {
-        const records = await sr.entities[entity].filter({ demo_dataset: key }).catch(() => []);
+        const records = await sr.entities[entity].filter({ demo_dataset: key }).catch(() => { return []; });
         for (const r of (records || [])) {
           if (seenIds.has(r.id)) continue;
           seenIds.add(r.id);
@@ -334,135 +406,120 @@ async function cleanAllDemoData(sr, userId) {
           deleted++;
         }
       }
-      // 3) For membership entities, delete ALL records for this user (demo mode = clean slate)
-      if (userId && (entity === 'OrganizationMembership' || entity === 'CommitteeMembership')) {
-        const userMemberships = await sr.entities[entity].filter({ user_id: userId }).catch(() => []);
-        for (const r of (userMemberships || [])) {
-          if (seenIds.has(r.id)) continue;
-          seenIds.add(r.id);
-          await sr.entities[entity].delete(r.id).catch(() => {});
-          deleted++;
-        }
-      }
-      // 4) For Organization/Committee, also clean by public_id prefix "DEMO-"
+      // 3) For Organization/Committee, also clean by public_id prefix "DEMO-"
       if (entity === 'Organization' || entity === 'Committee') {
-        const allRecords = await sr.entities[entity].list().catch(() => []);
+        const allRecords = await sr.entities[entity].list().catch(() => { return []; });
         for (const r of (allRecords || [])) {
           if (seenIds.has(r.id)) continue;
-          if (r.public_id?.startsWith?.("DEMO-") || r.slug?.includes?.("demo")) {
+          if (r.public_id && r.public_id.startsWith("DEMO-")) {
             seenIds.add(r.id);
             await sr.entities[entity].delete(r.id).catch(() => {});
             deleted++;
           }
         }
       }
-    } catch {}
+    } catch (e) {}
     counts[entity] = deleted;
   }
 
   return counts;
 }
 
-// ── Mandate builder ──
+// Mandate builder
 function buildMandate(cdef) {
   const topics = cdef.topics || [];
-  return `تتولى ${cdef.name_ar} اختصاصات تشمل: ${topics.join("، ")}. ` +
-    `تعمل اللجنة وفق اللائحة الداخلية وتقدم تقارير دورية للجهة المشرفة. ` +
-    `بيانات تجريبية — غير صالحة للاستخدام الرسمي · Demo data — fictional`;
+  return "تتولى " + cdef.name_ar + " اختصاصات تشمل: " + topics.join("، ") + ". " +
+    "تعمل اللجنة وفق اللائحة الداخلية وتقدم تقارير دورية للجهة المشرفة. " +
+    "بيانات تجريبية — غير صالحة للاستخدام الرسمي · Demo data — fictional";
 }
 
 function buildScope(cdef) {
-  return `يشمل نطاق ${cdef.name_ar}: المراجعة والاعتماد والمتابعة في مجالات الاختصاص المحددة. ` +
-    `تقدم اللجنة توصيات للجهة المشرفة وترفع تقارير دورية عن نتائج أعمالها. ` +
-    `بيانات تجريبية · Demo data`;
+  return "يشمل نطاق " + cdef.name_ar + ": المراجعة والاعتماد والمتابعة في مجالات الاختصاص المحددة. " +
+    "تقدم اللجنة توصيات للجهة المشرفة وترفع تقارير دورية عن نتائج أعمالها. " +
+    "بيانات تجريبية · Demo data";
 }
 
-// ── Agenda items ──
+// Agenda items
 function buildAgendaItems(meetingId, committeeId, orgId, committeeIndex, cdef) {
   const topics = cdef.topics || ["بند عام"];
   const items = [
     { title: "اعتماد محضر الاجتماع السابق", title_ar: "اعتماد محضر الاجتماع السابق", objective: "مراجعة واعتماد المحضر", time_allocation_minutes: 10, readiness: "ready", required_decision: "approve_minutes" },
-    { title: `تقرير المتابعة التنفيذية — ${topics[0]}`, title_ar: `تقرير المتابعة التنفيذية — ${topics[0]}`, objective: "استعراض تقدم الإجراءات", time_allocation_minutes: 20, readiness: "ready", required_decision: "note" },
-    { title: `${topics[1] || topics[0]} — للنقاش والتصويت`, title_ar: `${topics[1] || topics[0]} — للنقاش والتصويت`, objective: "مناقشة واتخاذ قرار", time_allocation_minutes: 30, readiness: "needs_attention", required_decision: "vote" },
-    { title: `${topics[2] || topics[0]} — استعراض`, title_ar: `${topics[2] || topics[0]} — استعراض`, objective: "استعراض وتقديم ملاحظات", time_allocation_minutes: 15, readiness: "ready", required_decision: "note" },
+    { title: "تقرير المتابعة التنفيذية — " + topics[0], title_ar: "تقرير المتابعة التنفيذية — " + topics[0], objective: "استعراض تقدم الإجراءات", time_allocation_minutes: 20, readiness: "ready", required_decision: "note" },
+    { title: (topics[1] || topics[0]) + " — للنقاش والتصويت", title_ar: (topics[1] || topics[0]) + " — للنقاش والتصويت", objective: "مناقشة واتخاذ قرار", time_allocation_minutes: 30, readiness: "needs_attention", required_decision: "vote" },
+    { title: (topics[2] || topics[0]) + " — استعراض", title_ar: (topics[2] || topics[0]) + " — استعراض", objective: "استعراض وتقديم ملاحظات", time_allocation_minutes: 15, readiness: "ready", required_decision: "note" },
   ];
-  return items.map((item, idx) => ({
-    organization_id: orgId,
-    committee_id: committeeId,
-    meeting_id: meetingId,
-    sequence: idx + 1,
-    title: item.title,
-    title_ar: item.title_ar,
-    objective: item.objective,
-    time_allocation_minutes: item.time_allocation_minutes,
-    required_decision: item.required_decision,
-    readiness: item.readiness,
-    classification: "internal",
-    status: "pending",
-    is_demo_data: true,
-    demo_dataset: DEMO_DATASET,
-  }));
+  return items.map(function(item, idx) {
+    return {
+      organization_id: orgId,
+      committee_id: committeeId,
+      meeting_id: meetingId,
+      sequence: idx + 1,
+      title: item.title,
+      title_ar: item.title_ar,
+      objective: item.objective,
+      time_allocation_minutes: item.time_allocation_minutes,
+      required_decision: item.required_decision,
+      readiness: item.readiness,
+      classification: "internal",
+      status: "pending",
+      is_demo_data: true,
+      demo_dataset: DEMO_DATASET,
+    };
+  });
 }
 
-// ── Attendance ──
+// Attendance
 function buildAttendance(meetingId, committeeId, orgId, members) {
   const statuses = ["present", "present", "present", "present", "present", "present", "absent_with_apology", "present", "present", "present"];
-  return members.map((m, idx) => ({
-    organization_id: orgId,
-    meeting_id: meetingId,
-    committee_id: committeeId,
-    member_name: m.full_name_ar || m.full_name,
-    member_role: m.role,
-    attendance_status: statuses[idx % statuses.length],
-    is_demo_data: true,
-    demo_dataset: DEMO_DATASET,
-  }));
+  return members.map(function(m, idx) {
+    return {
+      organization_id: orgId,
+      meeting_id: meetingId,
+      committee_id: committeeId,
+      member_name: m.full_name_ar || m.full_name,
+      member_role: m.role,
+      attendance_status: statuses[idx % statuses.length],
+      is_demo_data: true,
+      demo_dataset: DEMO_DATASET,
+    };
+  });
 }
 
-// ── Decisions (5 per committee) ──
+// Decisions (5 per committee)
 function buildDecisions(committeeId, orgId, committeeIndex, meetingId, cdef) {
   const topics = cdef.topics || ["قرار عام"];
   const decisions = [];
 
-  // Decision 1: Issued (approved in past meeting)
   decisions.push({
-    organization_id: orgId,
-    committee_id: committeeId,
-    meeting_id: meetingId,
-    decision_number: `DEC-${committeeIndex + 1}-2026-001`,
-    title: `اعتماد إطار عمل ${topics[0]}`,
-    title_ar: `اعتماد إطار عمل ${topics[0]}`,
-    proposal: `اعتماد الإطار المقترح لـ ${topics[0]} وفق المعايير المعتمدة — بيانات تجريبية`,
+    organization_id: orgId, committee_id: committeeId, meeting_id: meetingId,
+    decision_number: "DEC-" + (committeeIndex + 1) + "-2026-001",
+    title: "اعتماد إطار عمل " + topics[0],
+    title_ar: "اعتماد إطار عمل " + topics[0],
+    proposal: "اعتماد الإطار المقترح لـ " + topics[0] + " وفق المعايير المعتمدة — بيانات تجريبية",
     legal_basis: "اللائحة الداخلية التجريبية — المادة 12",
     vote_for: 7, vote_against: 1, vote_abstain: 1,
     status: "issued",
     issued_at: new Date(Date.now() - 14 * 86400000).toISOString(),
-    is_demo_data: true,
-    demo_dataset: DEMO_DATASET,
+    is_demo_data: true, demo_dataset: DEMO_DATASET,
   });
 
-  // Decision 2: Issued
   decisions.push({
-    organization_id: orgId,
-    committee_id: committeeId,
-    meeting_id: meetingId,
-    decision_number: `DEC-${committeeIndex + 1}-2026-002`,
-    title: `تخصيص ميزانية ${topics[1] || topics[0]}`,
-    title_ar: `تخصيص ميزانية ${topics[1] || topics[0]}`,
-    proposal: `تخصيص الميزانية اللازمة لتنفيذ أنشطة ${topics[1] || topics[0]} — بيانات تجريبية`,
+    organization_id: orgId, committee_id: committeeId, meeting_id: meetingId,
+    decision_number: "DEC-" + (committeeIndex + 1) + "-2026-002",
+    title: "تخصيص ميزانية " + (topics[1] || topics[0]),
+    title_ar: "تخصيص ميزانية " + (topics[1] || topics[0]),
+    proposal: "تخصيص الميزانية اللازمة لتنفيذ أنشطة " + (topics[1] || topics[0]) + " — بيانات تجريبية",
     legal_basis: "اللائحة الداخلية التجريبية — المادة 15",
     vote_for: 8, vote_against: 0, vote_abstain: 1,
     status: "issued",
     issued_at: new Date(Date.now() - 7 * 86400000).toISOString(),
-    is_demo_data: true,
-    demo_dataset: DEMO_DATASET,
+    is_demo_data: true, demo_dataset: DEMO_DATASET,
   });
 
-  // Decision 3: Scenario-specific
   if (cdef.scenario === 'minutes_pending_approval') {
     decisions.push({
       organization_id: orgId, committee_id: committeeId,
-      decision_number: `DEC-${committeeIndex + 1}-2026-003`,
+      decision_number: "DEC-" + (committeeIndex + 1) + "-2026-003",
       title: "قرار استراتيجي ينتظر الاعتماد",
       title_ar: "قرار استراتيجي ينتظر الاعتماد",
       proposal: "مسودة قرار استراتيجي تنتظر اعتماد الرئيس — بيانات تجريبية",
@@ -472,7 +529,7 @@ function buildDecisions(committeeId, orgId, committeeIndex, meetingId, cdef) {
   } else if (cdef.scenario === 'open_voting') {
     decisions.push({
       organization_id: orgId, committee_id: committeeId,
-      decision_number: `DEC-${committeeIndex + 1}-2026-003`,
+      decision_number: "DEC-" + (committeeIndex + 1) + "-2026-003",
       title: "قرار مفتوح للتصويت",
       title_ar: "قرار مفتوح للتصويت",
       proposal: "مسودة قرار مفتوح للتصويت — ينتظر إدلاء الأعضاء بأصواتهم — بيانات تجريبية",
@@ -482,34 +539,32 @@ function buildDecisions(committeeId, orgId, committeeIndex, meetingId, cdef) {
   } else {
     decisions.push({
       organization_id: orgId, committee_id: committeeId,
-      decision_number: `DEC-${committeeIndex + 1}-2026-003`,
-      title: `مراجعة ${topics[2] || topics[0]}`,
-      title_ar: `مراجعة ${topics[2] || topics[0]}`,
-      proposal: `مراجعة وتحديث السياسة المتعلقة بـ ${topics[2] || topics[0]} — بيانات تجريبية`,
+      decision_number: "DEC-" + (committeeIndex + 1) + "-2026-003",
+      title: "مراجعة " + (topics[2] || topics[0]),
+      title_ar: "مراجعة " + (topics[2] || topics[0]),
+      proposal: "مراجعة وتحديث السياسة المتعلقة بـ " + (topics[2] || topics[0]) + " — بيانات تجريبية",
       status: "in_review",
       is_demo_data: true, demo_dataset: DEMO_DATASET,
     });
   }
 
-  // Decision 4: Executing
   decisions.push({
     organization_id: orgId, committee_id: committeeId,
-    decision_number: `DEC-${committeeIndex + 1}-2026-004`,
-    title: `تنفيذ ${topics[3] || topics[0]}`,
-    title_ar: `تنفيذ ${topics[3] || topics[0]}`,
-    proposal: `بدء تنفيذ الإجراءات المتعلقة بـ ${topics[3] || topics[0]} — بيانات تجريبية`,
+    decision_number: "DEC-" + (committeeIndex + 1) + "-2026-004",
+    title: "تنفيذ " + (topics[3] || topics[0]),
+    title_ar: "تنفيذ " + (topics[3] || topics[0]),
+    proposal: "بدء تنفيذ الإجراءات المتعلقة بـ " + (topics[3] || topics[0]) + " — بيانات تجريبية",
     vote_for: 6, vote_against: 2, vote_abstain: 1,
     status: "executing",
     is_demo_data: true, demo_dataset: DEMO_DATASET,
   });
 
-  // Decision 5: Completed
   decisions.push({
     organization_id: orgId, committee_id: committeeId,
-    decision_number: `DEC-${committeeIndex + 1}-2026-005`,
-    title: `إغلاق ${topics[4] || topics[0]}`,
-    title_ar: `إغلاق ${topics[4] || topics[0]}`,
-    proposal: `إكمال وإغلاق الإجراءات المتعلقة بـ ${topics[4] || topics[0]} — بيانات تجريبية`,
+    decision_number: "DEC-" + (committeeIndex + 1) + "-2026-005",
+    title: "إغلاق " + (topics[4] || topics[0]),
+    title_ar: "إغلاق " + (topics[4] || topics[0]),
+    proposal: "إكمال وإغلاق الإجراءات المتعلقة بـ " + (topics[4] || topics[0]) + " — بيانات تجريبية",
     vote_for: 9, vote_against: 0, vote_abstain: 0,
     status: "completed",
     is_demo_data: true, demo_dataset: DEMO_DATASET,
@@ -518,25 +573,25 @@ function buildDecisions(committeeId, orgId, committeeIndex, meetingId, cdef) {
   return decisions;
 }
 
-// ── Actions (8 per committee) ──
-function buildActions(committeeId, orgId, committeeIndex, cdef, user) {
+// Actions (8 per committee) — owner_name uses DEMO_USER.name_ar for Fahad's actions
+function buildActions(committeeId, orgId, committeeIndex, cdef) {
   const topics = cdef.topics || ["إجراء عام"];
   const actions = [];
-  const futureDate = (days) => {
+  const futureDate = function(days) {
     const d = new Date();
     d.setDate(d.getDate() + days);
     return d.toISOString().split('T')[0];
   };
 
   const actionTemplates = [
-    { title: `إعداد مسودة ${topics[0]}`, owner: DEMO_USER.name_ar, deadline: futureDate(14), priority: 'high', progress: 30, status: 'in_progress' },
-    { title: `مراجعة ${topics[1] || topics[0]}`, owner: "أحمد المنصوري", deadline: futureDate(21), priority: 'medium', progress: 50, status: 'in_progress' },
-    { title: `تقييم ${topics[2] || topics[0]}`, owner: "سارة الكواري", deadline: futureDate(30), priority: 'medium', progress: 10, status: 'in_progress' },
-    { title: `إعداد تقرير ${topics[3] || topics[0]}`, owner: DEMO_USER.name_ar, deadline: futureDate(7), priority: 'high', progress: 60, status: 'in_progress' },
-    { title: `متابعة ${topics[4] || topics[0]}`, owner: "خالد العبدالله", deadline: futureDate(-3), priority: 'critical', progress: 20, status: 'overdue' },
-    { title: `اعتماد ${topics[5] || topics[0]}`, owner: "نورة آل علي", deadline: futureDate(45), priority: 'low', progress: 0, status: 'pending' },
-    { title: `تنفيذ ${topics[0]} — المرحلة الثانية`, owner: DEMO_USER.name_ar, deadline: futureDate(60), priority: 'medium', progress: 40, status: 'in_progress' },
-    { title: `إغلاق ${topics[2] || topics[0]}`, owner: "محمد الدوسري", deadline: futureDate(-7), priority: 'high', progress: 90, status: 'completed' },
+    { title: "إعداد مسودة " + topics[0], owner: DEMO_USER.name_ar, deadline: futureDate(14), priority: 'high', progress: 30, status: 'in_progress' },
+    { title: "مراجعة " + (topics[1] || topics[0]), owner: "أحمد المنصوري", deadline: futureDate(21), priority: 'medium', progress: 50, status: 'in_progress' },
+    { title: "تقييم " + (topics[2] || topics[0]), owner: "سارة الكواري", deadline: futureDate(30), priority: 'medium', progress: 10, status: 'in_progress' },
+    { title: "إعداد تقرير " + (topics[3] || topics[0]), owner: DEMO_USER.name_ar, deadline: futureDate(7), priority: 'high', progress: 60, status: 'in_progress' },
+    { title: "متابعة " + (topics[4] || topics[0]), owner: "خالد العبدالله", deadline: futureDate(-3), priority: 'critical', progress: 20, status: 'overdue' },
+    { title: "اعتماد " + (topics[5] || topics[0]), owner: "نورة آل علي", deadline: futureDate(45), priority: 'low', progress: 0, status: 'pending' },
+    { title: "تنفيذ " + topics[0] + " — المرحلة الثانية", owner: DEMO_USER.name_ar, deadline: futureDate(60), priority: 'medium', progress: 40, status: 'in_progress' },
+    { title: "إغلاق " + (topics[2] || topics[0]), owner: "محمد الدوسري", deadline: futureDate(-7), priority: 'high', progress: 90, status: 'completed' },
   ];
 
   for (const t of actionTemplates) {
@@ -557,21 +612,21 @@ function buildActions(committeeId, orgId, committeeIndex, cdef, user) {
   return actions;
 }
 
-// ── Meeting minutes (2 approved + 1 under review) ──
+// Meeting minutes (2 approved + 1 under review)
 function buildMinutes(committeeId, orgId, committeeIndex, meetings, cdef) {
   const minutes = [];
-  const pastMeetings = meetings.filter((m) => m.status === 'completed');
+  const pastMeetings = meetings.filter(function(m) { return m.status === 'completed'; });
   
   for (let i = 0; i < Math.min(2, pastMeetings.length); i++) {
     minutes.push({
       organization_id: orgId,
       committee_id: committeeId,
       meeting_id: pastMeetings[i].id,
-      title: `محضر ${pastMeetings[i].title}`,
-      title_ar: `محضر ${pastMeetings[i].title}`,
-      body: `تم عقد ${pastMeetings[i].title} بحضور أعضاء اللجنة. تمت مناقشة بنود جدول الأعمال واتخاذ القرارات اللازمة. ` +
-        `بيانات تجريبية — غير صالحة للاستخدام الرسمي · Demo data — fictional`,
-      status: i === 0 ? 'approved' : 'approved',
+      title: "محضر " + pastMeetings[i].title,
+      title_ar: "محضر " + pastMeetings[i].title,
+      body: "تم عقد " + pastMeetings[i].title + " بحضور أعضاء اللجنة. تمت مناقشة بنود جدول الأعمال واتخاذ القرارات اللازمة. " +
+        "بيانات تجريبية — غير صالحة للاستخدام الرسمي · Demo data — fictional",
+      status: 'approved',
       approved_by_name: cdef.fahadRole === 'chair' ? DEMO_USER.name_ar : "أحمد المنصوري",
       approved_at: new Date(Date.now() - (i + 1) * 7 * 86400000).toISOString(),
       is_demo_data: true,
@@ -584,9 +639,9 @@ function buildMinutes(committeeId, orgId, committeeIndex, meetings, cdef) {
       organization_id: orgId,
       committee_id: committeeId,
       meeting_id: pastMeetings[2].id,
-      title: `محضر ${pastMeetings[2].title} — تحت المراجعة`,
-      title_ar: `محضر ${pastMeetings[2].title} — تحت المراجعة`,
-      body: `مسودة محضر ${pastMeetings[2].title} — ينتظر المراجعة والاعتماد. بيانات تجريبية · Demo data`,
+      title: "محضر " + pastMeetings[2].title + " — تحت المراجعة",
+      title_ar: "محضر " + pastMeetings[2].title + " — تحت المراجعة",
+      body: "مسودة محضر " + pastMeetings[2].title + " — ينتظر المراجعة والاعتماد. بيانات تجريبية · Demo data",
       status: 'draft',
       is_demo_data: true,
       demo_dataset: DEMO_DATASET,
@@ -596,7 +651,7 @@ function buildMinutes(committeeId, orgId, committeeIndex, meetings, cdef) {
   return minutes;
 }
 
-// ── Documents (10 per committee) ──
+// Documents (10 per committee)
 function buildDocuments(committeeId, orgId, committeeIndex, cdef) {
   const topics = cdef.topics || ["وثيقة"];
   const docTypes = ["memo", "report", "analysis", "proposal", "evidence", "correspondence", "draft_decision", "report", "analysis", "proposal"];
@@ -606,12 +661,12 @@ function buildDocuments(committeeId, orgId, committeeIndex, cdef) {
     docs.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `${topics[i % topics.length]} — وثيقة ${i + 1}`,
-      title_ar: `${topics[i % topics.length]} — وثيقة ${i + 1}`,
+      title: (topics[i % topics.length]) + " — وثيقة " + (i + 1),
+      title_ar: (topics[i % topics.length]) + " — وثيقة " + (i + 1),
       document_type: docTypes[i % docTypes.length],
       classification: "internal",
       owner_name: i % 3 === 0 ? DEMO_USER.name_ar : "أحمد المنصوري",
-      description: `وثيقة تجريبية تتعلق بـ ${topics[i % topics.length]} — بيانات غير حقيقية · Demo document`,
+      description: "وثيقة تجريبية تتعلق بـ " + (topics[i % topics.length]) + " — بيانات غير حقيقية · Demo document",
       status: i < 6 ? "published" : "in_review",
       is_demo_data: true,
       demo_dataset: DEMO_DATASET,
@@ -620,7 +675,7 @@ function buildDocuments(committeeId, orgId, committeeIndex, cdef) {
   return docs;
 }
 
-// ── Risks (4 per committee) — stored as CommitteeAmendment for demo ──
+// Risks (4 per committee) — stored as CommitteeAmendment for demo
 function buildRisks(committeeId, orgId, committeeIndex, cdef) {
   const topics = cdef.topics || ["مخاطرة"];
   const riskLevels = ["high", "medium", "medium", "low"];
@@ -630,11 +685,11 @@ function buildRisks(committeeId, orgId, committeeIndex, cdef) {
     risks.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `مخاطرة ${topics[i % topics.length]} — ${i + 1}`,
-      title_ar: `مخاطرة ${topics[i % topics.length]} — ${i + 1}`,
+      title: "مخاطرة " + (topics[i % topics.length]) + " — " + (i + 1),
+      title_ar: "مخاطرة " + (topics[i % topics.length]) + " — " + (i + 1),
       type: "amendment",
       status: "proposed",
-      description: `مخاطرة محتملة في ${topics[i % topics.length]} — تتطلب متابعة ومعالجة. بيانات تجريبية`,
+      description: "مخاطرة محتملة في " + (topics[i % topics.length]) + " — تتطلب متابعة ومعالجة. بيانات تجريبية",
       priority: riskLevels[i],
       is_demo_data: true,
       demo_dataset: DEMO_DATASET,
@@ -643,8 +698,8 @@ function buildRisks(committeeId, orgId, committeeIndex, cdef) {
   return risks;
 }
 
-// ── Audit events (20 per committee) ──
-function buildAuditEvents(committeeId, orgId, committeeIndex, cdef, user) {
+// Audit events (20 per committee) — actor is DEMO_USER_ID for Fahad's actions
+function buildAuditEvents(committeeId, orgId, committeeIndex, cdef) {
   const events = [];
   const actionTypes = [
     'committee_accessed', 'meeting_scheduled', 'meeting_started', 'meeting_adjourned',
@@ -661,9 +716,9 @@ function buildAuditEvents(committeeId, orgId, committeeIndex, cdef, user) {
       organization_id: orgId,
       committee_id: committeeId,
       event_type: actionTypes[i % actionTypes.length],
-      description: `${actionTypes[i % actionTypes.length]} — ${cdef.name_ar} — بيانات تجريبية`,
+      description: actionTypes[i % actionTypes.length] + " — " + cdef.name_ar + " — بيانات تجريبية",
       actor_name: i % 3 === 0 ? DEMO_USER.name_ar : "أحمد المنصوري",
-      actor_user_id: i % 3 === 0 ? user.id : null,
+      actor_user_id: i % 3 === 0 ? DEMO_USER_ID : null,
       entity_type: "Committee",
       entity_id: committeeId,
       entity_title: cdef.name_ar,
@@ -675,8 +730,8 @@ function buildAuditEvents(committeeId, orgId, committeeIndex, cdef, user) {
   return events;
 }
 
-// ── Notifications (5 per committee) ──
-function buildNotifications(committeeId, orgId, committeeIndex, cdef, user) {
+// Notifications (5 per committee) — recipient is DEMO_USER_ID
+function buildNotifications(committeeId, orgId, committeeIndex, cdef) {
   const eventTypes = ['meeting_scheduled', 'agenda_published', 'action_assigned', 'decision_issued', 'minutes_approval_requested'];
   const notifications = [];
 
@@ -684,15 +739,15 @@ function buildNotifications(committeeId, orgId, committeeIndex, cdef, user) {
     notifications.push({
       organization_id: orgId,
       committee_id: committeeId,
-      recipient_user_id: user.id,
-      recipient_email: user.email,
+      recipient_user_id: DEMO_USER_ID,
+      recipient_email: DEMO_USER.email,
       recipient_name: DEMO_USER.name_ar,
       event_type: eventTypes[i],
       channel: 'in_app',
-      subject_ar: `${cdef.name_ar} — ${eventTypes[i]}`,
-      subject_en: `${cdef.name_en} — ${eventTypes[i]}`,
-      body_ar: `إشعار تجريبي من ${cdef.name_ar} — بيانات غير حقيقية`,
-      body_en: `Demo notification from ${cdef.name_en} — fictional data`,
+      subject_ar: cdef.name_ar + " — " + eventTypes[i],
+      subject_en: cdef.name_en + " — " + eventTypes[i],
+      body_ar: "إشعار تجريبي من " + cdef.name_ar + " — بيانات غير حقيقية",
+      body_en: "Demo notification from " + cdef.name_en + " — fictional data",
       priority: i === 0 ? 'high' : 'normal',
       status: i < 3 ? 'sent' : 'read',
       sent_at: new Date(Date.now() - i * 3600000).toISOString(),

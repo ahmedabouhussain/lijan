@@ -1,70 +1,164 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { DEMO_USER } from '../../shared/demoDataset.ts';
+import { DEMO_USER, DEMO_USER_ID, DEMO_DATASET } from '../../shared/demoDataset.ts';
 
 // GetMyOrganizations — resolves the current user's organization memberships
 // AND committee memberships across ALL organizations.
 // Returns org details + committees (grouped by org) for each active membership.
-// Used by EntryPortal to show a unified cross-org workspace.
+//
+// CRITICAL: When demo_mode=true, queries demo data by demo_dataset flag
+// (NOT by user_id). This ensures demo data is isolated from the founder's real data.
+// The founder's real memberships are never mixed with demo data.
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    let payload = {};
+    try { payload = await req.json(); } catch (e) {}
+    const demoMode = payload.demo_mode === true;
+
+    const sr = base44.asServiceRole;
+
+    // DEMO MODE: Return Fahad's demo data, scoped by demo_dataset flag
+    if (demoMode) {
+      const demoOrgs = await sr.entities.Organization
+        .filter({ is_demo_data: true, demo_dataset: DEMO_DATASET })
+        .catch(() => { return []; });
+
+      const demoCommitteeMemberships = await sr.entities.CommitteeMembership
+        .filter({ user_id: DEMO_USER_ID, status: 'active' })
+        .catch(() => { return []; });
+
+      const demoOrgMemberships = await sr.entities.OrganizationMembership
+        .filter({ user_id: DEMO_USER_ID, status: 'active' })
+        .catch(() => { return []; });
+
+      const organizations = [];
+      const seenOrgIds = new Set();
+      for (const org of (demoOrgs || [])) {
+        if (seenOrgIds.has(org.id)) continue;
+        if (org.status === 'merged_duplicate') continue;
+        seenOrgIds.add(org.id);
+        const orgMembership = (demoOrgMemberships || []).find((m) => m.organization_id === org.id);
+        organizations.push({
+          id: org.id,
+          public_id: org.public_id,
+          slug: org.slug,
+          name_ar: org.name_ar,
+          name_en: org.name_en,
+          type: org.type,
+          status: org.status,
+          directory_key: org.directory_key,
+          branding_primary_color: org.branding_primary_color,
+          logo_url: org.logo_url,
+          my_role: orgMembership ? orgMembership.role : 'member',
+          is_primary: org.public_id === 'DEMO-ORG-AUDIT-COUNCIL',
+        });
+      }
+
+      const seenCommitteeIds = new Set();
+      const myCommittees = [];
+      for (const cm of (demoCommitteeMemberships || [])) {
+        if (seenCommitteeIds.has(cm.committee_id)) continue;
+        seenCommitteeIds.add(cm.committee_id);
+        const committee = await sr.entities.Committee.get(cm.committee_id).catch(() => null);
+        if (!committee) continue;
+        myCommittees.push({
+          id: committee.id,
+          name_ar: committee.name_ar,
+          name_en: committee.name_en,
+          slug: committee.slug,
+          public_id: committee.public_id,
+          type: committee.type,
+          status: committee.status,
+          organization_id: committee.organization_id,
+          my_role: cm.role,
+        });
+      }
+
+      const committeesByOrg = {};
+      for (const c of myCommittees) {
+        if (!committeesByOrg[c.organization_id]) committeesByOrg[c.organization_id] = [];
+        committeesByOrg[c.organization_id].push(c);
+      }
+      for (const org of organizations) {
+        org.committees = committeesByOrg[org.id] || [];
+      }
+
+      organizations.sort((a, b) => {
+        if (a.is_primary) return -1;
+        if (b.is_primary) return 1;
+        return 0;
+      });
+
+      const userProfile = {
+        display_name_ar: DEMO_USER.name_ar,
+        display_name_en: DEMO_USER.name_en,
+        job_title_ar: DEMO_USER.job_title_ar,
+        job_title_en: DEMO_USER.job_title_en,
+        primary_org_ar: DEMO_USER.primary_org_ar,
+        primary_org_en: DEMO_USER.primary_org_en,
+        is_demo_user: true,
+        demo_persona_key: DEMO_USER.persona_key,
+      };
+
+      return Response.json({
+        organizations: organizations,
+        has_org: organizations.length > 0,
+        total_committees: myCommittees.length,
+        active_org_id: organizations.length > 0 ? organizations[0].id : null,
+        user_profile: userProfile,
+        is_demo_mode: true,
+      });
+    }
+
+    // NORMAL MODE: Real user's data, EXCLUDING demo data
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Detect demo persona — if user.data has demo markers OR email matches demo user
-    const isDemoUser = user.data?.is_demo_user === true ||
-                       user.data?.demo_persona_key === DEMO_USER.persona_key ||
-                       user.email === DEMO_USER.email;
-
-    // 1) Get all active ORG memberships for the user
-    const orgMemberships = await base44.asServiceRole.entities.OrganizationMembership
+    const orgMemberships = await sr.entities.OrganizationMembership
       .filter({ user_id: user.id, status: 'active' })
-      .catch(() => []);
+      .catch(() => { return []; });
 
-    // Sort: owner first, then admin, then member
+    const realOrgMemberships = (orgMemberships || []).filter(function(m) {
+      return !m.is_demo_data && m.demo_dataset !== DEMO_DATASET;
+    });
+
     const rolePriority = { owner: 1, admin: 2, member: 3, auditor: 4 };
-    const sortedOrgMemberships = (orgMemberships || []).sort(
-      (a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99)
-    );
+    const sortedOrgMemberships = realOrgMemberships.sort(function(a, b) {
+      return (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99);
+    });
 
-    // 2) Build org list with details — EXCLUDE merged duplicates, redirect to canonical
     const seenOrgIds = new Set();
     const organizations = [];
     for (const m of sortedOrgMemberships) {
       if (seenOrgIds.has(m.organization_id)) continue;
-      let org = await base44.asServiceRole.entities.Organization
-        .get(m.organization_id)
-        .catch(() => null);
+      let org = await sr.entities.Organization.get(m.organization_id).catch(() => null);
       if (!org) continue;
+      if (org.is_demo_data || org.demo_dataset === DEMO_DATASET) continue;
 
-      // If this org was merged, follow the redirect to the canonical org
       if (org.status === 'merged_duplicate' || org.merge_status === 'merged_duplicate') {
         if (org.merged_into_organization_id) {
-          const canonical = await base44.asServiceRole.entities.Organization
-            .get(org.merged_into_organization_id)
-            .catch(() => null);
+          const canonical = await sr.entities.Organization.get(org.merged_into_organization_id).catch(() => null);
           if (canonical) {
-            // Move the membership to the canonical org if not already there
-            const existingInCanonical = await base44.asServiceRole.entities.OrganizationMembership
+            const existingInCanonical = await sr.entities.OrganizationMembership
               .filter({ organization_id: canonical.id, user_id: user.id })
-              .catch(() => []);
+              .catch(() => { return []; });
             if (!existingInCanonical || existingInCanonical.length === 0) {
-              await base44.asServiceRole.entities.OrganizationMembership.update(m.id, {
+              await sr.entities.OrganizationMembership.update(m.id, {
                 organization_id: canonical.id,
               }).catch(() => {});
             }
             org = canonical;
           } else {
-            continue; // canonical gone — skip
+            continue;
           }
         } else {
-          continue; // merged but no canonical — skip
+          continue;
         }
       }
 
-      // Deduplicate by canonical org id
       if (seenOrgIds.has(org.id)) continue;
+      if (org.is_demo_data || org.demo_dataset === DEMO_DATASET) continue;
       seenOrgIds.add(org.id);
 
       organizations.push({
@@ -82,21 +176,22 @@ export default async function(req) {
       });
     }
 
-    // 3) Get all active COMMITTEE memberships for the user (across all orgs)
-    const committeeMemberships = await base44.asServiceRole.entities.CommitteeMembership
+    const committeeMemberships = await sr.entities.CommitteeMembership
       .filter({ user_id: user.id, status: 'active' })
-      .catch(() => []);
+      .catch(() => { return []; });
 
-    // 4) Fetch committee details for each membership
+    const realCommitteeMemberships = (committeeMemberships || []).filter(function(m) {
+      return !m.is_demo_data && m.demo_dataset !== DEMO_DATASET;
+    });
+
     const seenCommitteeIds = new Set();
     const myCommittees = [];
-    for (const cm of (committeeMemberships || [])) {
+    for (const cm of realCommitteeMemberships) {
       if (seenCommitteeIds.has(cm.committee_id)) continue;
       seenCommitteeIds.add(cm.committee_id);
-      const committee = await base44.asServiceRole.entities.Committee
-        .get(cm.committee_id)
-        .catch(() => null);
+      const committee = await sr.entities.Committee.get(cm.committee_id).catch(() => null);
       if (!committee) continue;
+      if (committee.is_demo_data || committee.demo_dataset === DEMO_DATASET) continue;
       myCommittees.push({
         id: committee.id,
         name_ar: committee.name_ar,
@@ -110,34 +205,24 @@ export default async function(req) {
       });
     }
 
-    // 5) Group committees by organization_id
     const committeesByOrg = {};
     for (const c of myCommittees) {
       if (!committeesByOrg[c.organization_id]) committeesByOrg[c.organization_id] = [];
       committeesByOrg[c.organization_id].push(c);
     }
-
-    // 6) Attach committees to each org in the list
     for (const org of organizations) {
       org.committees = committeesByOrg[org.id] || [];
     }
 
-    // 7) Also include orgs where the user has committees but no org membership
-    //    (edge case: invited to a committee without explicit org membership)
-    //    Skip merged duplicates — follow redirect to canonical
     for (const c of myCommittees) {
       if (!seenOrgIds.has(c.organization_id)) {
-        let org = await base44.asServiceRole.entities.Organization
-          .get(c.organization_id)
-          .catch(() => null);
+        let org = await sr.entities.Organization.get(c.organization_id).catch(() => null);
         if (!org) continue;
+        if (org.is_demo_data || org.demo_dataset === DEMO_DATASET) continue;
 
-        // Follow merge redirect
         if (org.status === 'merged_duplicate' || org.merge_status === 'merged_duplicate') {
           if (org.merged_into_organization_id) {
-            org = await base44.asServiceRole.entities.Organization
-              .get(org.merged_into_organization_id)
-              .catch(() => null);
+            org = await sr.entities.Organization.get(org.merged_into_organization_id).catch(() => null);
             if (!org) continue;
           } else {
             continue;
@@ -145,8 +230,7 @@ export default async function(req) {
         }
 
         if (seenOrgIds.has(org.id)) {
-          // Already listed — just attach committees
-          const existing = organizations.find((o) => o.id === org.id);
+          const existing = organizations.find(function(o) { return o.id === org.id; });
           if (existing && !existing.committees) {
             existing.committees = committeesByOrg[c.organization_id] || [];
           }
@@ -170,55 +254,34 @@ export default async function(req) {
       }
     }
 
-    // Mark primary org and sort it first
-    // For demo users, the first org in DEMO_ORGS (Audit and Review Council) is primary
-    const primaryOrgId = user.data?.primary_org_id;
+    const primaryOrgId = user.data ? user.data.primary_org_id : null;
     for (const org of organizations) {
-      org.is_primary = isDemoUser
-        ? org.public_id === "DEMO-ORG-AUDIT-COUNCIL"
-        : org.id === primaryOrgId;
+      org.is_primary = org.id === primaryOrgId;
     }
-    organizations.sort((a, b) => {
+    organizations.sort(function(a, b) {
       if (a.is_primary) return -1;
       if (b.is_primary) return 1;
       return 0;
     });
 
-    // Set active_org_id on user profile if not already set
-    if (organizations.length > 0) {
-      const currentActiveOrg = user.data?.active_org_id;
-      if (!currentActiveOrg) {
-        await base44.auth.updateMe({ active_org_id: organizations[0].id }).catch(() => {});
-      }
-    }
-
-    // Build user profile — use demo persona constants if this is the demo user
-    const userProfile = isDemoUser ? {
-      display_name_ar: DEMO_USER.name_ar,
-      display_name_en: DEMO_USER.name_en,
-      job_title_ar: DEMO_USER.job_title_ar,
-      job_title_en: DEMO_USER.job_title_en,
-      primary_org_ar: DEMO_USER.primary_org_ar,
-      primary_org_en: DEMO_USER.primary_org_en,
-      is_demo_user: true,
-      demo_persona_key: DEMO_USER.persona_key,
-    } : {
-      display_name_ar: user.data?.display_name_ar || user.full_name,
-      display_name_en: user.data?.display_name_en || user.full_name,
-      job_title_ar: user.data?.job_title_ar,
-      job_title_en: user.data?.job_title_en,
-      primary_org_ar: user.data?.primary_org_ar,
-      primary_org_en: user.data?.primary_org_en,
+    const userProfile = {
+      display_name_ar: (user.data && user.data.display_name_ar) || user.full_name,
+      display_name_en: (user.data && user.data.display_name_en) || user.full_name,
+      job_title_ar: user.data ? user.data.job_title_ar : null,
+      job_title_en: user.data ? user.data.job_title_en : null,
+      primary_org_ar: user.data ? user.data.primary_org_ar : null,
+      primary_org_en: user.data ? user.data.primary_org_en : null,
       is_demo_user: false,
       demo_persona_key: null,
     };
 
     return Response.json({
-      organizations,
+      organizations: organizations,
       has_org: organizations.length > 0,
       total_committees: myCommittees.length,
-      active_org_id: user.data?.active_org_id || organizations[0]?.id,
+      active_org_id: (user.data && user.data.active_org_id) || (organizations.length > 0 ? organizations[0].id : null),
       user_profile: userProfile,
+      is_demo_mode: false,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
