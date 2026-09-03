@@ -4,7 +4,7 @@ import {
   BRAND,
   BRAND_COLORS,
 } from "@/lib/brand";
-import PoweredByConnection from "@/components/brand/PoweredByConnection";
+
 import { useLanguage } from "@/lib/LanguageContext";
 
 // LIJAN splash: maroon intro video → brand reveal → fade to app.
@@ -120,9 +120,17 @@ export default function SplashScreen({ onFinish }) {
           {lang === "ar" ? BRAND.taglineAr : BRAND.taglineEn}
         </div>
 
-        {/* Powered by CONNECTION */}
-        <div className="mt-3">
-          <PoweredByConnection variant="light" />
+        {/* Powered by CONNECTION™ — white text on maroon for clear visibility */}
+        <div className="mt-3 flex items-baseline gap-1" dir="ltr">
+          <span className="text-[11px] tracking-wide" style={{ color: BRAND_COLORS.white, opacity: 0.7 }}>
+            Powered by
+          </span>
+          <span className="text-[13px] tracking-wide font-semibold" style={{ color: BRAND_COLORS.white }}>
+            CONNECTION
+          </span>
+          <sup className="text-[9px] font-semibold" style={{ color: BRAND_COLORS.gold }}>
+            ™
+          </sup>
         </div>
       </div>
 
