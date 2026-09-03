@@ -4,10 +4,13 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2, Sparkles } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+
+const DEMO_EMAIL = "F.alfihaidi@lijan.com";
+const DEMO_PASSWORD = "Lijan@2026";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -34,6 +37,12 @@ export default function Login() {
 
   const handleGoogle = () => {
     base44.auth.loginWithProvider("google", returnTo);
+  };
+
+  const handleDemoExplore = () => {
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
+    setError("");
   };
 
   return (
@@ -127,6 +136,21 @@ export default function Login() {
           )}
         </Button>
       </form>
+
+      <div className="mt-6 pt-6 border-t border-border">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full h-12 text-sm font-medium border-accent/40 text-accent hover:bg-accent/10"
+          onClick={handleDemoExplore}
+        >
+          <Sparkles className="w-4 h-4 mr-2" />
+          استكشاف التجربة · Explore Demo
+        </Button>
+        <p className="mt-2 text-xs text-muted-foreground text-center leading-relaxed">
+          تجربة حساب فهد الفهيدي — 3 منظمات و7 لجان ببيانات تجريبية
+        </p>
+      </div>
     </AuthLayout>
   );
 }
