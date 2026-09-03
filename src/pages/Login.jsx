@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,8 @@ import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
-const DEMO_EMAIL = "F.alfihaidi@lijan.com";
-const DEMO_PASSWORD = "Lijan@2026";
-
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -40,9 +38,7 @@ export default function Login() {
   };
 
   const handleDemoExplore = () => {
-    setEmail(DEMO_EMAIL);
-    setPassword(DEMO_PASSWORD);
-    setError("");
+    navigate("/");
   };
 
   return (
@@ -147,9 +143,6 @@ export default function Login() {
           <Sparkles className="w-4 h-4 mr-2" />
           استكشاف التجربة · Explore Demo
         </Button>
-        <p className="mt-2 text-xs text-muted-foreground text-center leading-relaxed">
-          تجربة حساب فهد الفهيدي — 3 منظمات و7 لجان ببيانات تجريبية
-        </p>
       </div>
     </AuthLayout>
   );
