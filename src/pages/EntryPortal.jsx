@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import DemoBanner from "@/components/raqeem/DemoBanner";
 import { base44 } from "@/api/base44Client";
-import BrandLogo from "@/components/raqeem/BrandLogo";
+import { Image } from "@/components/ui/image";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
@@ -66,8 +66,8 @@ export default function EntryPortal() {
         <header className="border-b border-border bg-card sticky top-0 z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
-                <BrandLogo className="w-full h-full" />
+              <div className="h-9 w-28 rounded-md overflow-hidden shrink-0" style={{ background: "#000000" }}>
+                <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/1ede74041_LijanLogo.png" alt="CONNECTION™" fittingType="fit" className="w-full h-full" />
               </div>
               <BrandWordmark variant="dark" className="hidden sm:block" />
             </div>
@@ -176,8 +176,8 @@ export default function EntryPortal() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
-              <BrandLogo className="w-full h-full" />
+            <div className="h-12 w-40 rounded-md overflow-hidden shrink-0" style={{ background: "#000000" }}>
+              <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/1ede74041_LijanLogo.png" alt="CONNECTION™" fittingType="fit" className="w-full h-full" />
             </div>
             <div className="leading-tight">
               <div dir="rtl" className="font-bold text-2xl tracking-tight flex items-start gap-0.5">
