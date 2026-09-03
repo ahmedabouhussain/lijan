@@ -418,6 +418,38 @@ async function cleanAllDemoData(sr) {
           }
         }
       }
+      // 4) For committee-scoped entities, clean by demo committee IDs
+      const committeeScoped = [
+        'Attendance', 'AgendaItem', 'Action', 'Decision', 'MeetingMinutes',
+        'Meeting', 'AuthorityDelegation', 'ConflictDeclaration', 'CommitteeAmendment',
+        'Document', 'AuditEvent', 'NotificationOutbox',
+      ];
+      if (committeeScoped.includes(entity)) {
+        // Find demo committee IDs (by is_demo_data flag or DEMO- public_id prefix)
+        let demoCommitteeIds = [];
+        try {
+          const flagged = await sr.entities.Committee.filter({ is_demo_data: true }).catch(() => { return []; });
+          demoCommitteeIds = (flagged || []).map(c => c.id);
+          const allComms = await sr.entities.Committee.list().catch(() => { return []; });
+          for (const c of (allComms || [])) {
+            if (c.public_id && c.public_id.startsWith("DEMO-") && !demoCommitteeIds.includes(c.id)) {
+              demoCommitteeIds.push(c.id);
+            }
+          }
+        } catch (e) {}
+        // Delete all records belonging to demo committees
+        for (const cid of demoCommitteeIds) {
+          try {
+            const records = await sr.entities[entity].filter({ committee_id: cid }).catch(() => { return []; });
+            for (const r of (records || [])) {
+              if (seenIds.has(r.id)) continue;
+              seenIds.add(r.id);
+              await sr.entities[entity].delete(r.id).catch(() => {});
+              deleted++;
+            }
+          } catch (e) {}
+        }
+      }
     } catch (e) {}
     counts[entity] = deleted;
   }

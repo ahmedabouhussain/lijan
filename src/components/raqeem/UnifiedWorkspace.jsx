@@ -51,17 +51,21 @@ export default function UnifiedWorkspace() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let stale = false;
     (async () => {
       try {
         const res = await base44.functions.invoke("GetMyOrganizations", { demo_mode: isDemoMode });
+        if (stale) return;
         const d = res.data || res;
         if (d.error) setError(d.error);
         else setData(d);
       } catch (e) {
+        if (stale) return;
         setError(e?.response?.data?.error || e?.message || "تعذّر التحميل");
       }
-      setLoading(false);
+      if (!stale) setLoading(false);
     })();
+    return () => { stale = true; };
   }, [isDemoMode]);
 
   if (loading) {
