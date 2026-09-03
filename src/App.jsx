@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { EffectiveActorProvider } from '@/lib/EffectiveActorContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import AutoFullscreen from '@/components/AutoFullscreen';
 import SplashScreen from '@/components/raqeem/SplashScreen';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { LanguageProvider } from '@/lib/LanguageContext';
@@ -217,6 +218,7 @@ function App() {
           <EffectiveActorProvider>
           <Router>
             <ScrollToTop />
+            <AutoFullscreen />
             {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
             <AuthenticatedApp />
           </Router>
