@@ -58,7 +58,7 @@ export default function UnifiedWorkspace() {
         if (stale) return;
         const d = res.data || res;
         if (d.error) setError(d.error);
-        else setData(d);
+        else { setData(d); setError(null); }
       } catch (e) {
         if (stale) return;
         setError(e?.response?.data?.error || e?.message || "تعذّر التحميل");
