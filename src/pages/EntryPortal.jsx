@@ -66,7 +66,7 @@ export default function EntryPortal() {
         <header className="border-b border-border bg-card sticky top-0 z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="h-10 w-32 rounded-md overflow-hidden shrink-0 bg-white border border-border">
+              <div className="h-10 w-32 overflow-hidden shrink-0">
                 <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/8c4576066_image.png" alt="LIJAN™" fittingType="fit" className="w-full h-full" />
               </div>
               <BrandWordmark variant="dark" className="hidden sm:block" />
@@ -176,7 +176,7 @@ export default function EntryPortal() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="h-14 w-44 rounded-md overflow-hidden shrink-0 bg-white/95 border border-white/20">
+            <div className="h-14 w-44 overflow-hidden shrink-0">
               <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/8c4576066_image.png" alt="LIJAN™" fittingType="fit" className="w-full h-full" />
             </div>
             <div className="leading-tight">
