@@ -9,7 +9,6 @@ import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import DemoBanner from "@/components/raqeem/DemoBanner";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
 import { BRAND } from "@/lib/brand";
@@ -69,7 +68,6 @@ export default function EntryPortal() {
               <div className="h-10 w-32 overflow-hidden shrink-0">
                 <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/8c4576066_image.png" alt="LIJAN™" fittingType="fit" className="w-full h-full" />
               </div>
-              <BrandWordmark variant="dark" className="hidden sm:block" />
             </div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <button
