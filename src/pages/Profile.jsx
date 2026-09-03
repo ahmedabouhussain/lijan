@@ -17,6 +17,7 @@ import SignaturePad from "@/components/raqeem/SignaturePad";
 import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
+import { DEMO_USER } from "@/../base44/shared/demoDataset";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -35,23 +36,40 @@ export default function Profile() {
   const [institutionId, setInstitutionId] = useState("");
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [department, setDepartment] = useState("");
+  const [isDemo, setIsDemo] = useState(false);
   const fileRef = useRef(null);
 
   useEffect(() => {
     base44.auth
       .me()
       .then((u) => {
-        setUser(u);
-        setFullName(u.full_name || "");
+        // Detect demo persona — override displayed identity if demo user
+        const isDemoUser = u.data?.is_demo_user === true ||
+                       u.data?.demo_persona_key === DEMO_USER.persona_key;
+        setIsDemo(isDemoUser);
+        if (isDemoUser) {
+          setUser({
+            ...u,
+            full_name: DEMO_USER.name_ar,
+            email: DEMO_USER.email,
+            data: { ...u.data, ...DEMO_USER },
+          });
+          setFullName(DEMO_USER.name_ar);
+          setTitle(DEMO_USER.job_title_ar);
+          setInstitutionEmail(DEMO_USER.email);
+        } else {
+          setUser(u);
+          setFullName(u.full_name || "");
+          setTitle(u.title || "");
+          setInstitutionEmail(u.institution_email || u.email || "");
+        }
         setGovernanceRole(u.governance_role || "member");
         setAvatarUrl(u.avatar_url || "");
-        setTitle(u.title || "");
         setPhone(u.phone || "");
         setBio(u.bio || "");
         setSigText(u.signature_text || "");
         setSigImage(u.signature_image_url || "");
         setInstitutionId(u.institution_id || "");
-        setInstitutionEmail(u.institution_email || u.email || "");
         setDepartment(u.department || "");
       })
       .catch(() => {})
@@ -119,6 +137,7 @@ export default function Profile() {
   }
 
   const initials = (user.full_name || "؟").split(" ").map((w) => w[0]).slice(0, 2).join("");
+  const demoPersona = isDemo ? DEMO_USER : null;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -180,6 +199,41 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Demo Persona Info — bilingual identity card */}
+      {demoPersona && (
+        <div className="raqeem-card p-6 space-y-4 border-accent/30">
+          <div className="flex items-center gap-2 pb-3 border-b border-border">
+            <Shield className="w-4 h-4 text-accent" />
+            <h2 className="text-sm font-semibold text-foreground">هوية الشخصية التجريبية · Demo Persona Identity</h2>
+            <StatusBadge label="تجريبي · Demo" colorClass="bg-accent/15 text-accent-foreground" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="text-xs mb-1 block text-muted-foreground">الاسم · Name</Label>
+              <div className="text-sm font-medium text-foreground">{demoPersona.name_ar}</div>
+              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.name_en}</div>
+            </div>
+            <div>
+              <Label className="text-xs mb-1 block text-muted-foreground">البريد الإلكتروني · Email</Label>
+              <div className="text-sm font-medium text-foreground" dir="ltr">{demoPersona.email}</div>
+            </div>
+            <div>
+              <Label className="text-xs mb-1 block text-muted-foreground">الصفة الوظيفية · Job Title</Label>
+              <div className="text-sm font-medium text-foreground">{demoPersona.job_title_ar}</div>
+              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.job_title_en}</div>
+            </div>
+            <div>
+              <Label className="text-xs mb-1 block text-muted-foreground">الجهة الأساسية · Primary Organization</Label>
+              <div className="text-sm font-medium text-foreground">{demoPersona.primary_org_ar}</div>
+              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.primary_org_en}</div>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
+            هذه هوية تجريبية لعرض قدرات المنصة — البيانات غير حقيقية · This is a fictional persona for demo purposes
+          </p>
+        </div>
+      )}
 
       {/* Institutional Affiliation */}
       <div className="raqeem-card p-6 space-y-5">

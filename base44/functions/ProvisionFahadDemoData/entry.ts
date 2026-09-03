@@ -334,13 +334,22 @@ async function cleanAllDemoData(sr, userId) {
           deleted++;
         }
       }
-      // 3) For membership entities, also clean by user_id + demo flags (belt-and-suspenders)
+      // 3) For membership entities, delete ALL records for this user (demo mode = clean slate)
       if (userId && (entity === 'OrganizationMembership' || entity === 'CommitteeMembership')) {
         const userMemberships = await sr.entities[entity].filter({ user_id: userId }).catch(() => []);
         for (const r of (userMemberships || [])) {
           if (seenIds.has(r.id)) continue;
-          // Only delete if it has demo markers
-          if (r.is_demo_data || r.demo_dataset || r.demo_persona_key) {
+          seenIds.add(r.id);
+          await sr.entities[entity].delete(r.id).catch(() => {});
+          deleted++;
+        }
+      }
+      // 4) For Organization/Committee, also clean by public_id prefix "DEMO-"
+      if (entity === 'Organization' || entity === 'Committee') {
+        const allRecords = await sr.entities[entity].list().catch(() => []);
+        for (const r of (allRecords || [])) {
+          if (seenIds.has(r.id)) continue;
+          if (r.public_id?.startsWith?.("DEMO-") || r.slug?.includes?.("demo")) {
             seenIds.add(r.id);
             await sr.entities[entity].delete(r.id).catch(() => {});
             deleted++;
