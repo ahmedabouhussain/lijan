@@ -5,7 +5,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import { EffectiveActorProvider } from '@/lib/EffectiveActorContext';
+import { EffectiveActorProvider, useEffectiveActor } from '@/lib/EffectiveActorContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AutoFullscreen from '@/components/AutoFullscreen';
@@ -84,8 +84,11 @@ import DocumentationHub from '@/pages/committee/DocumentationHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isDemoMode } = useEffectiveActor();
 
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  // Demo mode bypasses auth loading/error checks — falls through to the same
+  // <Routes> below. ProtectedRoute (already updated) lets demo mode through.
+  if (!isDemoMode && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -93,7 +96,7 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
+  if (!isDemoMode && authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import { useEffectiveActor } from '@/lib/EffectiveActorContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
 const DefaultFallback = () => (
@@ -11,12 +12,20 @@ const DefaultFallback = () => (
 
 export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthenticatedElement }) {
   const { isAuthenticated, isLoadingAuth, authChecked, authError, checkUserAuth } = useAuth();
+  const { isDemoMode } = useEffectiveActor();
 
   useEffect(() => {
+    // Skip auth check in demo mode — identity is client-side virtual
+    if (isDemoMode) return;
     if (!authChecked && !isLoadingAuth) {
       checkUserAuth();
     }
-  }, [authChecked, isLoadingAuth, checkUserAuth]);
+  }, [authChecked, isLoadingAuth, checkUserAuth, isDemoMode]);
+
+  // Demo mode bypasses real authentication entirely
+  if (isDemoMode) {
+    return <Outlet />;
+  }
 
   if (isLoadingAuth || !authChecked) {
     return fallback;
