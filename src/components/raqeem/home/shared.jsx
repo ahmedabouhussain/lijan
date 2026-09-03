@@ -101,7 +101,7 @@ export function useGovernanceData() {
 
         const [committees, members, meetings, agendaItems, decisions, actions, auditLogs] = await Promise.all([
           base44.entities.Committee.list().catch(() => []),
-          base44.entities.CommitteeMember.list().catch(() => []),
+          base44.entities.CommitteeMembership.list().catch(() => []),
           base44.entities.Meeting.list().catch(() => []),
           base44.entities.AgendaItem.list().catch(() => []),
           base44.entities.Decision.list().catch(() => []),

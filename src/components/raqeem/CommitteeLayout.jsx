@@ -185,6 +185,24 @@ function CommitteeShell() {
         )}
       </nav>
 
+      {/* User profile */}
+      {(() => {
+        const myMembership = (data.my_memberships || [])[0];
+        const displayName = myMembership?.full_name_ar || myMembership?.full_name || user?.full_name || user?.email || "";
+        const displayEmail = user?.email || "";
+        return (
+          <div className="px-4 py-2.5 border-t border-sidebar-border flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-sidebar-accent/30 flex items-center justify-center shrink-0">
+              <UserCircle className="w-5 h-5 text-sidebar-foreground" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-medium text-sidebar-foreground truncate">{displayName}</div>
+              <div className="text-[10px] text-sidebar-foreground/50 truncate">{displayEmail}</div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Language + Notifications + Footer */}
       <div className="px-4 py-2 border-t border-sidebar-border flex items-center justify-between">
         <LanguageSwitcher />

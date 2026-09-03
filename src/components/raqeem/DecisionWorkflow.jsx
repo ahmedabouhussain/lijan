@@ -49,7 +49,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
     setLoadingMembers(true);
     try {
       const [mems, votesData] = await Promise.all([
-        base44.entities.CommitteeMember.filter({ committee_id: decision.committee_id, status: "active" }).catch(() => []),
+        base44.entities.CommitteeMembership.filter({ committee_id: decision.committee_id, status: "active" }).catch(() => []),
         base44.entities.Vote.filter({ decision_id: decision.id }).catch(() => []),
       ]);
       const memList = mems || [];

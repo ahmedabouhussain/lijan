@@ -61,7 +61,7 @@ export default function CommitteeDetail() {
     try {
       const [c, m, meets, decs, acts, mins, delegs] = await Promise.all([
         base44.entities.Committee.get(id),
-        base44.entities.CommitteeMember.filter({ committee_id: id }).catch(() => []),
+        base44.entities.CommitteeMembership.filter({ committee_id: id }).catch(() => []),
         base44.entities.Meeting.filter({ committee_id: id }).catch(() => []),
         base44.entities.Decision.filter({ committee_id: id }).catch(() => []),
         base44.entities.Action.filter({ committee_id: id }).catch(() => []),

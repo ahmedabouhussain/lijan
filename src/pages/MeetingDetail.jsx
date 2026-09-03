@@ -64,7 +64,7 @@ export default function MeetingDetail() {
         base44.entities.Decision.filter({ meeting_id: id }).catch(() => []),
         base44.entities.Attendance.filter({ meeting_id: id }).catch(() => []),
         base44.entities.MeetingMinutes.filter({ meeting_id: id }).catch(() => []),
-        m.committee_id ? base44.entities.CommitteeMember.filter({ committee_id: m.committee_id }).catch(() => []) : Promise.resolve([]),
+        m.committee_id ? base44.entities.CommitteeMembership.filter({ committee_id: m.committee_id, status: 'active' }).catch(() => []) : Promise.resolve([]),
       ]);
       setAgendaItems(agenda || []);
       setDecisions(decs || []);
