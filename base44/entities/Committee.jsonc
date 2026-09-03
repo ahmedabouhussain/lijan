@@ -8,8 +8,7 @@
     },
     "organization_id": {
       "type": "string",
-      "title": "Organization ID (V2)",
-      "description": "Authoritative tenant scope \u2014 verified server-side"
+      "title": "Organization ID (V2)"
     },
     "mandate_id": {
       "type": "string",
@@ -182,6 +181,15 @@
     "audit_correlation_id": {
       "type": "string",
       "title": "Audit Correlation ID"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
     }
   },
   "required": [

@@ -26,8 +26,7 @@
     },
     "directory_key": {
       "type": "string",
-      "title": "Directory Key (canonical institutional identity)",
-      "description": "Stable key from OrganizationDirectory \u2014 prevents duplicate portals for the same entity"
+      "title": "Directory Key (canonical institutional identity)"
     },
     "slug": {
       "type": "string",
@@ -155,6 +154,15 @@
     "suspended_reason": {
       "type": "string",
       "title": "Suspension Reason"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
     }
   },
   "required": [

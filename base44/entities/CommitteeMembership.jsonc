@@ -112,6 +112,15 @@
       "type": "number",
       "title": "Protocol Order",
       "default": 99
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
     }
   },
   "required": [
