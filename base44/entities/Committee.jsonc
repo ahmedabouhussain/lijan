@@ -209,6 +209,16 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "$and": [
+            {
+              "data.classification": "public"
+            },
+            {
+              "data.status": "active"
+            }
+          ]
         }
       ]
     },
