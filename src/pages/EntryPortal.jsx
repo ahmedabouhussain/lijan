@@ -9,6 +9,8 @@ import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import DemoBanner from "@/components/raqeem/DemoBanner";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
@@ -173,7 +175,7 @@ export default function EntryPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col lg:flex-row" dir="rtl">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row" dir={lang === "ar" ? "rtl" : "ltr"}>
       {/* Left: Brand panel */}
       <div className="lg:w-1/2 bg-primary text-primary-foreground flex flex-col justify-between p-8 lg:p-12 relative overflow-hidden">
         {/* Decorative pattern */}
@@ -241,9 +243,9 @@ export default function EntryPortal() {
           <div>
             <div className="flex items-center gap-2 text-accent mb-3">
               <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-semibold uppercase tracking-wider">AI-Assisted Onboarding</span>
+              <span className="text-xs font-semibold uppercase tracking-wider">{t("إعداد مدعوم بالذكاء الاصطناعي", "AI-Assisted Onboarding")}</span>
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-1">تسجيل الدخول</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-1">{t("تسجيل الدخول", "Sign In")}</h2>
             <p className="text-sm text-muted-foreground">
               اختر جهتك وأدخل بريدك لبدء إنشاء اللجان · Select your entity and enter your email to begin
             </p>
@@ -252,10 +254,10 @@ export default function EntryPortal() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Entity dropdown */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+              <Label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
                 الجهة المؤسسية · Institution
-              </label>
+              </Label>
               <EntitySearchSelect
                 value={entityId}
                 onChange={setEntityId}
@@ -265,17 +267,16 @@ export default function EntryPortal() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+              <Label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                 البريد الإلكتروني المؤسسي · Official Email
-              </label>
-              <input
+              </Label>
+              <Input
                 type="email"
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@institution.gov.qa"
-                className="w-full px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
 
@@ -306,10 +307,10 @@ export default function EntryPortal() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {submitting ? (
-                <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> جارٍ التحويل...</>
+                <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> {t("جارٍ التحويل...", "Redirecting...")}</>
               ) : (
                 <>متابعة · Continue <ArrowLeft className="w-4 h-4" /></>
               )}
@@ -330,7 +331,7 @@ export default function EntryPortal() {
             <div className="pt-4 border-t border-border">
               <button
                 onClick={() => setShowWorkspace(true)}
-                className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 <Home className="w-4 h-4" />
                 {isDemoMode
