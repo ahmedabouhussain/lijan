@@ -47,6 +47,10 @@ export default function PublicCommittees() {
     loadPublicCommittees();
   }, []);
 
+  useEffect(() => {
+    document.title = isAr ? "السجل العمومي للجان | لِجان" : "Public Committees Registry | LIJAN";
+  }, [isAr]);
+
   const loadPublicCommittees = async () => {
     setLoading(true);
     setError(false);
@@ -80,8 +84,9 @@ export default function PublicCommittees() {
     );
   });
 
+  const orgMap = Object.fromEntries(orgs.map((o) => [o.id, o]));
   const getOrgName = (orgId) => {
-    const org = orgs.find((o) => o.id === orgId);
+    const org = orgMap[orgId];
     if (!org) return "—";
     return isAr ? org.name_ar : org.name_en;
   };
