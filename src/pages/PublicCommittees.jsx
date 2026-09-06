@@ -97,6 +97,7 @@ export default function PublicCommittees() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <button
             onClick={() => navigate("/")}
+            aria-label={isAr ? "العودة للرئيسية" : "Back to home"}
             className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
           >
             {isAr ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
@@ -140,12 +141,14 @@ export default function PublicCommittees() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={isAr ? "بحث بالاسم أو الصلاحية..." : "Search by name or mandate..."}
+                aria-label={isAr ? "بحث" : "Search"}
                 className="pl-9 rtl:pl-0 rtl:pr-9"
               />
             </div>
             <select
               value={orgFilter}
               onChange={(e) => setOrgFilter(e.target.value)}
+              aria-label={isAr ? "تصفية حسب الجهة" : "Filter by organization"}
               className="px-3 py-2 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="all">{isAr ? "كل الجهات" : "All organizations"}</option>
