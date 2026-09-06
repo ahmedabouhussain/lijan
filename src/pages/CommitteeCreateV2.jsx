@@ -21,6 +21,8 @@ const COMMITTEE_TYPES = [
   { value: "task_force", label: "فريق عمل" },
   { value: "working_group", label: "مجموعة عمل" },
   { value: "advisory_committee", label: "لجنة استشارية" },
+  { value: "joint_committee", label: "لجنة مشتركة" },
+  { value: "cross_institutional", label: "بين الجهات" },
 ];
 
 const VOTING_RULES = [
@@ -50,8 +52,10 @@ export default function CommitteeCreateV2() {
     term_start: "", term_end: "", classification: "internal",
     chair_name: "", secretary_name: "",
     quorum_count: 3, voting_rule: "simple_majority", meeting_cadence: "monthly",
+    participating_organization_ids: [],
   });
   const [newMember, setNewMember] = useState({ full_name: "", role: "member", institution_name: "" });
+  const [newOrgId, setNewOrgId] = useState("");
   const [establishingDoc, setEstablishingDoc] = useState({ type: "", reference: "", date: "", file_url: "", file_name: "" });
   const [supportingDocs, setSupportingDocs] = useState([]);
   const [logoUrl, setLogoUrl] = useState("");
@@ -93,6 +97,12 @@ export default function CommitteeCreateV2() {
     }));
   };
 
+  const addOrgId = () => {
+    if (!newOrgId.trim()) return;
+    setForm((f) => ({ ...f, participating_organization_ids: [...new Set([...f.participating_organization_ids, newOrgId.trim()])] }));
+    setNewOrgId("");
+  };
+
   const addMember = () => {
     if (!newMember.full_name.trim()) return;
     setMembers((m) => [...m, { ...newMember, protocol_order: 99 }]);
@@ -130,7 +140,7 @@ export default function CommitteeCreateV2() {
   return (
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to={`/o/${orgRef}`} className="hover:text-foreground">المنظمة</Link>
+        <Link to={`/o/${orgRef}`} className="hover:text-foreground">الجهة</Link>
         <span>›</span>
         <span className="text-foreground">إنشاء لجنة</span>
       </div>
@@ -183,6 +193,29 @@ export default function CommitteeCreateV2() {
             </select>
           </div>
         </div>
+
+        {(form.type === "joint_committee" || form.type === "cross_institutional") && (
+          <div className="space-y-2 p-3 rounded-md bg-accent/5 border border-accent/20">
+            <Label>الجهات المشاركة · Participating Organizations</Label>
+            <p className="text-xs text-muted-foreground">أضف معرّفات الجهات المشاركة في هذه اللجنة المشتركة · Add the organization IDs of participating institutions</p>
+            {form.participating_organization_ids.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {form.participating_organization_ids.map((oid, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary text-xs">
+                    {oid}
+                    <button onClick={() => setForm((f) => ({ ...f, participating_organization_ids: f.participating_organization_ids.filter((_, idx) => idx !== i) }))} className="text-muted-foreground hover:text-destructive">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-end gap-2">
+              <Input value={newOrgId} onChange={(e) => setNewOrgId(e.target.value)} placeholder="org-id..." className="text-sm" dir="ltr" />
+              <Button size="sm" variant="outline" onClick={addOrgId}><Plus className="w-4 h-4" /></Button>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <Label>الصلاحية · Mandate</Label>

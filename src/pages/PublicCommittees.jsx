@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
-import { BRAND } from "@/lib/brand";
 
 const COMMITTEE_TYPE_LABELS = {
   permanent_council: { ar: "مجلس دائم", en: "Permanent Council" },

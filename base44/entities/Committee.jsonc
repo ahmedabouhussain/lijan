@@ -10,6 +10,13 @@
       "type": "string",
       "title": "Organization ID (V2)"
     },
+    "participating_organization_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Participating Organization IDs (joint committees)"
+    },
     "mandate_id": {
       "type": "string",
       "title": "Committee Mandate ID (V2)"
@@ -204,6 +211,9 @@
       "$or": [
         {
           "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.participating_organization_ids": "{{user.data.active_org_id}}"
         },
         {
           "user_condition": {

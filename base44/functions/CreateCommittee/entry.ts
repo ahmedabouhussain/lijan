@@ -17,6 +17,7 @@ export default async function(req) {
       term_start, term_end, classification, chair_name, secretary_name,
       quorum_count, voting_rule, meeting_cadence, members,
       establishing_doc, supporting_docs, logo_url,
+      participating_organization_ids,
     } = body;
 
     if (!organization_id || !name_ar || !name_en) {
@@ -61,6 +62,7 @@ export default async function(req) {
       term_start: term_start || null,
       term_end: term_end || null,
       logo_url: logo_url || null,
+      participating_organization_ids: participating_organization_ids || [],
       status: 'draft',
       version: 1,
     });
