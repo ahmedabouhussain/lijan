@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut, Activity } from "lucide-react";
+import { ShieldCheck, ArrowLeft, ArrowRight, Building2, Mail, Sparkles, Loader2, Home, LogOut, Activity } from "lucide-react";
 import { QATARI_ENTITIES } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useAuth } from "@/lib/AuthContext";
@@ -96,7 +96,7 @@ export default function EntryPortal() {
                 title={t("الملف الشخصي", "Profile")}
               >
                 <span className="text-xs text-muted-foreground hidden md:block">{displayEmail}</span>
-                <span className="sm:hidden">{t("الملف", "Profile")}</span>
+                <span className="md:hidden">{t("الملف", "Profile")}</span>
               </button>
               {isDemoMode ? (
                 <button
@@ -134,11 +134,11 @@ export default function EntryPortal() {
     e.preventDefault();
     setError(null);
     if (!entityId) {
-      setError("الرجاء اختيار الجهة المؤسسية · Please select your institution");
+      setError(t("الرجاء اختيار الجهة المؤسسية", "Please select your institution"));
       return;
     }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("الرجاء إدخال بريد إلكتروني صحيح · Please enter a valid email");
+      setError(t("الرجاء إدخال بريد إلكتروني صحيح", "Please enter a valid email"));
       return;
     }
     setSubmitting(true);
@@ -206,9 +206,9 @@ export default function EntryPortal() {
             <span className="block text-accent text-xl lg:text-2xl mt-2">Institutional Entry Portal</span>
           </h1>
           <p className="text-primary-foreground/70 text-sm lg:text-base leading-relaxed max-w-md">
-            نظام تشغيل المجالس واللجان الوطنية — من الصلاحية إلى الأثر.
+            {BRAND.descriptorAr} — {BRAND.taglineAr}.
             <span className="block mt-1 text-primary-foreground/50 text-sm">
-              {BRAND.descriptorEn} — From Mandate to Impact.
+              {BRAND.descriptorEn} — {BRAND.taglineEn}.
             </span>
           </p>
 
@@ -312,7 +312,7 @@ export default function EntryPortal() {
               {submitting ? (
                 <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> {t("جارٍ التحويل...", "Redirecting...")}</>
               ) : (
-                <>متابعة · Continue <ArrowLeft className="w-4 h-4" /></>
+                <>متابعة · Continue {lang === "ar" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}</>
               )}
             </button>
           </form>
