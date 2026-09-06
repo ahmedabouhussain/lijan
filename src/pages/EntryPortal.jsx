@@ -342,8 +342,26 @@ export default function EntryPortal() {
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-            باستخدامك للمنصة فإنك توافق على الالتزام بسياسات الحوكمة والتصنيف المؤسسي.
-            <span className="block">By using this platform you agree to comply with institutional governance and classification policies.</span>
+            باستخدامك للمنصة فإنك توافق على الالتزام بـ
+            <button
+              type="button"
+              onClick={() => navigate("/governance-policies")}
+              className="text-primary hover:underline font-medium mx-0.5"
+            >
+              سياسات الحوكمة والتصنيف المؤسسي
+            </button>
+            .
+            <span className="block">
+              By using this platform you agree to comply with the
+              <button
+                type="button"
+                onClick={() => navigate("/governance-policies")}
+                className="text-primary hover:underline font-medium mx-0.5"
+              >
+                Governance & Institutional Classification Policies
+              </button>
+              .
+            </span>
           </p>
         </div>
       </div>
