@@ -33,12 +33,13 @@ const CADENCE_LABELS = {
 
 export default function PublicCommittees() {
   const navigate = useNavigate();
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
   const isAr = lang === "ar";
   const dir = isAr ? "rtl" : "ltr";
   const [committees, setCommittees] = useState([]);
   const [orgs, setOrgs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
   const [orgFilter, setOrgFilter] = useState("all");
 
@@ -48,6 +49,7 @@ export default function PublicCommittees() {
 
   const loadPublicCommittees = async () => {
     setLoading(true);
+    setError(false);
     try {
       const all = await base44.entities.Committee.filter(
         { classification: "public", status: "active" },
@@ -62,6 +64,7 @@ export default function PublicCommittees() {
       }
     } catch (e) {
       console.error("Failed to load public committees", e);
+      setError(true);
     }
     setLoading(false);
   };
@@ -70,8 +73,11 @@ export default function PublicCommittees() {
     if (orgFilter !== "all" && c.organization_id !== orgFilter) return false;
     if (!search) return true;
     const q = search.toLowerCase();
-    const name = isAr ? c.name_ar : c.name_en;
-    return (name || "").toLowerCase().includes(q) || (c.mandate || "").toLowerCase().includes(q);
+    return (
+      (c.name_ar || "").toLowerCase().includes(q) ||
+      (c.name_en || "").toLowerCase().includes(q) ||
+      (c.mandate || "").toLowerCase().includes(q)
+    );
   });
 
   const getOrgName = (orgId) => {
@@ -155,6 +161,19 @@ export default function PublicCommittees() {
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <Users className="w-10 h-10 text-destructive/40 mx-auto mb-3" />
+              <p className="text-sm text-destructive">
+                {isAr ? "تعذّر تحميل اللجان. حاول مرة أخرى." : "Failed to load committees. Try again."}
+              </p>
+              <button
+                onClick={loadPublicCommittees}
+                className="mt-3 text-sm text-primary hover:underline font-medium"
+              >
+                {isAr ? "إعادة المحاولة" : "Retry"}
+              </button>
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
