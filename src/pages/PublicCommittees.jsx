@@ -23,6 +23,14 @@ const COMMITTEE_TYPE_LABELS = {
   cross_institutional: { ar: "بين الجهات", en: "Cross-Institutional" },
 };
 
+const CADENCE_LABELS = {
+  weekly: { ar: "أسبوعي", en: "Weekly" },
+  biweekly: { ar: "كل أسبوعين", en: "Biweekly" },
+  monthly: { ar: "شهري", en: "Monthly" },
+  quarterly: { ar: "ربع سنوي", en: "Quarterly" },
+  ad_hoc: { ar: "حسب الطلب", en: "Ad hoc" },
+};
+
 export default function PublicCommittees() {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
@@ -115,13 +123,13 @@ export default function PublicCommittees() {
 
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={isAr ? "بحث بالاسم أو الصلاحية..." : "Search by name or mandate..."}
-                className="pl-9"
+                className="pl-9 rtl:pl-0 rtl:pr-9"
               />
             </div>
             <select
@@ -137,6 +145,12 @@ export default function PublicCommittees() {
               ))}
             </select>
           </div>
+
+          {!loading && filtered.length > 0 && (
+            <p className="text-xs text-muted-foreground mb-3">
+              {isAr ? `${filtered.length} لجنة` : `${filtered.length} committees`}
+            </p>
+          )}
 
           {loading ? (
             <div className="flex items-center justify-center py-16">
@@ -177,7 +191,7 @@ export default function PublicCommittees() {
                       {c.meeting_cadence && (
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {c.meeting_cadence}
+                          {CADENCE_LABELS[c.meeting_cadence]?.[lang] || c.meeting_cadence}
                         </span>
                       )}
                       {c.chair_name && (
