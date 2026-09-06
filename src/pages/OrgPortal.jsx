@@ -4,13 +4,15 @@ import { useOrg } from "@/lib/OrgContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
-import { Plus, ChevronLeft, Users, Building2, ShieldCheck, Lock } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Users, Building2, ShieldCheck, Lock } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function OrgPortal() {
   const { data } = useOrg();
   const { orgRef } = useParams();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isAr = lang === "ar";
+  const EnterIcon = isAr ? ChevronRight : ChevronLeft;
 
   if (!data) return <TableSkeleton rows={4} />;
 
@@ -20,6 +22,7 @@ export default function OrgPortal() {
   const myCommittees = allCommittees.filter((c) => myCommitteeIds.has(c.id));
   const otherCommittees = allCommittees.filter((c) => !myCommitteeIds.has(c.id));
   const isAdmin = my_role === "owner" || my_role === "admin";
+  const buildCRef = (c) => `${c.slug || c.id}--${c.public_id || c.id}`;
 
   const roleLabel = {
     owner: t("مالك المنظمة", "Organization Owner"),
@@ -60,6 +63,7 @@ export default function OrgPortal() {
           <h2 className="text-sm font-semibold flex items-center gap-2">
             <Users className="w-4 h-4 text-primary" />
             {t("لجاني", "My Committees")}
+            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{myCommittees.length}</span>
           </h2>
           {isAdmin && (
             <Link to={`/o/${orgRef}/create-committee`} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
@@ -83,8 +87,8 @@ export default function OrgPortal() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {myCommittees.map((c) => {
-              const cRef = `${c.slug || c.id}--${c.public_id || c.id}`;
-              const roleLabel = {
+              const cRef = buildCRef(c);
+              const committeeRoleLabel = {
                 chair: t("رئيس", "Chair"),
                 vice_chair: t("نائب الرئيس", "Vice Chair"),
                 secretary: t("أمين السر", "Secretary"),
@@ -108,13 +112,13 @@ export default function OrgPortal() {
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
                       <ShieldCheck className="w-3 h-3" />
-                      {roleLabel}
+                      {committeeRoleLabel}
                     </span>
                     <span>· {COMMITTEE_TYPES[c.type]?.ar || c.type}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{t("الدخول للجنة", "Enter Committee")}</span>
-                    <ChevronLeft className="w-4 h-4 text-primary group-hover:translate-x-[-2px] transition-transform" />
+                    <EnterIcon className="w-4 h-4 text-primary group-hover:translate-x-[-2px] rtl:group-hover:translate-x-[2px] transition-transform" />
                   </div>
                 </Link>
               );
@@ -129,10 +133,11 @@ export default function OrgPortal() {
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <Lock className="w-4 h-4 text-muted-foreground" />
             {t("لجان أخرى (إشراف)", "Other Committees (Oversight)")}
+            <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground font-medium">{otherCommittees.length}</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {otherCommittees.map((c) => {
-              const cRef = `${c.slug || c.id}--${c.public_id || c.id}`;
+              const cRef = buildCRef(c);
               return (
                 <Link
                   key={c.id}
