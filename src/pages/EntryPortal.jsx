@@ -16,12 +16,13 @@ import { BRAND } from "@/lib/brand";
 export default function EntryPortal() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoadingAuth, user } = useAuth();
-  const { isDemoMode, effectiveActor, enterDemo } = useEffectiveActor();
+  const { isDemoMode, effectiveActor, enterDemo, exitDemo } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [entityId, setEntityId] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [showWorkspace, setShowWorkspace] = useState(false);
 
   const handleLogout = async () => {
     await base44.auth.logout("/");
@@ -51,17 +52,14 @@ export default function EntryPortal() {
     );
   }
 
-  // Authenticated users OR demo mode → show unified workspace with all their orgs + committees
-  if ((isAuthenticated && user) || isDemoMode) {
-    const displayName = isDemoMode
-      ? (lang === "ar" ? effectiveActor?.data?.display_name_ar : effectiveActor?.data?.display_name_en)
-      : user?.full_name;
-    const displayEmail = isDemoMode ? effectiveActor?.email : user?.email;
+  const hasAccess = (isAuthenticated && user) || isDemoMode;
+  const displayEmail = isDemoMode ? effectiveActor?.email : user?.email;
+
+  // Workspace view — shown only when user explicitly toggles it
+  if (showWorkspace && hasAccess) {
     return (
       <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
-        {/* Demo banner — shown only in demo mode */}
         {isDemoMode && <DemoBanner />}
-        {/* Top bar */}
         <header className="border-b border-border bg-card sticky top-0 z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
@@ -71,12 +69,12 @@ export default function EntryPortal() {
             </div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <button
-                onClick={() => navigate("/")}
+                onClick={() => setShowWorkspace(false)}
                 className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
-                title={t("الرئيسية", "Home")}
+                title={t("العودة للرئيسية", "Back to Home")}
               >
                 <Home className="w-4 h-4" />
-                <span className="hidden sm:inline">{t("الرئيسية", "Home")}</span>
+                <span className="hidden sm:inline">{t("العودة للرئيسية", "Back to Home")}</span>
               </button>
               <button
                 onClick={() => navigate("/profile")}
@@ -88,7 +86,7 @@ export default function EntryPortal() {
               </button>
               {isDemoMode ? (
                 <button
-                  onClick={() => { window.location.href = "/"; }}
+                  onClick={() => { exitDemo(); setShowWorkspace(false); }}
                   className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 px-2.5 py-1.5 rounded-md font-medium transition-colors"
                   title={t("إنهاء الاستكشاف", "Exit Demo")}
                 >
@@ -306,6 +304,20 @@ export default function EntryPortal() {
             </button>
           </div>
 
+          {hasAccess && !showWorkspace && (
+            <div className="pt-4 border-t border-border">
+              <button
+                onClick={() => setShowWorkspace(true)}
+                className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                {isDemoMode
+                  ? t("دخول مساحة العمل التجريبية", "Enter Demo Workspace")
+                  : t("دخول مساحة العمل", "Enter Workspace")}
+              </button>
+            </div>
+          )}
+
           <div className="pt-4 border-t border-border">
             <button
               onClick={() => {
@@ -316,7 +328,7 @@ export default function EntryPortal() {
                 ];
                 demoKeys.forEach((k) => localStorage.removeItem(k));
                 enterDemo();
-                navigate("/");
+                setShowWorkspace(true);
               }}
               className="w-full inline-flex items-center justify-center gap-2 border border-accent/40 text-accent px-5 py-3 rounded-md text-sm font-medium hover:bg-accent/10 transition-colors"
             >
