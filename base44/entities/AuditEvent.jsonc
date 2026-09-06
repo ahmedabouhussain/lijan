@@ -42,7 +42,8 @@
         "activate",
         "provision",
         "suspend",
-        "deny_access"
+        "deny_access",
+        "demo_explore"
       ],
       "default": "create"
     },

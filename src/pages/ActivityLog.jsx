@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Activity, LogIn, Search, ShieldAlert } from "lucide-react";
+import { ArrowRight, ArrowLeft, Activity, LogIn, Search, ShieldAlert, Sparkles, Users, Eye, Clock } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -15,7 +15,9 @@ export default function ActivityLog() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
   const dir = isAr ? "rtl" : "ltr";
-  const [events, setEvents] = useState([]);
+  const [tab, setTab] = useState("logins"); // "logins" | "demos"
+  const [loginEvents, setLoginEvents] = useState([]);
+  const [demoEvents, setDemoEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -27,14 +29,12 @@ export default function ActivityLog() {
   const loadEvents = async () => {
     setLoading(true);
     try {
-      const [logins, logouts] = await Promise.all([
+      const [logins, demos] = await Promise.all([
         base44.entities.AuditEvent.filter({ action: "login" }, "-created_date", 200),
-        base44.entities.AuditEvent.filter({ action: "logout" }, "-created_date", 200),
+        base44.entities.AuditEvent.filter({ action: "demo_explore" }, "-created_date", 200),
       ]);
-      const merged = [...(logins || []), ...(logouts || [])].sort(
-        (a, b) => new Date(b.created_date) - new Date(a.created_date)
-      );
-      setEvents(merged);
+      setLoginEvents(logins || []);
+      setDemoEvents(demos || []);
     } catch (e) {
       console.error("Failed to load activity log", e);
     }
@@ -61,7 +61,12 @@ export default function ActivityLog() {
     );
   }
 
-  const filtered = events.filter((e) => {
+  const uniqueLoginUsers = new Set(loginEvents.map((e) => e.actor_email).filter((e) => e && e !== "anonymous@visitor")).size;
+  const anonymousDemos = demoEvents.filter((e) => !e.actor_user_id || e.actor_user_id === "anonymous").length;
+  const authenticatedDemos = demoEvents.length - anonymousDemos;
+
+  const activeEvents = tab === "logins" ? loginEvents : demoEvents;
+  const filtered = activeEvents.filter((e) => {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
@@ -70,9 +75,6 @@ export default function ActivityLog() {
       (e.action || "").toLowerCase().includes(q)
     );
   });
-
-  const loginCount = events.filter((e) => e.action === "login").length;
-  const uniqueUsers = new Set(events.filter((e) => e.action === "login").map((e) => e.actor_email).filter(Boolean)).size;
 
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={dir}>
@@ -104,32 +106,62 @@ export default function ActivityLog() {
           {/* Title */}
           <div className="flex items-center gap-3 mb-6">
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10">
-              <Activity className="w-5.5 h-5.5 text-primary" />
+              <Activity className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-                {isAr ? "سجل النشاط" : "Activity Log"}
+                {isAr ? "لوحة تحكم مدير النظام" : "System Admin Dashboard"}
               </h1>
               <p className="text-xs text-muted-foreground">
-                {isAr ? "من سجّل الدخول ومتى" : "Who logged in and when"}
+                {isAr ? "تتبع من سجّل الدخول ومن استكشف التجربة" : "Track who logged in and who explored the demo"}
               </p>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="raqeem-card p-4">
-              <div className="text-2xl font-bold text-foreground">{loginCount}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                {isAr ? "إجمالي عمليات الدخول" : "Total Login Events"}
-              </div>
-            </div>
-            <div className="raqeem-card p-4">
-              <div className="text-2xl font-bold text-foreground">{uniqueUsers}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                {isAr ? "مستخدمون فريدون" : "Unique Users"}
-              </div>
-            </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <StatCard
+              icon={<LogIn className="w-4 h-4" />}
+              value={loginEvents.length}
+              label={isAr ? "إجمالي عمليات الدخول" : "Total Logins"}
+              color="emerald"
+            />
+            <StatCard
+              icon={<Users className="w-4 h-4" />}
+              value={uniqueLoginUsers}
+              label={isAr ? "مستخدمون فريدون" : "Unique Users"}
+              color="primary"
+            />
+            <StatCard
+              icon={<Sparkles className="w-4 h-4" />}
+              value={demoEvents.length}
+              label={isAr ? "استكشافات التجربة" : "Demo Explorations"}
+              color="accent"
+            />
+            <StatCard
+              icon={<Eye className="w-4 h-4" />}
+              value={anonymousDemos}
+              label={isAr ? "زوار مجهولون" : "Anonymous Visitors"}
+              color="muted"
+            />
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mb-4 border-b border-border">
+            <TabButton
+              active={tab === "logins"}
+              onClick={() => setTab("logins")}
+              icon={<LogIn className="w-4 h-4" />}
+              label={isAr ? "سجل الدخول" : "Login Log"}
+              count={loginEvents.length}
+            />
+            <TabButton
+              active={tab === "demos"}
+              onClick={() => setTab("demos")}
+              icon={<Sparkles className="w-4 h-4" />}
+              label={isAr ? "استكشاف التجربة" : "Demo Explorations"}
+              count={demoEvents.length}
+            />
           </div>
 
           {/* Search */}
@@ -148,7 +180,9 @@ export default function ActivityLog() {
           <div className="raqeem-card overflow-hidden">
             <div className="px-5 py-3 border-b border-border">
               <h3 className="text-sm font-semibold">
-                {isAr ? "أحداث الدخول والخروج" : "Login & Logout Events"}
+                {tab === "logins"
+                  ? isAr ? "أحداث الدخول" : "Login Events"
+                  : isAr ? "جلسات استكشاف التجربة" : "Demo Exploration Sessions"}
                 <span className="text-muted-foreground font-normal"> ({filtered.length})</span>
               </h3>
             </div>
@@ -165,28 +199,45 @@ export default function ActivityLog() {
               <div className="divide-y divide-border">
                 {filtered.map((e) => {
                   const isLogin = e.action === "login";
+                  const isAnonymous = !e.actor_user_id || e.actor_user_id === "anonymous";
                   return (
                     <div key={e.id} className="px-5 py-3 flex items-center gap-3">
                       <div className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${
-                        isLogin ? "bg-emerald-50" : "bg-secondary"
+                        isLogin ? "bg-emerald-50" : "bg-accent/10"
                       }`}>
-                        <LogIn className={`w-4 h-4 ${isLogin ? "text-emerald-600" : "text-muted-foreground"}`} />
+                        {isLogin
+                          ? <LogIn className="w-4 h-4 text-emerald-600" />
+                          : <Sparkles className="w-4 h-4 text-accent" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-sm font-medium text-foreground truncate">
                             {e.actor_name || (isAr ? "— بدون اسم —" : "— No name —")}
                           </span>
-                          <StatusBadge
-                            label={isLogin ? (isAr ? "دخول" : "Login") : (isAr ? "خروج" : "Logout")}
-                            colorClass={isLogin ? "text-emerald-700 bg-emerald-50" : "text-muted-foreground bg-secondary"}
-                          />
+                          {isLogin ? (
+                            <StatusBadge
+                              label={isAr ? "دخول" : "Login"}
+                              colorClass="text-emerald-700 bg-emerald-50"
+                            />
+                          ) : (
+                            <StatusBadge
+                              label={isAr ? "استكشاف" : "Demo"}
+                              colorClass="text-accent bg-accent/10"
+                            />
+                          )}
+                          {!isLogin && isAnonymous && (
+                            <StatusBadge
+                              label={isAr ? "زائر" : "Visitor"}
+                              colorClass="text-muted-foreground bg-secondary"
+                            />
+                          )}
                         </div>
                         <div className="text-xs text-muted-foreground truncate" dir="ltr">
                           {e.actor_email || "—"}
                         </div>
                       </div>
-                      <div className="text-xs text-muted-foreground text-left shrink-0" dir="ltr">
+                      <div className="text-xs text-muted-foreground text-left shrink-0 flex items-center gap-1" dir="ltr">
+                        <Clock className="w-3 h-3" />
                         {e.created_date ? new Date(e.created_date).toLocaleString(isAr ? "ar-QA" : "en-GB", {
                           year: "numeric",
                           month: "short",
@@ -208,5 +259,42 @@ export default function ActivityLog() {
         </div>
       </main>
     </div>
+  );
+}
+
+function StatCard({ icon, value, label, color }) {
+  const colorMap = {
+    emerald: "bg-emerald-50 text-emerald-600",
+    primary: "bg-primary/10 text-primary",
+    accent: "bg-accent/10 text-accent",
+    muted: "bg-secondary text-muted-foreground",
+  };
+  return (
+    <div className="raqeem-card p-4">
+      <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full mb-2 ${colorMap[color]}`}>
+        {icon}
+      </div>
+      <div className="text-2xl font-bold text-foreground">{value}</div>
+      <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+    </div>
+  );
+}
+
+function TabButton({ active, onClick, icon, label, count }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+        active
+          ? "border-primary text-primary"
+          : "border-transparent text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {icon}
+      {label}
+      <span className={`text-xs px-1.5 py-0.5 rounded-full ${active ? "bg-primary/10" : "bg-secondary"}`}>
+        {count}
+      </span>
+    </button>
   );
 }

@@ -8,6 +8,7 @@
 // The founder's account (name, email, roles, permissions) is never touched.
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { DEMO_USER } from '@/../base44/shared/demoDataset';
 
@@ -50,8 +51,26 @@ export const EffectiveActorProvider = ({ children }) => {
     };
     localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
     setDemoSession(session);
+
+    // Record demo exploration event (fire-and-forget) for admin tracking
+    try {
+      base44.entities.AuditEvent.create({
+        action: 'demo_explore',
+        entity_type: 'DemoSession',
+        entity_id: session.demo_session_id,
+        entity_title: session.display_name_ar,
+        actor_user_id: user?.id || 'anonymous',
+        actor_name: user?.full_name || 'زائر مجهول · Anonymous Visitor',
+        actor_email: user?.email || 'anonymous@visitor',
+        description: 'Demo experience exploration started',
+        user_agent: navigator.userAgent,
+      });
+    } catch (e) {
+      // Silent fail — don't block demo entry
+    }
+
     return session;
-  }, []);
+  }, [user]);
 
   const exitDemo = useCallback(() => {
     localStorage.removeItem(DEMO_SESSION_KEY);

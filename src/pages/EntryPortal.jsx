@@ -80,10 +80,10 @@ export default function EntryPortal() {
                 <button
                   onClick={() => navigate("/activity-log")}
                   className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
-                  title={t("سجل النشاط", "Activity Log")}
+                  title={t("لوحة التحكم", "Admin Dashboard")}
                 >
                   <Activity className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t("سجل النشاط", "Activity Log")}</span>
+                  <span className="hidden sm:inline">{t("لوحة التحكم", "Admin Dashboard")}</span>
                 </button>
               )}
               <button
