@@ -1,9 +1,13 @@
 import React from "react";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 
 export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative">
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl overflow-hidden mb-4 mx-auto" style={{ background: "#FFFFFF" }}>

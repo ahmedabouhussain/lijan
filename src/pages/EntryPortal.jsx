@@ -10,6 +10,7 @@ import DemoBanner from "@/components/raqeem/DemoBanner";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
+import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
 import { BRAND } from "@/lib/brand";
 
@@ -68,6 +69,7 @@ export default function EntryPortal() {
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <LanguageSwitcher />
               <button
                 onClick={() => setShowWorkspace(false)}
                 className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
@@ -207,6 +209,13 @@ export default function EntryPortal() {
               {BRAND.descriptorEn} — From Mandate to Impact.
             </span>
           </p>
+
+          <div className="relative z-10 mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-foreground/10 border border-primary-foreground/20">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+            <span className="text-xs text-primary-foreground/80">
+              هوية مؤسسية واحدة لكل خدمات الحوكمة · One identity for all governance services
+            </span>
+          </div>
         </div>
 
         <div className="relative z-10 space-y-3 mt-8">
@@ -226,6 +235,9 @@ export default function EntryPortal() {
       {/* Right: Form panel */}
       <div className="lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-6">
+          <div className="flex justify-end">
+            <LanguageSwitcher />
+          </div>
           <div>
             <div className="flex items-center gap-2 text-accent mb-3">
               <Sparkles className="w-4 h-4" />
@@ -349,6 +361,16 @@ export default function EntryPortal() {
 
           <div className="flex justify-center">
             <PoweredByConnection variant="dark" />
+          </div>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => navigate("/committees-registry")}
+              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors"
+            >
+              {t("السجل العمومي للجان", "Public Committees Registry")}
+            </button>
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
