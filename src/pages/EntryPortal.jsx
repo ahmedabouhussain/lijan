@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Building2, Mail, Sparkles, Loader2, Home, LogOut, Activity } from "lucide-react";
 import { QATARI_ENTITIES } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useAuth } from "@/lib/AuthContext";
@@ -76,6 +76,16 @@ export default function EntryPortal() {
                 <Home className="w-4 h-4" />
                 <span className="hidden sm:inline">{t("العودة للرئيسية", "Back to Home")}</span>
               </button>
+              {user?.role === "admin" && !isDemoMode && (
+                <button
+                  onClick={() => navigate("/activity-log")}
+                  className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                  title={t("سجل النشاط", "Activity Log")}
+                >
+                  <Activity className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t("سجل النشاط", "Activity Log")}</span>
+                </button>
+              )}
               <button
                 onClick={() => navigate("/profile")}
                 className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"

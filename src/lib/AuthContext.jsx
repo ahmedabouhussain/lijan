@@ -98,6 +98,26 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
       setAuthChecked(true);
+
+      // Record login event (once per browser session) — fire-and-forget
+      if (!sessionStorage.getItem('lijan_login_recorded')) {
+        sessionStorage.setItem('lijan_login_recorded', '1');
+        try {
+          await base44.entities.AuditEvent.create({
+            action: 'login',
+            entity_type: 'User',
+            entity_id: currentUser.id,
+            entity_title: currentUser.email,
+            actor_user_id: currentUser.id,
+            actor_name: currentUser.full_name,
+            actor_email: currentUser.email,
+            description: 'User logged in',
+            user_agent: navigator.userAgent,
+          });
+        } catch (e) {
+          // Silent fail — don't block auth
+        }
+      }
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);

@@ -27,6 +27,7 @@ import MinutesArchive from '@/pages/MinutesArchive';
 import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
 import GovernancePolicies from '@/pages/GovernancePolicies';
+import ActivityLog from '@/pages/ActivityLog';
 
 // Organization Portal (Level 2)
 import OrgLayout from '@/components/raqeem/OrgLayout';
@@ -111,6 +112,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<EntryPortal />} />
       <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/governance-policies" element={<GovernancePolicies />} />
+      <Route path="/activity-log" element={<ActivityLog />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
