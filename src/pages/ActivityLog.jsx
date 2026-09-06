@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Activity, LogIn, Search, ShieldAlert, Sparkles, Users, Eye, Clock } from "lucide-react";
+import { ArrowRight, ArrowLeft, Activity, LogIn, Search, ShieldAlert, Sparkles, Users, Eye, Clock, FileText } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -117,6 +117,15 @@ export default function ActivityLog() {
               </p>
             </div>
           </div>
+
+          {/* Link to Audit Trail */}
+          <button
+            onClick={() => navigate("/audit-trail")}
+            className="w-full mb-6 inline-flex items-center justify-center gap-2 border border-accent/40 text-accent px-4 py-2.5 rounded-md text-sm font-medium hover:bg-accent/10 transition-colors"
+          >
+            <FileText className="w-4 h-4" />
+            {isAr ? "سجل العمليات التفصيلي — كل تغيير على المستندات والقرارات" : "Detailed Operations Log — Every document & decision change"}
+          </button>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">

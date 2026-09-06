@@ -28,6 +28,7 @@ import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
 import GovernancePolicies from '@/pages/GovernancePolicies';
 import ActivityLog from '@/pages/ActivityLog';
+import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 
 // Organization Portal (Level 2)
@@ -114,6 +115,7 @@ const AuthenticatedApp = () => {
       <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/governance-policies" element={<GovernancePolicies />} />
       <Route path="/activity-log" element={<ActivityLog />} />
+      <Route path="/audit-trail" element={<AuditTrail />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       <Route path="/login" element={<Login />} />

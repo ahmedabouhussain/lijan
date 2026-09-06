@@ -8,6 +8,7 @@ import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
 import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
+import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -126,6 +127,9 @@ export default function DecisionDetail() {
         signatures={[]}
         actions={actions}
       />
+
+      {/* Legal References & Execution Documents */}
+      <DecisionDocuments decision={decision} committee={committee} />
 
       {/* Dependencies & Execution Actions */}
       {decision.dependencies && (

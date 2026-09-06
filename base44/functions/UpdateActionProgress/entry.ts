@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // UpdateActionProgress — updates execution progress on an action.
 export default async function(req) {
@@ -40,6 +41,49 @@ export default async function(req) {
       description: `Progress updated: ${progress_percent !== undefined ? progress_percent + '%' : 'status change'}`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    // Dispatch automatic notifications to committee members when status changes
+    const oldStatus = action.status;
+    const newStatus = updateData.status || oldStatus;
+    if (newStatus !== oldStatus) {
+      try {
+        const [members, committee] = await Promise.all([
+          base44.asServiceRole.entities.CommitteeMembership
+            .filter({ committee_id: action.committee_id, status: 'active' }).catch(() => []),
+          base44.asServiceRole.entities.Committee.get(action.committee_id).catch(() => null),
+        ]);
+        const actorName = auth.user.full_name || auth.user.email;
+        const deepLink = `/o/${auth.organization_id}/c/${action.committee_id}/actions`;
+        const notifParams = (members || [])
+          .filter((m) => m.user_id && m.user_id !== auth.user.id)
+          .map((m) => ({
+            organization_id: auth.organization_id,
+            committee_id: action.committee_id,
+            recipient_user_id: m.user_id,
+            recipient_name: m.full_name || m.full_name_ar || '',
+            event_type: 'action_reminder',
+            context: {
+              action_title: action.title,
+              old_status: oldStatus,
+              new_status: newStatus,
+              committee_name: committee?.name_ar || committee?.name_en || '',
+              actor_name: actorName,
+              message: `Action "${action.title}" status changed: ${oldStatus} → ${newStatus}`,
+              deep_link: deepLink,
+            },
+            source_entity_type: 'Action',
+            source_entity_id: action_id,
+            source_title: action.title,
+            priority: newStatus === 'blocked' || newStatus === 'overdue' ? 'high' : 'normal',
+            correlation_id: auth.correlation_id,
+            actor_name: actorName,
+            deep_link: deepLink,
+          }));
+        if (notifParams.length > 0) {
+          await dispatchBatch(base44, notifParams);
+        }
+      } catch {}
+    }
 
     return Response.json({ status: 'ok', action_id, updates: updateData, correlation_id: auth.correlation_id });
   } catch (error) {
