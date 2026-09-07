@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Loader2, Bot } from "lucide-react";
 
 const ACTIVE_STATUSES = ["pending", "running", "in_progress"];
@@ -35,6 +36,7 @@ export default function MessageBubble({ message, agentIcon: AgentIcon = Bot }) {
       <div className="max-w-[80%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm">
         {message.content && (
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             className="text-sm prose prose-sm max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 leading-relaxed"
             components={mdComponents}
           >{message.content}</ReactMarkdown>
