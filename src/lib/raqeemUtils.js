@@ -180,7 +180,8 @@ export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {
     const d = new Date(dateStr);
-    return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const locale = document.documentElement.lang === "ar" ? "ar-QA" : "en-GB";
+    return d.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" });
   } catch {
     return dateStr;
   }

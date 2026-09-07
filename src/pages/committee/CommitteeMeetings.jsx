@@ -14,6 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const MODE_LABELS = {
+  physical: { ar: "حضوري", en: "Physical" },
+  online: { ar: "افتراضي", en: "Online" },
+  hybrid: { ar: "مختلط", en: "Hybrid" },
+};
+
 export default function CommitteeMeetings() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
@@ -74,8 +80,8 @@ export default function CommitteeMeetings() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div><Label>{t("العنوان", "Title")}</Label><Input value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Quarterly Review" /></div>
             <div><Label>{t("التاريخ والوقت", "Date & Time")}</Label><Input type="datetime-local" value={form.date} onChange={(e) => setForm(f => ({ ...f, date: e.target.value }))} /></div>
-            <div><Label>{t("الوضع", "Mode")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">Physical</option><option value="online">Online</option><option value="hybrid">Hybrid</option></select></div>
-            <div><Label>{t("المزود", "Provider")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">None</option><option value="teams">Teams</option><option value="zoom">Zoom</option><option value="external_link">External Link</option></select></div>
+            <div><Label>{t("الوضع", "Mode")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">{t("حضوري", "Physical")}</option><option value="online">{t("افتراضي", "Online")}</option><option value="hybrid">{t("مختلط", "Hybrid")}</option></select></div>
+            <div><Label>{t("المزود", "Provider")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">{t("بدون", "None")}</option><option value="teams">{t("Teams", "Teams")}</option><option value="zoom">{t("Zoom", "Zoom")}</option><option value="external_link">{t("رابط خارجي", "External Link")}</option></select></div>
           </div>
           <RecurrenceConfig
             value={{
@@ -103,14 +109,14 @@ export default function CommitteeMeetings() {
               <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div className="flex items-center gap-2">
                   {(m.is_series_master || m.series_id) && (
-                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" title={t("اجتماع متكرر", "Recurring meeting")} />
                   )}
                   <div>
                     <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
-                    <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
+                    <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {t(MODE_LABELS[m.mode]?.ar, MODE_LABELS[m.mode]?.en) || m.mode}</div>
                   </div>
                 </div>
-                <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                <StatusBadge label={t(MEETING_STATUS[m.status]?.ar || m.status, MEETING_STATUS[m.status]?.en || m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
               </Link>
             ))}
           </div>
@@ -128,14 +134,14 @@ export default function CommitteeMeetings() {
               <Link key={m.id} to={`${base}/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div className="flex items-center gap-2">
                   {(m.is_series_master || m.series_id) && (
-                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <Repeat className="w-3.5 h-3.5 text-accent shrink-0" title={t("اجتماع متكرر", "Recurring meeting")} />
                   )}
                   <div>
                     <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
                     <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
                   </div>
                 </div>
-                <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                <StatusBadge label={t(MEETING_STATUS[m.status]?.ar || m.status, MEETING_STATUS[m.status]?.en || m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
               </Link>
             ))}
           </div>

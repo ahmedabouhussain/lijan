@@ -74,7 +74,7 @@ export default function CommitteeCalendar() {
               <Link key={m.id} to={`${base}/meetings/${m.id}`} className="raqeem-card p-4 flex items-center gap-4 hover:bg-secondary/30 transition-colors">
                 <div className="text-center shrink-0 w-14">
                   <div className="text-lg font-bold text-primary">{new Date(m.date).getDate()}</div>
-                  <div className="text-[10px] text-muted-foreground uppercase">{new Date(m.date).toLocaleDateString("en", { month: "short" })}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase">{new Date(m.date).toLocaleDateString(lang === "ar" ? "ar-QA" : "en", { month: "short" })}</div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{m.title || m.title_ar}</div>
