@@ -5,12 +5,12 @@ import { Loader2, Bot } from "lucide-react";
 const ACTIVE_STATUSES = ["pending", "running", "in_progress"];
 
 const mdComponents = {
-  table: ({ children }) => <table className="w-full text-xs my-2.5 border-collapse rounded-md overflow-hidden border border-border/50">{children}</table>,
-  thead: ({ children }) => <thead className="bg-primary/5">{children}</thead>,
+  table: ({ children }) => <table className="w-full text-xs my-3 border-collapse rounded-lg overflow-hidden border border-border shadow-sm">{children}</table>,
+  thead: ({ children }) => <thead className="bg-primary/10 border-b-2 border-primary/20">{children}</thead>,
   tbody: ({ children }) => <tbody>{children}</tbody>,
-  tr: ({ children }) => <tr className="border-b border-border/40 last:border-0">{children}</tr>,
-  th: ({ children }) => <th className="px-2.5 py-1.5 text-right font-semibold text-muted-foreground whitespace-nowrap">{children}</th>,
-  td: ({ children }) => <td className="px-2.5 py-1.5 align-top">{children}</td>,
+  tr: ({ children }) => <tr className="border-b border-border/40 last:border-0 even:bg-secondary/30">{children}</tr>,
+  th: ({ children }) => <th className="px-3 py-2 text-right font-semibold text-foreground/70 whitespace-nowrap">{children}</th>,
+  td: ({ children }) => <td className="px-3 py-2 align-top leading-relaxed">{children}</td>,
 };
 
 export default function MessageBubble({ message, agentIcon: AgentIcon = Bot }) {
