@@ -1,6 +1,6 @@
 import React from "react";
 import { Archive, BookOpen, Lightbulb, ShieldCheck } from "lucide-react";
-import MemoryChat from "@/components/raqeem/MemoryChat";
+import AgentChatPanel from "@/components/raqeem/AgentChatPanel";
 
 export default function Memory() {
   return (
@@ -10,7 +10,7 @@ export default function Memory() {
           <h1 className="text-2xl font-bold text-foreground">الذاكرة المؤسسية · Institutional Memory</h1>
           <p className="text-sm text-muted-foreground mt-1">تحويل السجلات التاريخية إلى ذكاء مؤسسي قابل لإعادة الاستخدام</p>
         </div>
-        <MemoryChat />
+        <AgentChatPanel mode="memory" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
