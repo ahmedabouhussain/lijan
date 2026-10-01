@@ -7,6 +7,7 @@ import AmeenEmblem from "@/components/ameen/AmeenEmblem";
 import MessageBubble from "./copilot/MessageBubble";
 import { cn } from "@/lib/utils";
 import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
+import { AMEEN_SANDBOX_AGENT_NAME } from "@/lib/ameenContext";
 import { useAmeen } from "@/lib/AmeenContext";
 
 /**
@@ -22,10 +23,16 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     organization,
     committee,
     scopeKey,
+    route,
+    demoPersonaKey,
+    accessDenied,
     isDemo,
     isActive,
     t,
   } = useAmeen();
+
+  // One identity, two data scopes: the exploration experience reads sandbox data only.
+  const agentName = isDemo ? AMEEN_SANDBOX_AGENT_NAME : AMEEN_AGENT_NAME;
 
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -65,18 +72,18 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
   }, [scopeKey, contextLabel]);
 
   useEffect(() => {
-    if (!open || conversation || !isActive || isDemo) return;
+    if (!open || conversation || !isActive || accessDenied) return;
     (async () => {
       setLoading(true);
       try {
-        const list = await base44.agents.listConversations({ agent_name: AMEEN_AGENT_NAME });
+        const list = await base44.agents.listConversations({ agent_name: agentName });
         const meta = JSON.parse(metadataKey);
         const existing = (list || []).find((c) => {
           if (!c.metadata) return false;
           return Object.entries(meta).every(([k, v]) => c.metadata[k] === v);
         });
         const conv = existing || await base44.agents.createConversation({
-          agent_name: AMEEN_AGENT_NAME,
+          agent_name: agentName,
           metadata: {
             name: `${name} · ${scopeName || contextLabel}`,
             context: `السياق: ${contextLabel} · الدور: ${roleLabel}`,
@@ -88,7 +95,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
       } catch {}
       setLoading(false);
     })();
-  }, [open, conversation, metadataKey, isActive, isDemo, name, scopeName, contextLabel, roleLabel]);
+  }, [open, conversation, metadataKey, isActive, accessDenied, agentName, name, scopeName, contextLabel, roleLabel]);
 
   useEffect(() => {
     if (!conversation) return;
@@ -107,13 +114,22 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     if (!content || !conversation || sending) return;
     setInput("");
     setSending(true);
+    // Every consultation is recorded — «أمين» is never a silent channel.
+    base44.functions.invoke("LogAmeenAction", {
+      org_ref: route?.orgRef || null,
+      committee_ref: route?.committeeRef || null,
+      context_key: contextKey,
+      question: content,
+      demo_mode: isDemo,
+      demo_persona_key: demoPersonaKey,
+    }).catch(() => {});
     try {
       await base44.agents.addMessage(conversation, { role: "user", content });
     } catch {}
     setSending(false);
   };
 
-  const disabled = !isActive || isDemo || sending;
+  const disabled = !isActive || accessDenied || sending;
 
   const panel = (children) => (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -158,10 +174,18 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
             <span>{t("دورك", "Your role")}: {roleLabel}</span>
           </div>
           <p className="text-[11px] text-muted-foreground leading-relaxed">{t(context.scopeNote.ar, context.scopeNote.en)}</p>
+          {isDemo && (
+            <p className="text-[11px] text-accent leading-relaxed">
+              {t(
+                "نطاق العرض التجريبي — بيانات افتراضية غير حقيقية، والسجلات النظامية غير متاحة في هذا الوضع.",
+                "Exploration scope — fictional data only; governed records are not reachable in this mode."
+              )}
+            </p>
+          )}
         </div>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background" dir="auto">
-          {!isActive || isDemo ? (
+          {!isActive ? (
             <div className="text-center py-12 space-y-2">
               <Lock className="w-7 h-7 text-muted-foreground/50 mx-auto" />
               <p className="text-sm text-muted-foreground">
@@ -169,6 +193,16 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
               </p>
               <p className="text-xs text-muted-foreground">
                 {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use Ameen in this context.")}
+              </p>
+            </div>
+          ) : accessDenied ? (
+            <div className="text-center py-12 space-y-2">
+              <Lock className="w-7 h-7 text-muted-foreground/50 mx-auto" />
+              <p className="text-sm text-muted-foreground">
+                {t("لا تملك عضوية فعّالة في هذا النطاق.", "You hold no active membership in this scope.")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("لا يمكن لأمين الوصول إلى محتوى لست طرفاً فيه.", "Ameen cannot reach content you are not party to.")}
               </p>
             </div>
           ) : loading ? (
@@ -220,7 +254,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
           )}
         </div>
 
-        {isActive && !isDemo && (
+        {isActive && !accessDenied && (
           <div className="p-3 border-t border-border flex gap-2 bg-card" dir="auto">
             <input
               value={input}

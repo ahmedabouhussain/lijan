@@ -29,10 +29,12 @@ export function AmeenProvider({ children }) {
 
   const actorId = effectiveActor?.id || null;
   const active = isAuthenticated || isDemoMode;
+  // Sandbox sessions carry the demo persona key — the server verifies it and
+  // resolves scope against sandbox-flagged records only, never the founder's.
+  const demoPersonaKey = isDemoMode ? (effectiveActor?.data?.demo_persona_key || null) : null;
 
   useEffect(() => {
-    // Demo sessions never resolve the founder's real role or scope.
-    if (!isAuthenticated || isDemoMode || !route.orgRef) {
+    if ((!isAuthenticated && !isDemoMode) || !route.orgRef) {
       setVerified(null);
       return;
     }
@@ -46,6 +48,8 @@ export function AmeenProvider({ children }) {
           context_key: route.contextKey,
           entity_type: route.entityType,
           entity_id: route.entityId,
+          demo_mode: isDemoMode,
+          demo_persona_key: demoPersonaKey,
         });
         if (!cancelled) setVerified(res?.data || res || null);
       } catch {
@@ -60,6 +64,7 @@ export function AmeenProvider({ children }) {
   }, [
     isAuthenticated,
     isDemoMode,
+    demoPersonaKey,
     route.orgRef,
     route.committeeRef,
     route.contextKey,
@@ -98,6 +103,7 @@ export function AmeenProvider({ children }) {
     isDemo: isDemoMode,
     isActive: active,
     actorId,
+    demoPersonaKey,
     scopeKey,
     lang,
     t,

@@ -115,6 +115,9 @@ export function resolveAmeenRoute(pathname = "") {
   };
 }
 
+/** Sandbox-scope agent for the exploration experience — same «أمين», sandbox data only. */
+export const AMEEN_SANDBOX_AGENT_NAME = "ameen_demo";
+
 /** Public-id extraction from a route ref (mirrors the platform's slug--publicId form). */
 export function publicIdFromRef(ref) {
   if (!ref) return null;

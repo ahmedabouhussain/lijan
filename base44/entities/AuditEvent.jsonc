@@ -43,7 +43,8 @@
         "provision",
         "suspend",
         "deny_access",
-        "demo_explore"
+        "demo_explore",
+        "ai_query"
       ],
       "default": "create"
     },
