@@ -9,6 +9,7 @@ import MinutesManager from "@/components/raqeem/MinutesManager";
 import AttendancePanel from "@/components/raqeem/AttendancePanel";
 import LiveVotingWidget from "@/components/raqeem/LiveVotingWidget";
 import CalendarSyncButton from "@/components/raqeem/CalendarSyncButton";
+import OutlookSyncButton from "@/components/raqeem/OutlookSyncButton";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -194,6 +195,7 @@ export default function MeetingDetail() {
         {/* Meeting status controls */}
         <div className="flex items-center gap-2 flex-wrap">
           <CalendarSyncButton meetingId={id} />
+          <OutlookSyncButton meetingId={id} />
           {meeting.is_series_master && (
             <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
               {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}

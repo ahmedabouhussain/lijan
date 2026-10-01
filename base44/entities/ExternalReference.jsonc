@@ -22,6 +22,10 @@
       "type": "string",
       "title": "LIJAN Record ID"
     },
+    "user_id": {
+      "type": "string",
+      "title": "Connected User ID (per-member external mapping)"
+    },
     "external_system": {
       "type": "string",
       "title": "External System",
