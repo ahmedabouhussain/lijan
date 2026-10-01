@@ -31,7 +31,8 @@ export function AmeenProvider({ children }) {
   const active = isAuthenticated || isDemoMode;
 
   useEffect(() => {
-    if (!active || !route.orgRef) {
+    // Demo sessions never resolve the founder's real role or scope.
+    if (!isAuthenticated || isDemoMode || !route.orgRef) {
       setVerified(null);
       return;
     }
@@ -57,7 +58,8 @@ export function AmeenProvider({ children }) {
       cancelled = true;
     };
   }, [
-    active,
+    isAuthenticated,
+    isDemoMode,
     route.orgRef,
     route.committeeRef,
     route.contextKey,
