@@ -12,6 +12,8 @@ import AutoFullscreen from '@/components/AutoFullscreen';
 import SplashScreen from '@/components/raqeem/SplashScreen';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { LanguageProvider } from '@/lib/LanguageContext';
+import { AmeenProvider } from '@/lib/AmeenContext';
+import AmeenLauncher from '@/components/ameen/AmeenLauncher';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -230,8 +232,11 @@ function App() {
           <Router>
             <ScrollToTop />
             <AutoFullscreen />
-            {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-            <AuthenticatedApp />
+            <AmeenProvider>
+              {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+              <AuthenticatedApp />
+              <AmeenLauncher />
+            </AmeenProvider>
           </Router>
           <Toaster />
           </EffectiveActorProvider>

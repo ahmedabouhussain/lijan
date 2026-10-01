@@ -18,7 +18,6 @@ import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
-import CommitteeAgentDock from "@/components/raqeem/CommitteeAgentDock";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
@@ -323,8 +322,6 @@ function CommitteeShell() {
         </div>
       </nav>
 
-      {/* Route-aware floating agent launcher */}
-      <CommitteeAgentDock />
     </div>
   );
 }

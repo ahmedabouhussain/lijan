@@ -1,40 +1,71 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Maximize2, Minimize2, ShieldCheck, Lock } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import AmeenEmblem from "@/components/ameen/AmeenEmblem";
 import MessageBubble from "./copilot/MessageBubble";
 import { cn } from "@/lib/utils";
-import { AMEEN_AGENT_NAME, AMEEN_DISPLAY_NAME, AmeenIcon, getAmeenMode } from "@/lib/ameenAgent";
+import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
+import { useAmeen } from "@/lib/AmeenContext";
 
 /**
  * AgentChatPanel — the single «أمين» chat surface.
- * One agent and one identity; `mode` selects the active context (state) it runs in.
- * variant="floating" → fixed bottom-corner button + slide-out sheet.
- * variant="inline" → inline button + slide-out sheet.
+ * One identity, one engine; the active context and role come from AmeenContext.
  */
-export default function AgentChatPanel({
-  mode = "general",
-  metadata = {},
-  variant = "inline",
-  buttonClassName,
-}) {
-  const config = getAmeenMode(mode);
-  const { isDemoMode } = useEffectiveActor();
+export default function AgentChatPanel({ variant = "inline", buttonClassName }) {
+  const {
+    identity,
+    context,
+    contextKey,
+    roleProfile,
+    organization,
+    committee,
+    scopeKey,
+    isDemo,
+    isActive,
+    t,
+  } = useAmeen();
+
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [scopeNotice, setScopeNotice] = useState(null);
   const scrollRef = useRef(null);
+  const prevScopeRef = useRef(scopeKey);
 
-  // A stable key identifying this context's thread (mode + scope)
-  const metadataKey = JSON.stringify({ mode: config.mode, ...metadata });
+  const name = t(identity.name.ar, identity.name.en);
+  const contextLabel = t(context.label.ar, context.label.en);
+  const roleLabel = t(roleProfile.label.ar, roleProfile.label.en);
+  const scopeName = committee
+    ? t(committee.name_ar || committee.name_en, committee.name_en || committee.name_ar)
+    : organization
+      ? t(organization.name_ar || organization.name_en, organization.name_en || organization.name_ar)
+      : null;
+
+  // Isolation key: conversations never cross actor / organization / committee / context.
+  const metadata = useMemo(() => {
+    const m = { scope: scopeKey, context_key: contextKey };
+    if (scopeName) m.scope_name = scopeName;
+    return m;
+  }, [scopeKey, contextKey, scopeName]);
+  const metadataKey = JSON.stringify(metadata);
+
+  // Crossing into another context starts a clean, non-mixing thread.
+  useEffect(() => {
+    if (prevScopeRef.current === scopeKey) return;
+    prevScopeRef.current = scopeKey;
+    setConversation(null);
+    setMessages([]);
+    setScopeNotice(contextLabel);
+  }, [scopeKey, contextLabel]);
 
   useEffect(() => {
-    if (!open || conversation || isDemoMode) return;
+    if (!open || conversation || !isActive || isDemo) return;
     (async () => {
       setLoading(true);
       try {
@@ -47,8 +78,8 @@ export default function AgentChatPanel({
         const conv = existing || await base44.agents.createConversation({
           agent_name: AMEEN_AGENT_NAME,
           metadata: {
-            name: `${AMEEN_DISPLAY_NAME} · ${config.subtitle}`,
-            context: `الوضع النشط: ${config.subtitle}`,
+            name: `${name} · ${scopeName || contextLabel}`,
+            context: `السياق: ${contextLabel} · الدور: ${roleLabel}`,
             ...meta,
           },
         });
@@ -57,11 +88,13 @@ export default function AgentChatPanel({
       } catch {}
       setLoading(false);
     })();
-  }, [open, conversation, metadataKey, isDemoMode, config.mode, config.subtitle]);
+  }, [open, conversation, metadataKey, isActive, isDemo, name, scopeName, contextLabel, roleLabel]);
 
   useEffect(() => {
     if (!conversation) return;
-    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) => setMessages(data.messages || []));
+    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) =>
+      setMessages(data.messages || [])
+    );
     return unsub;
   }, [conversation]);
 
@@ -69,71 +102,140 @@ export default function AgentChatPanel({
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
-  const send = async () => {
-    if (!input.trim() || !conversation || sending) return;
-    const text = input.trim();
+  const send = async (text) => {
+    const content = (text ?? input).trim();
+    if (!content || !conversation || sending) return;
     setInput("");
     setSending(true);
     try {
-      await base44.agents.addMessage(conversation, { role: "user", content: text });
+      await base44.agents.addMessage(conversation, { role: "user", content });
     } catch {}
     setSending(false);
   };
 
+  const disabled = !isActive || isDemo || sending;
+
   const panel = (children) => (
     <Sheet open={open} onOpenChange={setOpen}>
       {children}
-      <SheetContent side="left" className="w-full sm:max-w-md flex flex-col p-0 gap-0" dir="rtl">
-        {/* Institutional identity header — maroon with gold emblem */}
-        <div className="bg-sidebar text-sidebar-foreground px-4 py-3.5 flex items-center gap-3 border-b border-sidebar-border">
-          <div className="w-9 h-9 rounded-lg bg-sidebar-accent/20 flex items-center justify-center shrink-0">
-            <AmeenIcon className="w-4 h-4 text-sidebar-primary" />
-          </div>
-          <div className="min-w-0">
+      <SheetContent
+        side="left"
+        className={cn(
+          "w-full flex flex-col p-0 gap-0 transition-[max-width] duration-200",
+          expanded ? "sm:max-w-2xl" : "sm:max-w-md"
+        )}
+      >
+        {/* Identity header */}
+        <div className="bg-sidebar text-sidebar-foreground px-4 py-3 flex items-center gap-3 border-b border-sidebar-border">
+          <AmeenEmblem size={36} tone="inverse" />
+          <div className="min-w-0 flex-1">
             <SheetTitle className="text-sm font-semibold tracking-wide leading-tight text-sidebar-foreground">
-              {AMEEN_DISPLAY_NAME}
+              {name}
             </SheetTitle>
-            <p className="text-[11px] text-sidebar-foreground/60 leading-tight mt-0.5 truncate">
-              {config.subtitle}
+            <p className="text-[11px] text-sidebar-foreground/60 leading-tight mt-0.5">
+              {t(identity.title.ar, identity.title.en)}
             </p>
           </div>
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="hidden sm:flex w-8 h-8 items-center justify-center rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 transition-colors"
+            aria-label={expanded ? t("تصغير", "Collapse") : t("عرض كامل", "Expand")}
+          >
+            {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
         </div>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background">
-          {isDemoMode ? (
+        {/* Live context strip */}
+        <div className="px-4 py-2.5 bg-card border-b border-border space-y-1.5" dir="auto">
+          <div className="flex items-center gap-2 text-xs text-foreground">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+            <span className="font-medium">
+              {t("السياق الحالي", "Current context")}: {scopeName ? `${scopeName} · ` : ""}{contextLabel}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0" />
+            <span>{t("دورك", "Your role")}: {roleLabel}</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">{t(context.scopeNote.ar, context.scopeNote.en)}</p>
+        </div>
+
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background" dir="auto">
+          {!isActive || isDemo ? (
             <div className="text-center py-12 space-y-2">
-              <AmeenIcon className="w-8 h-8 text-accent/40 mx-auto" />
-              <p className="text-sm text-muted-foreground">أمين متاح للمستخدمين المسجّلين.</p>
-              <p className="text-xs text-muted-foreground">سجّل الدخول لاستخدامه في هذه الصفحة.</p>
+              <Lock className="w-7 h-7 text-muted-foreground/50 mx-auto" />
+              <p className="text-sm text-muted-foreground">
+                {t("أمين متاح للمستخدمين المسجّلين.", "Ameen is available to registered users.")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use Ameen in this context.")}
+              </p>
             </div>
           ) : loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
             </div>
-          ) : messages.length === 0 ? (
-            <div className="text-center py-12 space-y-1.5">
-              <div className="w-12 h-12 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto mb-3">
-                <AmeenIcon className="w-5 h-5 text-primary/50" />
-              </div>
-              <p className="text-sm font-medium text-foreground">مرحباً بك، معك أمين</p>
-              <p className="text-xs text-muted-foreground max-w-xs mx-auto">{config.emptyHint}</p>
-            </div>
           ) : (
-            messages.map((m, i) => <MessageBubble key={i} message={m} agentIcon={AmeenIcon} />)
+            <>
+              {scopeNotice && messages.length === 0 && (
+                <div className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2.5 text-xs text-foreground leading-relaxed">
+                  {t("تم الانتقال إلى", "Switched to")} {scopeNotice}.{" "}
+                  {t(
+                    "لن تُستخدم معلومات السياق السابق هنا.",
+                    "Information from the previous context will not be used here."
+                  )}
+                </div>
+              )}
+
+              {messages.length === 0 ? (
+                <div className="py-8 space-y-5">
+                  <div className="text-center space-y-1.5">
+                    <AmeenEmblem size={44} tone="outline" className="mx-auto" />
+                    <p className="text-sm font-medium text-foreground">
+                      {t("مرحباً بك، معك أمين", "Welcome — Ameen here")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t(context.scopeNote.ar, context.scopeNote.en)}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {context.prompts.map((p) => {
+                      const label = t(p.ar, p.en);
+                      return (
+                        <button
+                          key={p.en}
+                          onClick={() => send(label)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                messages.map((m, i) => <MessageBubble key={i} message={m} />)
+              )}
+            </>
           )}
         </div>
 
-        {!isDemoMode && (
-          <div className="p-3 border-t border-border flex gap-2 bg-card">
+        {isActive && !isDemo && (
+          <div className="p-3 border-t border-border flex gap-2 bg-card" dir="auto">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
-              placeholder="اكتب رسالتك…"
+              placeholder={t("اكتب رسالتك…", "Type your message…")}
               className="flex-1 px-3.5 py-2.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/30 transition-colors"
-              disabled={sending}
+              disabled={disabled}
             />
-            <Button size="icon" onClick={send} disabled={sending || !input.trim()} className="rounded-lg shrink-0">
+            <Button
+              size="icon"
+              onClick={() => send()}
+              disabled={disabled || !input.trim()}
+              className="rounded-lg shrink-0"
+            >
               <Send className="w-4 h-4" />
             </Button>
           </div>
@@ -147,21 +249,21 @@ export default function AgentChatPanel({
       <button
         onClick={() => setOpen(true)}
         className={cn(
-          "flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary-dark transition-all hover:scale-105",
+          "flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary-dark transition-all hover:scale-105",
           buttonClassName
         )}
-        aria-label={AMEEN_DISPLAY_NAME}
+        aria-label={name}
       >
-        <AmeenIcon className="w-4 h-4 shrink-0" />
-        <span className="text-xs font-semibold whitespace-nowrap">{AMEEN_DISPLAY_NAME}</span>
+        <AmeenEmblem size={22} tone="inverse" />
+        <span className="text-xs font-semibold whitespace-nowrap">{name}</span>
       </button>
     );
   }
 
   return panel(
     <Button size="sm" variant="outline" className={buttonClassName} onClick={() => setOpen(true)}>
-      <AmeenIcon className="w-3.5 h-3.5" />
-      {AMEEN_DISPLAY_NAME}
+      <AmeenEmblem size={16} tone="outline" />
+      {name}
     </Button>
   );
 }

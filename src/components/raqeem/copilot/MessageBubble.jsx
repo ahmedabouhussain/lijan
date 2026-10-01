@@ -1,20 +1,27 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Loader2, Bot } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import AmeenEmblem from "@/components/ameen/AmeenEmblem";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const ACTIVE_STATUSES = ["pending", "running", "in_progress"];
 
 const mdComponents = {
-  table: ({ children }) => <table className="w-full text-xs my-3 border-collapse rounded-lg overflow-hidden border border-border shadow-sm">{children}</table>,
-  thead: ({ children }) => <thead className="bg-primary/10 border-b-2 border-primary/20">{children}</thead>,
+  table: ({ children }) => (
+    <div className="w-full overflow-x-auto my-3">
+      <table className="w-full text-xs border-collapse border border-border">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-primary/5 border-b-2 border-primary/20">{children}</thead>,
   tbody: ({ children }) => <tbody>{children}</tbody>,
   tr: ({ children }) => <tr className="border-b border-border/40 last:border-0 even:bg-secondary/30">{children}</tr>,
-  th: ({ children }) => <th className="px-3 py-2 text-right font-semibold text-foreground/70 whitespace-nowrap">{children}</th>,
+  th: ({ children }) => <th className="px-3 py-2 text-start font-semibold text-foreground/70 whitespace-nowrap">{children}</th>,
   td: ({ children }) => <td className="px-3 py-2 align-top leading-relaxed">{children}</td>,
 };
 
-export default function MessageBubble({ message, agentIcon: AgentIcon = Bot }) {
+export default function MessageBubble({ message }) {
+  const { t } = useLanguage();
   const isUser = message.role === "user";
   const activeTools = (message.tool_calls || []).filter((tc) => ACTIVE_STATUSES.includes(tc.status));
 
@@ -30,10 +37,10 @@ export default function MessageBubble({ message, agentIcon: AgentIcon = Bot }) {
 
   return (
     <div className="flex justify-start gap-2.5">
-      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5 border border-primary/15">
-        <AgentIcon className="w-4 h-4 text-primary" />
+      <div className="shrink-0 mt-0.5">
+        <AmeenEmblem size={30} tone="outline" />
       </div>
-      <div className="max-w-[80%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm">
+      <div className="max-w-[85%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm">
         {message.content && (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -44,7 +51,7 @@ export default function MessageBubble({ message, agentIcon: AgentIcon = Bot }) {
         {activeTools.length > 0 && (
           <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
             <Loader2 className="w-3 h-3 animate-spin" />
-            <span>جارٍ البحث في النظام…</span>
+            <span>{t("جارٍ التحقق من السجلات…", "Checking the records…")}</span>
           </div>
         )}
       </div>

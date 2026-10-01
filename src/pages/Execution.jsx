@@ -5,7 +5,6 @@ import { CheckSquare, AlertTriangle, Clock, ShieldCheck } from "lucide-react";
 import { ACTION_STATUS, PRIORITY, formatDate, isOverdue, daysUntil } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import AgentChatPanel from "@/components/raqeem/AgentChatPanel";
 import ActionManager from "@/components/raqeem/ActionManager";
 import { ESCALATION_LEVEL } from "@/lib/raqeemUtils";
 
@@ -53,7 +52,6 @@ export default function Execution() {
           <h1 className="text-2xl font-bold text-foreground">التنفيذ · Execution</h1>
           <p className="text-sm text-muted-foreground mt-1">تتبع الإجراءات عبر اللجان · Cross-committee execution</p>
         </div>
-        <AgentChatPanel mode="actions" />
       </div>
 
       {/* Summary */}
