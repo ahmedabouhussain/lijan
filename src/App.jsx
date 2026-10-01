@@ -79,7 +79,6 @@ import CommitteeNotifications from '@/pages/committee/CommitteeNotifications';
 import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 import ProductCatalog from '@/pages/committee/ProductCatalog';
-import ReportCenter from '@/pages/committee/ReportCenter';
 import PeopleFormationHub from '@/pages/committee/hubs/PeopleFormationHub';
 import MeetingsHub from '@/pages/committee/hubs/MeetingsHub';
 import RecordsHub from '@/pages/committee/hubs/RecordsHub';
@@ -116,8 +115,6 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<EntryPortal />} />
       <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/governance-policies" element={<GovernancePolicies />} />
-      <Route path="/activity-log" element={<ActivityLog />} />
-      <Route path="/audit-trail" element={<AuditTrail />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       <Route path="/login" element={<Login />} />
@@ -186,9 +183,12 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/closure" element={<CommitteeClosure />} />
           <Route path="/o/:orgRef/c/:committeeRef/settings" element={<CommitteeSettings />} />
           <Route path="/o/:orgRef/c/:committeeRef/products" element={<ProductCatalog />} />
-          <Route path="/o/:orgRef/c/:committeeRef/reports" element={<ReportCenter />} />
           <Route path="/o/:orgRef/c/:committeeRef/documentation" element={<DocumentationHub />} />
         </Route>
+
+        {/* Administrative oversight logs */}
+        <Route path="/activity-log" element={<ActivityLog />} />
+        <Route path="/audit-trail" element={<AuditTrail />} />
 
         {/* Deliberations Archive */}
         <Route path="/minutes-archive" element={<MinutesArchive />} />
