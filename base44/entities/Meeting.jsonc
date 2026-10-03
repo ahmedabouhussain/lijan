@@ -32,6 +32,10 @@
       "type": "string",
       "title": "Location"
     },
+    "location_en": {
+      "type": "string",
+      "title": "Location (English)"
+    },
     "mode": {
       "type": "string",
       "title": "Meeting Mode",

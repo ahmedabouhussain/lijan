@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, X, Lock, ShieldCheck, AlertCircle } from "lucide-react";
+import { Plus, Trash2, X, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { AGENDA_ITEM_STATUS, READINESS, CLASSIFICATION } from "@/lib/raqeemUtils";
+import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 
 export default function AgendaManager({ meetingId, items = [], onChanged }) {
+  const { t } = useLanguage();
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -38,7 +40,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
         action: "create",
         entity_type: "AgendaItem",
         entity_title: form.title,
-        description: "إضافة بند جدول أعمال",
+        description: L.pair("إضافة بند جدول أعمال", "Agenda item added"),
       });
       setForm({ title: "", objective: "", presenter: "", time_allocation_minutes: 15, required_decision: "", classification: "internal", readiness: "not_ready" });
       setShow(false);
@@ -89,7 +91,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
     <div className="space-y-3">
       {!show ? (
         <button onClick={() => setShow(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-          <Plus className="w-3.5 h-3.5" /> إضافة بند جدول أعمال
+          <Plus className="w-3.5 h-3.5" /> {t("إضافة بند جدول أعمال", "Add agenda item")}
         </button>
       ) : (
         <div className="border border-border rounded-md p-4 space-y-3 relative">
@@ -97,47 +99,47 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
             <X className="w-4 h-4" />
           </button>
           <div>
-            <Label className="text-xs">عنوان البند *</Label>
-            <Input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="بند جدول الأعمال" />
+            <Label className="text-xs">{t("عنوان البند *", "Item title *")}</Label>
+            <Input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder={t("بند جدول الأعمال", "Agenda item")} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs">الهدف</Label>
-              <Input value={form.objective} onChange={(e) => update("objective", e.target.value)} placeholder="هدف البند" />
+              <Label className="text-xs">{t("الهدف", "Objective")}</Label>
+              <Input value={form.objective} onChange={(e) => update("objective", e.target.value)} placeholder={t("هدف البند", "Item objective")} />
             </div>
             <div>
-              <Label className="text-xs">المقدم</Label>
-              <Input value={form.presenter} onChange={(e) => update("presenter", e.target.value)} placeholder="اسم المقدم" />
+              <Label className="text-xs">{t("المقدم", "Presenter")}</Label>
+              <Input value={form.presenter} onChange={(e) => update("presenter", e.target.value)} placeholder={t("اسم المقدم", "Presenter name")} />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label className="text-xs">المدة (دقيقة)</Label>
+              <Label className="text-xs">{t("المدة (دقيقة)", "Duration (min)")}</Label>
               <Input type="number" value={form.time_allocation_minutes} onChange={(e) => update("time_allocation_minutes", parseInt(e.target.value) || 15)} />
             </div>
             <div>
-              <Label className="text-xs">التصنيف</Label>
+              <Label className="text-xs">{t("التصنيف", "Classification")}</Label>
               <select value={form.classification} onChange={(e) => update("classification", e.target.value)} className={selectClass}>
                 {Object.entries(CLASSIFICATION).map(([k, v]) => (
-                  <option key={k} value={k}>{v.ar}</option>
+                  <option key={k} value={k}>{t(v.ar, v.en)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <Label className="text-xs">الجاهزية</Label>
+              <Label className="text-xs">{t("الجاهزية", "Readiness")}</Label>
               <select value={form.readiness} onChange={(e) => update("readiness", e.target.value)} className={selectClass}>
                 {Object.entries(READINESS).map(([k, v]) => (
-                  <option key={k} value={k}>{v.ar}</option>
+                  <option key={k} value={k}>{t(v.ar, v.en)}</option>
                 ))}
               </select>
             </div>
           </div>
           <div>
-            <Label className="text-xs">القرار المطلوب</Label>
-            <Input value={form.required_decision} onChange={(e) => update("required_decision", e.target.value)} placeholder="ما القرار المطلوب من هذا البند؟" />
+            <Label className="text-xs">{t("القرار المطلوب", "Required decision")}</Label>
+            <Input value={form.required_decision} onChange={(e) => update("required_decision", e.target.value)} placeholder={t("ما القرار المطلوب من هذا البند؟", "What decision is required on this item?")} />
           </div>
           <Button size="sm" onClick={create} disabled={saving || !form.title.trim()}>
-            {saving ? "جارٍ الحفظ..." : "إضافة البند"}
+            {saving ? t("جارٍ الحفظ...", "Saving...") : t("إضافة البند", "Add item")}
           </Button>
         </div>
       )}
@@ -150,12 +152,12 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-mono">{item.sequence}.</span>
-                    <span className="text-sm font-medium text-foreground">{item.title}</span>
+                    <span className="text-sm font-medium text-foreground">{L.title(item)}</span>
                   </div>
-                  {item.objective && <p className="text-xs text-muted-foreground mt-1">{item.objective}</p>}
+                  {item.objective && <p className="text-xs text-muted-foreground mt-1">{t(item.objective_ar, item.objective)}</p>}
                   <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground flex-wrap">
-                    {item.presenter && <span>المقدم: {item.presenter}</span>}
-                    {item.time_allocation_minutes && <span>{item.time_allocation_minutes} دقيقة</span>}
+                    {item.presenter && <span>{t("المقدم", "Presenter")}: {item.presenter}</span>}
+                    {item.time_allocation_minutes && <span>{item.time_allocation_minutes} {t("دقيقة", "min")}</span>}
                     {item.readiness && <StatusBadge label={L.label(READINESS, item.readiness, item.readiness)} colorClass={READINESS[item.readiness]?.color} />}
                   </div>
                 </div>
@@ -171,17 +173,19 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                 <div className="mt-2 pt-2 border-t border-border">
                   <div className="flex items-center gap-2 p-2 rounded-md bg-amber-50 border border-amber-200">
                     <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span className="text-[10px] text-amber-800 font-medium">بوابة الجاهزية مغلقة — البند غير جاهز للقرار. حدّث الجاهزية إلى "جاهز" لفتح البوابة.</span>
+                    <span className="text-[10px] text-amber-800 font-medium">
+                      {t("بوابة الجاهزية مغلقة — البند غير جاهز للقرار. حدّث الجاهزية إلى «جاهز» لفتح البوابة.", "Readiness gate closed — this item is not ready for decision. Set readiness to Ready to open the gate.")}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                    <span className="text-[10px] text-muted-foreground">تحديث الجاهزية:</span>
+                    <span className="text-[10px] text-muted-foreground">{t("تحديث الجاهزية:", "Update readiness:")}</span>
                     {Object.entries(READINESS).map(([k, v]) => (
                       <button
                         key={k}
                         onClick={() => updateReadiness(item.id, k)}
                         className={`text-[10px] px-2 py-1 rounded border ${item.readiness === k ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-secondary"}`}
                       >
-                        {v.ar}
+                        {t(v.ar, v.en)}
                       </button>
                     ))}
                   </div>
@@ -192,7 +196,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                 <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border flex-wrap">
                   {item.status === "pending" && (
                     <button onClick={() => changeStatus(item.id, "in_discussion")} className="text-[10px] px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100">
-                      بدء المناقشة
+                      {t("بدء المناقشة", "Start discussion")}
                     </button>
                   )}
                   {item.status === "in_discussion" && (
@@ -207,15 +211,15 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                         }`}
                       >
                         {item.readiness === "ready" ? <ShieldCheck className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                        تم القرار
+                        {t("تم القرار", "Decided")}
                       </button>
                       <button onClick={() => changeStatus(item.id, "deferred")} className="text-[10px] px-2 py-1 rounded bg-amber-50 text-amber-700 hover:bg-amber-100">
-                        تأجيل
+                        {t("تأجيل", "Defer")}
                       </button>
                     </>
                   )}
                   <button onClick={() => changeStatus(item.id, "withdrawn")} className="text-[10px] px-2 py-1 rounded bg-red-50 text-destructive hover:bg-red-100">
-                    سحب
+                    {t("سحب", "Withdraw")}
                   </button>
                 </div>
               )}

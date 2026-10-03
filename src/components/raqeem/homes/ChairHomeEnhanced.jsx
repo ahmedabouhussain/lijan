@@ -112,7 +112,7 @@ export default function ChairHome({ data, base }) {
                   <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
                   {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                 </div>
-                <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                <StatusBadge label={t(DECISION_STATUS[d.status]?.ar || d.status, DECISION_STATUS[d.status]?.en || d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </Link>
             ))}
           </div>

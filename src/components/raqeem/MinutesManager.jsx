@@ -3,10 +3,11 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Check, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
+import { FileText, Sparkles, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
 
 export default function MinutesManager({ meeting, committee, members, attendance, minutes, onChanged }) {
@@ -32,6 +33,8 @@ export default function MinutesManager({ meeting, committee, members, attendance
       .then((sigs) => setSignatures(sigs || []))
       .catch(() => {});
   }, [minutes]);
+
+  const minutesTitle = () => L.pair(`محضر ${L.title(meeting)}`, `Minutes: ${L.title(meeting)}`);
 
   const generateDraft = async () => {
     setGenerating(true);
@@ -62,8 +65,8 @@ export default function MinutesManager({ meeting, committee, members, attendance
         action: "status_change",
         entity_type: "MeetingMinutes",
         entity_id: minutes.id,
-        entity_title: `محضر ${meeting.title || ""}`,
-        description: `تغيير حالة المحضر إلى ${MINUTES_STATUS[newStatus]?.ar}`,
+        entity_title: minutesTitle(),
+        description: `${L.pair("تغيير حالة المحضر إلى", "Minutes status changed to")} ${L.label(MINUTES_STATUS, newStatus, newStatus)}`,
       });
       onChanged();
     } catch {}
@@ -99,7 +102,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
       await base44.entities.Signature.create({
         document_type: "MeetingMinutes",
         document_id: minutes.id,
-        document_title: `محضر ${meeting.title || ""}`,
+        document_title: minutesTitle(),
         committee_id: meeting.committee_id,
         signer_name: currentUser.full_name,
         signer_user_id: currentUser.id,
@@ -120,8 +123,8 @@ export default function MinutesManager({ meeting, committee, members, attendance
         action: "sign",
         entity_type: "MeetingMinutes",
         entity_id: minutes.id,
-        entity_title: `محضر ${meeting.title || ""}`,
-        description: `توقيع إلكتروني بواسطة ${currentUser.full_name}`,
+        entity_title: minutesTitle(),
+        description: L.pair(`توقيع إلكتروني بواسطة ${currentUser.full_name}`, `Electronic signature by ${currentUser.full_name}`),
       });
       onChanged();
     } catch {}
@@ -138,13 +141,13 @@ export default function MinutesManager({ meeting, committee, members, attendance
           </h3>
           <div className="flex items-center gap-2 text-xs">
             <span className={quorumMet ? "text-emerald-700" : "text-destructive"}>
-              {quorumMet ? "✓ تحقق النصاب" : "✗ لم يتحقق النصاب"}
+              {quorumMet ? `✓ ${t("تحقق النصاب", "Quorum met")}` : `✗ ${t("لم يتحقق النصاب", "Quorum not met")}`}
             </span>
             <span className="text-muted-foreground">({presentCount}/{meeting.quorum_required || 3})</span>
           </div>
         </div>
         {members.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-3">لا يوجد أعضاء مسجلون في اللجنة</p>
+          <p className="text-sm text-muted-foreground text-center py-3">{t("لا يوجد أعضاء مسجلون في اللجنة", "No members registered in this committee")}</p>
         ) : (
           <div className="space-y-1.5">
             {members.map((m) => {
@@ -154,7 +157,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
                 <div key={m.id} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
                   <div className="min-w-0">
                     <span className="text-sm font-medium text-foreground">{m.full_name}</span>
-                    {m.role && <span className="text-xs text-muted-foreground mr-2">· {MEMBER_ROLE[m.role]?.ar || m.role}</span>}
+                    {m.role && <span className="text-xs text-muted-foreground mr-2">· {L.label(MEMBER_ROLE, m.role, m.role)}</span>}
                   </div>
                   <div className="flex items-center gap-1">
                     {Object.entries(ATTENDANCE_STATUS).map(([key, val]) => (
@@ -165,7 +168,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
                           current === key ? val.color + " ring-1 ring-current" : "text-muted-foreground hover:bg-secondary"
                         }`}
                       >
-                        {val.ar}
+                        {t(val.ar, val.en)}
                       </button>
                     ))}
                   </div>
@@ -182,14 +185,14 @@ export default function MinutesManager({ meeting, committee, members, attendance
           <h3 className="text-sm font-semibold flex items-center gap-2">
             <FileText className="w-4 h-4 text-primary" /> {t("محضر الاجتماع", "Minutes")}
           </h3>
-          {minutes && <StatusBadge label={MINUTES_STATUS[minutes.status]?.ar || minutes.status} colorClass={MINUTES_STATUS[minutes.status]?.color} />}
+          {minutes && <StatusBadge {...L.status(MINUTES_STATUS, minutes.status, minutes.status)} />}
         </div>
 
         {!minutes && (
           <div className="text-center py-6 space-y-3">
-            <p className="text-sm text-muted-foreground">لا يوجد محضر بعد — أنشئ مسودة تلقائية من بيانات الاجتماع</p>
+            <p className="text-sm text-muted-foreground">{t("لا يوجد محضر بعد — أنشئ مسودة تلقائية من بيانات الاجتماع", "No minutes yet — generate an automatic draft from the meeting data")}</p>
             <Button onClick={generateDraft} disabled={generating}>
-              <Sparkles className="w-3.5 h-3.5" /> {generating ? "جارٍ إنشاء المحضر..." : "إنشاء مسودة المحضر تلقائياً"}
+              <Sparkles className="w-3.5 h-3.5" /> {generating ? t("جارٍ إنشاء المحضر...", "Generating minutes...") : t("إنشاء مسودة المحضر تلقائياً", "Generate minutes draft")}
             </Button>
           </div>
         )}
@@ -197,11 +200,11 @@ export default function MinutesManager({ meeting, committee, members, attendance
         {minutes && editing && (
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">ملخص المحضر</Label>
+              <Label className="text-xs">{t("ملخص المحضر", "Minutes summary")}</Label>
               <Input value={summary} onChange={(e) => setSummary(e.target.value)} />
             </div>
             <div>
-              <Label className="text-xs">نص المحضر (Markdown)</Label>
+              <Label className="text-xs">{t("نص المحضر (Markdown)", "Minutes body (Markdown)")}</Label>
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -211,10 +214,10 @@ export default function MinutesManager({ meeting, committee, members, attendance
             </div>
             <div className="flex items-center gap-2">
               <Button size="sm" onClick={saveBody} disabled={saving}>
-                <Save className="w-3.5 h-3.5" /> {saving ? "جارٍ الحفظ..." : "حفظ"}
+                <Save className="w-3.5 h-3.5" /> {saving ? t("جارٍ الحفظ...", "Saving...") : t("حفظ", "Save")}
               </Button>
               <Button size="sm" variant="ghost" onClick={() => { setEditing(false); setBody(minutes.body); }}>
-                <X className="w-3.5 h-3.5" /> إلغاء
+                <X className="w-3.5 h-3.5" /> {t("إلغاء", "Cancel")}
               </Button>
             </div>
           </div>
@@ -222,9 +225,9 @@ export default function MinutesManager({ meeting, committee, members, attendance
 
         {minutes && !editing && (
           <div className="space-y-4">
-            {minutes.summary_ar && (
+            {t(minutes.summary_ar, minutes.summary_en) && (
               <div className="bg-secondary/40 rounded-md p-3 text-sm text-foreground leading-relaxed border-r-2 border-primary">
-                {minutes.summary_ar}
+                {t(minutes.summary_ar, minutes.summary_en)}
               </div>
             )}
             <div className="prose prose-sm max-w-none text-foreground leading-relaxed">
@@ -234,31 +237,31 @@ export default function MinutesManager({ meeting, committee, members, attendance
             {/* Lifecycle controls */}
             <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-border">
               <Button size="sm" variant="outline" onClick={() => { setBody(minutes.body); setSummary(minutes.summary_ar || ""); setEditing(true); }}>
-                <Edit3 className="w-3.5 h-3.5" /> تحرير
+                <Edit3 className="w-3.5 h-3.5" /> {t("تحرير", "Edit")}
               </Button>
               {minutes.status === "draft" && (
                 <Button size="sm" onClick={() => transition("in_review")} disabled={transitioning}>
-                  <Send className="w-3.5 h-3.5" /> إرسال للمراجعة
+                  <Send className="w-3.5 h-3.5" /> {t("إرسال للمراجعة", "Send for review")}
                 </Button>
               )}
               {minutes.status === "in_review" && (
                 <Button size="sm" onClick={signElectronically} disabled={signing || !currentUser}>
-                  <PenLine className="w-3.5 h-3.5" /> {signing ? "جارٍ التوقيع..." : "توقيع واعتماد إلكترونياً"}
+                  <PenLine className="w-3.5 h-3.5" /> {signing ? t("جارٍ التوقيع...", "Signing...") : t("توقيع واعتماد إلكترونياً", "Sign and approve electronically")}
                 </Button>
               )}
               {minutes.status === "approved" && (
                 <Button size="sm" onClick={() => transition("issued", { issued_date: new Date().toISOString().slice(0, 10) })} disabled={transitioning}>
-                  <Send className="w-3.5 h-3.5" /> إصدار وإرسال للأعضاء
+                  <Send className="w-3.5 h-3.5" /> {t("إصدار وإرسال للأعضاء", "Issue and send to members")}
                 </Button>
               )}
               {(minutes.status === "issued" || minutes.status === "approved") && (
                 <Button size="sm" variant="outline" onClick={() => transition("amended")} disabled={transitioning}>
-                  <Edit3 className="w-3.5 h-3.5" /> تعديل لاحق
+                  <Edit3 className="w-3.5 h-3.5" /> {t("تعديل لاحق", "Amend later")}
                 </Button>
               )}
               {minutes.generated_by_ai && (
                 <span className="text-xs text-muted-foreground flex items-center gap-1 mr-auto">
-                  <Sparkles className="w-3 h-3" /> مسودة مولدة بالذكاء الاصطناعي
+                  <Sparkles className="w-3 h-3" /> {t("مسودة مولدة بالذكاء الاصطناعي", "AI-generated draft")}
                 </span>
               )}
             </div>
@@ -275,7 +278,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
                     <div key={sig.id} className="border border-border rounded-md p-3 bg-secondary/20">
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="text-xs font-medium text-foreground">{sig.signer_name}</div>
-                        <StatusBadge label="موقّع" colorClass="bg-emerald-50 text-emerald-700" />
+                        <StatusBadge label={t("موقّع", "Signed")} colorClass="bg-emerald-50 text-emerald-700" />
                       </div>
                       {sig.signature_image_url ? (
                         <img src={sig.signature_image_url} alt="signature" className="h-10 object-contain mb-1" />

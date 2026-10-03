@@ -48,7 +48,7 @@ export default function ObserverHome({ data, base }) {
                   <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
                 </div>
-                <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                <StatusBadge label={t(MEETING_STATUS[m.status]?.ar || m.status, MEETING_STATUS[m.status]?.en || m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
               </div>
             ))}
           </div>
@@ -88,7 +88,7 @@ export default function ObserverHome({ data, base }) {
               {issuedDecisions.slice(0, 5).map((d) => (
                 <div key={d.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div className="text-sm text-foreground truncate">{d.title}</div>
-                  <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                  <StatusBadge label={t(DECISION_STATUS[d.status]?.ar || d.status, DECISION_STATUS[d.status]?.en || d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
                 </div>
               ))}
             </div>

@@ -127,7 +127,7 @@ export default function MemberHome({ data, base, userName }) {
                     {t("موافق", "For")}: {d.vote_for || 0} · {t("معارض", "Against")}: {d.vote_against || 0}
                   </div>
                 </div>
-                <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                <StatusBadge label={t(DECISION_STATUS[d.status]?.ar || d.status, DECISION_STATUS[d.status]?.en || d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </Link>
             ))}
           </div>
@@ -152,7 +152,7 @@ export default function MemberHome({ data, base, userName }) {
                     {isOverdue(a.deadline) && <span className="text-amber-700">{t("متأخر", "Overdue")}</span>}
                   </div>
                 </div>
-                <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                <StatusBadge label={t(ACTION_STATUS[a.status]?.ar || a.status, ACTION_STATUS[a.status]?.en || a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
               </div>
             ))}
           </div>

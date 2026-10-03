@@ -24,6 +24,13 @@ const MEETING_MODES = {
   hybrid: { ar: "مختلط", en: "Hybrid" },
 };
 
+const RECURRENCE_TYPES = {
+  daily: { ar: "يومي", en: "Daily" },
+  weekly: { ar: "أسبوعي", en: "Weekly" },
+  monthly: { ar: "شهري", en: "Monthly" },
+  quarterly: { ar: "ربع سنوي", en: "Quarterly" },
+};
+
 export default function MeetingDetail() {
   const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
@@ -135,7 +142,7 @@ export default function MeetingDetail() {
         entity_type: "Decision",
         entity_id: dec.id,
         entity_title: decisionForm.title,
-        description: "إنشاء قرار من الاجتماع",
+        description: L.pair("إنشاء قرار من الاجتماع", "Decision created from the meeting"),
       });
       setDecisionForm({ title: "", proposal: "", legal_basis: "", owner_name: "", deadline: "" });
       setShowDecisionForm(false);
@@ -156,51 +163,54 @@ export default function MeetingDetail() {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/meetings` : "/";
     return (
       <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
-        <h2 className="text-lg font-semibold text-foreground mb-1">الاجتماع غير متوفر</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">
+          {t("الاجتماع غير متوفر", "Meeting not available")}
+        </h2>
         <p className="text-sm text-muted-foreground mb-4">
-          قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.
+          {t("قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.", "This meeting may have been deleted, or the link you opened is out of date.")}
         </p>
         <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
-          العودة إلى قائمة الاجتماعات
+          {t("العودة إلى قائمة الاجتماعات", "Back to the meetings list")}
         </Link>
       </div>
     );
   }
 
   const status = meeting.status;
+  const committeeHome = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}` : "/";
   const inputClass = "w-full px-3 py-2.5 text-sm border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring";
 
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        {committee && <Link to={`/committees/${committee.id}`} className="hover:text-foreground">{committee.name_ar}</Link>}
+        {committee && <Link to={committeeHome} className="hover:text-foreground">{L.name(committee)}</Link>}
         {committee && <ChevronRight className="w-4 h-4 rotate-180" />}
-        <span className="text-foreground truncate">{meeting.title || meeting.title_ar}</span>
+        <span className="text-foreground truncate">{L.title(meeting)}</span>
       </div>
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-foreground">{meeting.title || meeting.title_ar}</h1>
-            <StatusBadge label={MEETING_STATUS[status]?.ar || status} colorClass={MEETING_STATUS[status]?.color} size="md" />
+            <h1 className="text-2xl font-bold text-foreground">{L.title(meeting)}</h1>
+            <StatusBadge {...L.status(MEETING_STATUS, status, status)} size="md" />
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {formatDate(meeting.date)}</span>
-            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {meeting.location || L.label(MEETING_MODES, meeting.mode, "—")}</span>
-            <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> النصاب: {meeting.quorum_required}</span>
+            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {L.name(meeting, "location") || L.label(MEETING_MODES, meeting.mode, "—")}</span>
+            <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> {t("النصاب", "Quorum")}: {meeting.quorum_required}</span>
             {meeting.provider && meeting.provider !== "none" && (
               <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> {meeting.provider}</span>
             )}
             {meeting.is_series_master && (
               <span className="flex items-center gap-1.5 text-accent font-medium">
-                <Repeat className="w-3.5 h-3.5" /> سلسلة متكررة — {meeting.recurrence_type === "weekly" ? "أسبوعي" : meeting.recurrence_type === "monthly" ? "شهري" : meeting.recurrence_type === "daily" ? "يومي" : meeting.recurrence_type === "quarterly" ? "ربع سنوي" : meeting.recurrence_type}
+                <Repeat className="w-3.5 h-3.5" /> {t("سلسلة متكررة", "Recurring series")} — {L.label(RECURRENCE_TYPES, meeting.recurrence_type, meeting.recurrence_type)}
               </span>
             )}
             {meeting.series_id && !meeting.is_series_master && (
               <span className="flex items-center gap-1.5 text-muted-foreground">
-                <Repeat className="w-3.5 h-3.5" /> نسخة #{meeting.series_instance_number} من السلسلة
+                <Repeat className="w-3.5 h-3.5" /> {t(`نسخة #${meeting.series_instance_number} من السلسلة`, `Series instance #${meeting.series_instance_number}`)}
               </span>
             )}
           </div>
@@ -213,32 +223,32 @@ export default function MeetingDetail() {
           {meeting.is_series_master && (
             <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
               {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              إنشاء نسخ إضافية
+              {t("إنشاء نسخ إضافية", "Generate more instances")}
             </Button>
           )}
           {status === "scheduled" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
-              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} بدء الاجتماع
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("بدء الاجتماع", "Start Meeting")}
             </Button>
           )}
           {status === "in_progress" && (
             <>
               <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")} disabled={statusUpdating}>
-                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} تأجيل
+                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} {t("تأجيل", "Adjourn")}
               </Button>
               <Button size="sm" onClick={() => updateMeetingStatus("completed")} disabled={statusUpdating}>
-                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Square className="w-3.5 h-3.5" />} إنهاء
+                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Square className="w-3.5 h-3.5" />} {t("إنهاء", "Complete")}
               </Button>
             </>
           )}
           {status === "adjourned" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
-              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} استئناف
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("استئناف", "Resume")}
             </Button>
           )}
           {(status === "scheduled" || status === "in_progress" || status === "adjourned") && (
             <Button size="sm" variant="destructive" onClick={() => updateMeetingStatus("cancelled")} disabled={statusUpdating}>
-              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Ban className="w-3.5 h-3.5" />} إلغاء
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Ban className="w-3.5 h-3.5" />} {t("إلغاء", "Cancel")}
             </Button>
           )}
         </div>
@@ -268,7 +278,7 @@ export default function MeetingDetail() {
             </h2>
             {!showDecisionForm && (
               <button onClick={() => setShowDecisionForm(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-                <Plus className="w-3.5 h-3.5" /> قرار جديد
+                <Plus className="w-3.5 h-3.5" /> {t("قرار جديد", "New decision")}
               </button>
             )}
           </div>
@@ -279,45 +289,45 @@ export default function MeetingDetail() {
                 <X className="w-4 h-4" />
               </button>
               <div>
-                <Label className="text-xs">عنوان القرار *</Label>
-                <Input value={decisionForm.title} onChange={(e) => setDecisionForm((f) => ({ ...f, title: e.target.value }))} placeholder="عنوان القرار" />
+                <Label className="text-xs">{t("عنوان القرار *", "Decision title *")}</Label>
+                <Input value={decisionForm.title} onChange={(e) => setDecisionForm((f) => ({ ...f, title: e.target.value }))} placeholder={t("عنوان القرار", "Decision title")} />
               </div>
               <div>
-                <Label className="text-xs">المقترح / المسودة</Label>
-                <textarea value={decisionForm.proposal} onChange={(e) => setDecisionForm((f) => ({ ...f, proposal: e.target.value }))} rows={3} className={inputClass} placeholder="نص مقترح القرار" />
+                <Label className="text-xs">{t("المقترح / المسودة", "Proposal / draft")}</Label>
+                <textarea value={decisionForm.proposal} onChange={(e) => setDecisionForm((f) => ({ ...f, proposal: e.target.value }))} rows={3} className={inputClass} placeholder={t("نص مقترح القرار", "Proposed decision text")} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-xs">الأساس القانوني</Label>
-                  <Input value={decisionForm.legal_basis} onChange={(e) => setDecisionForm((f) => ({ ...f, legal_basis: e.target.value }))} placeholder="المرجع القانوني" />
+                  <Label className="text-xs">{t("الأساس القانوني", "Legal basis")}</Label>
+                  <Input value={decisionForm.legal_basis} onChange={(e) => setDecisionForm((f) => ({ ...f, legal_basis: e.target.value }))} placeholder={t("المرجع القانوني", "Legal reference")} />
                 </div>
                 <div>
-                  <Label className="text-xs">مسؤول التنفيذ</Label>
-                  <Input value={decisionForm.owner_name} onChange={(e) => setDecisionForm((f) => ({ ...f, owner_name: e.target.value }))} placeholder="اسم المسؤول" />
+                  <Label className="text-xs">{t("مسؤول التنفيذ", "Execution owner")}</Label>
+                  <Input value={decisionForm.owner_name} onChange={(e) => setDecisionForm((f) => ({ ...f, owner_name: e.target.value }))} placeholder={t("اسم المسؤول", "Owner name")} />
                 </div>
               </div>
               <div>
-                <Label className="text-xs">موعد التنفيذ</Label>
+                <Label className="text-xs">{t("موعد التنفيذ", "Execution deadline")}</Label>
                 <LocalizedDatePicker value={decisionForm.deadline} onChange={(v) => setDecisionForm((f) => ({ ...f, deadline: v }))} />
               </div>
               <Button size="sm" onClick={createDecision} disabled={savingDecision || !decisionForm.title.trim()}>
-                {savingDecision ? "جارٍ الحفظ..." : "إنشاء القرار"}
+                {savingDecision ? t("جارٍ الحفظ...", "Saving...") : t("إنشاء القرار", "Create decision")}
               </Button>
             </div>
           )}
 
           {decisions.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">لا توجد قرارات بعد</p>
+            <p className="text-sm text-muted-foreground text-center py-4">{t("لا توجد قرارات بعد", "No decisions yet")}</p>
           ) : (
             <div className="space-y-2">
               {decisions.map((d) => (
                 <div key={d.id} className="border border-border rounded-md p-3">
                   <Link to={`/decisions/${d.id}`} className="flex items-center justify-between hover:bg-secondary/30 -mx-1 px-1 rounded">
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                      <div className="text-sm font-medium text-foreground truncate">{L.title(d)}</div>
                       {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                     </div>
-                    <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                    <StatusBadge {...L.status(DECISION_STATUS, d.status, d.status)} />
                   </Link>
                   <LiveVotingWidget decision={d} canCallVote={canCallVote} canCastVote={canCastVote} onVoted={load} />
                 </div>

@@ -80,12 +80,12 @@ export default function DecisionDetail() {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/decisions` : "/";
     return (
       <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
-        <h2 className="text-lg font-semibold text-foreground mb-1">القرار غير متوفر</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">{t("القرار غير متوفر", "Decision not available")}</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.
+          {t("قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.", "This decision may have been deleted, or the link you opened is out of date.")}
         </p>
         <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
-          العودة إلى سجل القرارات
+          {t("العودة إلى سجل القرارات", "Back to the decisions register")}
         </Link>
       </div>
     );
@@ -159,7 +159,7 @@ export default function DecisionDetail() {
           <CheckSquare className="w-4 h-4 text-primary" /> {t("إجراءات التنفيذ", "Execution Actions")}
         </h2>
         {actions.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">لا توجد إجراءات تنفيذية مسندة</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t("لا توجد إجراءات تنفيذية مسندة", "No execution actions assigned")}</p>
         ) : (
           <div className="space-y-2">
             {actions.map((a) => (
@@ -168,7 +168,7 @@ export default function DecisionDetail() {
                   <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
                   <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
                 </div>
-                <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                <StatusBadge label={t(ACTION_STATUS[a.status]?.ar || a.status, ACTION_STATUS[a.status]?.en || a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
               </div>
             ))}
           </div>

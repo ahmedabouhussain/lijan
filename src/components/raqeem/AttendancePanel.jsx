@@ -5,16 +5,17 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
+import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 
 const STATUS_CONFIG = {
-  present: { label: "حاضر", icon: Check, activeClass: "bg-emerald-600 text-white border-emerald-600", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  absent: { label: "غائب", icon: X, activeClass: "bg-red-600 text-white border-red-600", badgeClass: "bg-red-50 text-red-700 border-red-200" },
-  apologies: { label: "اعتذار", icon: Mail, activeClass: "bg-amber-600 text-white border-amber-600", badgeClass: "bg-amber-50 text-amber-700 border-amber-200" },
-  late: { label: "متأخر", icon: Clock, activeClass: "bg-blue-600 text-white border-blue-600", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
+  present: { label: { ar: "حاضر", en: "Present" }, icon: Check, activeClass: "bg-emerald-600 text-white border-emerald-600", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  absent: { label: { ar: "غائب", en: "Absent" }, icon: X, activeClass: "bg-red-600 text-white border-red-600", badgeClass: "bg-red-50 text-red-700 border-red-200" },
+  apologies: { label: { ar: "اعتذار", en: "Apologies" }, icon: Mail, activeClass: "bg-amber-600 text-white border-amber-600", badgeClass: "bg-amber-50 text-amber-700 border-amber-200" },
+  late: { label: { ar: "متأخر", en: "Late" }, icon: Clock, activeClass: "bg-blue-600 text-white border-blue-600", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
 };
 
 const ROLE_ORDER = { chair: 0, vice_chair: 1, secretary: 2, member: 3, observer: 4, advisor: 5 };
-const ROLE_LABELS = { chair: "رئيس", vice_chair: "نائب", secretary: "أمين", member: "عضو", observer: "مراقب", advisor: "مستشار" };
 
 export default function AttendancePanel({ meeting, members, attendance, canCertify, onChanged }) {
   const { t } = useLanguage();
@@ -76,7 +77,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
         {canCertify && isLive && (
           <Button size="sm" onClick={certify} disabled={certifying || Object.keys(localStatus).length === 0}>
             {certifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
-            اعتماد الحضور
+            {t("اعتماد الحضور", "Certify attendance")}
           </Button>
         )}
       </div>
@@ -85,10 +86,10 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
       <div className={cn("rounded-md p-3 mb-4 border", quorumMet ? "bg-emerald-50 border-emerald-200" : "bg-amber-50 border-amber-200")}>
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">
-            النصاب: {presentCount} / {quorumRequired} حاضر
+            {t("النصاب", "Quorum")}: {presentCount} / {quorumRequired} {t("حاضر", "present")}
           </span>
           <span className={cn("text-xs font-semibold px-2 py-0.5 rounded text-white", quorumMet ? "bg-emerald-600" : "bg-amber-600")}>
-            {quorumMet ? "اكتمل النصاب" : "النصاب غير مكتمل"}
+            {quorumMet ? t("اكتمل النصاب", "Quorum met") : t("النصاب غير مكتمل", "Quorum not met")}
           </span>
         </div>
         <div className="mt-2 h-2 bg-white/50 rounded-full overflow-hidden">
@@ -102,7 +103,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
       {/* Member list */}
       <div className="space-y-1">
         {activeMembers.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">لا يوجد أعضاء نشطون</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t("لا يوجد أعضاء نشطون", "No active members")}</p>
         ) : (
           activeMembers.map(m => {
             const name = m.full_name || m.full_name_ar;
@@ -110,7 +111,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
             return (
               <div key={m.id} className="flex items-center justify-between py-1.5 border-b border-border last:border-0 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-[10px] text-muted-foreground uppercase w-12 shrink-0 font-medium">{ROLE_LABELS[m.role] || m.role}</span>
+                  <span className="text-[10px] text-muted-foreground uppercase w-12 shrink-0 font-medium">{L.label(MEMBER_ROLE, m.role, m.role)}</span>
                   <span className="text-sm font-medium text-foreground truncate">{name}</span>
                   {m.institution_name && <span className="text-xs text-muted-foreground truncate hidden md:inline">· {m.institution_name}</span>}
                 </div>
@@ -129,14 +130,14 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
                           )}
                         >
                           <Icon className="w-3 h-3" />
-                          <span className="hidden sm:inline">{cfg.label}</span>
+                          <span className="hidden sm:inline">{t(cfg.label.ar, cfg.label.en)}</span>
                         </button>
                       );
                     })}
                   </div>
                 ) : (
                   <StatusBadge
-                    label={STATUS_CONFIG[currentStatus]?.label || currentStatus}
+                    label={STATUS_CONFIG[currentStatus] ? t(STATUS_CONFIG[currentStatus].label.ar, STATUS_CONFIG[currentStatus].label.en) : currentStatus}
                     colorClass={cn("border", STATUS_CONFIG[currentStatus]?.badgeClass)}
                   />
                 )}

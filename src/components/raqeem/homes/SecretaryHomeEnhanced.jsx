@@ -112,7 +112,7 @@ export default function SecretaryHome({ data, base }) {
                   ) : (
                     <span className="text-[11px] text-amber-700 font-medium">{t("الحزمة غير جاهزة", "Pack Not Ready")}</span>
                   )}
-                  <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                  <StatusBadge label={t(MEETING_STATUS[m.status]?.ar || m.status, MEETING_STATUS[m.status]?.en || m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
                 </div>
               </Link>
             ))}

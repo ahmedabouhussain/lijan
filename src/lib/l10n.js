@@ -25,11 +25,12 @@ export function nameOf(record, lang, base = "name") {
   if (!record) return "";
   const ar = record[`${base}_ar`];
   const en = record[`${base}_en`];
-  const chosen = isArabic(lang) ? ar : en;
-  // Single-language records (no _ar/_en pair) fall back to the plain field once.
-  if (chosen) return chosen;
-  if (ar || en) return ar || en || "";
-  return record[base] ?? "";
+  // The plain field (title / name / location) is the record's own primary text.
+  const primary = record[base];
+  // One language per page: the active language's own value, then the plain field.
+  // The OTHER language's field is never returned, so an English page cannot show Arabic.
+  if (isArabic(lang)) return ar || primary || en || "";
+  return en || primary || "";
 }
 
 /** Localized human title of any governed record (title_ar/title_en, else title). */

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { ThumbsUp, ThumbsDown, Minus, CheckSquare, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function LiveVotingWidget({ decision, canCallVote, canCastVote, onVoted }) {
+  const { t } = useLanguage();
   const [voting, setVoting] = useState(false);
 
   const handle = async (fn, payload) => {
@@ -29,13 +30,13 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
       {/* Vote counts */}
       <div className="flex items-center gap-4 text-xs mb-2">
         <span className="flex items-center gap-1">
-          <ThumbsUp className="w-3 h-3 text-emerald-600" /> موافق: <strong className="text-foreground">{decision.vote_for || 0}</strong>
+          <ThumbsUp className="w-3 h-3 text-emerald-600" /> {t("موافق", "For")}: <strong className="text-foreground">{decision.vote_for || 0}</strong>
         </span>
         <span className="flex items-center gap-1">
-          <ThumbsDown className="w-3 h-3 text-red-600" /> معارض: <strong className="text-foreground">{decision.vote_against || 0}</strong>
+          <ThumbsDown className="w-3 h-3 text-red-600" /> {t("معارض", "Against")}: <strong className="text-foreground">{decision.vote_against || 0}</strong>
         </span>
         <span className="flex items-center gap-1">
-          <Minus className="w-3 h-3 text-muted-foreground" /> ممتنع: <strong className="text-foreground">{decision.vote_abstain || 0}</strong>
+          <Minus className="w-3 h-3 text-muted-foreground" /> {t("ممتنع", "Abstain")}: <strong className="text-foreground">{decision.vote_abstain || 0}</strong>
         </span>
       </div>
 
@@ -52,7 +53,7 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
       {decision.status === "proposed" && canCallVote && (
         <Button size="sm" disabled={voting} onClick={() => handle("OpenVote", base)}>
           {voting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5" />}
-          فتح التصويت
+          {t("فتح التصويت", "Open vote")}
         </Button>
       )}
 
@@ -61,24 +62,24 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
           {canCastVote && (
             <>
               <Button size="sm" variant="outline" disabled={voting} onClick={() => handle("CastVote", { ...base, vote_choice: "for" })}>
-                <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" /> موافق
+                <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" /> {t("موافق", "For")}
               </Button>
               <Button size="sm" variant="outline" disabled={voting} onClick={() => handle("CastVote", { ...base, vote_choice: "against" })}>
-                <ThumbsDown className="w-3.5 h-3.5 text-red-600" /> معارض
+                <ThumbsDown className="w-3.5 h-3.5 text-red-600" /> {t("معارض", "Against")}
               </Button>
               <Button size="sm" variant="outline" disabled={voting} onClick={() => handle("CastVote", { ...base, vote_choice: "abstain" })}>
-                <Minus className="w-3.5 h-3.5" /> ممتنع
+                <Minus className="w-3.5 h-3.5" /> {t("ممتنع", "Abstain")}
               </Button>
             </>
           )}
           {canCallVote && (
             <Button size="sm" disabled={voting} onClick={() => handle("CloseVote", base)}>
               {voting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
-              إغلاق التصويت
+              {t("إغلاق التصويت", "Close vote")}
             </Button>
           )}
           {!canCastVote && !canCallVote && (
-            <span className="text-xs text-muted-foreground">التصويت مفتوح للعضوية المصوّتة</span>
+            <span className="text-xs text-muted-foreground">{t("التصويت مفتوح للعضوية المصوّتة", "Voting is open to voting members")}</span>
           )}
         </div>
       )}
