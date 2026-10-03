@@ -18,7 +18,12 @@ export default function ProofChainSnapshot({ decision, committee, votes = [], si
     vote_abstain: decision.vote_abstain,
     status: decision.status,
   });
-  const hash = btoa(contentForHash).slice(0, 16);
+  // btoa accepts Latin-1 only, and the snapshot content is UTF-8 (Arabic titles and
+  // proposals included), so the string is encoded to bytes before base64.
+  const contentBytes = new TextEncoder().encode(contentForHash);
+  let contentBinary = "";
+  contentBytes.forEach((byte) => { contentBinary += String.fromCharCode(byte); });
+  const hash = btoa(contentBinary).slice(0, 16);
 
   const snapshotFields = [
     { icon: Hash, label: { ar: "نسخة المحتوى", en: "Content Version" }, value: `v${decision.version || 1}` },
