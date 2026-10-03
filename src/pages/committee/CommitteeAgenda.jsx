@@ -62,7 +62,13 @@ export default function CommitteeAgenda() {
     if (!form.meeting_id || !form.title.trim()) { setError(t("الاجتماع والعنوان مطلوبان", "Meeting and title are required")); return; }
     setSubmitting(true); setError("");
     try {
-      await base44.functions.invoke("SubmitAgendaItem", { committee_id: committeeId, ...form });
+      // Presenter is sent for the ACTIVE language only — never stored as the other language.
+      const { presenter, ...rest } = form;
+      await base44.functions.invoke("SubmitAgendaItem", {
+        committee_id: committeeId,
+        ...rest,
+        ...(lang === "ar" ? { presenter_ar: presenter } : { presenter_en: presenter }),
+      });
       setShowCreate(false); setForm({ meeting_id: "", title: "", objective: "", presenter: "" });
       fetchItems();
     } catch (e) { setError(e?.response?.data?.error || e?.message || t("فشلت العملية", "Operation failed")); }
@@ -112,6 +118,7 @@ export default function CommitteeAgenda() {
           {items.map((a) => {
             const ri = READINESS[a.readiness] || READINESS.not_ready;
             const si = STATUS[a.status] || STATUS.pending;
+            const presenter = L.value(a, { arKey: "presenter_ar", enKey: "presenter_en", legacyKey: "presenter" });
             return (
               <div key={a.id} className="raqeem-card p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -125,7 +132,7 @@ export default function CommitteeAgenda() {
                   </div>
                 </div>
                 {a.objective && <p className="text-xs text-muted-foreground">{a.objective}</p>}
-                {a.presenter && <p className="text-xs text-muted-foreground mt-1">{t("المقدم", "Presenter")}: {a.presenter}</p>}
+                {presenter && <p className="text-xs text-muted-foreground mt-1">{t("المقدم", "Presenter")}: {presenter}</p>}
               </div>
             );
           })}

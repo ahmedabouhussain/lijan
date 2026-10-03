@@ -6,7 +6,9 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    const { committee_id, meeting_id, title, title_ar, objective, presenter, time_allocation_minutes, required_decision, related_decision_id, classification } = body;
+    // `presenter` is the legacy single-language body field and is treated as the ARABIC
+    // reading only. Clients that know the active language send presenter_ar / presenter_en.
+    const { committee_id, meeting_id, title, title_ar, objective, presenter, presenter_ar, presenter_en, time_allocation_minutes, required_decision, related_decision_id, classification } = body;
 
     if (!committee_id || !meeting_id || !title) {
       return Response.json({ error: 'committee_id, meeting_id, title are required' }, { status: 400 });
@@ -27,6 +29,8 @@ export default async function(req) {
       title, title_ar: title_ar || null,
       objective: objective || null,
       presenter: presenter || null,
+      presenter_ar: presenter_ar || presenter || null,
+      presenter_en: presenter_en || null,
       time_allocation_minutes: time_allocation_minutes || 15,
       required_decision: required_decision || null,
       related_decision_id: related_decision_id || null,

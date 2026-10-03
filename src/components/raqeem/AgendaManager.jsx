@@ -10,7 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 
 export default function AgendaManager({ meetingId, items = [], onChanged }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -30,8 +30,12 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
     setSaving(true);
     try {
       const seq = (items?.length || 0) + 1;
+      // The presenter is written into the ACTIVE language's own field, so a value typed on
+      // an English page can never be stored as the Arabic reading, and vice versa.
+      const { presenter, ...rest } = form;
       await base44.entities.AgendaItem.create({
-        ...form,
+        ...rest,
+        [lang === "ar" ? "presenter_ar" : "presenter_en"]: presenter,
         meeting_id: meetingId,
         sequence: seq,
         status: "pending",
@@ -146,7 +150,9 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
 
       {sorted.length > 0 && (
         <div className="space-y-2">
-          {sorted.map((item) => (
+          {sorted.map((item) => {
+            const presenter = L.value(item, { arKey: "presenter_ar", enKey: "presenter_en", legacyKey: "presenter" });
+            return (
             <div key={item.id} className="border border-border rounded-md p-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
@@ -156,7 +162,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                   </div>
                   {item.objective && <p className="text-xs text-muted-foreground mt-1">{t(item.objective_ar, item.objective)}</p>}
                   <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground flex-wrap">
-                    {item.presenter && <span>{t("المقدم", "Presenter")}: {item.presenter}</span>}
+                    {presenter && <span>{t("المقدم", "Presenter")}: {presenter}</span>}
                     {item.time_allocation_minutes && <span>{item.time_allocation_minutes} {t("دقيقة", "min")}</span>}
                     {item.readiness && <StatusBadge label={L.label(READINESS, item.readiness, item.readiness)} colorClass={READINESS[item.readiness]?.color} />}
                   </div>
@@ -224,7 +230,8 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

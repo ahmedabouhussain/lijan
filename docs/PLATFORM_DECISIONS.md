@@ -142,6 +142,22 @@ Status values: `implemented` | `partial` | `planned`.
 - **Acceptance:** no banner stack inside the experience; provenance still recorded in the
   session and in `AuditEvent`.
 
+## D-15 — Bilingual record values: no cross-language fallback
+- **Decision:** A stored value may only be rendered for the language it belongs to. Where a
+  legacy single-language column exists (it holds Arabic), it is read as the **Arabic** value
+  only and is never returned for English — the English page shows an empty state instead.
+  A form always writes the **active language's own field**, so a value typed on an English
+  page can never be stored as the Arabic reading.
+- **Shared implementation:** `bilingualOrLegacy()` and the `L.value()` accessor in
+  `src/lib/l10n.js`; `AgendaItem.presenter_ar` / `presenter_en`.
+- **Affected surfaces:** meeting agenda (meeting detail, committee agenda), decision detail
+  breadcrumb/header, every surface reading a legacy single-language column.
+- **Migration:** implemented — `presenter` migrated to `presenter_ar` + `presenter_en` for every
+  agenda item holding a presenter; `SubmitAgendaItem` accepts the explicit pair and treats the
+  legacy body field as the Arabic reading.
+- **Acceptance:** no Arabic value renders on an English page; no English value renders on an
+  Arabic page; unknown legacy values resolve to an empty state, never to the other language.
+
 ---
 
 ## Removed / replaced manifest

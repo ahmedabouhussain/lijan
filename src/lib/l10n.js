@@ -55,6 +55,21 @@ export function statusOf(map, key, lang, fallback = "") {
   return { label: labelOf(map, key, lang, fallback), colorClass: colorOf(map, key) };
 }
 
+/**
+ * Resolve a record field that has explicit `_ar` / `_en` variants while a legacy
+ * single-language field may still hold an Arabic-only value.
+ *
+ * The legacy field is treated strictly as the ARABIC reading. It is never returned
+ * for English, so an Arabic value can never leak into the English interface — an
+ * English page shows an empty state instead.
+ */
+export function bilingualOrLegacy(record, lang, { arKey, enKey, legacyKey }) {
+  if (!record) return "";
+  const ar = record[arKey] || (legacyKey ? record[legacyKey] : "") || "";
+  const en = record[enKey] || "";
+  return isArabic(lang) ? ar : en;
+}
+
 // ── Active-language accessor (single source of truth) ──
 // LanguageProvider keeps this in sync; it is a fallback for the few display
 // components that do not consume the context directly. Never read the DOM.
@@ -79,6 +94,8 @@ export const L = {
   color: (map, key, fallback = "") => colorOf(map, key, fallback),
   status: (map, key, fallback = "") => statusOf(map, key, activeLang, fallback),
   pair: (ar, en) => pick(activeLang, ar, en),
+  /** Bilingual field with an Arabic-only legacy fallback — never leaks into English. */
+  value: (record, keys) => bilingualOrLegacy(record, activeLang, keys),
   date: (value, opts) => dateOf(value, activeLang, opts),
 };
 

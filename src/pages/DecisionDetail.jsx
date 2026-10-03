@@ -10,6 +10,7 @@ import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -95,23 +96,20 @@ export default function DecisionDetail() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-        {committee && <Link to={`/committees/${committee.id}`} className="hover:text-foreground">{committee.name_ar}</Link>}
+        {committee && <Link to={`/committees/${committee.id}`} className="hover:text-foreground">{L.name(committee)}</Link>}
         {committee && <ChevronRight className="w-4 h-4 rotate-180" />}
-        {meeting && <Link to={`/meetings/${meeting.id}`} className="hover:text-foreground">{meeting.title}</Link>}
+        {meeting && <Link to={`/meetings/${meeting.id}`} className="hover:text-foreground">{L.title(meeting)}</Link>}
         {meeting && <ChevronRight className="w-4 h-4 rotate-180" />}
-        <span className="text-foreground truncate">{decision.title}</span>
+        <span className="text-foreground truncate">{L.title(decision)}</span>
       </div>
 
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2 flex-wrap">
-          <h1 className="text-2xl font-bold text-foreground">{decision.title}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{L.title(decision)}</h1>
           {decision.decision_number && <span className="text-sm text-muted-foreground font-mono">{decision.decision_number}</span>}
-          <ProofChainDrawer entityType="Decision" entityId={decision.id} entityTitle={decision.title} />
+          <ProofChainDrawer entityType="Decision" entityId={decision.id} entityTitle={L.title(decision)} />
         </div>
-        {decision.title_ar && decision.title_ar !== decision.title && (
-          <p className="text-sm text-muted-foreground">{decision.title_ar}</p>
-        )}
       </div>
 
       {/* Workflow */}
