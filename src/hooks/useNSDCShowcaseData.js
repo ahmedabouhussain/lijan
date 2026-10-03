@@ -21,10 +21,15 @@ export function useNSDCShowcaseData() {
           base44.entities.CommitteeMembership.filter({ demo_dataset: SCENARIO_ID }, { limit: 20 }),
         ]);
 
-        const nsdc = committees.find((c) => c.slug === 'nsdc-sme-committee-demo');
-        const elan = committees.find((c) => c.slug === 'elan-executive-committee-demo');
-        const nsdcMeetings = (meetings.items || meetings).filter((m) => m.committee_id === nsdc?.id);
-        const elanMeetings = (meetings.items || meetings).filter((m) => m.committee_id === elan?.id);
+        const committeeRows = committees.items || committees;
+        const membershipRows = memberships.items || memberships;
+        const meetingRows = meetings.items || meetings;
+        const decisionRows = decisions.items || decisions;
+
+        const nsdc = committeeRows.find((c) => c.slug === 'nsdc-sme-committee-demo');
+        const elan = committeeRows.find((c) => c.slug === 'elan-executive-committee-demo');
+        const nsdcMeetings = meetingRows.filter((m) => m.committee_id === nsdc?.id);
+        const elanMeetings = meetingRows.filter((m) => m.committee_id === elan?.id);
         const items = agendaItems.items || agendaItems;
 
         if (!cancelled) {
@@ -39,9 +44,9 @@ export function useNSDCShowcaseData() {
               nsdcAgendaItems: items.filter((a) => a.committee_id === nsdc?.id),
               initiatives: initiatives.items || initiatives,
               evidence: evidence.items || evidence,
-              decision: (decisions.items || decisions).find((d) => d.committee_id === nsdc?.id),
-              hamadMembershipNSDC: memberships.find((m) => m.committee_id === nsdc?.id),
-              hamadMembershipELAN: memberships.find((m) => m.committee_id === elan?.id),
+              decision: decisionRows.find((d) => d.committee_id === nsdc?.id),
+              hamadMembershipNSDC: membershipRows.find((m) => m.committee_id === nsdc?.id),
+              hamadMembershipELAN: membershipRows.find((m) => m.committee_id === elan?.id),
             },
           });
         }
