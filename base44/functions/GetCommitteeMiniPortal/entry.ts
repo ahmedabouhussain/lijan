@@ -18,20 +18,31 @@ export default async function(req) {
     const demoMode = demo_mode === true;
 
     // ── DEMO MODE: resolve the demo persona, then only that persona's demo data ──
-    if (demoMode) {
-      const persona = resolveDemoPersona(demo_persona);
+    // The resolved persona key — not only the caller's boolean flag — is the exploration signal,
+    // so a stale flag on the client can never push an exploration link into the real-data scope.
+    const persona = resolveDemoPersona(demo_persona);
+    if (demoMode || persona) {
+      // An unknown or missing persona is refused: there is no silent fallback persona.
+      if (!persona) {
+        return Response.json({ error: 'Unknown or missing demo persona', code: 'unknown_persona' }, { status: 400 });
+      }
 
-      let committee;
-      if (public_id) {
-        const list = await sr.entities.Committee.filter({ public_id, is_demo_data: true, demo_dataset: persona.dataset }).catch(() => []);
-        committee = (list || [])[0];
+      // The reference carried by the URL may be a public_id, a slug or a record id — all three are
+      // accepted, and always inside this persona's governed dataset only.
+      const ref = public_id || committee_id || null;
+      let committee = null;
+      if (ref) {
+        const scope = { is_demo_data: true, demo_dataset: persona.dataset };
+        const byPublicId = await sr.entities.Committee.filter({ ...scope, public_id: ref }).catch(() => []);
+        committee = (byPublicId || [])[0] || null;
         if (!committee) {
-          committee = await sr.entities.Committee.get(public_id).catch(() => null);
-          if (committee && (!committee.is_demo_data || committee.demo_dataset !== persona.dataset)) committee = null;
+          const bySlug = await sr.entities.Committee.filter({ ...scope, slug: ref }).catch(() => []);
+          committee = (bySlug || [])[0] || null;
         }
-      } else if (committee_id) {
-        committee = await sr.entities.Committee.get(committee_id).catch(() => null);
-        if (committee && (!committee.is_demo_data || committee.demo_dataset !== persona.dataset)) committee = null;
+        if (!committee) {
+          const byId = await sr.entities.Committee.get(ref).catch(() => null);
+          if (byId && byId.is_demo_data === true && byId.demo_dataset === persona.dataset) committee = byId;
+        }
       }
       if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
 
@@ -127,7 +138,11 @@ export default async function(req) {
       // Try public_id first
       const list = await base44.asServiceRole.entities.Committee.filter({ public_id }).catch(() => []);
       committee = (list || [])[0];
-      // Fallback: try by committee ID (for records without public_id)
+      // Fallback: the slug (older links carry it), then the committee ID
+      if (!committee) {
+        const bySlug = await base44.asServiceRole.entities.Committee.filter({ slug: public_id }).catch(() => []);
+        committee = (bySlug || [])[0];
+      }
       if (!committee) {
         committee = await base44.asServiceRole.entities.Committee.get(public_id).catch(() => null);
       }

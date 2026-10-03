@@ -100,12 +100,27 @@ function CommitteeShell() {
   }
 
   if (error) {
+    // A committee that cannot be resolved in the caller's current scope — explained in the
+    // active language instead of a bare backend string.
+    const notFound = /not found|غير موجودة|غير متاحة/i.test(error);
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3 px-4" dir={dir}>
         <div className="w-16 h-16 rounded-2xl bg-destructive/8 flex items-center justify-center ring-1 ring-destructive/15">
           <AlertTriangle className="w-7 h-7 text-destructive" />
         </div>
-        <p className="text-sm text-muted-foreground max-w-sm text-center">{error}</p>
+        <p className="text-sm font-medium text-foreground max-w-md text-center">
+          {notFound
+            ? t("هذه اللجنة غير متاحة في النطاق الحالي", "This committee is not available in the current scope")
+            : error}
+        </p>
+        {notFound && (
+          <p className="text-xs text-muted-foreground max-w-md text-center">
+            {t(
+              "قد يكون الرابط قديمًا أو يخص لجنة خارج اللجان المسندة إليك. افتح اللجنة من مساحة العمل أو من بوابة المنظمة.",
+              "The link may be outdated or point to a committee outside the ones assigned to you. Open the committee from the workspace or the organization portal."
+            )}
+          </p>
+        )}
         <Link to={`/o/${orgRef}`} className="text-primary hover:underline text-sm font-medium">
           {t("العودة للبوابة", "Back to Portal")}
         </Link>
