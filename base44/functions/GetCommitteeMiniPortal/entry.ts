@@ -8,6 +8,26 @@ import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 // CRITICAL: When demo_mode=true, queries demo data by DEMO_USER_ID
 // (NOT the real authenticated user). This ensures demo data is isolated.
 
+// Resolve the institutional identity (name + approved logo) of every organization referenced by
+// the committee's members, workstreams and workstream memberships — ONE directory map for the
+// whole committee context, never a per-screen lookup and never a hardcoded logo.
+async function buildOrgIndex(sr: any, ids: any[]) {
+  const unique = [...new Set((ids || []).filter(Boolean))] as string[];
+  const index: Record<string, any> = {};
+  await Promise.all(unique.map(async (id) => {
+    const org = await sr.entities.Organization.get(id).catch(() => null);
+    if (org) {
+      index[id] = {
+        id: org.id,
+        name_ar: org.name_ar,
+        name_en: org.name_en,
+        logo_url: org.logo_url || null,
+      };
+    }
+  }));
+  return index;
+}
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -96,14 +116,26 @@ export default async function(req) {
       const previous = (meetings || []).filter((m) => new Date(m.date) < now2).sort((a, b) => new Date(b.date) - new Date(a.date));
 
       // Registers
-      const [decisions, actions, minutes, delegations] = await Promise.all([
+      const [decisions, actions, minutes, delegations, documents, initiatives, workstreams, workstreamMemberships] = await Promise.all([
         sr.entities.Decision.filter({ committee_id: committee.id }).catch(() => []),
         sr.entities.Action.filter({ committee_id: committee.id }).catch(() => []),
         sr.entities.MeetingMinutes.filter({ committee_id: committee.id }).catch(() => []),
         sr.entities.Delegation.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
+        sr.entities.Document.filter({ committee_id: committee.id }).catch(() => []),
+        sr.entities.Initiative.filter({ committee_id: committee.id }).catch(() => []),
+        sr.entities.Workstream.filter({ committee_id: committee.id }).catch(() => []),
+        sr.entities.WorkstreamMembership.filter({ committee_id: committee.id }).catch(() => []),
       ]);
+      const orderedWorkstreams = (workstreams || []).sort((a, b) => (a.sequence || 99) - (b.sequence || 99));
 
       const owningOrg = await sr.entities.Organization.get(committee.organization_id).catch(() => null);
+      const orgIndex = await buildOrgIndex(sr, [
+        ...orderedMembers.map((m) => m.represented_organization_id),
+        ...orderedWorkstreams.map((w) => w.lead_organization_id),
+        ...orderedWorkstreams.flatMap((w) => w.participating_organization_ids || []),
+        ...(workstreamMemberships || []).map((m) => m.represented_organization_id),
+        committee.organization_id,
+      ]);
 
       return Response.json({
         committee,
@@ -122,12 +154,17 @@ export default async function(req) {
         is_recused: isRecused,
         my_memberships: activeMemberships,
         members: orderedMembers,
+        workstreams: orderedWorkstreams,
+        workstream_memberships: workstreamMemberships || [],
+        org_index: orgIndex,
         meetings: { upcoming, previous, total: (meetings || []).length },
         registers: {
           decisions: decisions || [],
           actions: actions || [],
           minutes: minutes || [],
           delegations: delegations || [],
+          documents: documents || [],
+          initiatives: initiatives || [],
         },
         counters: {
           members: orderedMembers.length,
@@ -135,6 +172,7 @@ export default async function(req) {
           decisions: (decisions || []).length,
           actions: (actions || []).length,
           minutes: (minutes || []).length,
+          workstreams: orderedWorkstreams.length,
         },
         is_demo_mode: true,
       });
@@ -228,17 +266,29 @@ export default async function(req) {
     const previous = (meetings || []).filter((m) => new Date(m.date) < now2).sort((a, b) => new Date(b.date) - new Date(a.date));
 
     // Get registers (committee-scoped)
-    const [decisions, actions, minutes, delegations] = await Promise.all([
+    const [decisions, actions, minutes, delegations, documents, initiatives, workstreams, workstreamMemberships] = await Promise.all([
       base44.asServiceRole.entities.Decision.filter({ committee_id: committee.id }).catch(() => []),
       base44.asServiceRole.entities.Action.filter({ committee_id: committee.id }).catch(() => []),
       base44.asServiceRole.entities.MeetingMinutes.filter({ committee_id: committee.id }).catch(() => []),
       base44.asServiceRole.entities.Delegation.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
+      base44.asServiceRole.entities.Document.filter({ committee_id: committee.id }).catch(() => []),
+      base44.asServiceRole.entities.Initiative.filter({ committee_id: committee.id }).catch(() => []),
+      base44.asServiceRole.entities.Workstream.filter({ committee_id: committee.id }).catch(() => []),
+      base44.asServiceRole.entities.WorkstreamMembership.filter({ committee_id: committee.id }).catch(() => []),
     ]);
+    const orderedWorkstreams = (workstreams || []).sort((a, b) => (a.sequence || 99) - (b.sequence || 99));
 
     // Set user's active context
     await base44.auth.updateMe({ active_org_id: committee.organization_id, active_committee_id: committee.id }).catch(() => {});
 
     const owningOrg = await base44.asServiceRole.entities.Organization.get(committee.organization_id).catch(() => null);
+    const orgIndex = await buildOrgIndex(base44.asServiceRole, [
+      ...orderedMembers.map((m) => m.represented_organization_id),
+      ...orderedWorkstreams.map((w) => w.lead_organization_id),
+      ...orderedWorkstreams.flatMap((w) => w.participating_organization_ids || []),
+      ...(workstreamMemberships || []).map((m) => m.represented_organization_id),
+      committee.organization_id,
+    ]);
 
     return Response.json({
       committee,
@@ -257,12 +307,17 @@ export default async function(req) {
       is_recused: isRecused,
       my_memberships: activeMemberships,
       members: orderedMembers,
+      workstreams: orderedWorkstreams,
+      workstream_memberships: workstreamMemberships || [],
+      org_index: orgIndex,
       meetings: { upcoming, previous, total: (meetings || []).length },
       registers: {
         decisions: decisions || [],
         actions: actions || [],
         minutes: minutes || [],
         delegations: delegations || [],
+        documents: documents || [],
+        initiatives: initiatives || [],
       },
       counters: {
         members: orderedMembers.length,
@@ -270,6 +325,7 @@ export default async function(req) {
         decisions: (decisions || []).length,
         actions: (actions || []).length,
         minutes: (minutes || []).length,
+        workstreams: orderedWorkstreams.length,
       },
     });
   } catch (error) {
