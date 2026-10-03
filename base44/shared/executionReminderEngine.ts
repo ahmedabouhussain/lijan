@@ -150,7 +150,7 @@ export function buildReminderMessage(params) {
   const progress = Number(action.progress_percent || 0);
   const deadline = String(action.deadline || '').slice(0, 10);
 
-  const countAr = days < 0 ? `تجاوز الموعد بـ ${Math.abs(days)} يوم`
+  const countAr = days < 0 ? `متأخر بـ ${Math.abs(days)} يوم`
     : days === 0 ? 'الموعد النهائي اليوم'
     : `يتبقى ${days} يوم على الموعد النهائي`;
   const countEn = days < 0 ? `${Math.abs(days)} days past the deadline`
