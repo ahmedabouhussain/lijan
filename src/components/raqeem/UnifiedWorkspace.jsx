@@ -248,6 +248,27 @@ export default function UnifiedWorkspace() {
         })}
       </div>
 
+      {user?.role === "admin" && !isDemoMode && (
+        <button
+          onClick={() => navigate("/national-adoption-showcase")}
+          className="w-full flex items-center gap-3 p-4 text-right raqeem-card-interactive"
+          dir={lang === "ar" ? "rtl" : "ltr"}
+        >
+          <div className="w-10 h-10 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-5 h-5 text-accent" />
+          </div>
+          <div className="flex-1 min-w-0 text-left">
+            <div className="text-sm font-semibold text-foreground">
+              {t("عرض تبنّي اللجان الوطنية والأثر", "National Committee Adoption & Impact Showcase")}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {t("سيناريو توضيحي للقيادات — لجنة تنمية الشركات الصغيرة والمتوسطة", "Executive demonstration scenario — SME Development Committee")}
+            </div>
+          </div>
+          <ChevronLeft className={cn("w-4 h-4 text-muted-foreground shrink-0", lang === "ar" ? "" : "rotate-180")} />
+        </button>
+      )}
+
       <PoweredByConnection variant="dark" />
     </div>
   );

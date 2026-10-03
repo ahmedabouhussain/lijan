@@ -81,14 +81,24 @@ export default function EntryPortal() {
                 <span className="hidden sm:inline">{t("العودة للرئيسية", "Back to Home")}</span>
               </button>
               {user?.role === "admin" && !isDemoMode && (
-                <button
-                  onClick={() => navigate("/activity-log")}
-                  className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
-                  title={t("لوحة التحكم", "Admin Dashboard")}
-                >
-                  <Activity className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t("لوحة التحكم", "Admin Dashboard")}</span>
-                </button>
+                <>
+                  <button
+                    onClick={() => navigate("/national-adoption-showcase")}
+                    className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                    title={t("عرض التبنّي الوطني", "National Adoption Showcase")}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t("عرض التبنّي الوطني", "National Adoption")}</span>
+                  </button>
+                  <button
+                    onClick={() => navigate("/activity-log")}
+                    className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-primary hover:bg-secondary/50 px-2.5 py-1.5 rounded-md font-medium transition-colors"
+                    title={t("لوحة التحكم", "Admin Dashboard")}
+                  >
+                    <Activity className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t("لوحة التحكم", "Admin Dashboard")}</span>
+                  </button>
+                </>
               )}
               <button
                 onClick={() => navigate("/profile")}
@@ -364,7 +374,16 @@ export default function EntryPortal() {
             <PoweredByConnection variant="dark" />
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
+            {user?.role === "admin" && (
+              <button
+                type="button"
+                onClick={() => navigate("/national-adoption-showcase")}
+                className="block w-full text-xs text-primary hover:underline font-medium transition-colors"
+              >
+                {t("عرض تبنّي اللجان الوطنية والأثر", "National Committee Adoption & Impact Showcase")}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => navigate("/committees-registry")}
