@@ -36,6 +36,18 @@ const SOURCE_LABEL = {
   en: "Source: Synthetic showcase dataset — not operational data.",
 };
 
+/** How the source statement is demanded — addressed to the engine, in the reply language. */
+const SOURCE_RULE = {
+  ar: (label) => [
+    "إلزامي وبلا استثناء: اجعل أول سطر في أي رد يحتوي بيانات هو النص التالي حرفياً:",
+    label,
+  ],
+  en: (label) => [
+    "REQUIRED first line, written verbatim, whenever the reply contains any data:",
+    label,
+  ],
+};
+
 /** Shown only if a reply could not be produced in the active language after a retry. */
 export const AMEEN_LANGUAGE_FALLBACK = {
   ar: "تعذّر الآن توليد الرد بالعربية. أعد إرسال سؤالك وسيُعاد التوليد.",
@@ -73,7 +85,7 @@ export function ameenDirective(lang, { reload = false } = {}) {
     `direction: ${c.direction}`,
     ...(reload ? [`${RELOAD_MARKER} — the previous reply used the wrong language.`] : []),
     c.contract,
-    `Use this source statement verbatim when sandbox data is shown: ${c.source_label}`,
+    ...(c.locale === "ar" ? SOURCE_RULE.ar : SOURCE_RULE.en)(c.source_label),
     LOCALE_BLOCK_CLOSE,
   ].join("\n");
 }
