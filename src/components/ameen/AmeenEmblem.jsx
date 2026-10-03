@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { getActiveLang, isArabic } from "@/lib/l10n";
 
 /**
  * AmeenEmblem — the original institutional mark for «أمين».
@@ -12,9 +13,11 @@ import { cn } from "@/lib/utils";
  *  - "outline" → maroon hairline seal, maroon glyph
  *  - "inverse" → white glyph + gold ring (on maroon / dark backgrounds)
  */
-export default function AmeenEmblem({ size = 32, tone = "solid", className }) {
+export default function AmeenEmblem({ size = 32, tone = "solid", className, label }) {
   const isSolid = tone === "solid";
   const isInverse = tone === "inverse";
+  // The assistant's name follows the active language: «أمين» in Arabic, AMEEN in English.
+  const ariaLabel = label || (isArabic(getActiveLang()) ? "أمين" : "AMEEN");
 
   const plate = isInverse ? "none" : isSolid ? "#8A1538" : "none";
   const ring = isInverse ? "#B59358" : isSolid ? "#B59358" : "#8A1538";
@@ -29,7 +32,7 @@ export default function AmeenEmblem({ size = 32, tone = "solid", className }) {
       viewBox="0 0 40 40"
       className={cn("shrink-0", className)}
       role="img"
-      aria-label="أمين"
+      aria-label={ariaLabel}
       focusable="false"
     >
       {/* Approval seal */}

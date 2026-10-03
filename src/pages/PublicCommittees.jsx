@@ -92,8 +92,8 @@ export default function PublicCommittees() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={dir}>
-      <header className="border-b border-border bg-card sticky top-0 z-30">
+    <div className="min-h-app bg-background flex flex-col" dir={dir}>
+      <header className="border-b border-border bg-card sticky top-[env(safe-area-inset-top)] z-30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <button
             onClick={() => navigate("/")}

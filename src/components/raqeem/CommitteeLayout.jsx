@@ -64,7 +64,7 @@ function CommitteeShell() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex" dir={dir}>
+      <div className="min-h-app bg-background flex" dir={dir}>
         <aside className="hidden lg:flex w-60 shrink-0 bg-sidebar flex-col">
           <div className="px-4 py-2.5 border-b border-sidebar-border">
             <div className="flex items-center gap-2">
@@ -101,30 +101,69 @@ function CommitteeShell() {
   }
 
   if (error) {
-    // A committee that cannot be resolved in the caller's current scope — explained in the
-    // active language instead of a bare backend string.
-    const notFound = /not found|غير موجودة|غير متاحة/i.test(error);
+    // ONE shell, four DISTINCT situations. Every one of them states what happened, why,
+    // what the user can do now, and who can resolve it if they hold no authority.
+    // A raw backend string is never shown.
+    const raw = String(error || "");
+    const isAccessDenied = /401|403|unauthor|forbidden|denied|غير مصرح|صلاحية/i.test(raw);
+    const isServiceLimited = /network|fetch|timeout|offline|unavailable|اتصال|الخدمة/i.test(raw);
+    const state = !committeeRef
+      ? {
+          icon: ClipboardList,
+          plate: "bg-accent/8 ring-accent/15",
+          ink: "text-accent",
+          title: t("يجب اختيار لجنة", "Select a committee first"),
+          why: t("لم يحدد الرابط الحالي أي لجنة.", "The current link does not specify a committee."),
+          next: t("افتح اللجنة من مساحة العمل أو من بوابة المنظمة.", "Open the committee from the workspace or the organization portal."),
+        }
+      : isAccessDenied
+      ? {
+          icon: Lock,
+          plate: "bg-destructive/8 ring-destructive/15",
+          ink: "text-destructive",
+          title: t("لا تملك صلاحية الوصول إلى هذه اللجنة", "You do not have access to this committee"),
+          why: t("لا توجد عضوية مسندة إلى حسابك في هذه اللجنة، أو تم سحب الصلاحية.", "No membership is assigned to your account in this committee, or the grant was withdrawn."),
+          next: t("اطلب إسناد العضوية من مدير اللجنة أو من مسؤول الجهة.", "Ask the committee administrator or your organization administrator to assign your membership."),
+        }
+      : isServiceLimited
+      ? {
+          icon: Plug,
+          plate: "bg-accent/8 ring-accent/15",
+          ink: "text-accent",
+          retry: true,
+          title: t("تعذّر الوصول إلى الخدمة", "The service could not be reached"),
+          why: t("الاتصال غير مستقر أو الخدمة محدودة مؤقتًا. لا تُعرض أي بيانات محفوظة محليًا.", "The connection is unstable, or the service is temporarily limited. No locally cached records are shown."),
+          next: t("أعد المحاولة بعد استقرار الاتصال.", "Retry once the connection is stable."),
+        }
+      : {
+          icon: AlertTriangle,
+          plate: "bg-destructive/8 ring-destructive/15",
+          ink: "text-destructive",
+          title: t("هذه اللجنة غير متاحة في النطاق الحالي", "This committee is not available in the current scope"),
+          why: t("قد يكون الرابط قديمًا أو يخص لجنة خارج اللجان المسندة إليك.", "The link may be outdated, or point to a committee outside the ones assigned to you."),
+          next: t("افتح اللجنة من مساحة العمل أو من بوابة المنظمة.", "Open the committee from the workspace or the organization portal."),
+        };
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-3 px-4" dir={dir}>
-        <div className="w-16 h-16 rounded-2xl bg-destructive/8 flex items-center justify-center ring-1 ring-destructive/15">
-          <AlertTriangle className="w-7 h-7 text-destructive" />
+      <div className="flex flex-col items-center justify-center min-h-app gap-3 px-4" dir={dir}>
+        <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center ring-1", state.plate)}>
+          <state.icon className={cn("w-7 h-7", state.ink)} aria-hidden="true" />
         </div>
-        <p className="text-sm font-medium text-foreground max-w-md text-center">
-          {notFound
-            ? t("هذه اللجنة غير متاحة في النطاق الحالي", "This committee is not available in the current scope")
-            : error}
-        </p>
-        {notFound && (
-          <p className="text-xs text-muted-foreground max-w-md text-center">
-            {t(
-              "قد يكون الرابط قديمًا أو يخص لجنة خارج اللجان المسندة إليك. افتح اللجنة من مساحة العمل أو من بوابة المنظمة.",
-              "The link may be outdated or point to a committee outside the ones assigned to you. Open the committee from the workspace or the organization portal."
-            )}
-          </p>
+        <p className="text-sm font-medium text-foreground max-w-md text-center">{state.title}</p>
+        <p className="text-xs text-muted-foreground max-w-md text-center">{state.why}</p>
+        <p className="text-xs text-muted-foreground max-w-md text-center">{state.next}</p>
+        {state.retry ? (
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="text-primary hover:underline text-sm font-medium sovereign-focus"
+          >
+            {t("إعادة المحاولة", "Retry")}
+          </button>
+        ) : (
+          <Link to={`/o/${orgRef}`} className="text-primary hover:underline text-sm font-medium">
+            {t("العودة للبوابة", "Back to Portal")}
+          </Link>
         )}
-        <Link to={`/o/${orgRef}`} className="text-primary hover:underline text-sm font-medium">
-          {t("العودة للبوابة", "Back to Portal")}
-        </Link>
       </div>
     );
   }
@@ -190,7 +229,7 @@ function CommitteeShell() {
             </div>
             {is_recused && (
               <div className="mt-2 px-2 py-1 rounded bg-red-900/30 text-[11px] text-red-200">
-                {t("متتنحّ من هذه اللجنة", "Recused from this committee")}
+                {t("متنحٍّ من هذه اللجنة", "Recused from this committee")}
               </div>
             )}
             <Link
@@ -283,7 +322,7 @@ function CommitteeShell() {
   );
 
   return (
-    <div className="min-h-screen bg-background flex" dir={dir}>
+    <div className="min-h-app bg-background flex" dir={dir}>
       {/* Keyboard users reach the workspace content without traversing the whole sidebar */}
       <a
         href="#committee-main"
@@ -301,7 +340,7 @@ function CommitteeShell() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-60 bg-sidebar flex-col flex max-h-screen overflow-y-auto">
+          <aside className="relative w-60 bg-sidebar flex-col flex max-h-app overflow-y-auto safe-top safe-bottom">
             <button
               onClick={() => setMobileOpen(false)}
               aria-label={t("إغلاق قائمة التنقل", "Close navigation menu")}
@@ -343,7 +382,7 @@ function CommitteeShell() {
           </div>
         </header>
 
-        <main id="committee-main" className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+        <main id="committee-main" className="flex-1 overflow-y-auto pb-20 lg:pb-0">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <PageNav />
             {isDemoMode && demoPersonaKey === "DR_HAMAD_MAJEEGHEER" && <PersonaContextPath />}
@@ -353,7 +392,7 @@ function CommitteeShell() {
       </div>
 
       {/* Mobile bottom navigation */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border safe-bottom safe-x">
         <div className="flex items-center justify-around px-1 py-1 max-w-md mx-auto">
           {NAV_ITEMS.map((item) => {
             const to = item.to === "" ? base : `${base}${item.to}`;

@@ -43,8 +43,8 @@ export default function EntryPortal() {
   //    governed exploration sessions alike. There is no second entry toggle.
   if (hasAccess) {
     return (
-      <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
-        <header className="border-b border-border bg-card sticky top-0 z-30">
+      <div className="min-h-app bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+        <header className="border-b border-border bg-card sticky top-[env(safe-area-inset-top)] z-30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
             <BrandLogo className="h-9 w-32 shrink-0" />
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -111,7 +111,7 @@ export default function EntryPortal() {
 
   // ── Public entry — two primary paths only: Sign In, Explore LIJAN.
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+    <div className="min-h-app bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
       <header className="border-b border-border bg-card">
         <div className="max-w-5xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-3">
           <BrandLogo className="h-9 w-32 shrink-0" />

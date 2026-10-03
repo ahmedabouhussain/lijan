@@ -9,6 +9,7 @@ import { EffectiveActorProvider, useEffectiveActor } from '@/lib/EffectiveActorC
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AutoFullscreen from '@/components/AutoFullscreen';
+import NativeAppShell from '@/components/NativeAppShell';
 import SplashScreen from '@/components/raqeem/SplashScreen';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { LanguageProvider } from '@/lib/LanguageContext';
@@ -263,6 +264,7 @@ function App() {
           <Router>
             <ScrollToTop />
             <AutoFullscreen />
+            <NativeAppShell />
             <AmeenProvider>
               {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
               <AuthenticatedApp />

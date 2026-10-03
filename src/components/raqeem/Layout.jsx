@@ -174,7 +174,7 @@ export default function Layout() {
   );
 
   return (
-    <div className="min-h-screen bg-background flex" dir="rtl">
+    <div className="min-h-app bg-background flex" dir="rtl">
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-64 shrink-0 bg-sidebar flex-col">
         <SidebarContent />

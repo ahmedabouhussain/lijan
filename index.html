@@ -4,12 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png" />
     <link rel="apple-touch-icon" href="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <!-- viewport-fit=cover lets the app draw under the iPhone status bar / home indicator;
+         index.css absorbs the insets once at the app root so nothing hides behind them. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <!-- Noto Naskh Arabic — official Arabic typeface, bundled locally (no external font CDN) -->
     <link rel="preload" as="font" type="font/ttf" href="/fonts/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf" crossorigin />
     <link rel="preload" as="font" type="font/ttf" href="/fonts/NotoNaskhArabic/NotoNaskhArabic-Bold.ttf" crossorigin />
     <meta name="theme-color" content="#8A1538" />
     <link rel="manifest" href="/manifest.json" />
+    <!-- Installable app shell (iOS reads these instead of the manifest) -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="لجان" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="لِجان™ | LIJAN™ — National Councils & Committees Operating System. Powered by CONNECTION™." />
     <meta property="og:title" content="لِجان™ | LIJAN™" />
     <meta property="og:description" content="National Councils & Committees Operating System — Powered by CONNECTION™" />

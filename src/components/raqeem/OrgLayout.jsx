@@ -31,7 +31,7 @@ function OrgShell() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex" dir={document.documentElement.dir}>
+      <div className="min-h-app bg-background flex" dir={document.documentElement.dir}>
         <aside className="hidden lg:flex w-64 shrink-0 bg-sidebar flex-col">
           <div className="px-5 py-5 border-b border-sidebar-border">
             <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ function OrgShell() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
+      <div className="flex flex-col items-center justify-center min-h-app gap-3">
         <div className="w-16 h-16 rounded-2xl bg-destructive/8 flex items-center justify-center ring-1 ring-destructive/15">
           <AlertTriangle className="w-7 h-7 text-destructive" />
         </div>
@@ -199,7 +199,7 @@ function OrgShell() {
   );
 
   return (
-    <div className="min-h-screen bg-background flex" dir={document.documentElement.dir}>
+    <div className="min-h-app bg-background flex" dir={document.documentElement.dir}>
       <aside className="hidden lg:flex w-64 shrink-0 bg-sidebar flex-col">
         <SidebarContent />
       </aside>

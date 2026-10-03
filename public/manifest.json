@@ -1,25 +1,24 @@
 {
+  "id": "/",
   "name": "لِجان™ | LIJAN™",
-  "short_name": "LIJAN™",
+  "short_name": "لجان",
   "description": "National Councils & Committees Operating System — Powered by CONNECTION™",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#8A1538",
   "theme_color": "#8A1538",
   "lang": "ar",
   "dir": "rtl",
+  "categories": ["business", "productivity"],
   "icons": [
     {
       "src": "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png",
-      "sizes": "192x192",
+      "sizes": "192x192 512x512",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/6cc905f53_file_000000006f2c820abccb6782c8b70feb.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

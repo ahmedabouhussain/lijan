@@ -1,6 +1,26 @@
 // LIJAN shared utilities — bilingual labels, status maps, helpers
 import { getActiveLang } from "@/lib/l10n";
 
+// ── Semantic state palette ────────────────────────────────────────────────────
+// Every status colour in the platform resolves through these five families, which
+// come from the semantic tokens in index.css / tailwind.config.js. No blue, cyan,
+// purple or violet is part of the institutional identity: state is carried by a
+// quiet plate plus the status word, never by a decorative colour.
+const S = {
+  neutral: "text-state-neutral-ink bg-state-neutral-surface",
+  info: "text-state-info-ink bg-state-info-surface",
+  progress: "text-state-progress-ink bg-state-progress-surface",
+  success: "text-state-success-ink bg-state-success-surface",
+  warning: "text-state-warning-ink bg-state-warning-surface",
+  danger: "text-state-danger-ink bg-state-danger-surface",
+  ceremonial: "text-state-ceremonial-ink bg-state-ceremonial-surface",
+  // Ink-only variants — for rows where a plate would add noise.
+  infoInk: "text-state-info-ink",
+  warningInk: "text-state-warning-ink",
+  dangerInk: "text-state-danger-ink",
+  mutedInk: "text-muted-foreground",
+};
+
 export const COMMITTEE_TYPES = {
   permanent_council: { ar: "مجلس دائم", en: "Permanent Council" },
   permanent_committee: { ar: "لجنة دائمة", en: "Permanent Committee" },
@@ -16,67 +36,67 @@ export const COMMITTEE_TYPES = {
 };
 
 export const COMMITTEE_STATUS = {
-  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
-  pending_activation: { ar: "بانتظار التفعيل", en: "Pending Activation", color: "text-amber-700 bg-amber-50" },
-  active: { ar: "نشطة", en: "Active", color: "text-emerald-700 bg-emerald-50" },
-  closing: { ar: "قيد الإغلاق", en: "Closing", color: "text-amber-700 bg-amber-50" },
-  closed: { ar: "مغلقة", en: "Closed", color: "text-muted-foreground bg-secondary" },
-  archived: { ar: "مؤرشفة", en: "Archived", color: "text-muted-foreground bg-secondary" },
+  draft: { ar: "مسودة", en: "Draft", color: S.neutral },
+  pending_activation: { ar: "بانتظار التفعيل", en: "Pending Activation", color: S.warning },
+  active: { ar: "نشطة", en: "Active", color: S.success },
+  closing: { ar: "قيد الإغلاق", en: "Closing", color: S.progress },
+  closed: { ar: "مغلقة", en: "Closed", color: S.neutral },
+  archived: { ar: "مؤرشفة", en: "Archived", color: S.neutral },
 };
 
 export const MEETING_STATUS = {
-  scheduled: { ar: "مجدول", en: "Scheduled", color: "text-blue-700 bg-blue-50" },
-  in_progress: { ar: "جارٍ", en: "In Progress", color: "text-emerald-700 bg-emerald-50" },
-  adjourned: { ar: "مؤجلة", en: "Adjourned", color: "text-amber-700 bg-amber-50" },
-  completed: { ar: "مكتملة", en: "Completed", color: "text-muted-foreground bg-secondary" },
-  cancelled: { ar: "ملغاة", en: "Cancelled", color: "text-destructive bg-red-50" },
+  scheduled: { ar: "مجدول", en: "Scheduled", color: S.info },
+  in_progress: { ar: "جارٍ", en: "In Progress", color: S.progress },
+  adjourned: { ar: "مؤجلة", en: "Adjourned", color: S.warning },
+  completed: { ar: "مكتملة", en: "Completed", color: S.neutral },
+  cancelled: { ar: "ملغاة", en: "Cancelled", color: S.danger },
 };
 
 export const DECISION_STATUS = {
-  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
-  in_review: { ar: "قيد المراجعة", en: "In Review", color: "text-blue-700 bg-blue-50" },
-  proposed: { ar: "مقترح", en: "Proposed", color: "text-amber-700 bg-amber-50" },
-  voting: { ar: "قيد التصويت", en: "Voting", color: "text-purple-700 bg-purple-50" },
-  approved: { ar: "معتمد", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
-  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
-  deferred: { ar: "مؤجل", en: "Deferred", color: "text-amber-700 bg-amber-50" },
-  issued: { ar: "صادر", en: "Issued", color: "text-primary bg-primary/10" },
-  executing: { ar: "قيد التنفيذ", en: "Executing", color: "text-blue-700 bg-blue-50" },
-  completed: { ar: "مكتمل", en: "Completed", color: "text-emerald-700 bg-emerald-50" },
-  superseded: { ar: "ملغى بقرار لاحق", en: "Superseded", color: "text-muted-foreground bg-secondary" },
-  closed: { ar: "مغلق", en: "Closed", color: "text-muted-foreground bg-secondary" },
+  draft: { ar: "مسودة", en: "Draft", color: S.neutral },
+  in_review: { ar: "قيد المراجعة", en: "In Review", color: S.info },
+  proposed: { ar: "مقترح", en: "Proposed", color: S.warning },
+  voting: { ar: "قيد التصويت", en: "Voting", color: S.ceremonial },
+  approved: { ar: "معتمد", en: "Approved", color: S.success },
+  rejected: { ar: "مرفوض", en: "Rejected", color: S.danger },
+  deferred: { ar: "مؤجل", en: "Deferred", color: S.warning },
+  issued: { ar: "صادر", en: "Issued", color: S.ceremonial },
+  executing: { ar: "قيد التنفيذ", en: "Executing", color: S.progress },
+  completed: { ar: "مكتمل", en: "Completed", color: S.success },
+  superseded: { ar: "ملغى بقرار لاحق", en: "Superseded", color: S.neutral },
+  closed: { ar: "مغلق", en: "Closed", color: S.neutral },
 };
 
 export const ACTION_STATUS = {
-  assigned: { ar: "مُسند", en: "Assigned", color: "text-blue-700 bg-blue-50" },
-  in_progress: { ar: "قيد التنفيذ", en: "In Progress", color: "text-amber-700 bg-amber-50" },
-  blocked: { ar: "متعثر", en: "Blocked", color: "text-destructive bg-red-50" },
-  evidence_pending: { ar: "بانتظار الأدلة", en: "Evidence Pending", color: "text-amber-700 bg-amber-50" },
-  under_review: { ar: "قيد المراجعة", en: "Under Review", color: "text-purple-700 bg-purple-50" },
-  verified: { ar: "تم التحقق", en: "Verified", color: "text-emerald-700 bg-emerald-50" },
-  closed: { ar: "مغلق", en: "Closed", color: "text-muted-foreground bg-secondary" },
-  overdue: { ar: "متأخر", en: "Overdue", color: "text-destructive bg-red-50" },
+  assigned: { ar: "مُسند", en: "Assigned", color: S.info },
+  in_progress: { ar: "قيد التنفيذ", en: "In Progress", color: S.progress },
+  blocked: { ar: "متعثر", en: "Blocked", color: S.danger },
+  evidence_pending: { ar: "بانتظار الأدلة", en: "Evidence Pending", color: S.warning },
+  under_review: { ar: "قيد المراجعة", en: "Under Review", color: S.ceremonial },
+  verified: { ar: "تم التحقق", en: "Verified", color: S.success },
+  closed: { ar: "مغلق", en: "Closed", color: S.neutral },
+  overdue: { ar: "متأخر", en: "Overdue", color: S.danger },
 };
 
 export const PRIORITY = {
-  low: { ar: "منخفضة", en: "Low", color: "text-muted-foreground" },
-  medium: { ar: "متوسطة", en: "Medium", color: "text-blue-700" },
-  high: { ar: "عالية", en: "High", color: "text-amber-700" },
-  critical: { ar: "حرجة", en: "Critical", color: "text-destructive" },
+  low: { ar: "منخفضة", en: "Low", color: S.mutedInk },
+  medium: { ar: "متوسطة", en: "Medium", color: S.infoInk },
+  high: { ar: "عالية", en: "High", color: S.warningInk },
+  critical: { ar: "حرجة", en: "Critical", color: S.dangerInk },
 };
 
 export const READINESS = {
-  ready: { ar: "جاهز", en: "Ready", color: "text-emerald-700 bg-emerald-50" },
-  needs_attention: { ar: "يحتاج انتباه", en: "Needs Attention", color: "text-amber-700 bg-amber-50" },
-  not_ready: { ar: "غير جاهز", en: "Not Ready", color: "text-destructive bg-red-50" },
+  ready: { ar: "جاهز", en: "Ready", color: S.success },
+  needs_attention: { ar: "يحتاج انتباه", en: "Needs Attention", color: S.warning },
+  not_ready: { ar: "غير جاهز", en: "Not Ready", color: S.danger },
 };
 
 export const AGENDA_ITEM_STATUS = {
-  pending: { ar: "بانتظار", en: "Pending", color: "text-muted-foreground bg-secondary" },
-  in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: "text-blue-700 bg-blue-50" },
-  decided: { ar: "تم القرار", en: "Decided", color: "text-emerald-700 bg-emerald-50" },
-  deferred: { ar: "مؤجل", en: "Deferred", color: "text-amber-700 bg-amber-50" },
-  withdrawn: { ar: "مسحوب", en: "Withdrawn", color: "text-destructive bg-red-50" },
+  pending: { ar: "بانتظار", en: "Pending", color: S.neutral },
+  in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: S.info },
+  decided: { ar: "تم القرار", en: "Decided", color: S.success },
+  deferred: { ar: "مؤجل", en: "Deferred", color: S.warning },
+  withdrawn: { ar: "مسحوب", en: "Withdrawn", color: S.danger },
 };
 
 export const ESCALATION_LEVEL = {
@@ -97,19 +117,19 @@ export const CLASSIFICATION = {
 };
 
 export const MINUTES_STATUS = {
-  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
-  in_review: { ar: "قيد المراجعة", en: "In Review", color: "text-blue-700 bg-blue-50" },
-  approved: { ar: "معتمد", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
-  issued: { ar: "صادر", en: "Issued", color: "text-primary bg-primary/10" },
-  amended: { ar: "معدل", en: "Amended", color: "text-amber-700 bg-amber-50" },
+  draft: { ar: "مسودة", en: "Draft", color: S.neutral },
+  in_review: { ar: "قيد المراجعة", en: "In Review", color: S.info },
+  approved: { ar: "معتمد", en: "Approved", color: S.success },
+  issued: { ar: "صادر", en: "Issued", color: S.ceremonial },
+  amended: { ar: "معدل", en: "Amended", color: S.warning },
 };
 
 export const ATTENDANCE_STATUS = {
-  present: { ar: "حاضر", en: "Present", color: "text-emerald-700 bg-emerald-50" },
-  absent: { ar: "غائب", en: "Absent", color: "text-destructive bg-red-50" },
-  apologies: { ar: "اعتذر", en: "Apologies", color: "text-amber-700 bg-amber-50" },
-  proxy: { ar: "بالنيابة", en: "Proxy", color: "text-blue-700 bg-blue-50" },
-  late: { ar: "متأخر", en: "Late", color: "text-amber-700 bg-amber-50" },
+  present: { ar: "حاضر", en: "Present", color: S.success },
+  absent: { ar: "غائب", en: "Absent", color: S.danger },
+  apologies: { ar: "اعتذر", en: "Apologies", color: S.warning },
+  proxy: { ar: "بالنيابة", en: "Proxy", color: S.info },
+  late: { ar: "متأخر", en: "Late", color: S.warning },
 };
 
 export const MEMBER_ROLE = {
@@ -124,28 +144,28 @@ export const MEMBER_ROLE = {
 };
 
 export const INITIATIVE_STATUS = {
-  proposed: { ar: "مقترحة", en: "Proposed", color: "text-muted-foreground bg-secondary" },
-  under_review: { ar: "قيد الدراسة", en: "Under Review", color: "text-amber-700 bg-amber-50" },
-  prioritized: { ar: "ذات أولوية", en: "Prioritized", color: "text-blue-700 bg-blue-50" },
-  approved: { ar: "معتمدة", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
-  in_delivery: { ar: "قيد التنفيذ", en: "In Delivery", color: "text-blue-700 bg-blue-50" },
-  blocked: { ar: "متعثرة", en: "Blocked", color: "text-destructive bg-red-50" },
-  measuring_impact: { ar: "قياس الأثر", en: "Measuring Impact", color: "text-indigo-700 bg-indigo-50" },
-  closed: { ar: "مغلقة", en: "Closed", color: "text-muted-foreground bg-secondary" },
+  proposed: { ar: "مقترحة", en: "Proposed", color: S.neutral },
+  under_review: { ar: "قيد الدراسة", en: "Under Review", color: S.warning },
+  prioritized: { ar: "ذات أولوية", en: "Prioritized", color: S.info },
+  approved: { ar: "معتمدة", en: "Approved", color: S.success },
+  in_delivery: { ar: "قيد التنفيذ", en: "In Delivery", color: S.progress },
+  blocked: { ar: "متعثرة", en: "Blocked", color: S.danger },
+  measuring_impact: { ar: "قياس الأثر", en: "Measuring Impact", color: S.ceremonial },
+  closed: { ar: "مغلقة", en: "Closed", color: S.neutral },
 };
 
 export const WORKSTREAM_STATUS = {
-  active: { ar: "نشط", en: "Active", color: "text-emerald-700 bg-emerald-50" },
-  in_preparation: { ar: "قيد التحضير", en: "In Preparation", color: "text-amber-700 bg-amber-50" },
-  on_hold: { ar: "متوقف مؤقتًا", en: "On Hold", color: "text-destructive bg-red-50" },
-  closed: { ar: "مغلق", en: "Closed", color: "text-muted-foreground bg-secondary" },
+  active: { ar: "نشط", en: "Active", color: S.success },
+  in_preparation: { ar: "قيد التحضير", en: "In Preparation", color: S.warning },
+  on_hold: { ar: "متوقف مؤقتًا", en: "On Hold", color: S.danger },
+  closed: { ar: "مغلق", en: "Closed", color: S.neutral },
 };
 
 export const FIRST_MEETING_STATUS = {
-  not_yet_scheduled: { ar: "لم يُحدَّد بعد", en: "Not yet scheduled", color: "text-muted-foreground bg-secondary" },
-  scheduled: { ar: "مجدول", en: "Scheduled", color: "text-blue-700 bg-blue-50" },
-  held: { ar: "منعقد", en: "Held", color: "text-emerald-700 bg-emerald-50" },
-  status_pending_confirmation: { ar: "قيد تأكيد الحالة", en: "Status pending confirmation", color: "text-amber-700 bg-amber-50" },
+  not_yet_scheduled: { ar: "لم يُحدَّد بعد", en: "Not yet scheduled", color: S.neutral },
+  scheduled: { ar: "مجدول", en: "Scheduled", color: S.info },
+  held: { ar: "منعقد", en: "Held", color: S.success },
+  status_pending_confirmation: { ar: "قيد تأكيد الحالة", en: "Status pending confirmation", color: S.warning },
 };
 
 export const WORKSTREAM_ROLE = {
@@ -166,50 +186,50 @@ export const AUTHORITY_LEVELS = {
 };
 
 export const DEPENDENCY_TYPE = {
-  requires: { ar: "يتطلب", en: "Requires", color: "text-blue-700 bg-blue-50" },
-  blocks: { ar: "يعيق", en: "Blocks", color: "text-destructive bg-red-50" },
-  informs: { ar: "يبلغ", en: "Informs", color: "text-amber-700 bg-amber-50" },
-  supersedes: { ar: "يحل محل", en: "Supersedes", color: "text-purple-700 bg-purple-50" },
-  aligns_with: { ar: "متوافق مع", en: "Aligns With", color: "text-emerald-700 bg-emerald-50" },
+  requires: { ar: "يتطلب", en: "Requires", color: S.info },
+  blocks: { ar: "يعيق", en: "Blocks", color: S.danger },
+  informs: { ar: "يبلغ", en: "Informs", color: S.warning },
+  supersedes: { ar: "يحل محل", en: "Supersedes", color: S.ceremonial },
+  aligns_with: { ar: "متوافق مع", en: "Aligns With", color: S.success },
 };
 
 export const DEPENDENCY_STATUS = {
-  pending: { ar: "بانتظار", en: "Pending", color: "text-amber-700 bg-amber-50" },
-  active: { ar: "نشطة", en: "Active", color: "text-blue-700 bg-blue-50" },
-  resolved: { ar: "محلولة", en: "Resolved", color: "text-emerald-700 bg-emerald-50" },
-  broken: { ar: "مكسورة", en: "Broken", color: "text-destructive bg-red-50" },
+  pending: { ar: "بانتظار", en: "Pending", color: S.warning },
+  active: { ar: "نشطة", en: "Active", color: S.info },
+  resolved: { ar: "محلولة", en: "Resolved", color: S.success },
+  broken: { ar: "مكسورة", en: "Broken", color: S.danger },
 };
 
 export const SCENARIO_TYPE = {
-  baseline: { ar: "الأساسي", en: "Baseline", color: "text-muted-foreground bg-secondary" },
-  alternative: { ar: "بديل", en: "Alternative", color: "text-blue-700 bg-blue-50" },
-  preferred: { ar: "مفضل", en: "Preferred", color: "text-emerald-700 bg-emerald-50" },
-  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
+  baseline: { ar: "الأساسي", en: "Baseline", color: S.neutral },
+  alternative: { ar: "بديل", en: "Alternative", color: S.info },
+  preferred: { ar: "مفضل", en: "Preferred", color: S.success },
+  rejected: { ar: "مرفوض", en: "Rejected", color: S.danger },
 };
 
 export const SCENARIO_STATUS = {
-  draft: { ar: "مسودة", en: "Draft", color: "text-muted-foreground bg-secondary" },
-  evaluating: { ar: "قيد التقييم", en: "Evaluating", color: "text-blue-700 bg-blue-50" },
-  selected: { ar: "مختار", en: "Selected", color: "text-emerald-700 bg-emerald-50" },
-  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
-  archived: { ar: "مؤرشف", en: "Archived", color: "text-muted-foreground bg-secondary" },
+  draft: { ar: "مسودة", en: "Draft", color: S.neutral },
+  evaluating: { ar: "قيد التقييم", en: "Evaluating", color: S.info },
+  selected: { ar: "مختار", en: "Selected", color: S.success },
+  rejected: { ar: "مرفوض", en: "Rejected", color: S.danger },
+  archived: { ar: "مؤرشف", en: "Archived", color: S.neutral },
 };
 
 export const AI_OUTPUT_TYPE = {
-  meeting_minutes: { ar: "محضر اجتماع", en: "Meeting Minutes", color: "text-blue-700 bg-blue-50" },
-  governance_doc: { ar: "وثيقة حوكمة", en: "Governance Doc", color: "text-primary bg-primary/10" },
-  decision_draft: { ar: "مسودة قرار", en: "Decision Draft", color: "text-purple-700 bg-purple-50" },
-  policy_scenario: { ar: "سيناريو سياسي", en: "Policy Scenario", color: "text-amber-700 bg-amber-50" },
-  summary: { ar: "ملخص", en: "Summary", color: "text-muted-foreground bg-secondary" },
-  other: { ar: "أخرى", en: "Other", color: "text-muted-foreground bg-secondary" },
+  meeting_minutes: { ar: "محضر اجتماع", en: "Meeting Minutes", color: S.info },
+  governance_doc: { ar: "وثيقة حوكمة", en: "Governance Doc", color: S.ceremonial },
+  decision_draft: { ar: "مسودة قرار", en: "Decision Draft", color: S.ceremonial },
+  policy_scenario: { ar: "سيناريو سياسي", en: "Policy Scenario", color: S.warning },
+  summary: { ar: "ملخص", en: "Summary", color: S.neutral },
+  other: { ar: "أخرى", en: "Other", color: S.neutral },
 };
 
 export const AI_OUTPUT_STATUS = {
-  generated: { ar: "مولّد", en: "Generated", color: "text-amber-700 bg-amber-50" },
-  under_review: { ar: "قيد المراجعة", en: "Under Review", color: "text-blue-700 bg-blue-50" },
-  approved: { ar: "معتمد", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
-  rejected: { ar: "مرفوض", en: "Rejected", color: "text-destructive bg-red-50" },
-  amended: { ar: "معدل", en: "Amended", color: "text-amber-700 bg-amber-50" },
+  generated: { ar: "مولّد", en: "Generated", color: S.warning },
+  under_review: { ar: "قيد المراجعة", en: "Under Review", color: S.info },
+  approved: { ar: "معتمد", en: "Approved", color: S.success },
+  rejected: { ar: "مرفوض", en: "Rejected", color: S.danger },
+  amended: { ar: "معدل", en: "Amended", color: S.warning },
 };
 
 export function formatDate(dateStr) {

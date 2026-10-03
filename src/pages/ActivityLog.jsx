@@ -44,7 +44,7 @@ export default function ActivityLog() {
   // Non-admin guard
   if (user && user.role !== "admin") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" dir={dir}>
+      <div className="min-h-app bg-background flex items-center justify-center" dir={dir}>
         <div className="text-center space-y-3">
           <ShieldAlert className="w-12 h-12 text-destructive mx-auto" />
           <p className="text-sm text-muted-foreground">
@@ -77,9 +77,9 @@ export default function ActivityLog() {
   });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={dir}>
+    <div className="min-h-app bg-background flex flex-col" dir={dir}>
       {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-30">
+      <header className="border-b border-border bg-card sticky top-[env(safe-area-inset-top)] z-30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <button
             onClick={() => navigate(-1)}

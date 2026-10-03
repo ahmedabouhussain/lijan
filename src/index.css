@@ -71,6 +71,33 @@
     --sidebar-accent-foreground: 38 27% 97%;
     --sidebar-border: 335 50% 28%;
     --sidebar-ring: 38 36% 53%;
+
+    /* ── Semantic state tokens ─────────────────────────────────────────────
+       ONE vocabulary for every status surface (committees, meetings, decisions,
+       actions, initiatives, documents, attendance, AI outputs). State is carried
+       by a quiet institutional plate plus the status word itself — never by a
+       decorative colour. No blue, cyan, purple or violet exists in this palette. */
+    --state-neutral-surface: 40 14% 93%;
+    --state-neutral-ink: 210 4% 38%;
+    --state-info-surface: 40 12% 92%;
+    --state-info-ink: 210 6% 30%;
+    --state-progress-surface: 38 45% 91%;
+    --state-progress-ink: 30 50% 26%;
+    --state-success-surface: 152 24% 93%;
+    --state-success-ink: 152 42% 21%;
+    --state-warning-surface: 38 62% 92%;
+    --state-warning-ink: 32 62% 26%;
+    --state-danger-surface: 0 48% 95%;
+    --state-danger-ink: 0 58% 31%;
+    --state-ceremonial-surface: 335 40% 94%;
+    --state-ceremonial-ink: 335 71% 28%;
+
+    /* Chart series — institutional sequence (maroon, gold, deep maroon, gray, green). */
+    --chart-1: 335 71% 31%;
+    --chart-2: 38 36% 53%;
+    --chart-3: 335 69% 21%;
+    --chart-4: 210 4% 45%;
+    --chart-5: 152 42% 30%;
   }
 }
 
@@ -81,6 +108,15 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+  }
+
+  /* Device safe areas are absorbed once, at the app root, so no page can place
+     content under the iPhone status bar or the home indicator. */
+  #root {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
   }
 
   /* ── Arabic typography (Noto Naskh Arabic) ──
@@ -162,6 +198,19 @@
 }
 
 @layer utilities {
+  /* ── Native device chrome ──
+     `#root` absorbs the insets for every page; these helpers are for the chrome that
+     escapes the root box (fixed bars, drawers) so nothing hides behind a system bar. */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-x { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .bottom-safe { bottom: env(safe-area-inset-bottom); }
+
+  /* Dynamic viewport height: the app fills the screen without jumping when the mobile
+     browser chrome shows or hides. 100vh is the fallback for older engines. */
+  .min-h-app { min-height: 100vh; min-height: 100dvh; }
+  .max-h-app { max-height: 100vh; max-height: 100dvh; }
+
   /* Arabic typographic roles — four weights only, no lighter than 400 */
   .arabic-body { font-family: var(--font-arabic); font-weight: 400; line-height: var(--arabic-leading-body); }
   .arabic-label { font-family: var(--font-arabic); font-weight: 500; line-height: var(--arabic-leading-compact); }
