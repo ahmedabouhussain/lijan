@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -35,10 +36,7 @@ export default function CommitteePacks() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Package className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("حزم الاجتماعات", "Meeting Packs", lang)}</h1>
-      </div>
+      <PageHeader icon={Package} title={getTitle("حزم الاجتماعات", "Meeting Packs", lang)} />
       {upcoming.length === 0 ? (
         <EmptyState icon={Package} title={t("لا توجد حزم", "No Meeting Packs")} description={t("لا توجد اجتماعات قادمة.", "No upcoming meetings.")} />
       ) : (

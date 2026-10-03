@@ -159,7 +159,8 @@ function CommitteeShell() {
         </Link>
         <button
           onClick={() => setInfoCollapsed(!infoCollapsed)}
-          className="w-full flex items-center justify-between"
+          aria-expanded={!infoCollapsed}
+          className="w-full flex items-center justify-between sovereign-focus"
         >
           <h1 className="text-sm font-bold text-sidebar-foreground leading-tight">{L.name(committee)}</h1>
           <ChevronDown className={cn("w-4 h-4 text-sidebar-foreground/40 transition-transform shrink-0", infoCollapsed ? "" : "rotate-180")} />
@@ -216,6 +217,7 @@ function CommitteeShell() {
               key={item.to}
               to={to}
               onClick={() => setMobileOpen(false)}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors mb-0.5",
                 active
@@ -223,7 +225,7 @@ function CommitteeShell() {
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
               )}
             >
-              <item.icon className="w-4 h-4 shrink-0" />
+              <item.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>{t(item.label, item.labelEn)}</span>
             </Link>
           );
@@ -282,6 +284,14 @@ function CommitteeShell() {
 
   return (
     <div className="min-h-screen bg-background flex" dir={dir}>
+      {/* Keyboard users reach the workspace content without traversing the whole sidebar */}
+      <a
+        href="#committee-main"
+        className="sr-only focus:not-sr-only focus:block focus:m-3 focus:px-4 focus:py-2 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
+      >
+        {t("تخطَّ إلى محتوى اللجنة", "Skip to committee content")}
+      </a>
+
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-60 shrink-0 bg-sidebar flex-col">
         <SidebarContent />
@@ -292,8 +302,12 @@ function CommitteeShell() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
           <aside className="relative w-60 bg-sidebar flex-col flex max-h-screen overflow-y-auto">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-3 left-3 text-sidebar-foreground/60 hover:text-sidebar-foreground z-10">
-              <X className="w-5 h-5" />
+            <button
+              onClick={() => setMobileOpen(false)}
+              aria-label={t("إغلاق قائمة التنقل", "Close navigation menu")}
+              className="absolute top-3 left-3 text-sidebar-foreground/60 hover:text-sidebar-foreground z-10 sovereign-focus"
+            >
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
             <SidebarContent />
           </aside>
@@ -304,8 +318,12 @@ function CommitteeShell() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header */}
         <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-          <button onClick={() => setMobileOpen(true)}>
-            <Menu className="w-5 h-5" />
+          <button
+            onClick={() => setMobileOpen(true)}
+            aria-label={t("فتح قائمة التنقل", "Open navigation menu")}
+            className="p-1.5 rounded-md sovereign-focus"
+          >
+            <Menu className="w-5 h-5" aria-hidden="true" />
           </button>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
@@ -315,13 +333,17 @@ function CommitteeShell() {
           </div>
           <div className="flex items-center gap-2">
             <NotificationCenter />
-            <Link to={`/o/${orgRef}`} className="text-primary">
-              <ChevronLeft className="w-5 h-5" />
+            <Link
+              to={`/o/${orgRef}`}
+              aria-label={t("بوابة المنظمة", "Organization Portal")}
+              className="text-primary sovereign-focus"
+            >
+              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             </Link>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+        <main id="committee-main" className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <PageNav />
             {isDemoMode && demoPersonaKey === "DR_HAMAD_MAJEEGHEER" && <PersonaContextPath />}
@@ -343,12 +365,13 @@ function CommitteeShell() {
               <Link
                 key={item.to}
                 to={to}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-md min-w-[44px] transition-colors",
                   active ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-5 h-5" aria-hidden="true" />
                 <span className="text-[9px] leading-tight">{t(item.shortLabel || item.label, item.shortLabelEn || item.labelEn)}</span>
               </Link>
             );

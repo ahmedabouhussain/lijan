@@ -4,6 +4,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
+import PageHeader from "@/components/raqeem/PageHeader";
 import GenerateWizard from "@/components/raqeem/GenerateWizard";
 import LivingProductDelta from "@/components/raqeem/LivingProductDelta";
 import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive, History } from "lucide-react";
@@ -142,15 +143,17 @@ export default function ProductCatalog({ onGenerate }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
-        <h1 className="text-lg font-bold">{t("مركز الوثائق", "Document Center")}</h1>
-        <span className="text-sm text-muted-foreground">({templates.length})</span>
-        <Button size="sm" onClick={() => setWizardOpen(true)} className="mr-auto">
-          <Sparkles className="w-3.5 h-3.5" />
-          {t("معالج الإنشاء", "Generate Wizard")}
-        </Button>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title={t("مركز الوثائق", "Document Center")}
+        badge={<span className="text-sm text-muted-foreground">({templates.length})</span>}
+        actions={
+          <Button size="sm" onClick={() => setWizardOpen(true)}>
+            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+            {t("معالج الإنشاء", "Generate Wizard")}
+          </Button>
+        }
+      />
 
       <GenerateWizard
         open={wizardOpen}

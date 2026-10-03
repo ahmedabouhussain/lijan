@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
@@ -57,19 +58,17 @@ export default function CommitteeEscalations() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("التصعيدات", "Escalations", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({actions.length})</span>
-        </div>
-        {canManageExecution && openActions.length > 0 && (
+      <PageHeader
+        icon={TrendingUp}
+        title={getTitle("التصعيدات", "Escalations", lang)}
+        badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
+        actions={canManageExecution && openActions.length > 0 && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("تصعيد إجراء", "Escalate Action")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && canManageExecution && (
         <CrudFormDialog

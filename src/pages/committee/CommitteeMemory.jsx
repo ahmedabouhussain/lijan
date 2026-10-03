@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
@@ -40,21 +41,17 @@ export default function CommitteeMemory() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Brain className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("ذاكرة اللجنة", "Committee Memory", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({records.length})</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {canManageGovernance && (
-            <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              {t("إنشاء الذاكرة", "Generate Memory")}
-            </Button>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        icon={Brain}
+        title={getTitle("ذاكرة اللجنة", "Committee Memory", lang)}
+        badge={<span className="text-sm text-muted-foreground">({records.length})</span>}
+        actions={canManageGovernance && (
+          <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Sparkles className="w-4 h-4" aria-hidden="true" />}
+            {t("إنشاء الذاكرة", "Generate Memory")}
+          </Button>
+        )}
+      />
 
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>

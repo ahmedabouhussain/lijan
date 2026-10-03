@@ -38,6 +38,9 @@ export default function CrudFormDialog({
   if (!open) return null;
 
   const setField = (name, value) => setForm((f) => ({ ...f, [name]: value }));
+  // Every control is programmatically associated with its label, so a screen reader
+  // announces the field name instead of "edit text".
+  const fieldId = (name) => `crud-field-${name}`;
 
   const submit = async () => {
     // Validate required fields
@@ -63,23 +66,30 @@ export default function CrudFormDialog({
     <div className="raqeem-card p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">{title}</h3>
-        <button onClick={onClose} className="p-1 hover:bg-secondary rounded">
-          <X className="w-4 h-4 text-muted-foreground" />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={t("إغلاق النموذج", "Close form")}
+          className="p-1 hover:bg-secondary rounded sovereign-focus"
+        >
+          <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
         </button>
       </div>
       {error && (
-        <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>
+        <div role="alert" className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {fields.map((f) => (
           <div key={f.name} className={f.fullWidth ? "md:col-span-2" : ""}>
-            <Label className="text-xs">
+            <Label htmlFor={fieldId(f.name)} className="text-xs">
               {f.label}
-              {f.required && <span className="text-destructive"> *</span>}
+              {f.required && <span className="text-destructive" aria-hidden="true"> *</span>}
             </Label>
             {f.type === "select" ? (
               <select
-                className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent"
+                id={fieldId(f.name)}
+                aria-required={f.required ? "true" : undefined}
+                className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent sovereign-focus"
                 value={form[f.name] || ""}
                 onChange={(e) => setField(f.name, e.target.value)}
               >
@@ -92,6 +102,8 @@ export default function CrudFormDialog({
               </select>
             ) : f.type === "textarea" ? (
               <Textarea
+                id={fieldId(f.name)}
+                aria-required={f.required ? "true" : undefined}
                 value={form[f.name] || ""}
                 onChange={(e) => setField(f.name, e.target.value)}
                 placeholder={f.placeholder}
@@ -100,6 +112,8 @@ export default function CrudFormDialog({
               />
             ) : (
               <Input
+                id={fieldId(f.name)}
+                aria-required={f.required ? "true" : undefined}
                 type={f.type || "text"}
                 value={form[f.name] || ""}
                 onChange={(e) => setField(f.name, e.target.value)}
@@ -111,8 +125,8 @@ export default function CrudFormDialog({
           </div>
         ))}
       </div>
-      <Button onClick={submit} disabled={submitting} className="w-full min-h-[44px]">
-        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+      <Button onClick={submit} disabled={submitting} aria-busy={submitting} className="w-full min-h-[44px]">
+        {submitting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
         {submitLabel || t("حفظ", "Save")}
       </Button>
     </div>

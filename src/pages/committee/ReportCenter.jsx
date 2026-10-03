@@ -3,6 +3,7 @@ import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
+import PageHeader from "@/components/raqeem/PageHeader";
 import ProductViewer from "@/components/raqeem/ProductViewer";
 import { FileText, Loader2, Search, ChevronRight, ChevronLeft, Check, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -89,11 +90,11 @@ export default function ReportCenter() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
-        <h1 className="text-lg font-bold">{t("مركز التقارير", "Report Center")}</h1>
-        <span className="text-sm text-muted-foreground">({instances.length})</span>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title={t("مركز التقارير", "Report Center")}
+        badge={<span className="text-sm text-muted-foreground">({instances.length})</span>}
+      />
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

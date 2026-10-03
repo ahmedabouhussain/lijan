@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { GitBranch, Loader2, Plus, Check, X, AlertTriangle, Send, RotateCcw, CalendarClock, ArrowRightCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -197,15 +198,15 @@ export default function CommitteeAmendments() {
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <GitBranch className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("التعديلات المحوَّكة", "Governed Amendments")}</h1>
-        </div>
-        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
-          <Plus className="w-4 h-4" /> اقتراح تعديل
-        </Button>
-      </div>
+      <PageHeader
+        icon={GitBranch}
+        title={getTitle("التعديلات المحوَّكة", "Governed Amendments")}
+        actions={
+          <Button size="sm" onClick={() => setShowForm((s) => !s)}>
+            <Plus className="w-4 h-4" aria-hidden="true" /> اقتراح تعديل
+          </Button>
+        }
+      />
 
       {msg && <div className="p-3 rounded-md bg-secondary text-sm">{msg}</div>}
 

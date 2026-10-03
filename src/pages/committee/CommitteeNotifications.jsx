@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
@@ -83,19 +84,17 @@ export default function CommitteeNotifications() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Bell className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h1 className="text-lg font-bold">{getTitle("إعدادات الإشعارات", "Notification Settings", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({templates.length})</span>
-        </div>
-        {canManageNotifications && (
+      <PageHeader
+        icon={Bell}
+        title={getTitle("إعدادات الإشعارات", "Notification Settings", lang)}
+        badge={<span className="text-sm text-muted-foreground">({templates.length})</span>}
+        actions={canManageNotifications && (
           <Button size="sm" onClick={() => { setEditing(null); setShowForm(!showForm); }}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("قالب جديد", "New Template")}
           </Button>
         )}
-      </div>
+      />
 
       {/* User Preferences */}
       <div className="raqeem-card p-4">

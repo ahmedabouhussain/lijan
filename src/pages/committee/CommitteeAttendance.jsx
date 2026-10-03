@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
@@ -63,10 +64,7 @@ export default function CommitteeAttendance() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <UserCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("سجل الحضور", "Attendance", lang)}</h1>
-      </div>
+      <PageHeader icon={UserCheck} title={getTitle("سجل الحضور", "Attendance", lang)} />
 
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>

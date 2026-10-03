@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import { ScrollText, Edit3, X, Loader2, Info } from "lucide-react";
@@ -61,18 +62,16 @@ export default function CommitteeMandate() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ScrollText className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("الصلاحية", "Mandate", lang)}</h1>
-        </div>
-        {canManageGovernance && !editing && !is_oversight && (
+      <PageHeader
+        icon={ScrollText}
+        title={getTitle("الصلاحية", "Mandate", lang)}
+        actions={canManageGovernance && !editing && !is_oversight && (
           <Button size="sm" variant="outline" onClick={startEdit}>
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="w-4 h-4" aria-hidden="true" />
             {t("تحرير الصلاحية", "Edit Mandate")}
           </Button>
         )}
-      </div>
+      />
 
       {editing ? (
         <div className="raqeem-card p-4 space-y-3">

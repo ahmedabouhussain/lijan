@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -45,17 +46,15 @@ export default function FormationHistory() {
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <History className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("سجل التشكيل", "Formation Register")}</h1>
-        </div>
-        {versions.length >= 2 && (
+      <PageHeader
+        icon={History}
+        title={getTitle("سجل التشكيل", "Formation Register")}
+        actions={versions.length >= 2 && (
           <Button size="sm" variant={compareMode ? "default" : "outline"} onClick={() => { setCompareMode((c) => !c); setSelA(null); setSelB(null); }} className="inline-flex items-center gap-1.5">
-            <GitCompare className="w-4 h-4" /> {compareMode ? "إنهاء المقارنة" : "مقارنة النسخ"}
+            <GitCompare className="w-4 h-4" aria-hidden="true" /> {compareMode ? "إنهاء المقارنة" : "مقارنة النسخ"}
           </Button>
         )}
-      </div>
+      />
 
       {/* Comparison panel */}
       {compareMode && selA && selB && (

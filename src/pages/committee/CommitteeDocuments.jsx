@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
@@ -60,19 +61,17 @@ export default function CommitteeDocuments() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("وثائق اللجنة", "Committee Documents", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({docs.length})</span>
-        </div>
-        {canManageDocuments && (
+      <PageHeader
+        icon={FileText}
+        title={getTitle("وثائق اللجنة", "Committee Documents", lang)}
+        badge={<span className="text-sm text-muted-foreground">({docs.length})</span>}
+        actions={canManageDocuments && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("إضافة وثيقة", "Add Document")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && canManageDocuments && (
         <CrudFormDialog

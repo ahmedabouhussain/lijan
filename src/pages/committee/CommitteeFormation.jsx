@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
@@ -95,12 +96,9 @@ export default function CommitteeFormation() {
   const propose = (type) => navigate(`${base}/amendments?type=${type}`);
 
   return (
-    <div className="space-y-5" dir="rtl">
+    <div className="space-y-5" dir={lang === "ar" ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="flex items-center gap-2">
-        <GitBranch className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("التشكيل والتعديلات", "Formation & Amendments", lang)}</h1>
-      </div>
+      <PageHeader icon={GitBranch} title={getTitle("التشكيل والتعديلات", "Formation & Amendments", lang)} />
 
       {/* Governance notice */}
       <div className="raqeem-card p-4 bg-amber-50/50 border-amber-200">

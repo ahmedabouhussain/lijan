@@ -7,7 +7,7 @@ export default function EmptyState({ icon: Icon, title, description, action, cla
       {Icon && (
         <div className="relative mb-5">
           <div className="w-16 h-16 rounded-2xl bg-accent/8 flex items-center justify-center ring-1 ring-accent/15">
-            <Icon className="w-7 h-7 text-accent" />
+            <Icon className="w-7 h-7 text-accent" aria-hidden="true" />
           </div>
         </div>
       )}

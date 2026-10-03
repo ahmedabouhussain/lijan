@@ -3,6 +3,7 @@ import { useCommitteeScopedData } from "@/hooks/useCommitteeScoped";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -25,22 +26,17 @@ export default function CommitteeRecusals() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ShieldOff className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("التنحي وتضارب المصالح", "Recusals & Conflicts", lang)}</h1>
-        </div>
-        {canManageGovernance && (
+      <PageHeader
+        icon={ShieldOff}
+        title={getTitle("التنحي وتضارب المصالح", "Recusals & Conflicts", lang)}
+        subtitle={getDescription("", "", lang) || undefined}
+        actions={canManageGovernance && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("إقرار تعارض", "Declare Conflict")}
           </Button>
         )}
-      </div>
-      {(() => {
-        const desc = getDescription("", "", lang);
-        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
-      })()}
+      />
 
       {showCreate && canManageGovernance && (
         <CrudFormDialog

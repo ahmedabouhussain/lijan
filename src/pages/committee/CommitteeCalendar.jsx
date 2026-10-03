@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { Calendar, Filter } from "lucide-react";
 import { formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -40,11 +41,11 @@ export default function CommitteeCalendar() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("تقويم الاجتماعات", "Meeting Calendar", lang)}</h1>
-        <span className="text-sm text-muted-foreground">({all.length})</span>
-      </div>
+      <PageHeader
+        icon={Calendar}
+        title={getTitle("تقويم الاجتماعات", "Meeting Calendar", lang)}
+        badge={<span className="text-sm text-muted-foreground">({all.length})</span>}
+      />
 
       {/* Filters */}
       <div className="flex items-center gap-2 flex-wrap">

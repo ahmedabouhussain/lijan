@@ -186,6 +186,8 @@ export default function EntitySearchSelect({
           if (!open) setTimeout(() => inputRef.current?.focus(), 0);
         }}
         onKeyDown={handleKeyDown}
+        aria-expanded={open}
+        aria-haspopup="listbox"
         className={cn(
           "w-full flex items-center gap-2 px-3 py-2.5 text-sm border border-border rounded-md bg-card text-right transition-colors",
           "focus:outline-none focus:ring-2 focus:ring-ring",
@@ -193,7 +195,7 @@ export default function EntitySearchSelect({
           open && "ring-2 ring-ring"
         )}
       >
-        <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
+        <Building2 className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
         <span className="flex-1 truncate text-right">
           {value === OTHER_ID
             ? otherText
@@ -209,12 +211,13 @@ export default function EntitySearchSelect({
               e.stopPropagation();
               selectEntity("");
             }}
+            aria-label={t("إزالة الجهة المختارة", "Clear selected entity")}
             className="text-muted-foreground hover:text-destructive shrink-0"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </span>
         ) : (
-          <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 transition-transform", open && "rotate-180")} />
+          <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 transition-transform", open && "rotate-180")} aria-hidden="true" />
         )}
       </button>
 
@@ -223,13 +226,14 @@ export default function EntitySearchSelect({
         <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-md shadow-lg overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-secondary/30">
-            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
+              aria-label={t("ابحث عن جهة", "Search for an entity")}
               placeholder={t("اكتب للبحث...", "Type to search...")}
               className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground"
               autoFocus

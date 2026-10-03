@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -42,11 +43,11 @@ export default function CommitteeEvidence() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("الأدلة والتحقق", "Evidence & Verification", lang)}</h1>
-        <span className="text-sm text-muted-foreground">({actions.length})</span>
-      </div>
+      <PageHeader
+        icon={ShieldCheck}
+        title={getTitle("الأدلة والتحقق", "Evidence & Verification", lang)}
+        badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
+      />
 
       {actions.length === 0 ? (
         <EmptyState icon={ShieldCheck} title={t("لا توجد أدلة بانتظار التحقق", "No Evidence Pending")} description={t("جميع الإجراءات مكتملة أو لا تتطلب أدلة.", "All actions are complete or don't require evidence.")} />

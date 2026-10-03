@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
@@ -51,19 +52,17 @@ export default function CommitteeMinutes() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("محاضر اللجنة", "Committee Minutes", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({minutes.length})</span>
-        </div>
-        {canManageMinutes && meetings.length > 0 && (
+      <PageHeader
+        icon={FileText}
+        title={getTitle("محاضر اللجنة", "Committee Minutes", lang)}
+        badge={<span className="text-sm text-muted-foreground">({minutes.length})</span>}
+        actions={canManageMinutes && meetings.length > 0 && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("إنشاء مسودة", "Create Draft")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && canManageMinutes && (
         <CrudFormDialog

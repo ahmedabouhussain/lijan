@@ -39,13 +39,17 @@ export default function CommitteeHubTabs({ tabs, hubKey, hubLabel, hubLabelEn })
       </div>
 
       {/* Tab bar */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-border">
+      <div role="tablist" className="flex items-center gap-1 overflow-x-auto border-b border-border">
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTabObj.key === tab.key;
           return (
             <button
               key={tab.key}
+              role="tab"
+              id={`hub-tab-${tab.key}`}
+              aria-selected={isActive}
+              aria-controls={`hub-panel-${tab.key}`}
               onClick={() => setTab(tab.key)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-2.5 text-sm whitespace-nowrap transition-colors border-b-2 -mb-px",
@@ -54,13 +58,15 @@ export default function CommitteeHubTabs({ tabs, hubKey, hubLabel, hubLabelEn })
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className="w-4 h-4 shrink-0" />
+              <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
               {t(tab.label, tab.labelEn)}
             </button>
           );
         })}
       </div>
-      <ActiveComponent />
+      <div role="tabpanel" id={`hub-panel-${activeTabObj.key}`} aria-labelledby={`hub-tab-${activeTabObj.key}`}>
+        <ActiveComponent />
+      </div>
     </div>
   );
 }

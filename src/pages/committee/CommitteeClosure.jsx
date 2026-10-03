@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { Lock, Loader2, X } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -39,10 +40,7 @@ export default function CommitteeClosure() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Lock className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("إغلاق اللجنة", "Committee Closure", lang)}</h1>
-      </div>
+      <PageHeader icon={Lock} title={getTitle("إغلاق اللجنة", "Committee Closure", lang)} />
       {isClosed ? (
         <div className="raqeem-card p-6 text-center">
           <Lock className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />

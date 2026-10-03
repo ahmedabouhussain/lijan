@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ACTION_STATUS, MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -67,10 +68,7 @@ export default function CommitteeAudit() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("التدقيق وإعادة البناء", "Audit & Reconstruction", lang)}</h1>
-      </div>
+      <PageHeader icon={ShieldCheck} title={getTitle("التدقيق وإعادة البناء", "Audit & Reconstruction", lang)} />
 
       {/* Change Tracker */}
       <div className="raqeem-card p-4">
@@ -166,7 +164,7 @@ export default function CommitteeAudit() {
               <div key={e.id} className="p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">{e.action || e.description}</span>
-                  <span className="text-xs text-muted-foreground">{new Date(e.created_date || e.timestamp).toLocaleDateString("ar")}</span>
+                  <span className="text-xs text-muted-foreground">{formatDate(e.created_date || e.timestamp)}</span>
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">{e.actor_name || "—"} · {e.entity_type || ""}</div>
               </div>

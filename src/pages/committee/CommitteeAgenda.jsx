@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { ClipboardList, Plus, X, Loader2 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -77,18 +78,16 @@ export default function CommitteeAgenda() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("جدول الأعمال", "Agenda", lang)}</h1>
-        </div>
-        {canSubmit && upcomingMeetings.length > 0 && (
+      <PageHeader
+        icon={ClipboardList}
+        title={getTitle("جدول الأعمال", "Agenda", lang)}
+        actions={canSubmit && upcomingMeetings.length > 0 && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("بند جديد", "New Item")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && (
         <div className="raqeem-card p-4 space-y-3">

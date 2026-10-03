@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -49,18 +50,16 @@ export default function CommitteeSettings() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <SettingsIcon className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("إعدادات اللجنة", "Committee Settings", lang)}</h1>
-        </div>
-        {canManageGovernance && !editing && !is_oversight && (
+      <PageHeader
+        icon={SettingsIcon}
+        title={getTitle("إعدادات اللجنة", "Committee Settings", lang)}
+        actions={canManageGovernance && !editing && !is_oversight && (
           <Button size="sm" variant="outline" onClick={startEdit}>
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="w-4 h-4" aria-hidden="true" />
             {t("تحرير الملف", "Edit Profile")}
           </Button>
         )}
-      </div>
+      />
 
       {is_oversight && (
         <div className="p-3 rounded-md bg-secondary/60 border border-border text-xs text-muted-foreground">

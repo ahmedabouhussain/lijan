@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -53,22 +54,17 @@ export default function CommitteeRoles() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Award className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("الأدوار والصلاحيات", "Roles & Authorities", lang)}</h1>
-        </div>
-        {canManageMembership && (
+      <PageHeader
+        icon={Award}
+        title={getTitle("الأدوار والصلاحيات", "Roles & Authorities", lang)}
+        subtitle={getDescription("", "", lang) || undefined}
+        actions={canManageMembership && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("تعيين دور", "Assign Role")}
           </Button>
         )}
-      </div>
-      {(() => {
-        const desc = getDescription("", "", lang);
-        return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;
-      })()}
+      />
 
       {showCreate && canManageMembership && (
         <CrudFormDialog
@@ -92,11 +88,11 @@ export default function CommitteeRoles() {
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-xs text-muted-foreground">
             <tr>
-              <th className="text-right p-3 font-medium">{t("العضو", "Member")}</th>
-              <th className="text-right p-3 font-medium">{t("الدور", "Role")}</th>
-              <th className="text-right p-3 font-medium">{t("مستوى الصلاحية", "Authority Level")}</th>
-              <th className="text-right p-3 font-medium">{t("حق التصويت", "Voting Right")}</th>
-              <th className="text-right p-3 font-medium">{t("المؤسسة", "Institution")}</th>
+              <th scope="col" className="text-right p-3 font-medium">{t("العضو", "Member")}</th>
+              <th scope="col" className="text-right p-3 font-medium">{t("الدور", "Role")}</th>
+              <th scope="col" className="text-right p-3 font-medium">{t("مستوى الصلاحية", "Authority Level")}</th>
+              <th scope="col" className="text-right p-3 font-medium">{t("حق التصويت", "Voting Right")}</th>
+              <th scope="col" className="text-right p-3 font-medium">{t("المؤسسة", "Institution")}</th>
             </tr>
           </thead>
           <tbody>

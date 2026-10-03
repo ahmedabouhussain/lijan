@@ -188,6 +188,39 @@ Status values: `implemented` | `partial` | `planned`.
   switching committee while a read is in flight never leaves the previous committee's data
   on screen.
 
+## D-18 — One governed page header
+- **Decision:** Every committee surface presents the same page header: icon in the institutional
+  badge, title, optional count badge, and its primary action on the same row. No surface
+  re-implements its own header row.
+- **Shared implementation:** `src/components/raqeem/PageHeader.jsx`.
+- **Affected surfaces:** all committee surfaces except `CommitteeHome` (role dashboard with its
+  own composition) and `DocumentationHub` (release hero), which keep their own headers by design.
+- **Migration:** implemented — 36 committee surfaces migrated to `PageHeader`; the ad-hoc
+  `text-lg font-bold` header rows are gone. The six hub files are tab containers that delegate to
+  their children and correctly render no header of their own.
+- **Acceptance:** one header component across the workspace; every migrated header keeps its
+  count badge and its primary action on the same row.
+
+## D-19 — Accessibility baseline (WCAG 2.2 AA, code-level criteria)
+- **Decision:** The mechanically checkable AA criteria hold across the committee workspace:
+  every control has an accessible name, every form control is programmatically labelled,
+  decorative icons are hidden from assistive technology, tab sets expose tab semantics, the
+  workspace has landmarks and a skip link, and loading regions announce their state.
+- **Shared implementation:** `CrudFormDialog` (label association, `aria-required`, `role="alert"`,
+  labelled close button), `CommitteeHubTabs` (`tablist` / `tab` / `tabpanel`, `aria-selected`,
+  `aria-controls`), `CommitteeLayout` (skip link, `id="committee-main"`, navigation landmark,
+  `aria-current="page"`, `aria-expanded`, labelled icon-only controls), `PageHeader`,
+  `EmptyState` and `LoadingSkeleton` (`aria-hidden` on decorative icons, `role="status"` plus
+  `aria-busy` on skeletons), `EntitySearchSelect` (`aria-expanded`, labelled clear control and
+  search field), `CommitteeRoles` (`scope="col"` on table headers).
+- **Affected surfaces:** the whole committee workspace plus every consumer of the shared
+  components above.
+- **Migration:** implemented at the code level. Contrast was verified against the tokens: muted
+  text on the page background measures 4.61:1, so the palette passes AA for normal text and the
+  failure is not systemic.
+- **Acceptance:** no icon-only control without a name; no form field without a programmatic
+  label; no decorative icon exposed to assistive technology.
+
 ---
 
 ## Removed / replaced manifest
@@ -216,12 +249,17 @@ the entry page).
 and remain reachable.
 
 ## Deferred (not yet migrated)
-- Per-page migration of the remaining committee surfaces onto the shared governed-state
-  components — presentational unification across ~45 surfaces. Every surface reads and writes
-  correctly today; this is consistency work, not a correctness gap.
-- Full WCAG 2.2 AA sweep across dialogs and tables (section 25) — needs an assistive-technology
-  audit, not a code change alone.
+- **Assistive-technology validation.** The AA criteria above are met in code; confirming them
+  with a screen reader and at 200% zoom is a manual audit, not a further code change.
+- **Page-body control audit.** Shared controls and every page header/loading/empty state are
+  covered. Controls inside individual page bodies (in-row icon buttons, per-page filter inputs)
+  are migrated as each surface is touched, not by a single sweep.
+- **Two Arabic-only legacy surfaces.** `CommitteeAmendments` and `CommitteeEstablishment` hold
+  hardcoded Arabic copy and force `dir="rtl"`, so they do not switch language. Fixing them means
+  translating both surfaces, not changing a direction attribute.
+- `LocalizedFileUpload` takes Arabic-only labels (including its accessible name). Making it
+  bilingual changes its caller API and is not a one-line change.
 
 **Closed since the previous pass:** role-lens journeys (D-16), route-level lazy loading and
-request cancellation for the committee shell (D-17), and the repeated demo labelling on
-`/profile` (D-14).
+request cancellation for the committee shell (D-17), the repeated demo labelling on `/profile`
+(D-14), header unification (D-18) and the accessibility baseline (D-19).

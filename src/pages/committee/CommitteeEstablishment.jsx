@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { L } from "@/lib/l10n";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle, Check, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -157,15 +158,15 @@ export default function CommitteeEstablishment() {
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ScrollText className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("التأسيس والسندات", "Establishment & Instruments")}</h1>
-        </div>
-        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
-          <Upload className="w-4 h-4" /> تسجيل سند
-        </Button>
-      </div>
+      <PageHeader
+        icon={ScrollText}
+        title={getTitle("التأسيس والسندات", "Establishment & Instruments")}
+        actions={
+          <Button size="sm" onClick={() => setShowForm((s) => !s)}>
+            <Upload className="w-4 h-4" aria-hidden="true" /> تسجيل سند
+          </Button>
+        }
+      />
 
       {msg && <div className="p-3 rounded-md bg-secondary text-sm">{msg}</div>}
 

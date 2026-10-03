@@ -3,6 +3,7 @@ import { useCommitteeScopedData } from "@/hooks/useCommitteeScoped";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import { ArrowRightLeft, Plus } from "lucide-react";
@@ -29,18 +30,16 @@ export default function CommitteeDelegations() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ArrowRightLeft className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("تفويضات الصلاحية", "Authority Delegations", lang)}</h1>
-        </div>
-        {canManageGovernance && (
+      <PageHeader
+        icon={ArrowRightLeft}
+        title={getTitle("تفويضات الصلاحية", "Authority Delegations", lang)}
+        actions={canManageGovernance && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("تفويض جديد", "New Delegation")}
           </Button>
         )}
-      </div>
+      />
       {(() => {
         const desc = getDescription("", "", lang);
         return desc ? <p className="text-sm text-muted-foreground -mt-2">{desc}</p> : null;

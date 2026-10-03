@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -37,11 +38,11 @@ export default function CommitteeAlternates() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Users2 className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("الأعضاء البدلاء", "Alternate Members", lang)}</h1>
-        <span className="text-sm text-muted-foreground">({alternates.length})</span>
-      </div>
+      <PageHeader
+        icon={Users2}
+        title={getTitle("الأعضاء البدلاء", "Alternate Members", lang)}
+        badge={<span className="text-sm text-muted-foreground">({alternates.length})</span>}
+      />
 
       {alternates.length === 0 ? (
         <EmptyState icon={Users2} title={t("لا يوجد بدلاء", "No Alternates")} description={t("لم يتم تعيين بدلاء لهذه اللجنة.", "No alternate members assigned to this committee.")} />

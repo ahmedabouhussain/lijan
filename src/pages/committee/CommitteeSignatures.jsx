@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
@@ -52,19 +53,17 @@ export default function CommitteeSignatures() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <PenLine className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("التواقيع", "Signatures", lang)}</h1>
-          <span className="text-sm text-muted-foreground">({records.length})</span>
-        </div>
-        {canManageMinutes && (
+      <PageHeader
+        icon={PenLine}
+        title={getTitle("التواقيع", "Signatures", lang)}
+        badge={<span className="text-sm text-muted-foreground">({records.length})</span>}
+        actions={canManageMinutes && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             {t("طلب توقيع", "Request Signature")}
           </Button>
         )}
-      </div>
+      />
 
       {showCreate && canManageMinutes && (
         <CrudFormDialog

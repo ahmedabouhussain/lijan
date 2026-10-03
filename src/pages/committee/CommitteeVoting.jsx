@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
@@ -38,10 +39,7 @@ export default function CommitteeVoting() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <CheckSquare className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{getTitle("التصويت", "Voting", lang)}</h1>
-      </div>
+      <PageHeader icon={CheckSquare} title={getTitle("التصويت", "Voting", lang)} />
 
       {/* Authority Lens for voting capability */}
       <AuthorityLens
@@ -76,7 +74,7 @@ export default function CommitteeVoting() {
               {d.proposal && <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-3">{d.proposal}</p>}
               {d.legal_basis && (
                 <div className="mt-2 pt-2 border-t border-border flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <Gavel className="w-3 h-3" />
+                  <Gavel className="w-3 h-3" aria-hidden="true" />
                   <span>{t("الأساس القانوني", "Legal Basis")}: {d.legal_basis}</span>
                 </div>
               )}
@@ -91,13 +89,13 @@ export default function CommitteeVoting() {
                 {d.status === "voting" && canCastVote && (
                   <>
                     <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "for" })}>
-                      <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" /> {t("موافق", "For")}
+                      <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" /> {t("موافق", "For")}
                     </Button>
                     <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "against" })}>
-                      <ThumbsDown className="w-3.5 h-3.5 text-red-600" /> {t("معارض", "Against")}
+                      <ThumbsDown className="w-3.5 h-3.5 text-red-600" aria-hidden="true" /> {t("معارض", "Against")}
                     </Button>
                     <Button size="sm" variant="outline" disabled={voting} onClick={() => handleVoteAction("CastVote", { committee_id: committee.id, decision_id: d.id, vote_choice: "abstain" })}>
-                      <Minus className="w-3.5 h-3.5" /> {t("ممتنع", "Abstain")}
+                      <Minus className="w-3.5 h-3.5" aria-hidden="true" /> {t("ممتنع", "Abstain")}
                     </Button>
                   </>
                 )}

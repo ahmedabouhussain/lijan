@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { cn } from "@/lib/utils";
@@ -57,18 +58,16 @@ export default function CommitteeReports() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary" />
-          <h1 className="text-lg font-bold">{getTitle("تقارير اللجنة", "Committee Reports", lang)}</h1>
-        </div>
-        {canManageGovernance && (
+      <PageHeader
+        icon={BarChart3}
+        title={getTitle("تقارير اللجنة", "Committee Reports", lang)}
+        actions={canManageGovernance && (
           <Button size="sm" variant="outline" disabled={submitting} onClick={handleGenerate} className="min-h-[44px]">
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Download className="w-4 h-4" aria-hidden="true" />}
             {t("إنشاء تقرير", "Generate Report")}
           </Button>
         )}
-      </div>
+      />
 
       <div className="raqeem-card p-4">
         <div className="flex items-center gap-2 mb-4">
