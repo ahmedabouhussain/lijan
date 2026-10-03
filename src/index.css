@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ──────────────────────────────────────────────────────────────
+   Noto Naskh Arabic — الخط العربي الرسمي المعتمد.
+   Locally bundled (never fetched from an external font CDN) so Arabic
+   rendering is stable in closed/offline sovereign environments.
+   Only four real weights are used — 400 / 500 / 600 / 700.
+   Artificial (faux) bold is forbidden: font-synthesis stays off.
+   ────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Bold.ttf') format('truetype');
+}
+
 @layer base {
   :root {
     /* RAQEEM Institutional Palette — Qatar */
@@ -34,7 +70,11 @@
     --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+    /* Arabic typeface: Noto Naskh Arabic, locally bundled — see @font-face above */
+    --font-arabic: 'Noto Naskh Arabic', ui-sans-serif, system-ui, sans-serif;
+    --arabic-leading-body: 1.55;
+    --arabic-leading-compact: 1.4;
+    --arabic-leading-heading: 1.25;
     --font-mono: ui-monospace, SFMono-Regular, Menos, Monaco, Consolas, monospace;
     --sidebar-background: 335 69% 21%;  /* maroon sidebar */
     --sidebar-foreground: 38 27% 97%;
@@ -56,8 +96,48 @@
     @apply bg-background text-foreground font-body antialiased;
   }
 
-  [dir="rtl"] {
+  /* ── Arabic typography (Noto Naskh Arabic) ──
+     Applies to every RTL / Arabic surface: interface, dashboards, tables and exports.
+     Hierarchy comes from Size + Weight + Spacing only — never colour shouting,
+     shadows, outlines or glow. Letter spacing stays 0 for Arabic. */
+  [dir="rtl"],
+  [lang="ar"],
+  .font-arabic {
     font-family: var(--font-arabic);
+    font-synthesis: none;
+    font-variant-ligatures: contextual common-ligatures;
+    letter-spacing: 0;
+    text-rendering: optimizeLegibility;
+  }
+
+  [dir="rtl"] body,
+  [lang="ar"] body {
+    line-height: var(--arabic-leading-body);
+  }
+
+  /* Arabic headings are always Naskh — size and weight carry the hierarchy */
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3,
+  [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+  [dir="rtl"] .font-heading,
+  [dir="rtl"] .font-display {
+    font-family: var(--font-arabic);
+    line-height: var(--arabic-leading-heading);
+  }
+
+  /* Compact Arabic UI atoms keep a tighter measure */
+  [dir="rtl"] :is(button, input, select, textarea, label, .badge, .raqeem-section-title) {
+    letter-spacing: 0;
+    line-height: var(--arabic-leading-compact);
+  }
+
+  /* Shadow / outline / glow on official Arabic text is not permitted */
+  [dir="rtl"] {
+    text-shadow: none;
+    -webkit-text-stroke: 0;
+  }
+
+  [dir="rtl"] table {
+    text-align: right;
   }
 }
 
@@ -95,6 +175,15 @@
 }
 
 @layer utilities {
+  /* Arabic typographic roles — four weights only, no lighter than 400 */
+  .arabic-body { font-family: var(--font-arabic); font-weight: 400; line-height: var(--arabic-leading-body); }
+  .arabic-label { font-family: var(--font-arabic); font-weight: 500; line-height: var(--arabic-leading-compact); }
+  .arabic-subheading { font-family: var(--font-arabic); font-weight: 600; line-height: var(--arabic-leading-heading); }
+  .arabic-heading { font-family: var(--font-arabic); font-weight: 700; line-height: var(--arabic-leading-heading); }
+  /* Metrics, KPIs and figures stay Latin digits with tabular figures */
+  .arabic-figures { font-family: var(--font-arabic); font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .arabic-prose { line-height: var(--arabic-leading-body); letter-spacing: 0; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;

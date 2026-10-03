@@ -67,7 +67,17 @@ module.exports = {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
+  			arabic: ['var(--font-arabic)'],
   			mono: ['var(--font-mono)']
+  		},
+  		lineHeight: {
+  			'arabic-body': '1.55',
+  			'arabic-compact': '1.4',
+  			'arabic-heading': '1.25'
+  		},
+  		fontWeight: {
+  			label: '500',
+  			subheading: '600'
   		},
   		keyframes: {
   			'accordion-down': {

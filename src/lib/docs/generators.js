@@ -10,6 +10,7 @@
 import { saveAs } from "file-saver";
 import { DOCUMENT_CATALOG, OFFICIAL_LOGO_URL, INTRO_VIDEO_URL, CLASSIFICATIONS } from "./catalog";
 import { getDocumentContent } from "./content/index";
+import { ARABIC_FONT_NAME } from "@/lib/arabicTypography";
 
 // ── Brand constants ──
 const MAROON = "8A1538";
@@ -19,6 +20,9 @@ const CHARCOAL = "1F2023";
 const MUTED = "6F7176";
 const GOLD = "B59358";
 const WHITE = "FFFFFF";
+
+// Official Arabic typeface — Arabic output always uses Noto Naskh Arabic.
+const AR_FONT = ARABIC_FONT_NAME;
 
 let logoBufferCache = null;
 
@@ -98,7 +102,7 @@ export async function generateDOCX(docMeta, content, lang = "ar") {
       size: 48,
       color: MAROON,
       rightToLeft: isRTL,
-      font: isRTL ? "Arial" : "Calibri",
+      font: isRTL ? AR_FONT : "Calibri",
     })],
   }));
 
@@ -222,6 +226,16 @@ export async function generateDOCX(docMeta, content, lang = "ar") {
     creator: "LIJAN™ Platform",
     title: title,
     description: docMeta.description_en,
+    styles: {
+      default: {
+        document: {
+          // Arabic documents are set in the official typeface end-to-end,
+          // with a looser Naskh line measure.
+          run: { font: isRTL ? AR_FONT : "Calibri", size: 22 },
+          paragraph: { spacing: { line: isRTL ? 360 : 300, after: 120 } },
+        },
+      },
+    },
     sections: [{
       properties: {
         page: {
@@ -463,7 +477,7 @@ export async function generatePPTX(docMeta, content, lang = "ar") {
           fontSize: 16, color: CHARCOAL,
           align: isRTL ? "right" : "left",
           valign: "top",
-          fontFace: "Arial",
+          fontFace: AR_FONT,
           lineSpacing: 28,
         });
       }
@@ -508,7 +522,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
     ws.mergeCells(1, 1, 1, sheetDef.columns.length);
     const titleCell = ws.getCell(1, 1);
     titleCell.value = `LIJAN™  ·  ${isRTL ? sheetDef.name_ar : sheetDef.name_en}`;
-    titleCell.font = { bold: true, size: 14, color: { argb: "FF" + WHITE } };
+    titleCell.font = { name: AR_FONT, bold: true, size: 14, color: { argb: "FF" + WHITE } };
     titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF" + MAROON } };
     titleCell.alignment = { horizontal: "center", vertical: "middle" };
     ws.getRow(1).height = 30;
@@ -517,7 +531,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
     ws.mergeCells(2, 1, 2, sheetDef.columns.length);
     const descCell = ws.getCell(2, 1);
     descCell.value = isRTL ? sheetDef.description_ar : sheetDef.description_en;
-    descCell.font = { size: 10, color: { argb: "FF" + MUTED }, italic: true };
+    descCell.font = { name: AR_FONT, size: 10, color: { argb: "FF" + MUTED }, italic: true };
     descCell.alignment = { horizontal: "center" };
     ws.getRow(2).height = 20;
 
@@ -525,7 +539,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
     ws.mergeCells(3, 1, 3, sheetDef.columns.length);
     const classCell = ws.getCell(3, 1);
     classCell.value = `${isRTL ? "التصنيف" : "Classification"}: ${classificationLabel}  ·  v${docMeta.version}  ·  ${formatDate(lang)}`;
-    classCell.font = { size: 9, color: { argb: "FF" + GOLD } };
+    classCell.font = { name: AR_FONT, size: 9, color: { argb: "FF" + GOLD } };
     classCell.alignment = { horizontal: "center" };
 
     // Header row (row 5)
@@ -533,7 +547,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
     sheetDef.columns.forEach((col, i) => {
       const cell = headerRow.getCell(i + 1);
       cell.value = isRTL ? col.label_ar : col.label_en;
-      cell.font = { bold: true, size: 11, color: { argb: "FF" + WHITE } };
+      cell.font = { name: AR_FONT, bold: true, size: 11, color: { argb: "FF" + WHITE } };
       cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF" + MAROON_DARK } };
       cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
       cell.border = {
@@ -555,7 +569,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
       sheetDef.columns.forEach((col, i) => {
         const cell = dataRow.getCell(i + 1);
         cell.value = row[col.key] || "";
-        cell.font = { size: 10, color: { argb: "FF" + CHARCOAL } };
+        cell.font = { name: AR_FONT, size: 10, color: { argb: "FF" + CHARCOAL } };
         cell.alignment = { horizontal: isRTL ? "right" : "left", vertical: "middle", wrapText: true };
         cell.border = {
           bottom: { style: "thin", color: { argb: "FFE7E3DF" } },
@@ -572,7 +586,7 @@ export async function generateXLSX(docMeta, content, lang = "ar") {
     ws.mergeCells(footerRow.number, 1, footerRow.number, sheetDef.columns.length);
     const footerCell = footerRow.getCell(1);
     footerCell.value = `LIJAN™  ·  ${classificationLabel}  ·  ${isRTL ? "صفحة" : "Sheet"}: ${sheetName}`;
-    footerCell.font = { size: 9, color: { argb: "FF" + MUTED }, italic: true };
+    footerCell.font = { name: AR_FONT, size: 9, color: { argb: "FF" + MUTED }, italic: true };
     footerCell.alignment = { horizontal: "center" };
   });
 

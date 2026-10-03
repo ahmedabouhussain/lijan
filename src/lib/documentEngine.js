@@ -11,6 +11,7 @@
  */
 
 import { base44 } from '@/api/base44Client';
+import { arabicFontFaceCss, ARABIC_FONT_STACK } from '@/lib/arabicTypography';
 
 const MAROON = [138, 21, 56];
 const WARM_WHITE = [250, 248, 245];
@@ -195,14 +196,27 @@ export function printProduct(product, lang = 'ar') {
   const html = `<!DOCTYPE html><html dir="${dir}" lang="${lang}"><head><meta charset="utf-8">
     <title>${title}</title>
     <style>
-      @page { margin: 20mm; }
-      body { font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #FAF8F5; color: #1F2023; }
+      ${arabicFontFaceCss(typeof window !== 'undefined' ? window.location.origin : '')}
+      @page { size: A4; margin: 20mm; }
+      body { max-width: 800px; margin: 0 auto; padding: 20px; background: #FAF8F5; color: #1F2023; font-size: 11.5pt; font-weight: 400; line-height: 1.6; letter-spacing: 0; }
+      /* Arabic documents embed and use the official typeface; English stays Latin */
+      html[dir="rtl"] body { font-family: var(--arabic-font); }
+      html[dir="ltr"] body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
       .header { background: #8A1538; color: #fff; padding: 24px; border-radius: 12px; margin-bottom: 28px; }
-      .header h1 { margin: 0 0 6px; font-size: 18px; }
-      .header .meta { font-size: 11px; opacity: 0.85; }
-      .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #B59A5B; font-size: 9px; color: #6F7176; text-align: center; }
+      /* Cover / executive title — Bold 700 */
+      .header h1 { margin: 0 0 6px; font-size: 24pt; font-weight: 700; line-height: 1.25; }
+      /* Supporting metadata — Medium 500 */
+      .header .meta { font-size: 10pt; font-weight: 500; line-height: 1.4; opacity: 0.9; }
+      /* Section headings — SemiBold 600 */
+      section h3 { font-weight: 600; line-height: 1.25; }
+      section p { font-weight: 400; line-height: 1.6; }
+      table { border-collapse: collapse; width: 100%; }
+      th { font-weight: 600; font-size: 10.5pt; line-height: 1.4; }
+      td { font-weight: 400; font-size: 10pt; line-height: 1.4; }
+      strong, b { font-weight: 600; }
+      .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #B59A5B; font-size: 9pt; font-weight: 400; color: #6F7176; text-align: center; }
       @media print { body { background: white; } .header { border-radius: 0; } }
-    </style></head><body>
+    </style></head><body style="--arabic-font: ${ARABIC_FONT_STACK}">
     <div class="header">
       <h1>${title}</h1>
       <div class="meta">${[product.committee_name, product.product_type, product.classification].filter(Boolean).join(' · ')}</div>
