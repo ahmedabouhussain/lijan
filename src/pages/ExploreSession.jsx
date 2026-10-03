@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Loader2, Compass } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
-import { resolvePersonaBySlug } from "@/lib/demoPersonas";
+import { resolvePersonaBySlug, resolveRoleLens, roleLensPath } from "@/lib/demoPersonas";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 
 // Direct, stable route for every exploration persona: /explore/<slug>
@@ -12,17 +12,29 @@ import BrandLogo from "@/components/raqeem/BrandLogo";
 export default function ExploreSession() {
   const { personaSlug } = useParams();
   const navigate = useNavigate();
-  const { enterDemo } = useEffectiveActor();
+  const { isDemoMode, enterDemo } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const persona = resolvePersonaBySlug(personaSlug);
+  // ?lens=chair|secretary|member — a lens only decides where the session OPENS.
+  // It never grants authority: the role is the one the server resolves from the membership.
+  const lens = resolveRoleLens(new URLSearchParams(window.location.search).get("lens"));
+  const [sessionRequested, setSessionRequested] = useState(false);
   const started = useRef(false);
 
   useEffect(() => {
     if (!persona || started.current) return;
     started.current = true;
     enterDemo(persona.key);
-    navigate("/", { replace: true });
-  }, [persona, enterDemo, navigate]);
+    setSessionRequested(true);
+  }, [persona, enterDemo]);
+
+  // Land only once the governed session is active, so the landing committee resolves as
+  // the persona instead of as an anonymous visitor.
+  useEffect(() => {
+    if (!sessionRequested || !isDemoMode) return;
+    const target = lens && lens.personaKey === persona?.key ? roleLensPath(lens) : "/";
+    navigate(target, { replace: true });
+  }, [sessionRequested, isDemoMode, lens, persona, navigate]);
 
   if (!persona) {
     return (

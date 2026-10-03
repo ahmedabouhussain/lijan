@@ -62,3 +62,60 @@ export function resolvePersonaBySlug(slug) {
   const wanted = slug.trim().toLowerCase();
   return Object.values(DEMO_PERSONAS).find((p) => p.slug === wanted) || null;
 }
+
+// ── Role lenses ──────────────────────────────────────────────────────────────
+// A role lens is NOT a second persona and NOT a second dataset. It enters the SAME
+// governed session and opens the committee where that persona ALREADY holds the role
+// in the provisioned dataset. The lens only decides where the session opens — the
+// authority shown is always the one the server resolves from the membership.
+export const DEMO_ROLE_LENSES = [
+  {
+    key: 'chair',
+    personaKey: 'DR_HAMAD_MAJEEGHEER',
+    orgPublicId: 'DEMO-ORG-QDB',
+    committeePublicId: 'DEMO-COMM-QDB-DIGITAL',
+    titleAr: 'من منظور رئيس اللجنة',
+    titleEn: 'Through the Chair lens',
+    summaryAr:
+      'اعتماد جدول الأعمال، وإدارة سير البنود، والبت في القرارات، واعتماد المحاضر — داخل هذه اللجنة فقط.',
+    summaryEn:
+      'Approve the agenda, run agenda progression, decide on proposals and approve minutes — in this committee only.',
+  },
+  {
+    key: 'secretary',
+    personaKey: 'DR_HAMAD_MAJEEGHEER',
+    orgPublicId: 'DEMO-ORG-QDB',
+    committeePublicId: 'DEMO-COMM-QDB-INNOVATION',
+    titleAr: 'من منظور أمين السر',
+    titleEn: 'Through the Secretary lens',
+    summaryAr:
+      'تجهيز الأجندة والمحاضر وحزمة الاجتماع ومتابعة سجل الإجراءات، دون اعتماد القرار نيابة عن الرئيس.',
+    summaryEn:
+      'Prepare the agenda, minutes and meeting pack and follow up the action register — without approving in place of the Chair.',
+  },
+  {
+    key: 'member',
+    personaKey: 'DR_HAMAD_MAJEEGHEER',
+    orgPublicId: 'DEMO-ORG-QDB',
+    committeePublicId: 'DEMO-COMM-QDB-INVESTMENT',
+    titleAr: 'من منظور العضو',
+    titleEn: 'Through the Member lens',
+    summaryAr:
+      'المراجعة والتعليق والتوصية وتقديم الأدلة، دون صلاحية اعتماد القرارات أو قبول المخاطر.',
+    summaryEn:
+      'Review, comment, recommend and provide evidence — with no authority to approve decisions or accept risk.',
+  },
+];
+
+/** Resolve a role lens by key. Unknown or missing → null (never another lens). */
+export function resolveRoleLens(key) {
+  if (!key || typeof key !== 'string') return null;
+  const wanted = key.trim().toLowerCase();
+  return DEMO_ROLE_LENSES.find((l) => l.key === wanted) || null;
+}
+
+/** Landing route for a lens — the committee where the persona actually holds the role. */
+export function roleLensPath(lens) {
+  if (!lens) return null;
+  return `/o/${lens.orgPublicId}/c/${lens.committeePublicId}`;
+}

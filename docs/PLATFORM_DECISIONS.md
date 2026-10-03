@@ -158,6 +158,36 @@ Status values: `implemented` | `partial` | `planned`.
 - **Acceptance:** no Arabic value renders on an English page; no English value renders on an
   Arabic page; unknown legacy values resolve to an empty state, never to the other language.
 
+## D-16 — Exploration role lenses
+- **Decision:** Role journeys (Chair / Secretary / Member) are **lenses over the one governed
+  session** — not additional personas and not additional datasets. A lens chooses where the
+  session opens: the committee where that persona already holds the role in the provisioned
+  dataset. The authority displayed is always the one the server resolves from the membership,
+  so a lens can never grant a role.
+- **Shared implementation:** `DEMO_ROLE_LENSES`, `resolveRoleLens()`, `roleLensPath()` in
+  `src/lib/demoPersonas.js`; `src/components/demo/RoleLensSection.jsx`; `?lens=` on the existing
+  stable route in `src/pages/ExploreSession.jsx`.
+- **Affected surfaces:** `/explore`, `/explore/:personaSlug?lens=`.
+- **Migration:** implemented — three lenses on the canonical persona (chair →
+  `DEMO-COMM-QDB-DIGITAL`, secretary → `DEMO-COMM-QDB-INNOVATION`, member →
+  `DEMO-COMM-QDB-INVESTMENT`). A lens whose persona is not on the page is not shown.
+- **Acceptance:** every lens lands on a committee the persona actually holds that role in; the
+  session lands only after the governed session is active; an unknown or mismatched `?lens=`
+  opens the workspace normally instead; no new dataset is required.
+
+## D-17 — Route-level code splitting and request cancellation
+- **Decision:** The organization and committee shells load on entering them, not on first
+  paint. A read that a navigation abandons is discarded, never allowed to write into the
+  surface the user has moved to.
+- **Shared implementation:** `src/App.jsx` (`lazy` + one `Suspense` around `Routes`);
+  a request token in `src/lib/CommitteeContext.jsx` and `src/hooks/useCommitteeScoped.js`.
+- **Affected surfaces:** the `/o/...` portal and every `/o/.../c/...` committee surface
+  (54 split route modules), plus every consumer of `useCommitteeScopedData`.
+- **Migration:** implemented.
+- **Acceptance:** build passes; the entry route no longer carries the committee shell;
+  switching committee while a read is in flight never leaves the previous committee's data
+  on screen.
+
 ---
 
 ## Removed / replaced manifest
@@ -174,18 +204,24 @@ Status values: `implemented` | `partial` | `planned`.
 | `lijan_pending_entity` / `lijan_pending_email` entry hand-off | Server-resolved identity after authentication |
 | `src/components/raqeem/DemoBanner.jsx` (deleted — no remaining consumer) | `src/components/showcase/DemoBanner.jsx` retained for the labelled National Adoption Showcase page |
 | Persona classification label ("Governed Synthetic Demonstration Persona") inside `PersonaContextPath` | Context path and role retained; provenance kept in the session and in `AuditEvent` |
+| "Demo Persona Identity" title, "Demo" badge and fictional-persona disclaimer on `/profile` (three repetitions of the same label) | One "Exploration Session Identity" card with a single provenance line |
+| `lijan_profile_affiliation` localStorage mirror (write-only after the entry hand-off was removed) | `base44.auth.updateMe` remains the single record of institutional affiliation |
 
 **Retained with justification (no consumer, deliberately not deleted):**
 `base44/functions/CheckUserRegistration` (server-side registration lookup, no longer called from
-the entry page) and the `lijan_profile_affiliation` profile record still written by `/profile`.
+the entry page).
 
 `/create-portal`, `/committees-registry`, `/governance-policies`, `/profile`,
 `/national-adoption-showcase`, `/activity-log`, and every `/o/...` route are **unchanged**
 and remain reachable.
 
 ## Deferred (not yet migrated)
-- Role-lens journeys (Chair / Secretary / Member) on the exploration gateway — only journeys
-  with provisioned presentation data are shown, so the gateway currently offers the
-  multi-committee executive and the auditor journeys.
-- Route-level lazy loading and request cancellation for the committee shell (section 24).
-- Full WCAG 2.2 AA sweep across dialogs and tables (section 25).
+- Per-page migration of the remaining committee surfaces onto the shared governed-state
+  components — presentational unification across ~45 surfaces. Every surface reads and writes
+  correctly today; this is consistency work, not a correctness gap.
+- Full WCAG 2.2 AA sweep across dialogs and tables (section 25) — needs an assistive-technology
+  audit, not a code change alone.
+
+**Closed since the previous pass:** role-lens journeys (D-16), route-level lazy loading and
+request cancellation for the committee shell (D-17), and the repeated demo labelling on
+`/profile` (D-14).

@@ -113,13 +113,6 @@ export default function Profile() {
         department,
       };
       await base44.auth.updateMe(affiliationData);
-      // Persist affiliation locally so the Entry Portal can match it
-      localStorage.setItem("lijan_profile_affiliation", JSON.stringify({
-        institution_id: institutionId,
-        institution_name_ar: selectedEntity?.ar || "",
-        institution_name_en: selectedEntity?.en || "",
-        institution_email: institutionEmail,
-      }));
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
@@ -219,8 +212,7 @@ export default function Profile() {
         <div className="raqeem-card p-6 space-y-4 border-accent/30">
           <div className="flex items-center gap-2 pb-3 border-b border-border">
             <Shield className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold text-foreground">{t("هوية الشخصية التجريبية", "Demo Persona Identity")}</h2>
-            <StatusBadge label={t("تجريبي", "Demo")} colorClass="bg-accent/15 text-accent-foreground" />
+            <h2 className="text-sm font-semibold text-foreground">{t("هوية جلسة الاستكشاف", "Exploration Session Identity")}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -248,8 +240,8 @@ export default function Profile() {
           </div>
           <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
             {t(
-              "هذه هوية تجريبية لعرض قدرات المنصة — البيانات غير حقيقية",
-              "This is a fictional persona for demonstration purposes"
+              "جلسة استكشاف على بيانات معزولة — لا تتصل ببيانات الإنتاج",
+              "Exploration session on isolated data — no connection to production data"
             )}
           </p>
         </div>

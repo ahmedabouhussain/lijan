@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -25,8 +25,8 @@ import ExploreSession from '@/pages/ExploreSession';
 import CreatePortal from '@/pages/CreatePortal';
 import Profile from '@/pages/Profile';
 import FounderVault from '@/pages/FounderVault';
-import MeetingDetail from '@/pages/MeetingDetail';
-import DecisionDetail from '@/pages/DecisionDetail';
+const MeetingDetail = lazy(() => import('@/pages/MeetingDetail'));
+const DecisionDetail = lazy(() => import('@/pages/DecisionDetail'));
 import MinutesArchive from '@/pages/MinutesArchive';
 import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
@@ -36,61 +36,69 @@ import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
 
-// Organization Portal (Level 2)
-import OrgLayout from '@/components/raqeem/OrgLayout';
-import OrgPortal from '@/pages/OrgPortal';
-import OrgCommittees from '@/pages/OrgCommittees';
-import OrgNotifications from '@/pages/OrgNotifications';
-import OrgAdmin from '@/pages/OrgAdmin';
-import CommitteeCreateV2 from '@/pages/CommitteeCreateV2';
+// Organization Portal (Level 2) — loaded on entering the portal, not on first paint.
+const OrgLayout = lazy(() => import('@/components/raqeem/OrgLayout'));
+const OrgPortal = lazy(() => import('@/pages/OrgPortal'));
+const OrgCommittees = lazy(() => import('@/pages/OrgCommittees'));
+const OrgNotifications = lazy(() => import('@/pages/OrgNotifications'));
+const OrgAdmin = lazy(() => import('@/pages/OrgAdmin'));
+const CommitteeCreateV2 = lazy(() => import('@/pages/CommitteeCreateV2'));
 
-// Committee Workspace (Level 3)
-import CommitteeLayout from '@/components/raqeem/CommitteeLayout';
-import CommitteeHome from '@/pages/committee/CommitteeHome';
-import CommitteeMembers from '@/pages/committee/CommitteeMembers';
-import CommitteeFormation from '@/pages/committee/CommitteeFormation';
-import CommitteeEstablishment from '@/pages/committee/CommitteeEstablishment';
-import FormationHistory from '@/pages/committee/FormationHistory';
-import CommitteeAmendments from '@/pages/committee/CommitteeAmendments';
-import CommitteeRoles from '@/pages/committee/CommitteeRoles';
-import CommitteeDelegations from '@/pages/committee/CommitteeDelegations';
-import CommitteeAlternates from '@/pages/committee/CommitteeAlternates';
-import CommitteeRecusals from '@/pages/committee/CommitteeRecusals';
-import CommitteeMeetings from '@/pages/committee/CommitteeMeetings';
-import CommitteeCalendar from '@/pages/committee/CommitteeCalendar';
-import CommitteeAgenda from '@/pages/committee/CommitteeAgenda';
-import CommitteePacks from '@/pages/committee/CommitteePacks';
-import CommitteeAttendance from '@/pages/committee/CommitteeAttendance';
-import CommitteeDocuments from '@/pages/committee/CommitteeDocuments';
-import CommitteeMinutes from '@/pages/committee/CommitteeMinutes';
-import CommitteeSignatures from '@/pages/committee/CommitteeSignatures';
-import CommitteeDecisions from '@/pages/committee/CommitteeDecisions';
-import CommitteeActions from '@/pages/committee/CommitteeActions';
-import CommitteeVoting from '@/pages/committee/CommitteeVoting';
-import CommitteeEvidence from '@/pages/committee/CommitteeEvidence';
-import CommitteeDependencies from '@/pages/committee/CommitteeDependencies';
-import CommitteeEscalations from '@/pages/committee/CommitteeEscalations';
-import CommitteeRisks from '@/pages/committee/CommitteeRisks';
-import CommitteeReports from '@/pages/committee/CommitteeReports';
-import CommitteeMemory from '@/pages/committee/CommitteeMemory';
-import CommitteeAI from '@/pages/committee/CommitteeAI';
-import CommitteeAudit from '@/pages/committee/CommitteeAudit';
-import CommitteeMandate from '@/pages/committee/CommitteeMandate';
-import CommitteeGovernanceRules from '@/pages/committee/CommitteeGovernanceRules';
-import CommitteeIntegrations from '@/pages/committee/CommitteeIntegrations';
-import CommitteeNotifications from '@/pages/committee/CommitteeNotifications';
-import CommitteeClosure from '@/pages/committee/CommitteeClosure';
-import CommitteeSettings from '@/pages/committee/CommitteeSettings';
-import ProductCatalog from '@/pages/committee/ProductCatalog';
-import CommitteeWorkstreams from '@/pages/committee/CommitteeWorkstreams';
-import WorkstreamDetail from '@/pages/committee/WorkstreamDetail';
-import PeopleFormationHub from '@/pages/committee/hubs/PeopleFormationHub';
-import MeetingsHub from '@/pages/committee/hubs/MeetingsHub';
-import RecordsHub from '@/pages/committee/hubs/RecordsHub';
-import ExecutionHub from '@/pages/committee/hubs/ExecutionHub';
-import IntelligenceHub from '@/pages/committee/hubs/IntelligenceHub';
-import GovernanceHub from '@/pages/committee/hubs/GovernanceHub';
-import DocumentationHub from '@/pages/committee/DocumentationHub';
+// Committee Workspace (Level 3) — the whole shell is code-split: ~40 surfaces load only
+// when a committee route is actually opened.
+const CommitteeLayout = lazy(() => import('@/components/raqeem/CommitteeLayout'));
+const CommitteeHome = lazy(() => import('@/pages/committee/CommitteeHome'));
+const CommitteeMembers = lazy(() => import('@/pages/committee/CommitteeMembers'));
+const CommitteeFormation = lazy(() => import('@/pages/committee/CommitteeFormation'));
+const CommitteeEstablishment = lazy(() => import('@/pages/committee/CommitteeEstablishment'));
+const FormationHistory = lazy(() => import('@/pages/committee/FormationHistory'));
+const CommitteeAmendments = lazy(() => import('@/pages/committee/CommitteeAmendments'));
+const CommitteeRoles = lazy(() => import('@/pages/committee/CommitteeRoles'));
+const CommitteeDelegations = lazy(() => import('@/pages/committee/CommitteeDelegations'));
+const CommitteeAlternates = lazy(() => import('@/pages/committee/CommitteeAlternates'));
+const CommitteeRecusals = lazy(() => import('@/pages/committee/CommitteeRecusals'));
+const CommitteeMeetings = lazy(() => import('@/pages/committee/CommitteeMeetings'));
+const CommitteeCalendar = lazy(() => import('@/pages/committee/CommitteeCalendar'));
+const CommitteeAgenda = lazy(() => import('@/pages/committee/CommitteeAgenda'));
+const CommitteePacks = lazy(() => import('@/pages/committee/CommitteePacks'));
+const CommitteeAttendance = lazy(() => import('@/pages/committee/CommitteeAttendance'));
+const CommitteeDocuments = lazy(() => import('@/pages/committee/CommitteeDocuments'));
+const CommitteeMinutes = lazy(() => import('@/pages/committee/CommitteeMinutes'));
+const CommitteeSignatures = lazy(() => import('@/pages/committee/CommitteeSignatures'));
+const CommitteeDecisions = lazy(() => import('@/pages/committee/CommitteeDecisions'));
+const CommitteeActions = lazy(() => import('@/pages/committee/CommitteeActions'));
+const CommitteeVoting = lazy(() => import('@/pages/committee/CommitteeVoting'));
+const CommitteeEvidence = lazy(() => import('@/pages/committee/CommitteeEvidence'));
+const CommitteeDependencies = lazy(() => import('@/pages/committee/CommitteeDependencies'));
+const CommitteeEscalations = lazy(() => import('@/pages/committee/CommitteeEscalations'));
+const CommitteeRisks = lazy(() => import('@/pages/committee/CommitteeRisks'));
+const CommitteeReports = lazy(() => import('@/pages/committee/CommitteeReports'));
+const CommitteeMemory = lazy(() => import('@/pages/committee/CommitteeMemory'));
+const CommitteeAI = lazy(() => import('@/pages/committee/CommitteeAI'));
+const CommitteeAudit = lazy(() => import('@/pages/committee/CommitteeAudit'));
+const CommitteeMandate = lazy(() => import('@/pages/committee/CommitteeMandate'));
+const CommitteeGovernanceRules = lazy(() => import('@/pages/committee/CommitteeGovernanceRules'));
+const CommitteeIntegrations = lazy(() => import('@/pages/committee/CommitteeIntegrations'));
+const CommitteeNotifications = lazy(() => import('@/pages/committee/CommitteeNotifications'));
+const CommitteeClosure = lazy(() => import('@/pages/committee/CommitteeClosure'));
+const CommitteeSettings = lazy(() => import('@/pages/committee/CommitteeSettings'));
+const ProductCatalog = lazy(() => import('@/pages/committee/ProductCatalog'));
+const CommitteeWorkstreams = lazy(() => import('@/pages/committee/CommitteeWorkstreams'));
+const WorkstreamDetail = lazy(() => import('@/pages/committee/WorkstreamDetail'));
+const PeopleFormationHub = lazy(() => import('@/pages/committee/hubs/PeopleFormationHub'));
+const MeetingsHub = lazy(() => import('@/pages/committee/hubs/MeetingsHub'));
+const RecordsHub = lazy(() => import('@/pages/committee/hubs/RecordsHub'));
+const ExecutionHub = lazy(() => import('@/pages/committee/hubs/ExecutionHub'));
+const IntelligenceHub = lazy(() => import('@/pages/committee/hubs/IntelligenceHub'));
+const GovernanceHub = lazy(() => import('@/pages/committee/hubs/GovernanceHub'));
+const DocumentationHub = lazy(() => import('@/pages/committee/DocumentationHub'));
+
+// Route-level code splitting: a lazily loaded surface shows this while its chunk arrives.
+const RouteLoadingFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+  </div>
+);
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -116,6 +124,7 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <Suspense fallback={<RouteLoadingFallback />}>
     <Routes>
       <Route path="/" element={<EntryPortal />} />
       {/* Explore LIJAN — one gateway, one governed session, one stable route per persona */}
@@ -232,6 +241,7 @@ const AuthenticatedApp = () => {
 
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 

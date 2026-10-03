@@ -2,7 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Compass, Crown, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { resolveDemoPersona } from "@/lib/demoPersonas";
+import { resolveDemoPersona, DEMO_ROLE_LENSES } from "@/lib/demoPersonas";
+import RoleLensSection from "@/components/demo/RoleLensSection";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
@@ -41,6 +42,14 @@ export default function ExploreGateway() {
     ...def,
     persona: resolveDemoPersona(def.personaKey),
   })).filter((j) => j.persona);
+
+  // A lens is only offered for a journey that is actually on this page, and only
+  // because its committee is provisioned in that persona's dataset.
+  const journeyKeys = new Set(journeys.map((j) => j.persona.key));
+  const lenses = DEMO_ROLE_LENSES.map((lens) => ({
+    lens,
+    persona: resolveDemoPersona(lens.personaKey),
+  })).filter((item) => item.persona && journeyKeys.has(item.persona.key));
 
   const Arrow = lang === "ar" ? ArrowLeft : ArrowRight;
 
@@ -125,6 +134,14 @@ export default function ExploreGateway() {
               );
             })}
           </div>
+
+          <RoleLensSection
+            items={lenses}
+            onSelect={(lens) => {
+              const persona = resolveDemoPersona(lens.personaKey);
+              if (persona) navigate(`/explore/${persona.slug}?lens=${lens.key}`);
+            }}
+          />
 
           <div className="mt-10 pt-6 border-t border-border flex flex-col items-center gap-4">
             <button
