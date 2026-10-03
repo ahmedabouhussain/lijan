@@ -25,6 +25,10 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     scopeKey,
     route,
     demoPersonaKey,
+    openingMessage,
+    contextPath,
+    contextPathEn,
+    lang,
     accessDenied,
     isDemo,
     isActive,
@@ -173,6 +177,16 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
             <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0" />
             <span>{t("دورك", "Your role")}: {roleLabel}</span>
           </div>
+          {(() => {
+            const path = lang === "ar" ? contextPath : (contextPathEn || contextPath);
+            const parts = path?.parts || [];
+            if (parts.length === 0) return null;
+            return (
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                {parts.join(lang === "ar" ? " ← " : " → ")}
+              </p>
+            );
+          })()}
           <p className="text-[11px] text-muted-foreground leading-relaxed">{t(context.scopeNote.ar, context.scopeNote.en)}</p>
           {isDemo && (
             <p className="text-[11px] text-accent leading-relaxed">
@@ -228,8 +242,10 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
                     <p className="text-sm font-medium text-foreground">
                       {t("مرحباً بك، معك أمين", "Welcome — Ameen here")}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t(context.scopeNote.ar, context.scopeNote.en)}
+                    <p className="text-xs text-muted-foreground leading-relaxed px-2">
+                      {openingMessage
+                        ? t(openingMessage.ar, openingMessage.en)
+                        : t(context.scopeNote.ar, context.scopeNote.en)}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">

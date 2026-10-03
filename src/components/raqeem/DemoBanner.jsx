@@ -1,25 +1,31 @@
-// LIJAN™ — Demo Mode Banner
-// A calm, visible indicator shown when exploring the platform as Fahad.
-// Includes an "Exit Demo" button that restores the real user's session.
+// LIJAN™ — Exploration banner.
+// One governed persona at a time: the banner always names the ACTIVE persona, never a
+// hardcoded one, and carries the synthetic-data notice.
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Sparkles, X, AlertCircle } from 'lucide-react';
 import { useEffectiveActor } from '@/lib/EffectiveActorContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { base44 } from '@/api/base44Client';
 
 export default function DemoBanner() {
-  const navigate = useNavigate();
-  const { isDemoMode, exitDemo } = useEffectiveActor();
+  const { isDemoMode, demoSession, exitDemo } = useEffectiveActor();
   const { t, lang } = useLanguage();
 
   const handleExit = () => {
     exitDemo();
-    // Reload to clear all demo state
+    // Reload to clear all persona state
     window.location.href = '/';
   };
 
-  if (!isDemoMode) return null;
+  if (!isDemoMode || !demoSession) return null;
+
+  const personaName = lang === 'ar'
+    ? (demoSession.display_name_ar || demoSession.display_name_en)
+    : (demoSession.display_name_en || demoSession.display_name_ar);
+
+  const lineAr = `أنت الآن تستكشف المنصة بشخصية ${personaName}`;
+  const lineEn = `You are now exploring the platform as ${personaName || ''}`.trim();
 
   return (
     <div className="bg-accent/10 border-b border-accent/30 px-4 py-2.5 flex items-center justify-between gap-3" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -29,11 +35,11 @@ export default function DemoBanner() {
         </div>
         <div className="min-w-0">
           <div className="text-xs font-semibold text-foreground truncate">
-            {t('أنت الآن تستكشف المنصة بشخصية فهد الفهيدي', 'You are exploring as Fahad Al-Fihaidi')}
+            {t(lineAr, lineEn)}
           </div>
           <div className="text-[10px] text-muted-foreground flex items-center gap-1 truncate">
             <AlertCircle className="w-3 h-3 shrink-0" />
-            {t('بيانات تجريبية — غير صالحة للاستخدام الرسمي', 'Demo data — not for official use')}
+            {t('بيانات تجريبية — غير صالحة للاستخدام الرسمي', 'Synthetic demonstration data — not for official use')}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
@@ -17,6 +18,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { WorkspaceSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { cn } from "@/lib/utils";
+import DrHamadExperience from "@/components/demo/DrHamadExperience";
 
 const ROLE_ICONS = {
   chair: Crown,
@@ -46,7 +48,7 @@ const ROLE_LABELS = {
 export default function UnifiedWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isDemoMode, effectiveActor, demoPersonaKey } = useEffectiveActor();
+  const { isDemoMode, effectiveActor, demoPersonaKey, isDrHamadExperience } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -72,6 +74,12 @@ export default function UnifiedWorkspace() {
     })();
     return () => { stale = true; };
   }, [isDemoMode, demoPersonaKey]);
+
+  // The Dr. Hamad demonstration experience has its own resolved surface: one primary
+  // organization, three institutional contexts, seven scoped committee memberships.
+  if (isDemoMode && isDrHamadExperience) {
+    return <DrHamadExperience />;
+  }
 
   if (loading) {
     return <WorkspaceSkeleton />;
@@ -142,13 +150,15 @@ export default function UnifiedWorkspace() {
             )}
           </p>
         </div>
-        <button
-          onClick={() => navigate("/create-portal")}
-          className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          {t("بوابة منظمة جديدة", "New Organization")}
-        </button>
+        {!isDemoMode && (
+          <button
+            onClick={() => navigate("/create-portal")}
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            {t("بوابة منظمة جديدة", "New Organization")}
+          </button>
+        )}
       </div>
 
       {/* Organizations + Committees */}

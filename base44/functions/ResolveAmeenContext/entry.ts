@@ -1,8 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveUserCapabilities } from '../../shared/committeeAuth.ts';
+import { resolveUserCapabilities, resolvePersonaCapabilities } from '../../shared/committeeAuth.ts';
 import { resolveAmeenSources, resolveClassificationCeiling } from '../../shared/ameenContextKernel.ts';
 import {
-  DEMO_PERSONA_KEY,
   resolveScope,
   resolveSandboxCommitteeRole,
   resolveSandboxOrganizationRole,
@@ -11,14 +10,19 @@ import {
   describeOrganization,
   describeCommittee,
 } from '../../shared/ameenScopeResolver.ts';
+import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
+import { DR_HAMAD_COMMITTEES, DR_HAMAD_AMEEN_GENERAL, DR_HAMAD_PERSONA } from '../../shared/drHamadDataset.ts';
+import { drHamadContextPath } from '../../shared/drHamadExperience.ts';
 
 // ResolveAmeenContext — server-verified context for the single assistant «أمين».
 // The client says WHERE the user is; this function decides WHO they are there,
-// what role they hold, and which sources / classification ceiling apply.
+// what role they hold, and which scope / boundaries apply.
 // Platform Admin does NOT gain operational committee authority.
 //
-// Sandbox sessions (the exploration experience) resolve against the sandbox persona
-// and sandbox-flagged records only — the founder's real identity is never consulted.
+// Exploration (sandbox) sessions resolve against the REQUESTED governed persona and that
+// persona's sandbox records only — never another persona, never the founder's identity.
+
+const DR_HAMAD_KEY = 'DR_HAMAD_MAJEEGHEER';
 
 export default async function (req) {
   try {
@@ -128,7 +132,7 @@ export default async function (req) {
 
 /**
  * Sandbox scope — the exploration experience.
- * Only the approved demo persona, and only records flagged as sandbox data.
+ * Only a registered governed persona, and only that persona's sandbox-flagged records.
  */
 async function resolveSandboxContext({ base44, organization, committee, context_key, demo_persona_key }) {
   const denied = () => Response.json({
@@ -142,37 +146,72 @@ async function resolveSandboxContext({ base44, organization, committee, context_
     classification_ceiling: null,
   });
 
-  if (demo_persona_key !== DEMO_PERSONA_KEY) return denied();
+  const persona = resolveDemoPersona(demo_persona_key);
+  if (!persona) return denied();
+
+  const isDrHamad = persona.key === DR_HAMAD_KEY;
+  const personaDescriptor = {
+    key: persona.key,
+    persona_id: persona.persona_id || null,
+    name_ar: persona.name_ar,
+    name_en: persona.name_en,
+    primary_org_ar: persona.primary_org_ar,
+    primary_org_en: persona.primary_org_en,
+    dataset: persona.dataset,
+  };
 
   if (committee) {
-    if (!isSandboxCommittee(committee)) return denied();
+    if (!isSandboxCommittee(committee, persona)) return denied();
 
-    const role = await resolveSandboxCommitteeRole(base44, committee);
+    const resolved = await resolvePersonaCapabilities(base44, persona, committee);
+    const def = isDrHamad
+      ? (DR_HAMAD_COMMITTEES.find((c) => c.public_id === committee.public_id) || null)
+      : null;
 
     return Response.json({
       verified: true,
       access_denied: false,
       demo: true,
       context_key: context_key || 'committee',
-      role,
+      role: resolved.role,
+      persona: personaDescriptor,
       organization: describeOrganization(organization),
       committee: describeCommittee(committee),
-      capabilities: null,
-      allowed_sources: role
+      capabilities: resolved.capabilities,
+      authority_context: resolved.authority_context,
+      allowed_sources: resolved.role
         ? resolveAmeenSources({
-            role,
+            role: resolved.role,
             isCommitteeScope: true,
             isOrgAdmin: false,
             isPlatformAdmin: false,
           })
         : [],
       classification_ceiling: resolveClassificationCeiling({ committee, organization }),
+      // «أمين» speaks from the selected committee and the current role only.
+      ameen_message_ar: def ? def.ameen_ar : null,
+      ameen_message_en: def ? def.ameen_en : null,
+      role_label_ar: def ? (def.role_label_ar || null) : null,
+      role_label_en: def ? (def.role_label_en || null) : null,
+      context_path: def ? drHamadContextPath(committee.public_id, 'ar') : null,
+      context_path_en: def ? drHamadContextPath(committee.public_id, 'en') : null,
+      classification_label_ar: def
+        ? (def.classification === 'source_based_demonstration'
+            ? 'محتوى مستند إلى مواد مصدرية'
+            : def.synthetic_role ? 'دور تجريبي افتراضي' : 'بيانات تجريبية')
+        : null,
+      classification_label_en: def
+        ? (def.classification === 'source_based_demonstration'
+            ? 'Source-based demonstration content'
+            : def.synthetic_role ? 'Synthetic demonstration role' : 'Synthetic demonstration data')
+        : null,
+      synthetic_role: def ? def.synthetic_role === true : false,
     });
   }
 
-  if (!isSandboxOrganization(organization)) return denied();
+  if (!isSandboxOrganization(organization, persona)) return denied();
 
-  const role = await resolveSandboxOrganizationRole(base44, organization);
+  const role = await resolveSandboxOrganizationRole(base44, organization, persona);
 
   return Response.json({
     verified: true,
@@ -180,10 +219,29 @@ async function resolveSandboxContext({ base44, organization, committee, context_
     demo: true,
     context_key: context_key || 'general',
     role,
+    persona: personaDescriptor,
     organization: describeOrganization(organization),
     committee: null,
     capabilities: null,
     allowed_sources: ['committee_profile'],
     classification_ceiling: resolveClassificationCeiling({ committee: null, organization }),
+    ameen_message_ar: isDrHamad ? DR_HAMAD_AMEEN_GENERAL.ar : null,
+    ameen_message_en: isDrHamad ? DR_HAMAD_AMEEN_GENERAL.en : null,
+    context_path: isDrHamad
+      ? {
+          parts: [DR_HAMAD_PERSONA.primary_org_ar],
+          role_label: null,
+          owns_primary: true,
+          synthetic_role: false,
+        }
+      : null,
+    context_path_en: isDrHamad
+      ? {
+          parts: [DR_HAMAD_PERSONA.primary_org_en],
+          role_label: null,
+          owns_primary: true,
+          synthetic_role: false,
+        }
+      : null,
   });
 }

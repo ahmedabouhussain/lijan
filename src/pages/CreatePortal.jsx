@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { QATARI_ENTITIES } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 
 const ORG_TYPES = [
   { value: "ministry", label: "وزارة · Ministry" },
@@ -38,6 +39,7 @@ const OTHER_ID = "__other__";
 
 export default function CreatePortal() {
   const navigate = useNavigate();
+  const { isDemoMode } = useEffectiveActor();
   const [entityId, setEntityId] = useState("");
   const [customAr, setCustomAr] = useState("");
   const [customEn, setCustomEn] = useState("");
@@ -180,6 +182,25 @@ export default function CreatePortal() {
   );
 
   const showForm = entityId && !entityExists && !joinSubmitted;
+
+  // A demonstration persona never holds organization-creation authority — the surface is
+  // closed here and the command is denied by the backend as well.
+  if (isDemoMode) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4" dir="rtl">
+        <div className="raqeem-card p-6 max-w-md text-center space-y-3">
+          <ShieldCheck className="w-8 h-8 text-accent mx-auto" />
+          <h1 className="text-lg font-bold text-foreground">إنشاء بوابة منظمة غير متاح في وضع الاستكشاف</h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            دور العرض التجريبي لا يمنح صلاحية إنشاء الجهات.
+            <br />
+            Organization creation is not available to a demonstration persona.
+          </p>
+          <Button onClick={() => navigate("/")} variant="outline">العودة للرئيسية · Back to Home</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12" dir="rtl">

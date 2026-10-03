@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { resolveUserCapabilities } from '../../shared/committeeAuth.ts';
-import { DEMO_PERSONA_KEY, resolveScope } from '../../shared/ameenScopeResolver.ts';
+import { resolveSandboxPersona, resolveScope } from '../../shared/ameenScopeResolver.ts';
 
 // LogAmeenAction — explicit audit trail for every «أمين» consultation.
 //
@@ -27,7 +27,7 @@ export default async function (req) {
       demo_persona_key,
     } = body || {};
 
-    const isSandbox = demo_mode === true && demo_persona_key === DEMO_PERSONA_KEY;
+    const isSandbox = demo_mode === true && resolveSandboxPersona(demo_persona_key) !== null;
 
     const { organization, committee } = await resolveScope(base44, {
       orgRef: org_ref,

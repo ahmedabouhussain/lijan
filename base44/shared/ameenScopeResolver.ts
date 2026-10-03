@@ -4,11 +4,27 @@
 // so scope rules are never duplicated between functions.
 
 import { DEMO_USER, DEMO_DATASET } from './demoDataset.ts';
+import { resolveDemoPersona } from './demoPersonas.ts';
 
+// Legacy single-persona constants (the platform exploration persona). New callers pass an
+// explicit persona; when none is given these keep the historical behaviour intact.
 export const DEMO_PERSONA_KEY = DEMO_USER.persona_key;
 export const DEMO_PERSONA_USER_ID = DEMO_USER.user_id;
 export const DEMO_PERSONA_NAME_AR = DEMO_USER.name_ar;
 export const DEMO_PERSONA_EMAIL = DEMO_USER.email;
+
+/** Resolve the exploration persona of a request. No silent fallback to another persona. */
+export function resolveSandboxPersona(personaKey) {
+  return resolveDemoPersona(personaKey || DEMO_PERSONA_KEY);
+}
+
+function sandboxDatasetOf(persona) {
+  return persona ? persona.dataset : DEMO_DATASET;
+}
+
+function sandboxUserIdOf(persona) {
+  return persona ? persona.user_id : DEMO_PERSONA_USER_ID;
+}
 
 /** Resolve an organization by public_id → slug → id. */
 export async function resolveOrganization(base44, orgRef) {
@@ -60,28 +76,28 @@ export async function resolveScope(base44, { orgRef, committeeRef }) {
 // ── Sandbox (demo) scope ───────────────────────────────────────────────────────
 // Demo data is a separate dataset keyed to a virtual persona, never to a real user.
 
-/** A committee belongs to the sandbox dataset — never a real, governed committee. */
-export function isSandboxCommittee(committee) {
+/** A committee belongs to the persona's sandbox dataset — never a real, governed committee. */
+export function isSandboxCommittee(committee, persona = null) {
   return !!committee
     && committee.is_demo_data === true
-    && committee.demo_dataset === DEMO_DATASET;
+    && committee.demo_dataset === sandboxDatasetOf(persona);
 }
 
-/** An organization belongs to the sandbox dataset. */
-export function isSandboxOrganization(organization) {
+/** An organization belongs to the persona's sandbox dataset. */
+export function isSandboxOrganization(organization, persona = null) {
   return !!organization
     && organization.is_demo_data === true
-    && organization.demo_dataset === DEMO_DATASET;
+    && organization.demo_dataset === sandboxDatasetOf(persona);
 }
 
 /** The sandbox persona's office inside a sandbox committee. */
-export async function resolveSandboxCommitteeRole(base44, committee) {
-  if (!isSandboxCommittee(committee)) return null;
+export async function resolveSandboxCommitteeRole(base44, committee, persona = null) {
+  if (!isSandboxCommittee(committee, persona)) return null;
 
   const rows = await base44.asServiceRole.entities.CommitteeMembership
     .filter({
       committee_id: committee.id,
-      user_id: DEMO_PERSONA_USER_ID,
+      user_id: sandboxUserIdOf(persona),
       status: 'active',
     }).catch(() => []);
 
@@ -90,13 +106,13 @@ export async function resolveSandboxCommitteeRole(base44, committee) {
 }
 
 /** The sandbox persona's office at the organization level (admin | member | …). */
-export async function resolveSandboxOrganizationRole(base44, organization) {
-  if (!isSandboxOrganization(organization)) return null;
+export async function resolveSandboxOrganizationRole(base44, organization, persona = null) {
+  if (!isSandboxOrganization(organization, persona)) return null;
 
   const rows = await base44.asServiceRole.entities.OrganizationMembership
     .filter({
       organization_id: organization.id,
-      user_id: DEMO_PERSONA_USER_ID,
+      user_id: sandboxUserIdOf(persona),
       status: 'active',
     }).catch(() => []);
 

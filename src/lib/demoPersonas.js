@@ -4,10 +4,31 @@
 // Every demonstration persona resolves through ONE identity path: a virtual user id
 // (DEMO-USER-*) plus a demo dataset key. The server resolves memberships, roles and
 // organizations from those two keys; the UI carries only the session.
+//
+// There is NO silent fallback: an unknown key resolves to null and the caller must refuse.
 
 export const DEMO_PERSONAS = {
+  DR_HAMAD_MAJEEGHEER: {
+    key: 'DR_HAMAD_MAJEEGHEER',
+    persona_id: 'demo-dr-hamad-majeegheer',
+    user_id: 'DEMO-USER-DR-HAMAD-MAJEEGHEER',
+    dataset: 'DR_HAMAD_GOVERNED_DEMO_V1',
+    email: 'dr.hamad.majeegheer.demo@lijan.example',
+    name_ar: 'الدكتور حمد سالم مجيغير',
+    name_en: 'Dr. Hamad Salem Majeegheer',
+    job_title_ar: 'قيادي تنفيذي — بنك قطر للتنمية',
+    job_title_en: 'Executive Leader — Qatar Development Bank',
+    job_title_is_demo_wording: true,
+    primary_org_ar: 'بنك قطر للتنمية',
+    primary_org_en: 'Qatar Development Bank',
+    primary_org_abbr: 'QDB',
+    primary_org_public_id: 'DEMO-ORG-QDB',
+    account_classification_ar: 'شخصية عرض تجريبية محكومة',
+    account_classification_en: 'Governed Synthetic Demonstration Persona',
+  },
   FAHAD_AL_FIHAIDI: {
     key: 'FAHAD_AL_FIHAIDI',
+    persona_id: 'demo-fahad-al-fihaidi',
     user_id: 'DEMO-USER-FAHAD-AL-FIHAIDI',
     dataset: 'FAHAD_QATAR_GOVERNMENT_DEMO_V2',
     email: 'F.alfihaidi@lijan.com',
@@ -15,28 +36,20 @@ export const DEMO_PERSONAS = {
     name_en: 'Fahad Al-Fihaidi',
     job_title_ar: 'مدير التدقيق',
     job_title_en: 'Director of Audit',
+    job_title_is_demo_wording: true,
     primary_org_ar: 'مجلس التدقيق والمراجعة',
     primary_org_en: 'Audit and Review Council',
     primary_org_public_id: 'DEMO-ORG-AUDIT-COUNCIL',
-  },
-  DR_HAMAD_MAJEEGHEER: {
-    key: 'DR_HAMAD_MAJEEGHEER',
-    user_id: 'DEMO-USER-DR-HAMAD-MAJEEGHEER',
-    dataset: 'DR_HAMAD_GOVERNED_DEMO_V1',
-    email: 'dr.hamad.majeegheer.demo@lijan.example',
-    name_ar: 'الدكتور حمد سالم مجيغير',
-    name_en: 'Dr. Hamad Salem Majeegheer',
-    job_title_ar: 'حساب تجريبي حوكمي تنفيذي',
-    job_title_en: 'Governed Executive Demonstration Persona',
-    primary_org_ar: 'بنك قطر للتنمية',
-    primary_org_en: 'Qatar Development Bank',
-    primary_org_public_id: 'DEMO-ORG-QDB',
+    account_classification_ar: 'شخصية عرض تجريبية',
+    account_classification_en: 'Demonstration Persona',
   },
 };
 
-export const DEFAULT_DEMO_PERSONA_KEY = 'FAHAD_AL_FIHAIDI';
+// The canonical demonstration experience is Dr. Hamad's.
+export const DEFAULT_DEMO_PERSONA_KEY = 'DR_HAMAD_MAJEEGHEER';
 
-/** Resolve a persona by key. An unknown or missing key falls back to the platform demo persona. */
+/** Resolve a persona by key. Unknown or missing → null (never another persona). */
 export function resolveDemoPersona(key) {
-  return DEMO_PERSONAS[key] || DEMO_PERSONAS[DEFAULT_DEMO_PERSONA_KEY];
+  if (!key || typeof key !== 'string') return null;
+  return DEMO_PERSONAS[key] || null;
 }

@@ -104,6 +104,14 @@ export function AmeenProvider({ children }) {
     isActive: active,
     actorId,
     demoPersonaKey,
+    // «أمين» opens with the current committee's own role statement — never the previous one.
+    openingMessage: (verified?.ameen_message_ar || verified?.ameen_message_en)
+      ? { ar: verified.ameen_message_ar, en: verified.ameen_message_en }
+      : null,
+    contextPath: verified?.context_path || null,
+    contextPathEn: verified?.context_path_en || null,
+    authorityContext: verified?.authority_context || null,
+    persona: verified?.persona || null,
     scopeKey,
     lang,
     t,

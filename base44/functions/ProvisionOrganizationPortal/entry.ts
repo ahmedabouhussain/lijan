@@ -19,6 +19,16 @@ export default async function(req) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
+
+    // Demonstration personas never hold organization-creation authority. Hidden in the UI,
+    // and denied here so a direct URL or API call cannot provision on their behalf.
+    if (body.demo_mode === true || body.demo_persona_key) {
+      return Response.json({
+        error: 'Organization creation is not available to demonstration personas',
+        code: 'demo_persona_not_authorized',
+      }, { status: 403 });
+    }
+
     const {
       name_ar, name_en, type, slug,
       branding_primary_color, logo_url, description,

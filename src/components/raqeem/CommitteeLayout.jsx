@@ -23,6 +23,8 @@ import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { FOUNDER_EMAIL } from "@/lib/docs/catalog";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import PersonaContextPath from "@/components/demo/PersonaContextPath";
 
 // Role-Adaptive Navigation — admin roles see all; members/observers see only what serves their role.
 const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
@@ -46,6 +48,7 @@ function CommitteeShell() {
   const [infoCollapsed, setInfoCollapsed] = useState(false);
   const [showDocHub, setShowDocHub] = useState(true);
   const { user } = useAuth();
+  const { isDemoMode, demoPersonaKey } = useEffectiveActor();
 
   useEffect(() => {
     const isFounder = user?.email === FOUNDER_EMAIL;
@@ -292,6 +295,7 @@ function CommitteeShell() {
         <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <PageNav />
+            {isDemoMode && demoPersonaKey === "DR_HAMAD_MAJEEGHEER" && <PersonaContextPath />}
             <Outlet />
           </div>
         </main>
