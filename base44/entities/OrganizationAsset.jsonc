@@ -1,0 +1,142 @@
+{
+  "name": "OrganizationAsset",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "organization_slug": {
+      "type": "string",
+      "title": "Organization Slug (asset folder key)"
+    },
+    "asset_type": {
+      "type": "string",
+      "title": "Asset Type",
+      "enum": [
+        "logo",
+        "wordmark",
+        "emblem",
+        "seal"
+      ],
+      "default": "logo"
+    },
+    "variant": {
+      "type": "string",
+      "title": "Variant",
+      "enum": [
+        "primary",
+        "on_dark",
+        "monochrome",
+        "horizontal",
+        "vertical"
+      ],
+      "default": "primary"
+    },
+    "stored_path": {
+      "type": "string",
+      "title": "Stored Path (in-app, runtime source)"
+    },
+    "filename": {
+      "type": "string",
+      "title": "Filename"
+    },
+    "source_url": {
+      "type": "string",
+      "title": "Source URL (where the asset was obtained)"
+    },
+    "source_domain": {
+      "type": "string",
+      "title": "Source Domain"
+    },
+    "retrieved_at": {
+      "type": "string",
+      "title": "Retrieved At",
+      "format": "date-time"
+    },
+    "mime_type": {
+      "type": "string",
+      "title": "MIME Type"
+    },
+    "width": {
+      "type": "number",
+      "title": "Width (intrinsic)"
+    },
+    "height": {
+      "type": "number",
+      "title": "Height (intrinsic)"
+    },
+    "sha256": {
+      "type": "string",
+      "title": "SHA-256 Checksum"
+    },
+    "usage_note": {
+      "type": "string",
+      "title": "Usage Note"
+    },
+    "verification_status": {
+      "type": "string",
+      "title": "Verification Status",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected",
+        "inactive"
+      ],
+      "default": "pending_review"
+    },
+    "approved_by": {
+      "type": "string",
+      "title": "Approved By"
+    },
+    "approved_at": {
+      "type": "string",
+      "title": "Approved At",
+      "format": "date-time"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "title": "Rejection Reason"
+    },
+    "version": {
+      "type": "number",
+      "title": "Asset Version",
+      "default": 1
+    },
+    "supersedes_asset_id": {
+      "type": "string",
+      "title": "Supersedes Asset ID"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Is Active (resolved at runtime)",
+      "default": false
+    }
+  },
+  "required": [
+    "organization_id",
+    "asset_type",
+    "variant",
+    "stored_path",
+    "verification_status",
+    "is_active"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

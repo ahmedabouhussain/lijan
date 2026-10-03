@@ -9,6 +9,7 @@ import WorkInbox from "@/components/raqeem/WorkInbox";
 import ChairBrief from "@/components/raqeem/ChairBrief";
 import SecretaryOperations from "@/components/raqeem/SecretaryOperations";
 import InstitutionalTimeMachine from "@/components/raqeem/InstitutionalTimeMachine";
+import CommitteeChairCard from "@/components/raqeem/CommitteeChairCard";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import ChairHomeEnhanced from "@/components/raqeem/homes/ChairHomeEnhanced";
 import SecretaryHomeEnhanced from "@/components/raqeem/homes/SecretaryHomeEnhanced";
@@ -40,6 +41,12 @@ export default function CommitteeHome() {
   const { committee, my_role, is_recused } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
   const isAdminRole = ["chair", "vice_chair", "secretary", "committee_administrator"].includes(my_role);
+
+  // The chair is an OFFICE resolved from the stored seat — and the mark shown is the institution's.
+  const chairSeat = (data.members || []).find((m) => m.role === "chair") || null;
+  const chairOrg = chairSeat?.represented_organization_id
+    ? (data.org_index || {})[chairSeat.represented_organization_id]
+    : null;
 
   const roleLabel = t(
     { chair: "رئيس اللجنة", vice_chair: "نائب الرئيس", secretary: "أمين السر", committee_administrator: "مدير اللجنة", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار" }[my_role] || my_role,
@@ -108,6 +115,8 @@ export default function CommitteeHome() {
           )}
         </div>
       </SovereignCard>
+
+      {chairSeat && <CommitteeChairCard chair={chairSeat} org={chairOrg} logoUrl={chairOrg?.logo_url} />}
 
       {/* Role-specific calm brief — appears above WorkInbox */}
       <ChairBrief data={data} base={base} />

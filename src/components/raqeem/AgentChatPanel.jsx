@@ -32,6 +32,8 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     accessDenied,
     isDemo,
     isActive,
+    pendingPrompt,
+    consumeAmeenPrompt,
     t,
   } = useAmeen();
 
@@ -147,6 +149,18 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     } catch {}
     setSending(false);
   };
+
+  // A contextual quick action asks «أمين» a question: open the surface and send it in the
+  // CURRENT scope. The prompt is consumed once, so it can never re-fire on a later render.
+  useEffect(() => {
+    if (!pendingPrompt || !isActive || accessDenied) return;
+    setOpen(true);
+    setScopeNotice(null);
+    if (!conversation || loading) return;
+    send(pendingPrompt);
+    consumeAmeenPrompt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingPrompt, conversation, loading, isActive, accessDenied]);
 
   const disabled = !isActive || accessDenied || sending;
 

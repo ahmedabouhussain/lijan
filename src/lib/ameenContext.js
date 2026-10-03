@@ -12,6 +12,10 @@ const SECTION_CONTEXT = {
   attendance: "meeting",
   voting: "meeting",
 
+  // A work group is its own scope: «أمين» reads that group's records, not the committee's whole register.
+  workstreams: "workgroup",
+  "work-groups": "workgroup",
+
   minutes: "minutes",
 
   decisions: "decision",
@@ -53,6 +57,7 @@ const SECTION_CONTEXT = {
 
 const ENTITY_BY_CONTEXT = {
   committee: "Committee",
+  workgroup: "Workstream",
   meeting: "Meeting",
   minutes: "MeetingMinutes",
   decision: "Decision",

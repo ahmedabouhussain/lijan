@@ -6,6 +6,7 @@ import { Settings, Users, Shield, Building2, Ban, RotateCcw, Loader2, AlertTrian
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function OrgAdmin() {
   const { data } = useOrg();
@@ -14,6 +15,7 @@ export default function OrgAdmin() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [orgActionLoading, setOrgActionLoading] = useState(false);
+  const [platformAdmin, setPlatformAdmin] = useState(false);
 
   const isAdmin = data?.my_role === "owner" || data?.my_role === "admin";
   const isOwner = data?.my_role === "owner";
@@ -26,6 +28,11 @@ export default function OrgAdmin() {
       .catch(() => setMembers([]))
       .finally(() => setLoading(false));
   }, [data?.organization?.id]);
+
+  // The institutional asset registry is platform administration, so the entry point is too.
+  useEffect(() => {
+    base44.auth.me().then((u) => setPlatformAdmin(u?.role === "admin")).catch(() => setPlatformAdmin(false));
+  }, []);
 
   const suspendMember = async (member) => {
     setActionLoading(member.id);
@@ -160,6 +167,25 @@ export default function OrgAdmin() {
           ))}
         </div>
       </div>
+
+      {/* Central institutional identity register — platform administrators only */}
+      {platformAdmin && (
+        <div className="raqeem-card p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Building2 className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold">{t("سجل الأصول المؤسسية", "Organization Assets Registry")}</h3>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            {t(
+              "المصدر المركزي للشعارات المؤسسية: الاستيراد من المصادر الرسمية، الاعتماد، الإصدارات وسجل التدقيق.",
+              "The central register of institutional marks: official import, approval, versioning and audit."
+            )}
+          </p>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/organization-assets">{t("فتح السجل", "Open registry")}</Link>
+          </Button>
+        </div>
+      )}
 
       {/* Organization suspension — owner only */}
       {isOwner && (

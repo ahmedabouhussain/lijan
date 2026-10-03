@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
+import { buildOrgAssetIndex } from '../../shared/orgAssets.ts';
 
 // GetCommitteeMiniPortal — verified read for the Committee Mini-Portal Home.
 // Verifies committee membership server-side, returns committee + members + meetings + registers.
@@ -14,14 +15,22 @@ import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 async function buildOrgIndex(sr: any, ids: any[]) {
   const unique = [...new Set((ids || []).filter(Boolean))] as string[];
   const index: Record<string, any> = {};
+  // ONE registry lookup for the whole committee context — never a per-screen logo query.
+  const assetIndex = await buildOrgAssetIndex(sr, unique);
   await Promise.all(unique.map(async (id) => {
     const org = await sr.entities.Organization.get(id).catch(() => null);
     if (org) {
+      const asset = assetIndex[id];
       index[id] = {
         id: org.id,
+        public_id: org.public_id || null,
+        slug: org.slug || null,
         name_ar: org.name_ar,
         name_en: org.name_en,
-        logo_url: org.logo_url || null,
+        // The registry's approved + activated asset is the runtime source; the organization
+        // record is the fallback. A page never hotlinks an official website.
+        logo_url: asset?.stored_path || org.logo_url || null,
+        asset_version: asset?.version || null,
       };
     }
   }));
@@ -166,6 +175,8 @@ export default async function(req) {
           documents: documents || [],
           initiatives: initiatives || [],
         },
+        // The caller's OWN work-group seats, resolved by stored identity link — never by name.
+        my_workgroup_memberships: (workstreamMemberships || []).filter((m) => m.user_id === persona.user_id),
         counters: {
           members: orderedMembers.length,
           meetings: (meetings || []).length,
@@ -319,6 +330,8 @@ export default async function(req) {
         documents: documents || [],
         initiatives: initiatives || [],
       },
+      // The caller's OWN work-group seats, resolved by stored identity link — never by name.
+      my_workgroup_memberships: (workstreamMemberships || []).filter((m) => m.user_id === user.id),
       counters: {
         members: orderedMembers.length,
         meetings: (meetings || []).length,
@@ -327,7 +340,7 @@ export default async function(req) {
         minutes: (minutes || []).length,
         workstreams: orderedWorkstreams.length,
       },
-    });
+      });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

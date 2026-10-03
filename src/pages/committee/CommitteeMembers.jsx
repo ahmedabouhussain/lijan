@@ -10,8 +10,10 @@ import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
-import { MEMBER_ROLE } from "@/lib/raqeemUtils";
-import { Users, Plus, UserMinus, Loader2 } from "lucide-react";
+import { MEMBER_ROLE, WORKSTREAM_ROLE } from "@/lib/raqeemUtils";
+import CommitteeChairCard from "@/components/raqeem/CommitteeChairCard";
+import { Users, Plus, UserMinus, Loader2, Network } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { L } from "@/lib/l10n";
 
@@ -44,6 +46,22 @@ export default function CommitteeMembers() {
   // Institutional identity (name + approved logo) resolved once for the whole committee context.
   const orgIndex = data.org_index || {};
   const displayName = (m) => (lang === "ar" ? m.full_name_ar || m.full_name : m.full_name);
+  const workGroups = data.workstreams || [];
+
+  // The chair is an office resolved from the stored seat; the mark shown is the institution's.
+  const chairSeat = ordered.find((m) => m.role === "chair") || null;
+  const chairOrg = chairSeat?.represented_organization_id ? orgIndex[chairSeat.represented_organization_id] : null;
+
+  // Work-group seats are joined by the STORED link (committee_membership_id) — never by name, so a
+  // person serving in more than one group keeps ONE file with several group seats shown inside it.
+  const workGroupSeats = (m) =>
+    (data.workstream_memberships || [])
+      .filter((s) => s.committee_membership_id === m.id && s.status === "active")
+      .map((s) => {
+        const g = workGroups.find((w) => w.id === s.workstream_id);
+        return { ...s, groupNameAr: g?.name_ar, groupNameEn: g?.name_en };
+      })
+      .filter((s) => s.groupNameAr || s.groupNameEn);
 
   const handleEnd = async (memberId) => {
     await execute("EndCommitteeMembership", {
@@ -70,6 +88,8 @@ export default function CommitteeMembers() {
           </Button>
         )}
       />
+
+      {chairSeat && <CommitteeChairCard chair={chairSeat} org={chairOrg} logoUrl={chairOrg?.logo_url} />}
 
       {showCreate && canManageMembership && (
         <CrudFormDialog
@@ -105,12 +125,32 @@ export default function CommitteeMembers() {
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground truncate">{displayName(m)}</div>
                   <div className="mt-0.5">
-                    <OrganizationIdentity
-                      org={orgIndex[m.represented_organization_id]}
-                      size="row"
-                      nameClassName="text-xs text-muted-foreground"
-                    />
+                    {(() => {
+                      const org = orgIndex[m.represented_organization_id];
+                      const identity = <OrganizationIdentity org={org} size="row" nameClassName="text-xs text-muted-foreground" />;
+                      // The mark opens the institution's own file.
+                      return org?.public_id ? (
+                        <Link to={`/o/${org.public_id}`} className="sovereign-focus rounded inline-flex">
+                          {identity}
+                        </Link>
+                      ) : (
+                        identity
+                      );
+                    })()}
                   </div>
+                  {workGroupSeats(m).length > 0 && (
+                    <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                      {workGroupSeats(m).map((seat) => (
+                        <span
+                          key={seat.id}
+                          className="inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded border border-border text-muted-foreground"
+                        >
+                          <Network className="w-3 h-3" aria-hidden="true" />
+                          {lang === "ar" ? seat.groupNameAr : seat.groupNameEn} · {L.label(WORKSTREAM_ROLE, seat.role, seat.role)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">

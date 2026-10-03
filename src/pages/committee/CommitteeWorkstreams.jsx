@@ -1,19 +1,44 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import PageHeader from "@/components/raqeem/PageHeader";
-import StatusBadge from "@/components/raqeem/StatusBadge";
-import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
-import { Progress } from "@/components/ui/progress";
-import { Network, ChevronLeft, ChevronRight, Users2, CalendarClock } from "lucide-react";
-import { WORKSTREAM_STATUS, FIRST_MEETING_STATUS } from "@/lib/raqeemUtils";
-import { L } from "@/lib/l10n";
+import WorkGroupCard from "@/components/workgroups/WorkGroupCard";
+import { Network } from "lucide-react";
 
-// Workstreams of the active committee. Served from the committee-scoped context so no page
-// can combine or leak another committee's workstreams.
+// Every figure on a work-group card is derived from the committee's own records.
+// Nothing is authored here: a group with no actions shows zero actions.
+const OPEN_ACTION_STATUSES = new Set(["assigned", "in_progress", "blocked", "evidence_pending", "under_review", "overdue"]);
+
+function countsFor(workGroup, memberships, actions, initiatives, lang) {
+  const groupMembers = memberships.filter((m) => m.workstream_id === workGroup.id && m.status === "active");
+  const groupActions = actions.filter((a) => a.workstream_id === workGroup.id);
+  const open = groupActions.filter((a) => isOpen(a));
+  const groupName = lang === "ar" ? workGroup.name_ar : workGroup.name_en;
+  const groupInitiatives = initiatives.filter((i) =>
+    (i.workstream_ar || i.workstream_en) === groupName
+  );
+
+  // Meetings are counted from the register only: a meeting the group's own actions reference.
+  const meetingIds = new Set(groupActions.map((a) => a.meeting_id).filter(Boolean));
+  const deadlines = open.map((a) => a.deadline).filter(Boolean).sort();
+
+  return {
+    memberCount: groupMembers.length,
+    meetingsCount: meetingIds.size,
+    initiativesCount: groupInitiatives.length,
+    openActionsCount: open.length,
+    nextDeadline: deadlines[0] || null,
+  };
+}
+
+function isOpen(action) {
+  if (!action.status) return true;
+  return OPEN_ACTION_STATUSES.has(action.status) || action.status === "assigned";
+}
+
 export default function CommitteeWorkstreams() {
   const { orgRef, committeeRef } = useParams();
   const { data } = useCommittee();
@@ -21,13 +46,14 @@ export default function CommitteeWorkstreams() {
 
   if (!data) return <TableSkeleton rows={4} />;
 
-  const workstreams = data.workstreams || [];
+  const workGroups = data.workstreams || [];
   const memberships = data.workstream_memberships || [];
   const orgIndex = data.org_index || {};
+  const actions = data.registers?.actions || [];
+  const initiatives = data.registers?.initiatives || [];
   const base = `/o/${orgRef}/c/${committeeRef}`;
-  const Arrow = lang === "ar" ? ChevronLeft : ChevronRight;
 
-  if (workstreams.length === 0) {
+  if (workGroups.length === 0) {
     return (
       <div className="space-y-4">
         <PageHeader icon={Network} title={t("مجموعات العمل", "Work Groups")} />
@@ -48,95 +74,31 @@ export default function CommitteeWorkstreams() {
       <PageHeader
         icon={Network}
         title={t("مجموعات العمل", "Work Groups")}
-        subtitle={t("متابعة مجموعات العمل وتقدّمها", "Follow-up of work groups and their progress")}
-        badge={<span className="text-sm text-muted-foreground">({workstreams.length})</span>}
+        subtitle={t(
+          "المجموعات التشغيلية المنبثقة عن اللجنة، ورؤساؤها والجهات المشاركة فيها.",
+          "The committee's operational work groups, their leads and participating institutions."
+        )}
+        badge={<span className="text-sm text-muted-foreground arabic-figures">({workGroups.length})</span>}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        {workstreams.map((ws) => {
-          const active = memberships.filter((m) => m.workstream_id === ws.id && m.status === "active");
-          const leadOrg = ws.lead_organization_id ? orgIndex[ws.lead_organization_id] : null;
-          const status = L.status(WORKSTREAM_STATUS, ws.status, ws.status);
-          const firstMeeting = L.status(FIRST_MEETING_STATUS, ws.first_meeting_status || "not_yet_scheduled", ws.first_meeting_status);
-          const participatingOrgs = (ws.participating_organization_ids || []).map((id) => orgIndex[id]).filter(Boolean);
-          const shownOrgs = participatingOrgs.slice(0, 4);
-          const extraOrgsCount = Math.max(0, participatingOrgs.length - shownOrgs.length);
+        {workGroups.map((wg) => {
+          const counts = countsFor(wg, memberships, actions, initiatives, lang);
+          const leadOrg = wg.lead_organization_id ? orgIndex[wg.lead_organization_id] : null;
+          const participants = (wg.participating_organization_ids || []).map((id) => orgIndex[id]).filter(Boolean);
           return (
-            <Link
-              key={ws.id}
-              to={`${base}/workstreams/${ws.id}`}
-              className="raqeem-card-interactive p-4 block group"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-foreground truncate">
-                    {lang === "ar" ? ws.name_ar : ws.name_en}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    {lang === "ar" ? ws.mandate_ar : ws.mandate_en}
-                  </p>
-                </div>
-                <StatusBadge label={status.label} colorClass={status.colorClass} />
-              </div>
-
-              <dl className="mt-3 space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <dt className="text-xs text-muted-foreground">{t("قائد المسار", "Lead")}</dt>
-                  <dd className="min-w-0">
-                    <OrganizationIdentity org={leadOrg} size="row" nameClassName="text-xs font-medium" />
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <dt className="text-xs text-muted-foreground inline-flex items-center gap-1">
-                    <Users2 className="w-3 h-3" aria-hidden="true" />{t("الأعضاء", "Members")}
-                  </dt>
-                  <dd className="text-xs font-medium arabic-figures">{active.length}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <dt className="text-xs text-muted-foreground inline-flex items-center gap-1">
-                    <CalendarClock className="w-3 h-3" aria-hidden="true" />{t("الاجتماع الأول", "First meeting")}
-                  </dt>
-                  <dd className="text-xs font-medium">
-                    {ws.first_meeting_status === "held" && ws.first_meeting_date
-                      ? L.date(ws.first_meeting_date)
-                      : firstMeeting.label}
-                  </dd>
-                </div>
-                {shownOrgs.length > 0 && (
-                  <div className="flex items-center justify-between gap-2">
-                    <dt className="text-xs text-muted-foreground">{t("الجهات المشاركة", "Participating institutions")}</dt>
-                    <dd className="flex items-center -space-x-1.5 rtl:space-x-reverse">
-                      {shownOrgs.map((org, i) => (
-                        <span key={i} className="w-6 h-6 rounded-full bg-white border border-border flex items-center justify-center overflow-hidden shrink-0" title={lang === "ar" ? org.name_ar : org.name_en}>
-                          {org.logo_url ? (
-                            <img src={org.logo_url} alt="" className="w-full h-full object-contain p-0.5" />
-                          ) : (
-                            <span className="text-[9px] font-semibold text-muted-foreground">{(lang === "ar" ? org.name_ar : org.name_en)?.[0]}</span>
-                          )}
-                        </span>
-                      ))}
-                      {extraOrgsCount > 0 && (
-                        <span className="w-6 h-6 rounded-full bg-secondary border border-border flex items-center justify-center text-[9px] font-semibold text-muted-foreground shrink-0">
-                          +{extraOrgsCount}
-                        </span>
-                      )}
-                    </dd>
-                  </div>
-                )}
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <dt className="text-xs text-muted-foreground">{t("التقدم", "Progress")}</dt>
-                    <dd className="text-xs font-medium arabic-figures">{ws.progress_percent || 0}%</dd>
-                  </div>
-                  <Progress value={ws.progress_percent || 0} className="h-1.5" />
-                </div>
-              </dl>
-
-              <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs font-medium text-primary">
-                <span>{t("فتح مساحة العمل", "Open workspace")}</span>
-                <Arrow className="w-3.5 h-3.5" />
-              </div>
-            </Link>
+            <WorkGroupCard
+              key={wg.id}
+              workGroup={wg}
+              leadOrg={leadOrg}
+              participants={participants}
+              memberCount={counts.memberCount}
+              meetingsCount={counts.meetingsCount}
+              initiativesCount={counts.initiativesCount}
+              openActionsCount={counts.openActionsCount}
+              nextDeadline={counts.nextDeadline}
+              href={`${base}/workstreams/${wg.id}`}
+            />
           );
         })}
       </div>

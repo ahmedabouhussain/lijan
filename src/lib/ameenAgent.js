@@ -45,6 +45,23 @@ export const AMEEN_CONTEXTS = {
       { ar: "ما الموضوعات التي تحتاج قراراً؟", en: "What needs a decision?" },
     ],
   },
+  workgroup: {
+    key: "workgroup",
+    label: { ar: "سياق مجموعة العمل", en: "Work group context" },
+    scopeNote: {
+      ar: "يستخدم أمين بيانات مجموعة العمل الحالية فقط: اجتماعاتها، قراراتها، إجراءاتها، مبادراتها ووثائقها المصرّح لك بالوصول إليها.",
+      en: "Ameen uses this work group's own data only: its meetings, decisions, actions, initiatives and the documents you are authorized to reach.",
+    },
+    prompts: [
+      { ar: "لخّص آخر اجتماع لمجموعة العمل.", en: "Summarise the work group's latest meeting." },
+      { ar: "استخرج القرارات الصادرة عن المجموعة.", en: "Extract the decisions issued by the group." },
+      { ar: "ما الإجراءات المتأخرة؟", en: "Which actions are overdue?" },
+      { ar: "أنشئ موجزًا لرئيس المجموعة.", en: "Create a brief for the work group lead." },
+      { ar: "اعرض أعضاء المجموعة والجهات التي يمثلونها.", en: "Show the group's members and the institutions they represent." },
+      { ar: "قارن المبادرات بحالة التنفيذ.", en: "Compare the initiatives with their delivery status." },
+      { ar: "لخّص الملفات الجديدة منذ آخر اجتماع.", en: "Summarise the new files since the last meeting." },
+    ],
+  },
   meeting: {
     key: "meeting",
     label: { ar: "سياق الاجتماع", en: "Meeting context" },

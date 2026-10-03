@@ -35,6 +35,8 @@ import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
+// Central institutional identity register — platform administration only.
+const OrganizationAssetsAdmin = lazy(() => import('@/pages/OrganizationAssetsAdmin'));
 
 // Organization Portal (Level 2) — loaded on entering the portal, not on first paint.
 const OrgLayout = lazy(() => import('@/components/raqeem/OrgLayout'));
@@ -171,6 +173,9 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/governance" element={<GovernanceHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/workstreams" element={<CommitteeWorkstreams />} />
           <Route path="/o/:orgRef/c/:committeeRef/workstreams/:workstreamId" element={<WorkstreamDetail />} />
+          {/* Work Groups — the same governed surfaces under their published name */}
+          <Route path="/o/:orgRef/c/:committeeRef/work-groups" element={<CommitteeWorkstreams />} />
+          <Route path="/o/:orgRef/c/:committeeRef/work-groups/:workstreamId" element={<WorkstreamDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/meetings/:id" element={<MeetingDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/calendar" element={<CommitteeCalendar />} />
           <Route path="/o/:orgRef/c/:committeeRef/agenda" element={<CommitteeAgenda />} />
@@ -204,6 +209,9 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/products" element={<ProductCatalog />} />
           <Route path="/o/:orgRef/c/:committeeRef/documentation" element={<DocumentationHub />} />
         </Route>
+
+        {/* Central institutional identity register */}
+        <Route path="/organization-assets" element={<OrganizationAssetsAdmin />} />
 
         {/* Administrative oversight logs */}
         <Route path="/activity-log" element={<ActivityLog />} />

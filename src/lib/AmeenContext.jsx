@@ -26,6 +26,8 @@ export function AmeenProvider({ children }) {
 
   const [verified, setVerified] = useState(null);
   const [verifying, setVerifying] = useState(false);
+  // A quick action on a page hands «أمين» a prompt; the chat surface opens and consumes it once.
+  const [pendingPrompt, setPendingPrompt] = useState(null);
 
   const actorId = effectiveActor?.id || null;
   const active = isAuthenticated || isDemoMode;
@@ -77,12 +79,14 @@ export function AmeenProvider({ children }) {
   const roleProfile = getAmeenRoleProfile(role);
 
   // Isolation key — conversations never cross actor, organization, committee or context.
+  // A work-group scope is keyed by the GROUP, so two groups in one committee never share a thread.
   const scopeKey = [
     isDemoMode ? "demo" : "live",
     actorId || "anonymous",
     route.orgRef || "-",
     route.committeeRef || "-",
     route.contextKey,
+    route.contextKey === "workgroup" ? route.entityId || "-" : "-",
   ].join("::");
 
   const value = {
@@ -113,6 +117,9 @@ export function AmeenProvider({ children }) {
     authorityContext: verified?.authority_context || null,
     persona: verified?.persona || null,
     scopeKey,
+    pendingPrompt,
+    askAmeen: setPendingPrompt,
+    consumeAmeenPrompt: () => setPendingPrompt(null),
     lang,
     t,
   };
