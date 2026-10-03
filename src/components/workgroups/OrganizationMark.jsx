@@ -55,10 +55,11 @@ export default function OrganizationMark({
   // The mark is chosen for the ground it sits on: the reversed edition on a dark surface,
   // the primary edition otherwise, falling back to the institution's own approved record.
   const dark = tone === "dark";
-  const src =
-    (dark ? logoUrlOnDark || org?.logo_on_dark_url || logoUrl : logoUrl) ||
-    org?.logo_url ||
-    null;
+  // A reversed edition is used ONLY when the registry actually holds one. Without it the primary
+  // edition is rendered on a clean LIGHT plate, so the official mark keeps its own colours and
+  // stays legible on a dark ground — never a dark mark on a near-black plate.
+  const onDarkEdition = dark ? logoUrlOnDark || org?.logo_on_dark_url || null : null;
+  const src = onDarkEdition || logoUrl || org?.logo_url || null;
   const label = title || (org ? t(`شعار ${org.name_ar}`, `${org.name_en} logo`) : "");
 
   if (src) {
@@ -68,7 +69,7 @@ export default function OrganizationMark({
           // A clean neutral ground with breathing space: the mark keeps its own aspect ratio,
           // is never cropped, stretched or recoloured, and vectors stay vectors.
           "shrink-0 inline-flex items-center justify-center rounded border p-0.5",
-          dark ? "bg-neutral-900 border-white/10" : "bg-white border-border/60",
+          onDarkEdition ? "bg-neutral-900 border-white/10" : "bg-white border-border/60",
           BOX[size] || BOX.row,
           className
         )}

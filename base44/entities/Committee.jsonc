@@ -209,6 +209,28 @@
       "type": "string",
       "title": "Audit Correlation ID"
     },
+    "merge_status": {
+      "type": "string",
+      "title": "Merge Status (non-destructive de-duplication)",
+      "enum": [
+        "active",
+        "merged_duplicate"
+      ],
+      "default": "active"
+    },
+    "merged_into_committee_id": {
+      "type": "string",
+      "title": "Merged Into Committee ID (the surviving authoritative record)"
+    },
+    "merged_at": {
+      "type": "string",
+      "title": "Merged At",
+      "format": "date-time"
+    },
+    "merge_reason": {
+      "type": "string",
+      "title": "Merge Reason / Source Note"
+    },
     "is_demo_data": {
       "type": "boolean",
       "title": "Is Demo Data",

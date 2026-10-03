@@ -24,6 +24,11 @@ async function buildOrgIndex(sr: any, ids: any[]) {
       // The registry's approved + activated asset is the runtime source; the organization
       // record is the fallback. A page never hotlinks an official website.
       const primary = slot.primary?.stored_path || org.logo_url || null;
+      // The reversed edition is a SEPARATE approved asset — never the primary re-used under
+      // another name. When the registry holds no on_dark edition this stays null, so a dark
+      // ground falls back to a clean light plate and keeps the official colours intact instead
+      // of rendering a dark mark on a near-black plate.
+      const onDarkEdition = slot.on_dark?.stored_path || null;
       index[id] = {
         id: org.id,
         public_id: org.public_id || null,
@@ -33,7 +38,7 @@ async function buildOrgIndex(sr: any, ids: any[]) {
         // Each background tone resolves its own edition, so a dark ground never gets the
         // primary mark and vice versa.
         logo_url: primary,
-        logo_on_dark_url: slot.on_dark?.stored_path || primary,
+        logo_on_dark_url: onDarkEdition,
         asset_version: slot.primary?.version || null,
         asset_version_on_dark: slot.on_dark?.version || null,
       };
