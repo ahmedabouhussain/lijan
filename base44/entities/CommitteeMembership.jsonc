@@ -55,6 +55,30 @@
       ],
       "default": "decision"
     },
+    "represented_organization_id": {
+      "type": "string",
+      "title": "Represented Organization ID (the entity this member represents)"
+    },
+    "membership_type": {
+      "type": "string",
+      "title": "Membership Type",
+      "enum": [
+        "internal",
+        "represented",
+        "external"
+      ],
+      "default": "internal"
+    },
+    "is_external_membership": {
+      "type": "boolean",
+      "title": "External Membership",
+      "default": false
+    },
+    "is_demonstration_role": {
+      "type": "boolean",
+      "title": "Demonstration Role (synthetic)",
+      "default": false
+    },
     "voting_right": {
       "type": "boolean",
       "title": "Voting Right",

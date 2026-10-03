@@ -16,6 +16,7 @@ import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import { L } from "@/lib/l10n";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
@@ -166,6 +167,19 @@ function CommitteeShell() {
         {!infoCollapsed && (
           <>
             <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">{committee.name_en}</p>
+            {/* The institution that owns this committee — never the committee name itself */}
+            {data?.owning_org && (
+              <span className="mt-1.5 flex items-center gap-1.5 min-w-0">
+                <span className="text-[10px] text-sidebar-foreground/40 shrink-0">
+                  {t("الجهة المالكة للجنة", "Committee Owning Entity")}:
+                </span>
+                <OrganizationIdentity
+                  org={data.owning_org}
+                  size="row"
+                  nameClassName="text-[11px] text-sidebar-foreground/70 truncate"
+                />
+              </span>
+            )}
             <div className="flex items-center gap-2 mt-2">
               <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="sm" />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sidebar-accent/30 text-sidebar-accent-foreground">

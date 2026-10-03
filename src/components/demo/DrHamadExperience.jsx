@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Building2, Users, Crown, Pen, User, AlertTriangle, FileText, CheckSquare,
-  CalendarClock, ChevronLeft, Loader2, Sparkles, Gauge, Globe2, Building,
+  CalendarClock, ChevronLeft, Loader2, Sparkles, Gauge, Globe2,
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -19,11 +19,20 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { WorkspaceSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import AgentChatPanel from "@/components/raqeem/AgentChatPanel";
+import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import { cn } from "@/lib/utils";
 
 const ROLE_ICONS = { chair: Crown, vice_chair: Crown, secretary: Pen, member: User };
 
-const CONTEXT_ICONS = { QDB: Building, NATIONAL: Globe2, ELAN: Building2 };
+// Affiliation wording — resolved from the membership record (its type and the entity it
+// represents), never from the committee name or its owning organization.
+function affiliationLabel(c, t) {
+  const ar = `ممثل ${c.represented_org_ar}`;
+  const en = `Representing ${c.represented_org_en}`;
+  if (c.is_external_membership) return t(`عضوية خارجية — ${ar}`, `External Membership — ${en}`);
+  if (c.membership_type === "represented") return t(ar, en);
+  return t(`عضوية داخلية في ${c.represented_org_ar}`, `Internal membership at ${c.represented_org_en}`);
+}
 
 function formatDate(value, lang) {
   if (!value) return null;
@@ -70,7 +79,7 @@ export default function DrHamadExperience() {
     return <EmptyState icon={AlertTriangle} title={t("تعذّر تحميل تجربة العرض", "Failed to load the exploration experience")} description={error} />;
   }
 
-  const { profile, summary, sections, role_tally_copy, role_labels } = data;
+  const { profile, summary, sections, role_tally_copy, role_labels, primary_org: primaryOrg } = data;
   const allCommittees = (sections || []).flatMap((s) => s.committees || []);
   const attentionList = allCommittees
     .filter((c) => (c.indicators?.items_needing_attention || 0) > 0)
@@ -101,7 +110,13 @@ export default function DrHamadExperience() {
         <h1 className="text-xl font-bold text-foreground">
           {t(`مرحبًا، ${profile.name_ar}`, `Welcome, ${profile.name_en}`)}
         </h1>
-        <p className="text-sm font-semibold text-primary mt-1">{lang === "ar" ? profile.primary_org_ar : profile.primary_org_en}</p>
+        <div className="mt-1.5">
+          <OrganizationIdentity
+            org={primaryOrg || { name_ar: profile.primary_org_ar, name_en: profile.primary_org_en }}
+            size="card"
+            nameClassName="text-sm font-semibold text-primary"
+          />
+        </div>
         <p className="text-xs text-muted-foreground mt-0.5">
           {lang === "ar" ? profile.job_title_ar : profile.job_title_en}
           {profile.job_title_is_demo_wording && (
@@ -187,14 +202,11 @@ export default function DrHamadExperience() {
 
       {/* Three contextual sections */}
       {sections.map((section) => {
-        const ContextIcon = CONTEXT_ICONS[section.key] || Building2;
         return (
           <div key={section.key} className="raqeem-card overflow-hidden">
             <div className="p-4 border-b border-border bg-secondary/20">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                  <ContextIcon className="w-4 h-4 text-primary" />
-                </div>
+              <div className="flex items-start gap-2.5">
+                <OrganizationIdentity org={section.owning_org} size="header" showName={false} className="mt-0.5" />
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold text-foreground truncate">
                     {lang === "ar" ? section.title_ar : section.title_en}
@@ -229,7 +241,6 @@ export default function DrHamadExperience() {
             <div className="divide-y divide-border">
               {section.committees.map((c) => {
                 const RoleIcon = ROLE_ICONS[c.role] || User;
-                const represented = c.owning_org?.public_id !== "DEMO-ORG-QDB";
                 const nextMeeting = formatDate(c.indicators?.next_meeting?.date, lang);
                 return (
                   <button
@@ -242,9 +253,24 @@ export default function DrHamadExperience() {
                         <div className="text-sm font-medium text-foreground truncate">
                           {lang === "ar" ? c.name_ar : c.name_en}
                         </div>
-                        <div className="text-[11px] text-muted-foreground truncate mt-0.5">
-                          {lang === "ar" ? c.owning_org?.name_ar : c.owning_org?.name_en}
-                          {represented && ` · ${t("جهة التمثيل", "Representing")}: ${lang === "ar" ? c.represented_org_ar : c.represented_org_en}`}
+                        {/* Committee owner and represented entity — two distinct relationships */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                          <span className="inline-flex items-center gap-1.5 min-w-0">
+                            <span className="text-[10px] text-muted-foreground/70 shrink-0">
+                              {t("الجهة المالكة للجنة", "Committee Owning Entity")}:
+                            </span>
+                            <OrganizationIdentity
+                              org={c.owning_org}
+                              size="row"
+                              nameClassName="text-[11px] text-muted-foreground truncate"
+                            />
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 min-w-0">
+                            <OrganizationIdentity org={c.represented_org} size="row" showName={false} />
+                            <span className="text-[11px] text-muted-foreground truncate">
+                              {affiliationLabel(c, t)}
+                            </span>
+                          </span>
                         </div>
                         {c.workstream_ar && (
                           <div className="text-[11px] text-muted-foreground truncate mt-0.5">

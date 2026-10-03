@@ -103,8 +103,19 @@ export default async function(req) {
         sr.entities.Delegation.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
       ]);
 
+      const owningOrg = await sr.entities.Organization.get(committee.organization_id).catch(() => null);
+
       return Response.json({
         committee,
+        // The owning institutional identity, resolved from the organization record.
+        owning_org: owningOrg
+          ? {
+            public_id: owningOrg.public_id,
+            name_ar: owningOrg.name_ar,
+            name_en: owningOrg.name_en,
+            logo_url: owningOrg.logo_url || null,
+          }
+          : null,
         mandate: mandate || null,
         my_role: effectiveRole,
         is_oversight: false,
@@ -227,8 +238,19 @@ export default async function(req) {
     // Set user's active context
     await base44.auth.updateMe({ active_org_id: committee.organization_id, active_committee_id: committee.id }).catch(() => {});
 
+    const owningOrg = await base44.asServiceRole.entities.Organization.get(committee.organization_id).catch(() => null);
+
     return Response.json({
       committee,
+      // The owning institutional identity, resolved from the organization record.
+      owning_org: owningOrg
+        ? {
+          public_id: owningOrg.public_id,
+          name_ar: owningOrg.name_ar,
+          name_en: owningOrg.name_en,
+          logo_url: owningOrg.logo_url || null,
+        }
+        : null,
       mandate: mandate || null,
       my_role: effectiveRole,
       is_oversight: isOversight,

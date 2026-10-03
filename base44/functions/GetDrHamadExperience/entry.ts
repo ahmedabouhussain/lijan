@@ -51,6 +51,12 @@ export default async function (req) {
       return true;
     });
 
+    // The persona's permanent primary organization — resolved once from its own record.
+    // Every membership references it as the represented entity; it is never changed by
+    // navigating between committees.
+    const primaryOrg = (await sr.entities.Organization
+      .filter({ public_id: DR_HAMAD_PERSONA.primary_org_public_id }).catch(() => []) || [])[0] || null;
+
     // ── Resolve the committees + owning organizations of those memberships ──
     const committees = [];
     for (const membership of active) {
@@ -88,6 +94,12 @@ export default async function (req) {
       const grant = (grants || [])[0] || null;
       const delegationActive = !!grant && grant.delegation_status === 'active';
 
+      // The entity this member represents is carried by the membership record itself —
+      // never inferred from the committee's owning organization.
+      const representedOrg = membership.represented_organization_id
+        ? await sr.entities.Organization.get(membership.represented_organization_id).catch(() => null)
+        : primaryOrg;
+
       // Role boundary — stated, never granted across committees.
       const boundary = DR_HAMAD_ROLE_BOUNDARIES[membership.role] || null;
       const roleLabelAr = def?.role_label_ar || ROLE_LABELS[membership.role]?.ar || membership.role;
@@ -101,11 +113,29 @@ export default async function (req) {
         name_en: committee.name_en,
         type: committee.type,
         status: committee.status,
+        // Owning entity of the committee, with its approved institutional logo.
         owning_org: owningOrg
-          ? { public_id: owningOrg.public_id, name_ar: owningOrg.name_ar, name_en: owningOrg.name_en }
+          ? {
+            public_id: owningOrg.public_id,
+            name_ar: owningOrg.name_ar,
+            name_en: owningOrg.name_en,
+            logo_url: owningOrg.logo_url || null,
+          }
           : null,
-        represented_org_ar: DR_HAMAD_PERSONA.primary_org_ar,
-        represented_org_en: DR_HAMAD_PERSONA.primary_org_en,
+        // The organization this member represents — separate from the committee's owner.
+        represented_org: representedOrg
+          ? {
+            public_id: representedOrg.public_id,
+            name_ar: representedOrg.name_ar,
+            name_en: representedOrg.name_en,
+            logo_url: representedOrg.logo_url || null,
+          }
+          : null,
+        membership_type: membership.membership_type || (owningOrg && primaryOrg && owningOrg.id === primaryOrg.id ? 'internal' : 'represented'),
+        is_external_membership: membership.is_external_membership === true,
+        is_demonstration_role: membership.is_demonstration_role === true,
+        represented_org_ar: representedOrg?.name_ar || DR_HAMAD_PERSONA.primary_org_ar,
+        represented_org_en: representedOrg?.name_en || DR_HAMAD_PERSONA.primary_org_en,
         role: membership.role,
         role_label_ar: roleLabelAr,
         role_label_en: roleLabelEn,
@@ -148,10 +178,16 @@ export default async function (req) {
     }
 
     // ── Section grouping (three institutional contexts) ──
-    const sections = drHamadSections().map((section) => ({
-      ...section,
-      committees: withIndicators.filter((c) => section.committee_public_ids.includes(c.public_id)),
-    }));
+    // Each section carries the owning institutional identity of the committees it holds —
+    // resolved from the records, so a national committee is never presented as QDB-owned.
+    const sections = drHamadSections().map((section) => {
+      const sectionCommittees = withIndicators.filter((c) => section.committee_public_ids.includes(c.public_id));
+      return {
+        ...section,
+        committees: sectionCommittees,
+        owning_org: sectionCommittees.map((c) => c.owning_org).find(Boolean) || null,
+      };
+    });
 
     const roleRowset = withIndicators.map((c) => ({ role: c.role }));
     const tally = tallyRoles(roleRowset);
@@ -203,6 +239,14 @@ export default async function (req) {
         primary_org_en: DR_HAMAD_PERSONA.primary_org_en,
         primary_org_abbr: DR_HAMAD_PERSONA.primary_org_abbr,
       },
+      primary_org: primaryOrg
+        ? {
+          public_id: primaryOrg.public_id,
+          name_ar: primaryOrg.name_ar,
+          name_en: primaryOrg.name_en,
+          logo_url: primaryOrg.logo_url || null,
+        }
+        : null,
       contexts: Object.entries(DR_HAMAD_ORGS).map(([key, org]) => ({
         key,
         public_id: org.public_id,
