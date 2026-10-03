@@ -119,7 +119,7 @@ export default function CommitteeSettings() {
 
           <div className="raqeem-card p-4">
             <h3 className="text-sm font-semibold mb-2">{t("الصلاحية", "Mandate")}</h3>
-            <p className="text-sm text-foreground/80 leading-relaxed">{mandate?.text || committee.mandate || t("غير محدد", "Not defined")}</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">{L.name(committee, "mandate") || L.name(mandate, "text") || t("غير محدد", "Not defined")}</p>
           </div>
         </>
       )}

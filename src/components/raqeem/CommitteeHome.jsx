@@ -168,12 +168,12 @@ export default function CommitteeHome({ committee, members, meetings, decisions,
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-foreground truncate">{L.name(committee)}</h1>
               <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium shrink-0 ${roleBadgeClass}`}>
-                <RoleIcon className="w-3 h-3" /> {roleLabel.ar} · {roleLabel.en}
+                <RoleIcon className="w-3 h-3" /> {L.pair(roleLabel.ar, roleLabel.en)}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">{committee.name_en}</p>
-            {committee.mandate && (
-              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{committee.mandate}</p>
+            <p className="text-sm text-muted-foreground">{L.name(committee, "name")}</p>
+            {L.name(committee, "mandate") && (
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{L.name(committee, "mandate")}</p>
             )}
           </div>
         </div>

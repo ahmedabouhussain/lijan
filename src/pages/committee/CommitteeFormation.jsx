@@ -194,13 +194,13 @@ export default function CommitteeFormation() {
           <div>
             <div className="text-[11px] text-muted-foreground mb-1">{t("الصلاحية", "Mandate")}</div>
             <div className="text-sm whitespace-pre-wrap rounded-md bg-secondary/30 p-3 min-h-[3rem]">
-              {committee.mandate || t("غير محدد", "Not specified")}
+              {L.name(committee, "mandate") || t("غير محدد", "Not specified")}
             </div>
           </div>
           <div>
             <div className="text-[11px] text-muted-foreground mb-1">{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</div>
             <div className="text-sm whitespace-pre-wrap rounded-md bg-secondary/30 p-3 min-h-[3rem]">
-              {committee.scope || t("غير محدد", "Not specified")}
+              {L.name(committee, "scope") || t("غير محدد", "Not specified")}
             </div>
           </div>
         </div>

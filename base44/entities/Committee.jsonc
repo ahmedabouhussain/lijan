@@ -59,9 +59,17 @@
       "type": "string",
       "title": "Mandate / \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629"
     },
+    "mandate_en": {
+      "type": "string",
+      "title": "Mandate Text (English)"
+    },
     "establishing_authority": {
       "type": "string",
       "title": "Establishing Authority"
+    },
+    "establishing_authority_en": {
+      "type": "string",
+      "title": "Establishing Authority (English)"
     },
     "establishing_doc_type": {
       "type": "string",
@@ -89,9 +97,17 @@
       "type": "string",
       "title": "Appointing Authority (V2)"
     },
+    "appointing_authority_en": {
+      "type": "string",
+      "title": "Appointing Authority (English)"
+    },
     "scope": {
       "type": "string",
       "title": "Scope & Responsibilities"
+    },
+    "scope_en": {
+      "type": "string",
+      "title": "Scope & Responsibilities (English)"
     },
     "term_start": {
       "type": "string",
@@ -159,6 +175,10 @@
     "reporting_requirements": {
       "type": "string",
       "title": "Reporting Requirements"
+    },
+    "reporting_requirements_en": {
+      "type": "string",
+      "title": "Reporting Requirements (English)"
     },
     "status": {
       "type": "string",

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeMandate() {
   const { data, reload } = useCommittee();
@@ -24,12 +25,25 @@ export default function CommitteeMandate() {
   if (!data) return <TableSkeleton rows={4} />;
   const { committee, mandate, is_oversight } = data;
 
+  // One language per page: display and edit both resolve the ACTIVE language's own field,
+  // never the other language's text.
+  const KEY = {
+    mandate: lang === "ar" ? "mandate" : "mandate_en",
+    scope: lang === "ar" ? "scope" : "scope_en",
+    establishing_authority: lang === "ar" ? "establishing_authority" : "establishing_authority_en",
+    reporting_requirements: lang === "ar" ? "reporting_requirements" : "reporting_requirements_en",
+  };
+  const mandateText = L.name(committee, "mandate") || L.name(mandate, "text");
+  const scopeText = L.name(committee, "scope") || L.name(mandate, "scope");
+  const estAuth = L.name(committee, "establishing_authority") || L.name(mandate, "establishing_authority");
+  const appointingAuth = L.name(committee, "appointing_authority");
+
   const startEdit = () => {
     setForm({
-      mandate: committee.mandate || mandate?.text || "",
-      scope: committee.scope || mandate?.scope || "",
-      establishing_authority: committee.establishing_authority || mandate?.establishing_authority || "",
-      reporting_requirements: committee.reporting_requirements || mandate?.reporting_requirements || "",
+      [KEY.mandate]: mandateText || "",
+      [KEY.scope]: scopeText || "",
+      [KEY.establishing_authority]: estAuth || "",
+      [KEY.reporting_requirements]: L.name(committee, "reporting_requirements") || "",
     });
     setEditing(true);
     setError("");
@@ -71,10 +85,10 @@ export default function CommitteeMandate() {
             <Info className="w-3.5 h-3.5 shrink-0" />
             {t("التغييرات الجوهرية في الصلاحية تتطلب تعديلاً رسمياً مع تاريخ سريان.", "Material mandate changes require a formal amendment with effective date.")}
           </div>
-          <div><Label>{t("نص الصلاحية", "Mandate Text")}</Label><Textarea value={form.mandate} onChange={(e) => setForm(f => ({ ...f, mandate: e.target.value }))} rows={4} /></div>
-          <div><Label>{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</Label><Textarea value={form.scope} onChange={(e) => setForm(f => ({ ...f, scope: e.target.value }))} rows={3} /></div>
-          <div><Label>{t("الجهة المؤسِّسة", "Establishing Authority")}</Label><Input value={form.establishing_authority} onChange={(e) => setForm(f => ({ ...f, establishing_authority: e.target.value }))} /></div>
-          <div><Label>{t("متطلبات التقارير", "Reporting Requirements")}</Label><Textarea value={form.reporting_requirements} onChange={(e) => setForm(f => ({ ...f, reporting_requirements: e.target.value }))} rows={2} /></div>
+          <div><Label>{t("نص الصلاحية", "Mandate Text")}</Label><Textarea value={form[KEY.mandate] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.mandate]: e.target.value }))} rows={4} /></div>
+          <div><Label>{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</Label><Textarea value={form[KEY.scope] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.scope]: e.target.value }))} rows={3} /></div>
+          <div><Label>{t("الجهة المؤسِّسة", "Establishing Authority")}</Label><Input value={form[KEY.establishing_authority] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.establishing_authority]: e.target.value }))} /></div>
+          <div><Label>{t("متطلبات التقارير", "Reporting Requirements")}</Label><Textarea value={form[KEY.reporting_requirements] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.reporting_requirements]: e.target.value }))} rows={2} /></div>
           <Button onClick={submit} disabled={submitting} className="w-full min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("حفظ", "Save")}
           </Button>
@@ -83,22 +97,22 @@ export default function CommitteeMandate() {
         <div className="space-y-3">
           <div className="raqeem-card p-4">
             <h3 className="text-sm font-semibold mb-2">{t("نص الصلاحية", "Mandate Text")}</h3>
-            <p className="text-sm text-foreground/80 leading-relaxed">{mandate?.text || committee.mandate || t("غير محدد", "Not defined")}</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">{mandateText || t("غير محدد", "Not defined")}</p>
           </div>
-          {(committee.scope || mandate?.scope) && (
+          {scopeText && (
             <div className="raqeem-card p-4">
               <h3 className="text-sm font-semibold mb-2">{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</h3>
-              <p className="text-sm text-foreground/80 leading-relaxed">{committee.scope || mandate.scope}</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{scopeText}</p>
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="raqeem-card p-4">
               <h3 className="text-xs font-semibold text-muted-foreground mb-1">{t("الجهة المؤسِّسة", "Establishing Authority")}</h3>
-              <p className="text-sm">{committee.establishing_authority || mandate?.establishing_authority || "—"}</p>
+              <p className="text-sm">{estAuth || "—"}</p>
             </div>
             <div className="raqeem-card p-4">
               <h3 className="text-xs font-semibold text-muted-foreground mb-1">{t("الجهة المعيِّنة", "Appointing Authority")}</h3>
-              <p className="text-sm">{committee.appointing_authority || "—"}</p>
+              <p className="text-sm">{appointingAuth || "—"}</p>
             </div>
           </div>
         </div>
