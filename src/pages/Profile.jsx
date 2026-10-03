@@ -20,7 +20,6 @@ import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { resolveDemoPersona } from "@/lib/demoPersonas";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import DemoBanner from "@/components/raqeem/DemoBanner";
 
 export default function Profile() {
   const { isDemoMode, effectiveActor, demoPersonaKey } = useEffectiveActor();
@@ -147,7 +146,6 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      {isDemoMode && <DemoBanner />}
       <PageNav />
       <div>
         <h1 className="text-2xl font-bold text-foreground">{t("الملف الشخصي", "Profile")}</h1>
@@ -265,8 +263,8 @@ export default function Profile() {
         </div>
         <p className="text-xs text-muted-foreground -mt-2">
           {t(
-            "جهتك التابع لها — تُستخدم لمطابقة دخولك في بوابة الدخول المؤسسية",
-            "Your affiliated entity — used to match your entry at the Institutional Entry Portal"
+            "جهتك التابع لها — تُحل عضوياتك وصلاحياتك على الخادم بعد تسجيل الدخول",
+            "Your affiliated entity — your memberships and authority are resolved on the server after sign-in"
           )}
         </p>
 
@@ -310,8 +308,8 @@ export default function Profile() {
               <span className="text-muted-foreground">
                 {" — "}
                 {t(
-                  "ستظهر هذه الجهة كمطابقة عند دخولك من بوابة الدخول المؤسسية",
-                  "This entity will appear as a match when you sign in from the Institutional Entry Portal"
+                  "تُعرض هذه الجهة كسياقك المؤسسي الأساسي بعد تسجيل الدخول",
+                  "This entity is shown as your primary organizational context after sign-in"
                 )}
               </span>
             </p>

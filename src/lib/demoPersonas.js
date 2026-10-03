@@ -10,6 +10,7 @@
 export const DEMO_PERSONAS = {
   DR_HAMAD_MAJEEGHEER: {
     key: 'DR_HAMAD_MAJEEGHEER',
+    slug: 'dr-hamad',
     persona_id: 'demo-dr-hamad-majeegheer',
     user_id: 'DEMO-USER-DR-HAMAD-MAJEEGHEER',
     dataset: 'DR_HAMAD_GOVERNED_DEMO_V1',
@@ -28,6 +29,7 @@ export const DEMO_PERSONAS = {
   },
   FAHAD_AL_FIHAIDI: {
     key: 'FAHAD_AL_FIHAIDI',
+    slug: 'auditor',
     persona_id: 'demo-fahad-al-fihaidi',
     user_id: 'DEMO-USER-FAHAD-AL-FIHAIDI',
     dataset: 'FAHAD_QATAR_GOVERNMENT_DEMO_V2',
@@ -52,4 +54,11 @@ export const DEFAULT_DEMO_PERSONA_KEY = 'DR_HAMAD_MAJEEGHEER';
 export function resolveDemoPersona(key) {
   if (!key || typeof key !== 'string') return null;
   return DEMO_PERSONAS[key] || null;
+}
+
+/** Resolve a persona by its stable route slug, e.g. /explore/dr-hamad → slug 'dr-hamad'. */
+export function resolvePersonaBySlug(slug) {
+  if (!slug || typeof slug !== 'string') return null;
+  const wanted = slug.trim().toLowerCase();
+  return Object.values(DEMO_PERSONAS).find((p) => p.slug === wanted) || null;
 }

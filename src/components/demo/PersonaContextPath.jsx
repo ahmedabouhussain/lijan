@@ -43,7 +43,6 @@ export default function PersonaContextPath() {
   const path = lang === "ar" ? current.context_path : current.context_path_en;
   const parts = path?.parts || [];
   const roleLabel = lang === "ar" ? current.role_label_ar : current.role_label_en;
-  const classification = lang === "ar" ? current.classification_label_ar : current.classification_label_en;
 
   return (
     <div className="mb-3 rounded-md border border-border bg-secondary/20 px-3 py-2" dir={lang === "ar" ? "rtl" : "ltr"}>
@@ -57,7 +56,6 @@ export default function PersonaContextPath() {
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[10px]">
         {roleLabel && <span className="text-primary font-medium">{roleLabel}</span>}
-        {classification && <span className="text-accent">{classification}</span>}
         {current.delegation_required && !current.delegation_active && (
           <span className="text-destructive">
             {lang === "ar" ? "يتطلب تفويضًا نافذًا لممارسة صلاحيات الرئيس" : "Chair powers require an active delegation"}

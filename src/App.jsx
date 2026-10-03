@@ -20,6 +20,8 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 // Page imports
 import EntryPortal from '@/pages/EntryPortal';
+import ExploreGateway from '@/pages/ExploreGateway';
+import ExploreSession from '@/pages/ExploreSession';
 import CreatePortal from '@/pages/CreatePortal';
 import Profile from '@/pages/Profile';
 import FounderVault from '@/pages/FounderVault';
@@ -116,6 +118,9 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<EntryPortal />} />
+      {/* Explore LIJAN — one gateway, one governed session, one stable route per persona */}
+      <Route path="/explore" element={<ExploreGateway />} />
+      <Route path="/explore/:personaSlug" element={<ExploreSession />} />
       <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/governance-policies" element={<GovernancePolicies />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
