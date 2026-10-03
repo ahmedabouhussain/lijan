@@ -19,7 +19,7 @@ function startBrowserDownload(url, filename) {
 }
 
 export default function useDocumentationPack() {
-  const { lang, dir, t } = useLanguage();
+  const { lang, dir, t, setLang } = useLanguage();
   const [release, setRelease] = useState(null);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -212,12 +212,18 @@ export default function useDocumentationPack() {
     }
   }, [release, edition, audit, t]);
 
+  // The in-page switch drives the whole page: interface direction, copy, and the document edition shown.
+  useEffect(() => {
+    setEdition(lang === "ar" ? "ar" : "en");
+  }, [lang]);
+
   const selectEdition = useCallback(
     (next) => {
       setEdition(next);
+      setLang(next);
       audit({ action: "language_selected", language: next, result: "success" });
     },
-    [audit]
+    [audit, setLang]
   );
 
   const selectCategory = useCallback(

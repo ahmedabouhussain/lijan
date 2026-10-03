@@ -6,8 +6,9 @@
    Noto Naskh Arabic — الخط العربي الرسمي المعتمد.
    Locally bundled (never fetched from an external font CDN) so Arabic
    rendering is stable in closed/offline sovereign environments.
-   Only four real weights are used — 400 / 500 / 600 / 700.
-   Artificial (faux) bold is forbidden: font-synthesis stays off.
+   Approved weights in release v1.1: Regular 400 (body) and Bold 700 (headings).
+   No 500 / 600 faces are declared and no synthetic weight is created:
+   font-synthesis stays off, so nothing is artificially emboldened.
    ────────────────────────────────────────────────────────────── */
 @font-face {
   font-family: 'Noto Naskh Arabic';
@@ -15,20 +16,6 @@
   font-weight: 400;
   font-display: swap;
   src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Noto Naskh Arabic';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Medium.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Noto Naskh Arabic';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-SemiBold.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Noto Naskh Arabic';

@@ -1,6 +1,7 @@
 import React from "react";
 import { AlertCircle, CheckCircle2, Loader2, X } from "lucide-react";
 import useDocumentationPack from "@/hooks/useDocumentationPack";
+import { usePageConfig } from "@/hooks/usePageConfig";
 import DocumentationPackHero from "@/components/docs/DocumentationPackHero";
 import DocumentationSummary from "@/components/docs/DocumentationSummary";
 import DocumentLibrary from "@/components/docs/DocumentLibrary";
@@ -21,7 +22,12 @@ function PageSkeleton({ t }) {
 
 export default function DocumentationHub() {
   const pack = useDocumentationPack();
+  // Title and description stay administratively editable through the committee page configuration.
+  const { getTitle, getDescription } = usePageConfig("documentation");
   const { t, isAr, dir, release, loading, notice, setNotice } = pack;
+  const pageLang = isAr ? "ar" : "en";
+  const pageTitle = release ? getTitle(release.title_ar, release.title_en, pageLang) : null;
+  const pageDescription = release ? getDescription(release.subtitle_ar, release.subtitle_en, pageLang) : null;
 
   return (
     <div className="space-y-6" dir={dir}>
@@ -45,6 +51,8 @@ export default function DocumentationHub() {
             release={release}
             isAr={isAr}
             t={t}
+            title={pageTitle}
+            description={pageDescription}
             onDownloadPack={pack.downloadPack}
             packState={pack.busy.pack}
           />

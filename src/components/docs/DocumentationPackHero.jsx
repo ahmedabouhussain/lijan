@@ -11,7 +11,7 @@ function formatSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function DocumentationPackHero({ release, isAr, t, onDownloadPack, packState }) {
+export default function DocumentationPackHero({ release, isAr, t, onDownloadPack, packState, title, description }) {
   const busy = packState === "loading";
   const summaryParts = [
     "ZIP",
@@ -51,10 +51,10 @@ export default function DocumentationPackHero({ release, isAr, t, onDownloadPack
 
           <div>
             <h1 className="font-heading text-2xl font-bold leading-snug text-foreground">
-              {isAr ? release?.title_ar : release?.title_en}
+              {title || (isAr ? release?.title_ar : release?.title_en)}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {isAr ? release?.subtitle_ar : release?.subtitle_en}
+              {description || (isAr ? release?.subtitle_ar : release?.subtitle_en)}
             </p>
           </div>
 
