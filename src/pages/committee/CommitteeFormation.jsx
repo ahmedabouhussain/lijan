@@ -156,7 +156,7 @@ export default function CommitteeFormation() {
                   {(m.full_name || "?").charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">{m.full_name}</div>
+                  <div className="text-sm font-medium truncate">{L.name(m, "full_name")}</div>
                   <div className="text-xs text-muted-foreground truncate">
                     {m.institution_name || "—"} {m.user_email ? `· ${m.user_email}` : ""}
                   </div>

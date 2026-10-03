@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { L } from "@/lib/l10n";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } from "lucide-react";
@@ -146,7 +147,7 @@ export default function FormationHistory() {
                     <div className="divide-y divide-border">
                       {members.map((m, i) => (
                         <div key={i} className="flex items-center justify-between py-1.5 text-xs">
-                          <span>{m.full_name}</span>
+                          <span>{L.name(m, "full_name")}</span>
                           <span className="text-muted-foreground">{ROLE_LABELS[m.role] || m.role}</span>
                         </div>
                       ))}

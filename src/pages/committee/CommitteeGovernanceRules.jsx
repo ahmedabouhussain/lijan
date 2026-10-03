@@ -72,11 +72,18 @@ export default function CommitteeGovernanceRules() {
     setSubmitting(false);
   };
 
+  // A stored value is shown as its localized label — a raw key (simple_majority,
+  // confidential …) is never printed to the reader.
+  const optionLabel = (options, key) => {
+    const found = options.find((o) => o.value === key);
+    return found ? t(found.label_ar, found.label_en) : key || "";
+  };
+
   const rules = [
-    { label: t("قاعدة التصويت", "Voting Rule"), value: committee.voting_rule },
+    { label: t("قاعدة التصويت", "Voting Rule"), value: optionLabel(VOTING_RULES, committee.voting_rule) },
     { label: t("النصاب", "Quorum"), value: committee.quorum_count },
-    { label: t("دورة الاجتماعات", "Meeting Cadence"), value: committee.meeting_cadence },
-    { label: t("التصنيف", "Classification"), value: committee.classification },
+    { label: t("دورة الاجتماعات", "Meeting Cadence"), value: optionLabel(CADENCE, committee.meeting_cadence) },
+    { label: t("التصنيف", "Classification"), value: optionLabel(CLASSIFICATION, committee.classification) },
   ];
 
   return (

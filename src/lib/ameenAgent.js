@@ -5,10 +5,13 @@
 // NOTE: context keys here are mirrored by base44/shared/ameenContextKernel.ts.
 // The server owns permissions/sources; this file owns labels and prompts.
 
+import { AMEEN_NAME } from "@/lib/ameenIdentity";
+
 export const AMEEN_AGENT_NAME = "ameen";
 
 export const AMEEN_IDENTITY = {
-  name: { ar: "أمين", en: "AMEEN" },
+  // The name lives in ONE module (ameenIdentity) — never retyped on a surface.
+  name: AMEEN_NAME,
   title: { ar: "المساعد المؤسسي للجان", en: "Institutional Committee Intelligence" },
 };
 
@@ -23,7 +26,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "السياق المؤسسي العام", en: "General institutional context" },
     scopeNote: {
       ar: "يستخدم أمين معلومات الجهات واللجان المصرّح لك بالوصول إليها فقط.",
-      en: "Ameen only uses organizations and committees you are authorized to access.",
+      en: "AMEEN only uses organizations and committees you are authorized to access.",
     },
     prompts: [
       { ar: "ما الأعمال ذات الأولوية لديّ؟", en: "What needs my attention?" },
@@ -36,7 +39,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق اللجنة", en: "Committee context" },
     scopeNote: {
       ar: "يستخدم أمين معلومات هذه اللجنة والسجلات المصرّح لك بالوصول إليها فقط.",
-      en: "Ameen only uses this committee's information and records you are authorized to see.",
+      en: "AMEEN only uses this committee's information and records you are authorized to see.",
     },
     prompts: [
       { ar: "أعدّ موجزاً عن اللجنة.", en: "Prepare a committee brief." },
@@ -50,7 +53,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق مجموعة العمل", en: "Work group context" },
     scopeNote: {
       ar: "يستخدم أمين بيانات مجموعة العمل الحالية فقط: اجتماعاتها، قراراتها، إجراءاتها، مبادراتها ووثائقها المصرّح لك بالوصول إليها.",
-      en: "Ameen uses this work group's own data only: its meetings, decisions, actions, initiatives and the documents you are authorized to reach.",
+      en: "AMEEN uses this work group's own data only: its meetings, decisions, actions, initiatives and the documents you are authorized to reach.",
     },
     prompts: [
       { ar: "لخّص آخر اجتماع لمجموعة العمل.", en: "Summarise the work group's latest meeting." },
@@ -67,7 +70,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق الاجتماع", en: "Meeting context" },
     scopeNote: {
       ar: "يستخدم أمين بيانات هذا الاجتماع وجدول أعماله والسجلات المرتبطة به.",
-      en: "Ameen uses this meeting's data, agenda, and related records.",
+      en: "AMEEN uses this meeting's data, agenda, and related records.",
     },
     prompts: [
       { ar: "اعرض بنود جدول الأعمال.", en: "Show the agenda items." },
@@ -81,7 +84,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق المحضر", en: "Minutes context" },
     scopeNote: {
       ar: "يستخدم أمين مسودة المحضر والملاحظات والوثائق المرتبطة بالجلسة.",
-      en: "Ameen uses the draft minutes, notes, and documents tied to the session.",
+      en: "AMEEN uses the draft minutes, notes, and documents tied to the session.",
     },
     prompts: [
       { ar: "أعدّ مسودة المحضر.", en: "Draft the minutes." },
@@ -94,7 +97,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق القرارات والمتابعة", en: "Decisions & follow-up context" },
     scopeNote: {
       ar: "يستخدم أمين القرارات المرتبطة بهذه اللجنة وسجل المتابعة الخاص بها.",
-      en: "Ameen uses this committee's decisions and its follow-up register.",
+      en: "AMEEN uses this committee's decisions and its follow-up register.",
     },
     prompts: [
       { ar: "اعرض القرارات المفتوحة.", en: "Show open decisions." },
@@ -107,7 +110,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق الإجراءات والتنفيذ", en: "Actions & execution context" },
     scopeNote: {
       ar: "يستخدم أمين الإجراءات المسندة داخل نطاقك وصلاحيتك.",
-      en: "Ameen uses the actions assigned within your authorized scope.",
+      en: "AMEEN uses the actions assigned within your authorized scope.",
     },
     prompts: [
       { ar: "اعرض إجراءاتي المعلقة.", en: "Show my open actions." },
@@ -120,7 +123,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق الوثائق والسجلات", en: "Documents & records context" },
     scopeNote: {
       ar: "يستخدم أمين الوثائق المصرّح لك بالوصول إليها داخل هذا النطاق فقط.",
-      en: "Ameen only uses documents you are authorized to access in this scope.",
+      en: "AMEEN only uses documents you are authorized to access in this scope.",
     },
     prompts: [
       { ar: "لخّص هذه الوثيقة.", en: "Summarize this document." },
@@ -133,7 +136,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق الحوكمة والامتثال", en: "Governance & compliance context" },
     scopeNote: {
       ar: "يستخدم أمين قواعد اللجنة وسجلات الالتزام المتاحة لصلاحيتك.",
-      en: "Ameen uses the committee's rules and the compliance records your role permits.",
+      en: "AMEEN uses the committee's rules and the compliance records your role permits.",
     },
     prompts: [
       { ar: "افحص اكتمال التشكيل والمدة.", en: "Check composition and term completeness." },
@@ -146,7 +149,7 @@ export const AMEEN_CONTEXTS = {
     label: { ar: "سياق الذاكرة المؤسسية", en: "Institutional memory context" },
     scopeNote: {
       ar: "يبحث أمين في السوابق والسجلات التاريخية ضمن النطاق المصرّح لك به.",
-      en: "Ameen searches precedents and historical records within your authorized scope.",
+      en: "AMEEN searches precedents and historical records within your authorized scope.",
     },
     prompts: [
       { ar: "ما السوابق في هذا الموضوع؟", en: "What precedents exist on this topic?" },

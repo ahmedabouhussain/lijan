@@ -1,4 +1,6 @@
 import React from "react";
+import { L } from "@/lib/l10n";
+import { ACTION_STATUS } from "@/lib/raqeemUtils";
 import { cn } from "@/lib/utils";
 
 /**
@@ -39,12 +41,19 @@ export function TaskCard({ icon: Icon, title, reason, committee, deadline, prior
     low: "bg-muted text-muted-foreground",
   };
 
-  const priorityLabel = {
-    urgent: "عاجل",
-    high: "مرتفع",
-    normal: "عادي",
-    low: "منخفض",
+  // One language per page: the label follows the active language, never a fixed literal.
+  const priorityLabels = {
+    urgent: { ar: "عاجل", en: "Urgent" },
+    high: { ar: "مرتفع", en: "High" },
+    normal: { ar: "عادي", en: "Normal" },
+    low: { ar: "منخفض", en: "Low" },
   };
+  // A stored value is resolved to the active language's label — a raw key
+  // (in_review, under_review …) is never printed to the reader.
+  const statusLabel =
+    status && /^[a-z][a-z_]*$/.test(status)
+      ? L.label(ACTION_STATUS, status, L.pair("غير مصنّف", "Unclassified"))
+      : status;
 
   return (
     <SovereignCard interactive={to ? false : true} className="p-4">
@@ -59,7 +68,7 @@ export function TaskCard({ icon: Icon, title, reason, committee, deadline, prior
             <h4 className="text-sm font-semibold text-foreground leading-snug">{title}</h4>
             {priority && (
               <span className={cn("shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full", priorityStyles[priority])}>
-                {priorityLabel[priority] || priority}
+                {priorityLabels[priority] ? L.label(priorityLabels, priority) : priority}
               </span>
             )}
           </div>
@@ -75,7 +84,7 @@ export function TaskCard({ icon: Icon, title, reason, committee, deadline, prior
             {status && (
               <>
                 <span aria-hidden="true">·</span>
-                <span>{status}</span>
+                <span>{statusLabel}</span>
               </>
             )}
           </div>

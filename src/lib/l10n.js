@@ -11,6 +11,17 @@
 /** True when the active language is Arabic. */
 export const isArabic = (lang) => lang === "ar";
 
+/** Script detection — used to guarantee ONE language per page, never to translate. */
+export const hasArabicScript = (value) => /[\u0600-\u06FF]/.test(String(value ?? ""));
+export const hasLatinScript = (value) => /[A-Za-z]/.test(String(value ?? ""));
+
+/**
+ * The active language's own notice for a value that was never authored in it.
+ * Never a silent substitute for the other language, and never a raw stored value.
+ */
+export const missingValueLabel = (lang) =>
+  isArabic(lang) ? "القيمة غير مُدخَلة بالعربية" : "Not provided in English";
+
 /**
  * Pick the active-language value of a bilingual pair.
  * Never falls back to the other language's text while it exists: it falls back only
@@ -25,12 +36,21 @@ export function nameOf(record, lang, base = "name") {
   if (!record) return "";
   const ar = record[`${base}_ar`];
   const en = record[`${base}_en`];
-  // The plain field (title / name / location) is the record's own primary text.
+  // The plain field (title / name / location) is the record's own primary text —
+  // on this platform it holds the record's natural reading (Meeting.title, Document.title …).
   const primary = record[base];
-  // One language per page: the active language's own value, then the plain field.
-  // The OTHER language's field is never returned, so an English page cannot show Arabic.
-  if (isArabic(lang)) return ar || primary || en || "";
-  return en || primary || "";
+
+  // STRICT single-language resolution: the ACTIVE language's field only. The other
+  // language is never returned — not as a fallback, not as a subtitle. A value that was
+  // never authored in the active language resolves to "" so the surface can state that
+  // in the active language instead of leaking the other one.
+  const active = isArabic(lang) ? ar : en;
+  if (active) return active;
+  if (!primary) return "";
+  // The plain field is accepted only when its script can belong to the active language:
+  // Arabic text can never stand in on an English page, and Latin text is never presented
+  // as the Arabic reading.
+  return hasArabicScript(primary) === isArabic(lang) ? primary : "";
 }
 
 /** Localized human title of any governed record (title_ar/title_en, else title). */

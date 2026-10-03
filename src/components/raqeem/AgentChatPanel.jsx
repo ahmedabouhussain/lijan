@@ -8,6 +8,8 @@ import MessageBubble from "./copilot/MessageBubble";
 import { cn } from "@/lib/utils";
 import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
 import { AMEEN_SANDBOX_AGENT_NAME } from "@/lib/ameenContext";
+import { nameOf } from "@/lib/l10n";
+import { ameenName } from "@/lib/ameenIdentity";
 import { useAmeen } from "@/lib/AmeenContext";
 
 /**
@@ -51,13 +53,15 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
   const scrollRef = useRef(null);
   const prevScopeRef = useRef(scopeKey);
 
-  const name = t(identity.name.ar, identity.name.en);
+  const name = ameenName(lang);
   const contextLabel = t(context.label.ar, context.label.en);
   const roleLabel = t(roleProfile.label.ar, roleProfile.label.en);
+  // ONE language per page: the active language's own name only. The other language is
+  // never substituted silently — a missing name falls back to the context label.
   const scopeName = committee
-    ? t(committee.name_ar || committee.name_en, committee.name_en || committee.name_ar)
+    ? nameOf(committee, lang, "name")
     : organization
-      ? t(organization.name_ar || organization.name_en, organization.name_en || organization.name_ar)
+      ? nameOf(organization, lang, "name")
       : null;
 
   // Isolation key: conversations never cross actor / organization / committee / context.
@@ -232,7 +236,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
             <div className="text-center py-12 space-y-2">
               <Lock className="w-7 h-7 text-muted-foreground/50 mx-auto" />
               <p className="text-sm text-muted-foreground">
-                {t("أمين متاح للمستخدمين المسجّلين.", "Ameen is available to registered users.")}
+                {t("«أمين» متاح للمستخدمين المسجّلين.", "AMEEN is available to registered users.")}
               </p>
               <p className="text-xs text-muted-foreground">
                 {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use Ameen in this context.")}
@@ -245,7 +249,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
                 {t("لا تملك عضوية فعّالة في هذا النطاق.", "You hold no active membership in this scope.")}
               </p>
               <p className="text-xs text-muted-foreground">
-                {t("لا يمكن لأمين الوصول إلى محتوى لست طرفاً فيه.", "Ameen cannot reach content you are not party to.")}
+                {t("لا يمكن لـ«أمين» الوصول إلى محتوى لست طرفاً فيه.", "AMEEN cannot reach content you are not party to.")}
               </p>
             </div>
           ) : loading ? (
@@ -269,7 +273,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
                   <div className="text-center space-y-1.5">
                     <AmeenEmblem size={44} tone="outline" className="mx-auto" />
                     <p className="text-sm font-medium text-foreground">
-                      {t("مرحباً بك، معك أمين", "Welcome — Ameen here")}
+                      {t("مرحباً بك، معك «أمين»", "Welcome — AMEEN here")}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed px-2">
                       {openingMessage

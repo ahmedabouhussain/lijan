@@ -138,12 +138,29 @@ export const DEMO_COMMITTEES = [
 ];
 
 // Fictional demo member names (no real user accounts)
+// Schema convention: full_name carries the English reading, full_name_ar the Arabic one.
+// Both readings exist for every demo person, so neither language is ever substituted.
 export const DEMO_MEMBER_NAMES = [
-  "أحمد المنصوري", "خالد العبدالله", "سارة الكواري", "محمد الدوسري",
-  "نورة آل علي", "عبدالله الكبيسي", "ريم الأنصاري", "حمد المري",
-  "عائشة النعيمي", "ماجد السليطي", "لطيفة آل ثاني", "بدر الكواري",
-  "منى الهتمي", "سعود العطية", "دانة آل خليفة", "فيصل آل ثاني",
-  "روضة العبيدلي", "ناصر المحيربي", "هند الكواري", "ثاني آل ثاني",
+  { ar: "أحمد المنصوري", en: "Ahmed Al-Mansoori" },
+  { ar: "خالد العبدالله", en: "Khalid Al-Abdullah" },
+  { ar: "سارة الكواري", en: "Sara Al-Kuwari" },
+  { ar: "محمد الدوسري", en: "Mohammed Al-Dosari" },
+  { ar: "نورة آل علي", en: "Noura Al-Ali" },
+  { ar: "عبدالله الكبيسي", en: "Abdullah Al-Kubaisi" },
+  { ar: "ريم الأنصاري", en: "Reem Al-Ansari" },
+  { ar: "حمد المري", en: "Hamad Al-Marri" },
+  { ar: "عائشة النعيمي", en: "Aisha Al-Naimi" },
+  { ar: "ماجد السليطي", en: "Majed Al-Sulaiti" },
+  { ar: "لطيفة آل ثاني", en: "Latifa Al-Thani" },
+  { ar: "بدر الكواري", en: "Bader Al-Kuwari" },
+  { ar: "منى الهتمي", en: "Mona Al-Hetmi" },
+  { ar: "سعود العطية", en: "Saud Al-Attiyah" },
+  { ar: "دانة آل خليفة", en: "Dana Al-Khalifa" },
+  { ar: "فيصل آل ثاني", en: "Faisal Al-Thani" },
+  { ar: "روضة العبيدلي", en: "Rawda Al-Obaidli" },
+  { ar: "ناصر المحيربي", en: "Nasser Al-Muhairbi" },
+  { ar: "هند الكواري", en: "Hind Al-Kuwari" },
+  { ar: "ثاني آل ثاني", en: "Thani Al-Thani" },
 ];
 
 export const DEMO_INSTITUTIONS = [
@@ -180,11 +197,11 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
         institution_name: DEMO_INSTITUTIONS[committeeIndex % DEMO_INSTITUTIONS.length],
       });
     } else {
-      const name = DEMO_MEMBER_NAMES[nameIdx % DEMO_MEMBER_NAMES.length];
+      const person = DEMO_MEMBER_NAMES[nameIdx % DEMO_MEMBER_NAMES.length];
       nameIdx++;
       members.push({
-        full_name: name,
-        full_name_ar: name,
+        full_name: person.en,
+        full_name_ar: person.ar,
         user_email: `demo.member${nameIdx}@lijan-demo.com`,
         user_id: null,
         role: roles[i],
@@ -205,10 +222,10 @@ export function buildCommitteeMembers(committeeIndex, fahadRole) {
 export function buildMeetings(committeeId, orgId, committeeIndex) {
   const meetings = [];
   const locations = [
-    "قاعة الاجتماعات الرئيسية — الدوحة",
-    "قاعة المجلس التنفيذي — لوسيل",
-    "مركز التنسيق الحكومي — موقع تجريبي",
-    "قاعة الاجتماعات الافتراضية — عبر المنصة",
+    { ar: "قاعة الاجتماعات الرئيسية — الدوحة", en: "Main Meeting Room — Doha" },
+    { ar: "قاعة المجلس التنفيذي — لوسيل", en: "Executive Council Hall — Lusail" },
+    { ar: "مركز التنسيق الحكومي — موقع تجريبي", en: "Government Coordination Centre — Demo Site" },
+    { ar: "قاعة الاجتماعات الافتراضية — عبر المنصة", en: "Virtual Meeting Room — via the platform" },
   ];
   
   // 4 past meetings
@@ -223,11 +240,12 @@ export function buildMeetings(committeeId, orgId, committeeIndex) {
     meetings.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة ${5 - p}`,
+      title: `Meeting of the ${DEMO_COMMITTEES[committeeIndex].name_en} — Session ${5 - p}`,
       title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة ${5 - p}`,
       date: pastDate.toISOString(),
       duration_minutes: 90,
-      location: locations[(p + committeeIndex) % locations.length],
+      location: locations[(p + committeeIndex) % locations.length].ar,
+      location_en: locations[(p + committeeIndex) % locations.length].en,
       mode: p % 2 === 0 ? "hybrid" : "physical",
       provider: "none",
       quorum_required: 4,
@@ -248,11 +266,12 @@ export function buildMeetings(committeeId, orgId, committeeIndex) {
     meetings.push({
       organization_id: orgId,
       committee_id: committeeId,
-      title: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة ${u}`,
+      title: `Meeting of the ${DEMO_COMMITTEES[committeeIndex].name_en} — Upcoming session ${u}`,
       title_ar: `اجتماع ${DEMO_COMMITTEES[committeeIndex].name_ar} — الدورة القادمة ${u}`,
       date: upcomingDate.toISOString(),
       duration_minutes: 90,
-      location: locations[(u + committeeIndex) % locations.length],
+      location: locations[(u + committeeIndex) % locations.length].ar,
+      location_en: locations[(u + committeeIndex) % locations.length].en,
       mode: "hybrid",
       provider: "none",
       quorum_required: 4,

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowRight, Loader2, Plus, X, Users } from "lucide-react";
+import { L } from "@/lib/l10n";
+import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -279,7 +281,7 @@ export default function CommitteeCreateV2() {
             <div className="space-y-1.5">
               {members.map((m, i) => (
                 <div key={i} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-secondary/30 text-sm">
-                  <span>{m.full_name} · {m.role} {m.institution_name ? `· ${m.institution_name}` : ""}</span>
+                  <span>{L.name(m, "full_name")} · {L.label(MEMBER_ROLE, m.role)} {m.institution_name ? `· ${m.institution_name}` : ""}</span>
                   <button onClick={() => setMembers((arr) => arr.filter((_, idx) => idx !== i))} className="text-muted-foreground hover:text-destructive">
                     <X className="w-3.5 h-3.5" />
                   </button>

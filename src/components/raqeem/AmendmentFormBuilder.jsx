@@ -5,15 +5,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
+import { L } from "@/lib/l10n";
 
+// One language per page: every option carries both readings and renders only the
+// active one — a single-language label would leak into the other interface.
 const MEMBER_ROLES = [
-  { value: "chair", label: "رئيس" },
-  { value: "vice_chair", label: "نائب الرئيس" },
-  { value: "secretary", label: "أمين سر" },
-  { value: "member", label: "عضو" },
-  { value: "alternate", label: "بديل" },
-  { value: "observer", label: "مراقب" },
-  { value: "advisor", label: "مستشار" },
+  { value: "chair", ar: "رئيس", en: "Chair" },
+  { value: "vice_chair", ar: "نائب الرئيس", en: "Vice Chair" },
+  { value: "secretary", ar: "أمين سر", en: "Secretary" },
+  { value: "member", ar: "عضو", en: "Member" },
+  { value: "alternate", ar: "بديل", en: "Alternate" },
+  { value: "observer", ar: "مراقب", en: "Observer" },
+  { value: "advisor", ar: "مستشار", en: "Advisor" },
 ];
 
 const AMENDMENT_FIELD_CONFIG = {
@@ -135,8 +138,8 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
                   update("role_changes", arr);
                 }}
               >
-                <option value="">— الدور —</option>
-                {MEMBER_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                <option value="">{L.pair("— الدور —", "— Role —")}</option>
+                {MEMBER_ROLES.map((r) => <option key={r.value} value={r.value}>{L.pair(r.ar, r.en)}</option>)}
               </select>
               <Button
                 type="button"
@@ -213,11 +216,11 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
             onChange={(e) => update("new_voting_rule", e.target.value)}
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
           >
-            <option value="">— اختر —</option>
-            <option value="simple_majority">أغلبية بسيطة</option>
-            <option value="two_thirds">ثلثان</option>
-            <option value="unanimous">إجماع</option>
-            <option value="chair_decides">يقرر الرئيس</option>
+            <option value="">{L.pair("— اختر —", "— Select —")}</option>
+            <option value="simple_majority">{L.pair("أغلبية بسيطة", "Simple majority")}</option>
+            <option value="two_thirds">{L.pair("ثلثان", "Two thirds")}</option>
+            <option value="unanimous">{L.pair("إجماع", "Unanimous")}</option>
+            <option value="chair_decides">{L.pair("يقرر الرئيس", "Chair decides")}</option>
           </select>
         </div>
       )}
@@ -272,7 +275,7 @@ function MemberListEditor({ label, members, onChange }) {
             value={m.role || "member"}
             onChange={(e) => updateMember(i, "role", e.target.value)}
           >
-            {MEMBER_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+            {MEMBER_ROLES.map((r) => <option key={r.value} value={r.value}>{L.pair(r.ar, r.en)}</option>)}
           </select>
           <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => remove(i)}>
             <Trash2 className="w-3.5 h-3.5" />

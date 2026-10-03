@@ -1,0 +1,91 @@
+{
+  "name": "TranslationGap",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "entity_type": {
+      "type": "string",
+      "title": "Entity Type"
+    },
+    "record_id": {
+      "type": "string",
+      "title": "Record ID"
+    },
+    "record_label": {
+      "type": "string",
+      "title": "Record Label (for administrators)"
+    },
+    "field_key": {
+      "type": "string",
+      "title": "Field Key (e.g. name_en, mandate_ar)"
+    },
+    "missing_language": {
+      "type": "string",
+      "title": "Missing Language",
+      "enum": [
+        "ar",
+        "en"
+      ]
+    },
+    "counterpart_available": {
+      "type": "boolean",
+      "title": "Other Language Value Exists (never displayed as a substitute)",
+      "default": false
+    },
+    "surface": {
+      "type": "string",
+      "title": "Surface Where Detected"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "open",
+        "in_progress",
+        "resolved",
+        "dismissed"
+      ],
+      "default": "open"
+    },
+    "resolved_value": {
+      "type": "string",
+      "title": "Completed Value"
+    },
+    "resolved_by": {
+      "type": "string",
+      "title": "Resolved By"
+    },
+    "resolved_at": {
+      "type": "string",
+      "title": "Resolved At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "entity_type",
+    "record_id",
+    "field_key",
+    "missing_language"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

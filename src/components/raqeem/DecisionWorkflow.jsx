@@ -84,7 +84,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
         if (v.choice === "for") forCount++;
         else if (v.choice === "against") againstCount++;
         else abstainCount++;
-        if (v.choice === "against" && v.dissent) dissentParts.push(`${v.member.full_name}: ${v.dissent}`);
+        if (v.choice === "against" && v.dissent) dissentParts.push(`${L.name(v.member, "full_name")}: ${v.dissent}`);
       }
 
       const now = new Date().toISOString();
@@ -233,7 +233,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
                     <div key={m.id} className="border border-border rounded-md p-3 bg-card">
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="min-w-0">
-                          <div className="text-sm font-medium text-foreground truncate">{m.full_name}</div>
+                          <div className="text-sm font-medium text-foreground truncate">{L.name(m, "full_name")}</div>
                           <div className="text-[10px] text-muted-foreground">{m.role === "chair" ? "الرئيس" : m.role === "secretary" ? "الأمين" : m.role === "vice_chair" ? "نائب الرئيس" : "عضو"}</div>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">

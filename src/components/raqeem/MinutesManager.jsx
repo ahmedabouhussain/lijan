@@ -156,7 +156,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
               return (
                 <div key={m.id} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
                   <div className="min-w-0">
-                    <span className="text-sm font-medium text-foreground">{m.full_name}</span>
+                    <span className="text-sm font-medium text-foreground">{L.name(m, "full_name")}</span>
                     {m.role && <span className="text-xs text-muted-foreground mr-2">· {L.label(MEMBER_ROLE, m.role, m.role)}</span>}
                   </div>
                   <div className="flex items-center gap-1">
