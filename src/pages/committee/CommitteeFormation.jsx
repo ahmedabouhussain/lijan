@@ -28,11 +28,20 @@ const PROPOSE_ACTIONS = [
 ];
 
 const AMENDMENT_LABELS = {
-  rename: "إعادة تسمية", change_arabic_name: "تغيير الاسم العربي", change_english_name: "تغيير الاسم الإنجليزي",
-  add_member: "تعيين عضو", end_member: "إنهاء عضوية", replace_member: "استبدال عضو", change_role: "تغيير دور",
-  reconstitute: "إعادة تشكيل", amend_mandate: "تعديل الصلاحية", change_quorum: "تغيير النصاب",
-  change_voting_rule: "تغيير قاعدة التصويت", extend_committee: "تمديد اللجنة", renew_committee: "تجديد اللجنة",
-  other: "أخرى",
+  rename: { ar: "إعادة تسمية", en: "Renaming" },
+  change_arabic_name: { ar: "تغيير الاسم العربي", en: "Change Arabic Name" },
+  change_english_name: { ar: "تغيير الاسم الإنجليزي", en: "Change English Name" },
+  add_member: { ar: "تعيين عضو", en: "Member Appointment" },
+  end_member: { ar: "إنهاء عضوية", en: "End of Membership" },
+  replace_member: { ar: "استبدال عضو", en: "Member Replacement" },
+  change_role: { ar: "تغيير دور", en: "Role Change" },
+  reconstitute: { ar: "إعادة تشكيل", en: "Reconstitution" },
+  amend_mandate: { ar: "تعديل الصلاحية", en: "Mandate Amendment" },
+  change_quorum: { ar: "تغيير النصاب", en: "Quorum Change" },
+  change_voting_rule: { ar: "تغيير قاعدة التصويت", en: "Voting Rule Change" },
+  extend_committee: { ar: "تمديد اللجنة", en: "Committee Extension" },
+  renew_committee: { ar: "تجديد اللجنة", en: "Committee Renewal" },
+  other: { ar: "أخرى", en: "Other" },
 };
 
 const STATUS_COLORS = {
@@ -105,10 +114,12 @@ export default function CommitteeFormation() {
         <div className="flex items-start gap-2.5">
           <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <div className="text-sm font-semibold text-amber-800">حوكمة التشكيل · Governed Formation</div>
+            <div className="text-sm font-semibold text-state-warning-ink">{t("حوكمة التشكيل", "Governed Formation")}</div>
             <p className="text-xs text-amber-700 leading-relaxed">
-              لا يمكن تعديل التشكيل أو التسمية أو الصلاحية مباشرةً. كل تغيير رسمي يمر عبر سير عمل محوَّك:
-              اقتراح ← تحليل أثر ← مراجعة ← اعتماد ← نفاذ. التعديلات غير المعتمدة لا تؤثر على الصلاحيات الحالية.
+              {t(
+                "لا يمكن تعديل التشكيل أو التسمية أو الصلاحية مباشرةً. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح ← تحليل أثر ← مراجعة ← اعتماد ← نفاذ. التعديلات غير المعتمدة لا تؤثر على الصلاحيات الحالية.",
+                "Formation, naming and mandate cannot be changed directly. Every official change follows a governed workflow: proposal, impact analysis, review, approval, then effectivation. Unapproved amendments do not affect current authority."
+              )}
             </p>
           </div>
         </div>
@@ -116,7 +127,7 @@ export default function CommitteeFormation() {
 
       {/* Propose actions */}
       <div className="raqeem-card p-4 space-y-3">
-        <div className="text-sm font-semibold">إجراء مقترح · Propose a Change</div>
+        <div className="text-sm font-semibold">{t("إجراء مقترح", "Propose a Change")}</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {PROPOSE_ACTIONS.map((a) => (
             <button
@@ -139,7 +150,7 @@ export default function CommitteeFormation() {
         <div className="p-3 pb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">التشكيل الحالي · Current Formation ({ordered.length})</span>
+            <span className="text-sm font-semibold">{t(`التشكيل الحالي (${ordered.length})`, `Current Formation (${ordered.length})`)}</span>
           </div>
           <Button size="sm" variant="ghost" onClick={() => navigate(`${base}/members`)} className="h-7 text-xs">
             {t("قائمة الأعضاء", "Member List")}
@@ -147,7 +158,7 @@ export default function CommitteeFormation() {
           </Button>
         </div>
         {ordered.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground text-center">لا يوجد أعضاء نشطون</div>
+          <div className="p-4 text-sm text-muted-foreground text-center">{t("لا يوجد أعضاء نشطون", "No active members")}</div>
         ) : (
           ordered.map((m) => (
             <div key={m.id} className="flex items-center justify-between p-3">
@@ -181,7 +192,7 @@ export default function CommitteeFormation() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ScrollText className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">الصلاحية والاختصاصات · Charter & Mandate</span>
+            <span className="text-sm font-semibold">{t("الصلاحية والاختصاصات", "Charter & Mandate")}</span>
           </div>
           <Button size="sm" variant="ghost" onClick={() => propose("amend_mandate")} className="h-7 text-xs">
             <FileText className="w-3.5 h-3.5" />
@@ -209,7 +220,7 @@ export default function CommitteeFormation() {
         <div className="flex items-center gap-2.5">
           <FileCheck className="w-4 h-4 text-primary" />
           <div>
-            <div className="text-sm font-semibold">سند التأسيس · Founding Instrument</div>
+            <div className="text-sm font-semibold">{t("سند التأسيس", "Founding Instrument")}</div>
             <div className="text-xs text-muted-foreground">
               {committee.establishing_doc_reference || t("مرجع التأسيس", "Establishing reference")}
             </div>
@@ -226,7 +237,7 @@ export default function CommitteeFormation() {
         <div className="p-3 pb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <GitBranch className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">التعديلات المقترحة · Proposed Amendments ({proposed.length})</span>
+            <span className="text-sm font-semibold">{t(`التعديلات المقترحة (${proposed.length})`, `Proposed Amendments (${proposed.length})`)}</span>
           </div>
           <Button size="sm" variant="ghost" onClick={() => navigate(`${base}/amendments`)} className="h-7 text-xs">
             {t("الكل", "All")}
@@ -236,12 +247,12 @@ export default function CommitteeFormation() {
         {loadingAmendments ? (
           <div className="p-4 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
         ) : proposed.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground text-center">لا توجد تعديلات قيد المراجعة</div>
+          <div className="p-4 text-sm text-muted-foreground text-center">{t("لا توجد تعديلات قيد المراجعة", "No amendments under review")}</div>
         ) : (
           proposed.slice(0, 5).map((a) => (
             <div key={a.id} className="p-3 flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{AMENDMENT_LABELS[a.amendment_type] || a.amendment_type}</div>
+                <div className="text-sm font-medium truncate">{t(AMENDMENT_LABELS[a.amendment_type]?.ar ?? a.amendment_type, AMENDMENT_LABELS[a.amendment_type]?.en ?? a.amendment_type)}</div>
                 {a.description && <div className="text-xs text-muted-foreground truncate">{a.description}</div>}
                 {a.impact_summary && (
                   <div className="text-[11px] text-amber-600 truncate mt-0.5 flex items-center gap-1">
@@ -259,15 +270,15 @@ export default function CommitteeFormation() {
       <div className="raqeem-card divide-y divide-border">
         <div className="p-3 pb-2 flex items-center gap-2">
           <CalendarClock className="w-4 h-4 text-primary" />
-          <span className="text-sm font-semibold">التغييرات المجدولة · Scheduled Changes ({upcomingScheduled.length})</span>
+          <span className="text-sm font-semibold">{t(`التغييرات المجدولة (${upcomingScheduled.length})`, `Scheduled Changes (${upcomingScheduled.length})`)}</span>
         </div>
         {upcomingScheduled.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground text-center">لا توجد تغييرات مجدولة للنفاذ المستقبلي</div>
+          <div className="p-4 text-sm text-muted-foreground text-center">{t("لا توجد تغييرات مجدولة للنفاذ المستقبلي", "No scheduled changes pending future effectivation")}</div>
         ) : (
           upcomingScheduled.map((a) => (
             <div key={a.id} className="p-3 flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{AMENDMENT_LABELS[a.amendment_type] || a.amendment_type}</div>
+                <div className="text-sm font-medium truncate">{t(AMENDMENT_LABELS[a.amendment_type]?.ar ?? a.amendment_type, AMENDMENT_LABELS[a.amendment_type]?.en ?? a.amendment_type)}</div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {t("نفاذ", "Effective")}: {a.effective_date}
@@ -287,7 +298,7 @@ export default function CommitteeFormation() {
         >
           <div className="flex items-center gap-2 mb-1">
             <History className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">سجل التعديلات · Amendment History</span>
+            <span className="text-sm font-semibold">{t("سجل التعديلات", "Amendment History")}</span>
           </div>
           <div className="text-xs text-muted-foreground">{history.length} {t("تعديل منفّذ/مرفوض", "effective/rejected amendments")}</div>
         </button>
@@ -297,7 +308,7 @@ export default function CommitteeFormation() {
         >
           <div className="flex items-center gap-2 mb-1">
             <History className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">نسخ التشكيل · Formation Versions</span>
+            <span className="text-sm font-semibold">{t("نسخ التشكيل", "Formation Versions")}</span>
           </div>
           <div className="text-xs text-muted-foreground">{t("الخط الزمني الكامل للتشكيل", "Full formation timeline")}</div>
         </button>

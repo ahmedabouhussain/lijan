@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
-  Building2, ArrowRight, Loader2, AlertCircle, Users,
+  Building2, ArrowRight, Loader2, AlertCircle,
   CheckCircle2, Info, Link as LinkIcon, Palette, FileText,
   ShieldCheck, UserPlus, ArrowLeft,
 } from "lucide-react";
@@ -13,15 +13,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { QATARI_ENTITIES } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
+// Bilingual pairs — one language per page (never "وزارة · Ministry" in one label).
 const ORG_TYPES = [
-  { value: "ministry", label: "وزارة · Ministry" },
-  { value: "authority", label: "هيئة · Authority" },
-  { value: "council", label: "مجلس · Council" },
-  { value: "organization", label: "منظمة · Organization" },
-  { value: "agency", label: "وكالة · Agency" },
-  { value: "committee", label: "لجنة · Committee" },
-  { value: "other", label: "أخرى · Other" },
+  { value: "ministry", ar: "وزارة", en: "Ministry" },
+  { value: "authority", ar: "هيئة", en: "Authority" },
+  { value: "council", ar: "مجلس", en: "Council" },
+  { value: "organization", ar: "منظمة", en: "Organization" },
+  { value: "agency", ar: "وكالة", en: "Agency" },
+  { value: "committee", ar: "لجنة", en: "Committee" },
+  { value: "other", ar: "أخرى", en: "Other" },
 ];
 
 const CATEGORY_TO_TYPE = {
@@ -40,6 +42,7 @@ const OTHER_ID = "__other__";
 export default function CreatePortal() {
   const navigate = useNavigate();
   const { isDemoMode } = useEffectiveActor();
+  const { t } = useLanguage();
   const [entityId, setEntityId] = useState("");
   const [customAr, setCustomAr] = useState("");
   const [customEn, setCustomEn] = useState("");
@@ -190,13 +193,13 @@ export default function CreatePortal() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4" dir="rtl">
         <div className="raqeem-card p-6 max-w-md text-center space-y-3">
           <ShieldCheck className="w-8 h-8 text-accent mx-auto" />
-          <h1 className="text-lg font-bold text-foreground">إنشاء بوابة منظمة غير متاح في وضع الاستكشاف</h1>
+          <h1 className="text-lg font-bold text-foreground">{t("إنشاء بوابة منظمة غير متاح في وضع الاستكشاف", "Creating an organization portal is not available in exploration mode")}</h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
             دور العرض التجريبي لا يمنح صلاحية إنشاء الجهات.
             <br />
             Organization creation is not available to a demonstration persona.
           </p>
-          <Button onClick={() => navigate("/")} variant="outline">العودة للرئيسية · Back to Home</Button>
+          <Button onClick={() => navigate("/")} variant="outline">{t("العودة للرئيسية", "Back to Home")}</Button>
         </div>
       </div>
     );
@@ -210,7 +213,7 @@ export default function CreatePortal() {
           <div className="w-14 h-14 rounded-lg bg-primary flex items-center justify-center mx-auto">
             <Building2 className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">إنشاء بوابة دخول</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("إنشاء بوابة دخول", "Create a Portal")}</h1>
           <p className="text-sm text-muted-foreground">
             Create Entry Portal · ستحصل على دور مالك البوابة
           </p>
@@ -233,7 +236,7 @@ export default function CreatePortal() {
               value={entityId}
               onChange={handleEntityChange}
               includeOther
-              placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+              placeholder={t("— ابحث أو اختر الجهة —", "— Search or select an entity —")}
             />
             <p className="text-xs text-muted-foreground">
               الجهات الحكومية وشبه الحكومية والقابضة والبنوك والخاصة المعتمدة في قطر
@@ -244,7 +247,7 @@ export default function CreatePortal() {
           {checking && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>جارٍ التحقق من البوابات الموجودة · Checking existing portals…</span>
+              <span>{t("جارٍ التحقق من البوابات الموجودة…", "Checking existing portals…")}</span>
             </div>
           )}
 
@@ -299,7 +302,7 @@ export default function CreatePortal() {
               {/* Access request pending */}
               {resolution.result === 'access_request_pending' && (
                 <div className="p-4 rounded-md bg-state-info-surface border border-border text-sm text-state-info-ink">
-                  <p className="font-medium">طلب الانضمام قيد المراجعة</p>
+                  <p className="font-medium">{t("طلب الانضمام قيد المراجعة", "Join request under review")}</p>
                   <p className="text-xs mt-1">Your join request is pending review by the organization owner.</p>
                 </div>
               )}
@@ -309,24 +312,24 @@ export default function CreatePortal() {
                 <div className="space-y-4 p-4 rounded-md bg-secondary/30 border border-border">
                   <div className="flex items-center gap-2">
                     <UserPlus className="w-4 h-4 text-primary" />
-                    <p className="text-sm font-semibold text-foreground">طلب الانضمام إلى البوابة · Request to Join</p>
+                    <p className="text-sm font-semibold text-foreground">{t("طلب الانضمام إلى البوابة", "Request to Join the Portal")}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-xs mb-1 block">المسمى الوظيفي · Job Title</Label>
-                      <Input value={joinJobTitle} onChange={(e) => setJoinJobTitle(e.target.value)} placeholder="مثال: مدير إدارة" />
+                      <Label className="text-xs mb-1 block">{t("المسمى الوظيفي", "Job Title")}</Label>
+                      <Input value={joinJobTitle} onChange={(e) => setJoinJobTitle(e.target.value)} placeholder={t("مثال: مدير إدارة", "e.g. Department Manager")} />
                     </div>
                     <div>
-                      <Label className="text-xs mb-1 block">الإدارة · Department</Label>
+                      <Label className="text-xs mb-1 block">{t("الإدارة", "Department")}</Label>
                       <Input value={joinDepartment} onChange={(e) => setJoinDepartment(e.target.value)} placeholder="مثال: الشؤون القانونية" />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs mb-1 block">المبرر · Justification</Label>
+                    <Label className="text-xs mb-1 block">{t("المبرر", "Justification")}</Label>
                     <Textarea
                       value={joinJustification}
                       onChange={(e) => setJoinJustification(e.target.value)}
-                      placeholder="اشرح بإيجاز سبب انضمامك إلى هذه الجهة · Briefly explain why you need to join"
+                      placeholder={t("اشرح بإيجاز سبب انضمامك إلى هذه الجهة", "Briefly explain why you need to join this entity")}
                       rows={2}
                     />
                   </div>
@@ -358,7 +361,7 @@ export default function CreatePortal() {
             <div className="space-y-4 p-6 rounded-lg bg-emerald-50 border border-emerald-200 text-center">
               <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
               <div>
-                <p className="text-sm font-bold text-emerald-900">تم إرسال طلب الانضمام</p>
+                <p className="text-sm font-bold text-state-success-ink">{t("تم إرسال طلب الانضمام", "Join request submitted")}</p>
                 <p className="text-xs text-emerald-700 mt-1">
                   Your join request has been submitted. The organization owner will review it and notify you.
                 </p>
@@ -377,8 +380,8 @@ export default function CreatePortal() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="custom_ar">الاسم (عربي) *</Label>
-                  <Input id="custom_ar" value={customAr} onChange={(e) => setCustomAr(e.target.value)} placeholder="اسم الجهة" />
+                  <Label htmlFor="custom_ar">{t("الاسم (عربي) *", "Name (Arabic) *")}</Label>
+                  <Input id="custom_ar" value={customAr} onChange={(e) => setCustomAr(e.target.value)} placeholder={t("اسم الجهة", "Entity name")} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="custom_en">Name (English) *</Label>
@@ -386,9 +389,9 @@ export default function CreatePortal() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="custom_type">نوع المنظمة · Organization Type</Label>
+                <Label htmlFor="custom_type">{t("نوع المنظمة", "Organization Type")}</Label>
                 <select id="custom_type" value={customType} onChange={(e) => setCustomType(e.target.value)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
-                  {ORG_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.label}</option>))}
+                  {ORG_TYPES.map((opt) => (<option key={opt.value} value={opt.value}>{t(opt.ar, opt.en)}</option>))}
                 </select>
               </div>
             </div>
@@ -441,7 +444,7 @@ export default function CreatePortal() {
                   <FileText className="w-3.5 h-3.5" />
                   الوصف · Description
                 </Label>
-                <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="وصف موجز للجهة · Brief description of the entity" rows={3} />
+                <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("وصف موجز للجهة", "Brief description of the entity")} rows={3} />
               </div>
 
               <div className="p-3 rounded-md bg-secondary/40 text-xs text-muted-foreground leading-relaxed">

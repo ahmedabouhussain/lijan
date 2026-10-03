@@ -69,28 +69,28 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs">نوع المستند</Label>
+          <Label className="text-xs">{t("نوع المستند", "Document Type")}</Label>
           <select
             value={value.type || ""}
             onChange={(e) => update("type", e.target.value)}
             className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm"
           >
-            <option value="">— اختر —</option>
+            <option value="">{t("— اختر —", "— Select —")}</option>
             {DOC_TYPES.map((t) => (
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">الرقم المرجعي</Label>
+          <Label className="text-xs">{t("الرقم المرجعي", "Reference Number")}</Label>
           <Input
             value={value.reference || ""}
             onChange={(e) => update("reference", e.target.value)}
-            placeholder="رقم القرار / التعميم"
+            placeholder={t("رقم القرار / التعميم", "Decision / circular number")}
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">تاريخ الإصدار</Label>
+          <Label className="text-xs">{t("تاريخ الإصدار", "Issue Date")}</Label>
           <Input
             type="date"
             value={value.date || ""}
@@ -100,7 +100,7 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-xs">رفع المستند (PDF / صورة / Word)</Label>
+        <Label className="text-xs">{t("رفع المستند (PDF / صورة / Word)", "Upload Document (PDF / image / Word)")}</Label>
         {value.file_url ? (
           <div className="flex items-center justify-between py-2 px-3 rounded-md bg-secondary/40 text-sm">
             <span className="truncate flex items-center gap-2">

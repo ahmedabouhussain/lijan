@@ -9,6 +9,14 @@ import { cn } from "@/lib/utils";
 import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
 import { AMEEN_SANDBOX_AGENT_NAME } from "@/lib/ameenContext";
 import { nameOf } from "@/lib/l10n";
+import {
+  LOCALE_BLOCK_OPEN,
+  ameenDirective,
+  stripAmeenDirective,
+  isAmeenReloadMessage,
+  isReplyInActiveLanguage,
+  AMEEN_LANGUAGE_FALLBACK,
+} from "@/lib/ameenLocale";
 import { ameenName } from "@/lib/ameenIdentity";
 import { useAmeen } from "@/lib/AmeenContext";
 
@@ -68,7 +76,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
   // The interface language is part of the key: each language keeps its own thread, so the
   // reply language «أمين» is told to use always matches the language the reader is seeing.
   const metadata = useMemo(() => {
-    const m = { scope: scopeKey, context_key: contextKey, response_language: lang };
+    // The locale is part of the session too: a thread belongs to the language it was
+    // opened in, and every message below re-states it.
+    const m = { scope: scopeKey, context_key: contextKey, ui_locale: lang, response_language: lang };
     if (scopeName) m.scope_name = scopeName;
     return m;
   }, [scopeKey, contextKey, scopeName, lang]);
@@ -134,6 +144,63 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  // ── Pre-display language gate ───────────────────────────────────────────────
+  // The active locale governs the reply, so a reply that ignored it is never shown as
+  // written. It is regenerated once under the same contract; if the engine fails again,
+  // the reader gets a localized notice instead of the wrong language.
+  const guardRef = useRef(new Set());
+  const [languageFallback, setLanguageFallback] = useState(false);
+
+  // A new thread starts with a clean language state.
+  useEffect(() => {
+    guardRef.current = new Set();
+    setLanguageFallback(false);
+  }, [conversation?.id]);
+
+  const reloadDirective = ameenDirective(lang, { reload: true });
+  const messageId = (m, i) => m.id || `${m.created_date || i}:${String(m.content || "").slice(0, 40)}`;
+
+  useEffect(() => {
+    if (!conversation || messages.length === 0) return;
+    const offenders = [];
+    messages.forEach((m, i) => {
+      if (m.role !== "assistant" || !m.content) return;
+      if (isReplyInActiveLanguage(lang, m.content)) return;
+      offenders.push(messageId(m, i));
+    });
+    if (offenders.length === 0) return;
+    const fresh = offenders.filter((id) => !guardRef.current.has(id));
+    if (fresh.length === 0) {
+      // The engine ignored the contract even after a rewrite — stop showing the leak.
+      setLanguageFallback(true);
+      return;
+    }
+    fresh.forEach((id) => guardRef.current.add(id));
+    base44.agents
+      .addMessage(conversation, { role: "user", content: reloadDirective })
+      .catch(() => {});
+  }, [messages, conversation, lang, reloadDirective]);
+
+  // The reader sees their own question and the reply — never the governing block, and
+  // never the engine-only rewrite turn.
+  const displayMessages = useMemo(
+    () =>
+      messages
+        .filter((m) => !isAmeenReloadMessage(m.content))
+        .map((m, i) => {
+          const id = messageId(m, i);
+          const mustReplace =
+            languageFallback && m.role === "assistant" && !isReplyInActiveLanguage(lang, m.content);
+          return {
+            ...m,
+            content: mustReplace
+              ? AMEEN_LANGUAGE_FALLBACK[lang === "ar" ? "ar" : "en"]
+              : stripAmeenDirective(m.content),
+          };
+        }),
+    [messages, lang, languageFallback]
+  );
+
   const send = async (text) => {
     const content = (text ?? input).trim();
     if (!content || !conversation || sending) return;
@@ -149,7 +216,12 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
       demo_persona_key: demoPersonaKey,
     }).catch(() => {});
     try {
-      await base44.agents.addMessage(conversation, { role: "user", content });
+      // The locale travels WITH the question: locale, ui_locale, response_language,
+      // direction and the binding contract, all ahead of the user's own words.
+      await base44.agents.addMessage(conversation, {
+        role: "user",
+        content: `${ameenDirective(lang)}\n${content}`,
+      });
     } catch {}
     setSending(false);
   };
@@ -297,7 +369,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
                   </div>
                 </div>
               ) : (
-                messages.map((m, i) => <MessageBubble key={i} message={m} />)
+                displayMessages.map((m, i) => <MessageBubble key={i} message={m} />)
               )}
             </>
           )}

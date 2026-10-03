@@ -62,13 +62,13 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>تسجيل مداولة جديدة</DialogTitle>
+          <DialogTitle>{L.pair("تسجيل مداولة جديدة", "Record a New Deliberation")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label className="mb-1.5 block">اللجنة *</Label>
+            <Label className="mb-1.5 block">{L.pair("اللجنة *", "Committee *")}</Label>
             <Select value={form.committee_id} onValueChange={(v) => update("committee_id", v)}>
-              <SelectTrigger><SelectValue placeholder="اختر اللجنة" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={L.pair("اختر اللجنة", "Select the committee")} /></SelectTrigger>
               <SelectContent>
                 {committees.map((c) => (
                   <SelectItem key={c.id} value={c.id}>{L.name(c)}</SelectItem>
@@ -77,21 +77,21 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
             </Select>
           </div>
           <div>
-            <Label className="mb-1.5 block">الموضوع *</Label>
-            <Input value={form.topic} onChange={(e) => update("topic", e.target.value)} placeholder="موضوع المداولة" required />
+            <Label className="mb-1.5 block">{L.pair("الموضوع *", "Topic *")}</Label>
+            <Input value={form.topic} onChange={(e) => update("topic", e.target.value)} placeholder={L.pair("موضوع المداولة", "Deliberation topic")} required />
           </div>
           <div>
-            <Label className="mb-1.5 block">ملخص النقاش *</Label>
+            <Label className="mb-1.5 block">{L.pair("ملخص النقاش *", "Discussion Summary *")}</Label>
             <Textarea
               value={form.discussion_summary}
               onChange={(e) => update("discussion_summary", e.target.value)}
-              placeholder="تفاصيل النقاش والمداولات التي دارت حول الموضوع..."
+              placeholder={L.pair("تفاصيل النقاش والمداولات التي دارت حول الموضوع...", "Details of the discussion and deliberations on the topic…")}
               rows={4}
               required
             />
           </div>
           <div>
-            <Label className="mb-1.5 block">القرار المرتبط</Label>
+            <Label className="mb-1.5 block">{L.pair("القرار المرتبط", "Related Decision")}</Label>
             <Select
               value={form.decision_id}
               onValueChange={(v) => update("decision_id", v)}
@@ -99,7 +99,7 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
             >
               <SelectTrigger><SelectValue placeholder={!form.committee_id ? "اختر اللجنة أولاً" : "بدون قرار مرتبط"} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">بدون قرار مرتبط</SelectItem>
+                <SelectItem value="none">{L.pair("بدون قرار مرتبط", "No related decision")}</SelectItem>
                 {decisions.map((d) => (
                   <SelectItem key={d.id} value={d.id}>
                     {d.decision_number ? `${d.decision_number} — ` : ""}{L.title(d) || L.pair("قرار", "Decision")}
@@ -109,15 +109,15 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
             </Select>
           </div>
           <div>
-            <Label className="mb-1.5 block">النتيجة</Label>
-            <Input value={form.outcome} onChange={(e) => update("outcome", e.target.value)} placeholder="نتيجة المداولة" />
+            <Label className="mb-1.5 block">{L.pair("النتيجة", "Outcome")}</Label>
+            <Input value={form.outcome} onChange={(e) => update("outcome", e.target.value)} placeholder={L.pair("نتيجة المداولة", "Deliberation outcome")} />
           </div>
           <div>
-            <Label className="mb-1.5 block">المُداوِل</Label>
-            <Input value={form.deliberated_by} onChange={(e) => update("deliberated_by", e.target.value)} placeholder="اسم من قاد المداولة" />
+            <Label className="mb-1.5 block">{L.pair("المُداوِل", "Deliberated By")}</Label>
+            <Input value={form.deliberated_by} onChange={(e) => update("deliberated_by", e.target.value)} placeholder={L.pair("اسم من قاد المداولة", "Name of the person who led the deliberation")} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>إلغاء</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{L.pair("إلغاء", "Cancel")}</Button>
             <Button type="submit" disabled={submitting || !form.committee_id || !form.topic || !form.discussion_summary}>
               {submitting ? "جاري الحفظ..." : "حفظ المداولة"}
             </Button>

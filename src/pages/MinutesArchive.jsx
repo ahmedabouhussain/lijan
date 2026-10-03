@@ -99,8 +99,8 @@ export default function MinutesArchive() {
               <Archive className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">سجل المداولات</h1>
-              <p className="text-sm text-muted-foreground">أرشيف نقاشات اللجان ومداولاتها المرتبطة بالقرارات</p>
+              <h1 className="text-xl font-bold text-foreground">{L.pair("سجل المداولات", "Deliberations Archive")}</h1>
+              <p className="text-sm text-muted-foreground">{L.pair("أرشيف نقاشات اللجان ومداولاتها المرتبطة بالقرارات", "An archive of committee discussions and deliberations linked to decisions")}</p>
             </div>
           </div>
           <Button onClick={() => setDialogOpen(true)} className="gap-2 shrink-0">
@@ -112,13 +112,13 @@ export default function MinutesArchive() {
         {/* Filter */}
         {committees.length > 0 && (
           <div className="flex items-center gap-3 mb-6">
-            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">تصفية حسب اللجنة:</span>
+            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{L.pair("تصفية حسب اللجنة:", "Filter by committee:")}</span>
             <Select value={filterCommittee} onValueChange={setFilterCommittee}>
               <SelectTrigger className="w-64">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">جميع اللجان</SelectItem>
+                <SelectItem value="all">{L.pair("جميع اللجان", "All committees")}</SelectItem>
                 {committees.map((c) => (
                   <SelectItem key={c.id} value={c.id}>{L.name(c)}</SelectItem>
                 ))}
@@ -131,7 +131,7 @@ export default function MinutesArchive() {
         {filtered.length === 0 ? (
           <EmptyState
             icon={MessageSquareText}
-            title="لا توجد مداولات مسجلة"
+            title={L.pair("لا توجد مداولات مسجلة", "No deliberations recorded")}
             description="ابدأ بتسجيل مداولات اللجنة لضمان توثيق النقاشات وربطها بالقرارات لتحقيق الشفافية"
             action={
               <Button onClick={() => setDialogOpen(true)} className="gap-2">

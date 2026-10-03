@@ -4,20 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
-
-const TYPE_LABELS_AR = {
-  permanent_council: "مجلس دائم",
-  permanent_committee: "لجنة دائمة",
-  temporary_committee: "لجنة مؤقتة",
-  ministerial_committee: "لجنة وزارية",
-  national_committee: "لجنة وطنية",
-  task_force: "فريق عمل",
-  working_group: "مجموعة عمل",
-  advisory_committee: "لجنة استشارية",
-  special_committee: "لجنة خاصة",
-  joint_committee: "لجنة مشتركة",
-  cross_institutional: "بين المؤسسات",
-};
+import { COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 
 export default function CommitteeLogoSection({ value, onChange, committeeInfo }) {
   const { t } = useLanguage();
@@ -35,7 +22,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onChange(file_url);
     } catch (err) {
-      setError("تعذّر رفع الشعار");
+      setError(t("تعذّر رفع الشعار", "Could not upload the logo"));
     }
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -46,7 +33,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
     setError("");
     try {
       const { name_ar, name_en, type, mandate } = committeeInfo || {};
-      const typeLabel = TYPE_LABELS_AR[type] || type || "لجنة";
+      const typeLabel = COMMITTEE_TYPES[type]?.en || type || "Committee";
       const prompt = [
         `Design a professional, minimalist institutional logo/emblem for a ${typeLabel}.`,
         name_ar && `Committee name (Arabic): "${name_ar}".`,
@@ -61,10 +48,10 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
       if (result?.url) {
         onChange(result.url);
       } else {
-        setError("تعذّر إنشاء الشعار");
+        setError(t("تعذّر إنشاء الشعار", "Could not create the logo"));
       }
     } catch (err) {
-      setError("تعذّر إنشاء الشعار بالذكاء الاصطناعي");
+      setError(t("تعذّر إنشاء الشعار بالذكاء الاصطناعي", "Could not generate the logo with AI"));
     }
     setGenerating(false);
   };
@@ -84,10 +71,10 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
           </div>
           <div className="flex flex-col gap-2">
             <Button type="button" size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={busy}>
-              <Upload className="w-3.5 h-3.5" /> تغيير
+              <Upload className="w-3.5 h-3.5" /> {t("تغيير", "Change")}
             </Button>
             <Button type="button" size="sm" variant="ghost" onClick={handleRemove} disabled={busy} className="text-muted-foreground">
-              <X className="w-3.5 h-3.5" /> إزالة
+              <X className="w-3.5 h-3.5" /> {t("إزالة", "Remove")}
             </Button>
           </div>
         </div>
@@ -101,7 +88,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
             className="flex-1 justify-start"
           >
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-            {uploading ? "جارٍ الرفع..." : "رفع من الجهاز"}
+            {uploading ? t("جارٍ الرفع...", "Uploading…") : t("رفع من الجهاز", "Upload from device")}
           </Button>
           <Button
             type="button"
@@ -111,7 +98,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
             className="flex-1 justify-start"
           >
             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {generating ? "جارٍ الإنشاء..." : "إنشاء بالذكاء الاصطناعي"}
+            {generating ? t("جارٍ الإنشاء...", "Generating…") : t("إنشاء بالذكاء الاصطناعي", "Generate with AI")}
           </Button>
         </div>
       )}
@@ -126,7 +113,10 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
 
       {!value && (
         <p className="text-xs text-muted-foreground">
-          ارفع شعار اللجنة من جهازك أو ولّده تلقائيًا بالذكاء الاصطناعي من واقع اسم اللجنة ونوعها وصلاحياتها.
+          {t(
+            "ارفع شعار اللجنة من جهازك أو ولّده تلقائيًا بالذكاء الاصطناعي من واقع اسم اللجنة ونوعها وصلاحياتها.",
+            "Upload the committee logo from your device, or generate one from the committee's name, type and mandate."
+          )}
         </p>
       )}
 

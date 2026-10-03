@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Plus, Trash2, UserPlus, UserMinus, RefreshCw, FileText, Scale, Users, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,60 +19,61 @@ const MEMBER_ROLES = [
   { value: "advisor", ar: "مستشار", en: "Advisor" },
 ];
 
+// Every amendment type carries its own bilingual title — never an Arabic-only header.
 const AMENDMENT_FIELD_CONFIG = {
   add_member: {
     icon: UserPlus,
-    title: "إضافة عضو",
+    title: { ar: "إضافة عضو", en: "Add Member" },
     fields: ["members"],
   },
   end_member: {
     icon: UserMinus,
-    title: "إنهاء عضوية",
+    title: { ar: "إنهاء عضوية", en: "End Membership" },
     fields: ["members_end"],
   },
   change_role: {
     icon: RefreshCw,
-    title: "تغيير دور",
+    title: { ar: "تغيير دور", en: "Change Role" },
     fields: ["role_changes"],
   },
   reconstitute: {
     icon: Users,
-    title: "إعادة تشكيل",
+    title: { ar: "إعادة تشكيل", en: "Reconstitution" },
     fields: ["members", "quorum", "voting_rule"],
   },
   rename: {
     icon: FileText,
-    title: "إعادة تسمية",
+    title: { ar: "إعادة تسمية", en: "Renaming" },
     fields: ["names"],
   },
   amend_mandate: {
     icon: Scale,
-    title: "تعديل الصلاحية",
+    title: { ar: "تعديل الصلاحية", en: "Mandate Amendment" },
     fields: ["mandate"],
   },
   change_quorum: {
     icon: Users,
-    title: "تغيير النصاب",
+    title: { ar: "تغيير النصاب", en: "Change Quorum" },
     fields: ["quorum"],
   },
   change_voting_rule: {
     icon: Scale,
-    title: "تغيير قاعدة التصويت",
+    title: { ar: "تغيير قاعدة التصويت", en: "Change Voting Rule" },
     fields: ["voting_rule"],
   },
   extend_committee: {
     icon: Clock,
-    title: "تمديد اللجنة",
+    title: { ar: "تمديد اللجنة", en: "Extend Committee Term" },
     fields: ["term"],
   },
   renew_committee: {
     icon: Clock,
-    title: "تجديد اللجنة",
+    title: { ar: "تجديد اللجنة", en: "Renew Committee" },
     fields: ["term"],
   },
   other: {
     icon: FileText,
-    title: "أخرى",
+    title: { ar: "أخرى", en: "Other" },
     fields: ["description"],
   },
 };
@@ -88,13 +89,13 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
         <Icon className="w-4 h-4 text-primary" aria-hidden="true" />
-        {config.title}
+        {L.pair(config.title.ar, config.title.en)}
       </div>
 
       {/* Member additions */}
       {config.fields.includes("members") && (
         <MemberListEditor
-          label="الأعضاء الجدد"
+          label={L.pair("الأعضاء الجدد", "New Members")}
           members={data.members || []}
           onChange={(members) => update("members", members)}
         />
@@ -103,12 +104,12 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Member removals */}
       {config.fields.includes("members_end") && (
         <div className="space-y-2">
-          <Label className="text-xs">أعضاء لإنهاء عضويتهم</Label>
+          <Label className="text-xs">{L.pair("أعضاء لإنهاء عضويتهم", "Members whose membership ends")}</Label>
           <Textarea
             rows={2}
             value={data.members_to_end || ""}
             onChange={(e) => update("members_to_end", e.target.value)}
-            placeholder="أسماء الأعضاء المطلوب إنهاء عضويتهم — اسم لكل سطر"
+            placeholder={L.pair("أسماء الأعضاء المطلوب إنهاء عضويتهم — اسم لكل سطر", "Names of members to end — one name per line")}
           />
         </div>
       )}
@@ -116,12 +117,12 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Role changes */}
       {config.fields.includes("role_changes") && (
         <div className="space-y-2">
-          <Label className="text-xs">تغييرات الأدوار</Label>
+          <Label className="text-xs">{L.pair("تغييرات الأدوار", "Role Changes")}</Label>
           {(data.role_changes || []).map((rc, i) => (
             <div key={i} className="flex items-center gap-2">
               <Input
                 className="flex-1 h-8 text-xs"
-                placeholder="اسم العضو"
+                placeholder={L.pair("اسم العضو", "Member name")}
                 value={rc.member_name || ""}
                 onChange={(e) => {
                   const arr = [...(data.role_changes || [])];
@@ -162,7 +163,7 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
             onClick={() => update("role_changes", [...(data.role_changes || []), {}])}
             className="h-7 text-xs"
           >
-            <Plus className="w-3.5 h-3.5" /> إضافة تغيير دور
+            <Plus className="w-3.5 h-3.5" /> {L.pair("إضافة تغيير دور", "Add role change")}
           </Button>
         </div>
       )}
@@ -171,11 +172,11 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {config.fields.includes("names") && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <Label className="text-xs">الاسم الجديد بالعربية</Label>
+            <Label className="text-xs">{L.pair("الاسم الجديد بالعربية", "New Arabic name")}</Label>
             <Input value={data.new_name_ar || ""} onChange={(e) => update("new_name_ar", e.target.value)} />
           </div>
           <div>
-            <Label className="text-xs">الاسم الجديد بالإنجليزية</Label>
+            <Label className="text-xs">{L.pair("الاسم الجديد بالإنجليزية", "New English name")}</Label>
             <Input dir="ltr" value={data.new_name_en || ""} onChange={(e) => update("new_name_en", e.target.value)} />
           </div>
         </div>
@@ -184,12 +185,12 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Mandate */}
       {config.fields.includes("mandate") && (
         <div className="space-y-2">
-          <Label className="text-xs">الصلاحية / الاختصاص الجديد</Label>
+          <Label className="text-xs">{L.pair("الصلاحية / الاختصاص الجديد", "New mandate / scope")}</Label>
           <Textarea
             rows={3}
             value={data.new_mandate || ""}
             onChange={(e) => update("new_mandate", e.target.value)}
-            placeholder="نص الصلاحية المعدّلة"
+            placeholder={L.pair("نص الصلاحية المعدّلة", "Amended mandate text")}
           />
         </div>
       )}
@@ -197,7 +198,7 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Quorum */}
       {config.fields.includes("quorum") && (
         <div className="space-y-1.5">
-          <Label className="text-xs">النصاب الجديد (عدد الأعضاء)</Label>
+          <Label className="text-xs">{L.pair("النصاب الجديد (عدد الأعضاء)", "New quorum (member count)")}</Label>
           <Input
             type="number"
             min="1"
@@ -210,7 +211,7 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {/* Voting rule */}
       {config.fields.includes("voting_rule") && (
         <div className="space-y-1.5">
-          <Label className="text-xs">قاعدة التصويت الجديدة</Label>
+          <Label className="text-xs">{L.pair("قاعدة التصويت الجديدة", "New voting rule")}</Label>
           <select
             value={data.new_voting_rule || ""}
             onChange={(e) => update("new_voting_rule", e.target.value)}
@@ -229,12 +230,12 @@ export default function AmendmentFormBuilder({ type, value, onChange }) {
       {config.fields.includes("term") && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <LocalizedDatePicker
-            label="تاريخ بداية المدة"
+            label={L.pair("تاريخ بداية المدة", "Term start date")}
             value={data.new_term_start || ""}
             onChange={(v) => update("new_term_start", v)}
           />
           <LocalizedDatePicker
-            label="تاريخ نهاية المدة"
+            label={L.pair("تاريخ نهاية المدة", "Term end date")}
             value={data.new_term_end || ""}
             onChange={(v) => update("new_term_end", v)}
           />
@@ -260,13 +261,13 @@ function MemberListEditor({ label, members, onChange }) {
         <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-2 p-2 rounded-md bg-secondary/30">
           <Input
             className="h-8 text-xs"
-            placeholder="الاسم الكامل"
+            placeholder={L.pair("الاسم الكامل", "Full name")}
             value={m.full_name_ar || m.full_name || ""}
             onChange={(e) => updateMember(i, "full_name_ar", e.target.value)}
           />
           <Input
             className="h-8 text-xs"
-            placeholder="الجهة الممثلة"
+            placeholder={L.pair("الجهة الممثلة", "Represented entity")}
             value={m.institution_name || ""}
             onChange={(e) => updateMember(i, "institution_name", e.target.value)}
           />
@@ -283,7 +284,7 @@ function MemberListEditor({ label, members, onChange }) {
         </div>
       ))}
       <Button type="button" size="sm" variant="outline" onClick={add} className="h-7 text-xs">
-        <Plus className="w-3.5 h-3.5" /> إضافة عضو
+        <Plus className="w-3.5 h-3.5" /> {L.pair("إضافة عضو", "Add member")}
       </Button>
     </div>
   );

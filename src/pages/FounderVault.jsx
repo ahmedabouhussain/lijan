@@ -137,7 +137,7 @@ export default function FounderVault() {
             </button>
           </div>
           {byType("book_chapter").length === 0 ? (
-            <EmptyState icon={BookOpen} title="لا توجد فصول بعد" description="ابدأ بتوثيق فلسفة المنصة" />
+            <EmptyState icon={BookOpen} title={t("لا توجد فصول بعد", "No chapters yet")} description={t("ابدأ بتوثيق فلسفة المنصة", "Start documenting the platform's philosophy")} />
           ) : (
             byType("book_chapter").map((e) => (
               <div key={e.id} className="raqeem-card p-5">
@@ -169,7 +169,7 @@ export default function FounderVault() {
             </button>
           </div>
           {byType("adr").length === 0 ? (
-            <EmptyState icon={ScrollText} title="لا توجد قرارات معمارية" description="سجّل أول قرار معماري للمنصة" />
+            <EmptyState icon={ScrollText} title={t("لا توجد قرارات معمارية", "No architectural decisions")} description={t("سجّل أول قرار معماري للمنصة", "Record the platform's first architectural decision")} />
           ) : (
             byType("adr").map((e) => (
               <div key={e.id} className="raqeem-card p-5">
@@ -205,7 +205,7 @@ export default function FounderVault() {
             </button>
           </div>
           {byType("non_negotiable").length === 0 ? (
-            <EmptyState icon={ShieldAlert} title="لا توجد مبادئ مسجلة" />
+            <EmptyState icon={ShieldAlert} title={t("لا توجد مبادئ مسجلة", "No principles recorded")} />
           ) : (
             byType("non_negotiable").map((e) => (
               <div key={e.id} className="raqeem-card p-4 flex items-start gap-3">
@@ -233,7 +233,7 @@ export default function FounderVault() {
             </button>
           </div>
           {byType("moat").length === 0 ? (
-            <EmptyState icon={Target} title="لا توجد نقاط تفوق مسجلة" />
+            <EmptyState icon={Target} title={t("لا توجد نقاط تفوق مسجلة", "No moat entries recorded")} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {byType("moat").map((e, i) => (
@@ -261,7 +261,7 @@ export default function FounderVault() {
             </button>
           </div>
           {byType("roadmap_item").length === 0 ? (
-            <EmptyState icon={MapIcon} title="لا توجد محطات مسجلة" />
+            <EmptyState icon={MapIcon} title={t("لا توجد محطات مسجلة", "No milestones recorded")} />
           ) : (
             <div className="relative space-y-0">
               {byType("roadmap_item").map((e, i) => (
@@ -288,7 +288,7 @@ export default function FounderVault() {
             الذاكرة المؤسسية · ذاكرة اللجان المغلقة المنقولة من دورة حياة كل لجنة
           </p>
           {byType("institutional_memory").length === 0 ? (
-            <EmptyState icon={Archive} title="لا توجد ذاكرة مؤسسية بعد" description="عند إغلاق لجنة، تُنقل ذاكرتها تلقائياً إلى هنا" />
+            <EmptyState icon={Archive} title={t("لا توجد ذاكرة مؤسسية بعد", "No institutional memory yet")} description={t("عند إغلاق لجنة، تُنقل ذاكرتها تلقائياً إلى هنا", "When a committee closes, its memory is transferred here automatically")} />
           ) : (
             byType("institutional_memory").map((e) => (
               <div key={e.id} className="raqeem-card p-5">

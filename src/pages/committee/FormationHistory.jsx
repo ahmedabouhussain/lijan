@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { L } from "@/lib/l10n";
+import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
 import { History, Loader2, ChevronDown, ChevronUp, Users, Crown, GitCompare } from "lucide-react";
@@ -9,11 +10,6 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Button } from "@/components/ui/button";
 import FormationDiff from "@/components/raqeem/FormationDiff";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
-
-const ROLE_LABELS = {
-  chair: "رئيس", vice_chair: "نائب رئيس", secretary: "أمين",
-  member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار",
-};
 
 export default function FormationHistory() {
   const { data } = useCommittee();
@@ -70,7 +66,7 @@ export default function FormationHistory() {
               <Crown className="w-4 h-4 text-primary" />
               <span className="font-semibold text-sm">التشكيل الحالي · نسخة #{current.version_number}</span>
             </div>
-            <StatusBadge label="نافذ" colorClass="bg-green-100 text-green-700" />
+            <StatusBadge label={L.pair("نافذ", "In force")} colorClass="bg-state-success-surface text-state-success-ink" />
           </div>
           <div className="text-xs text-muted-foreground">
             نافذ من {current.effective_date}
@@ -123,7 +119,7 @@ export default function FormationHistory() {
                     <div className="min-w-0">
                       <div className="text-sm font-medium">
                         نسخة #{v.version_number}
-                        {v.is_current && <span className="text-green-600 mr-2">· الحالية</span>}
+                        {v.is_current && <span className="text-state-success-ink mx-2">· {L.pair("الحالية", "Current")}</span>}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {v.effective_date} → {v.end_date || "الآن"}
@@ -148,10 +144,10 @@ export default function FormationHistory() {
                       {members.map((m, i) => (
                         <div key={i} className="flex items-center justify-between py-1.5 text-xs">
                           <span>{L.name(m, "full_name")}</span>
-                          <span className="text-muted-foreground">{ROLE_LABELS[m.role] || m.role}</span>
+                          <span className="text-muted-foreground">{L.label(MEMBER_ROLE, m.role, m.role)}</span>
                         </div>
                       ))}
-                      {members.length === 0 && <div className="text-xs text-muted-foreground py-2">لا أعضاء في هذه النسخة</div>}
+                      {members.length === 0 && <div className="text-xs text-muted-foreground py-2">{L.pair("لا أعضاء في هذه النسخة", "No members in this version")}</div>}
                     </div>
                   </div>
                 )}

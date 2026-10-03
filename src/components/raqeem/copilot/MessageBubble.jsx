@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { Loader2 } from "lucide-react";
 import AmeenEmblem from "@/components/ameen/AmeenEmblem";
 import { useLanguage } from "@/lib/LanguageContext";
+import { hasArabicScript } from "@/lib/l10n";
 
 const ACTIVE_STATUSES = ["pending", "running", "in_progress"];
 
@@ -25,10 +26,19 @@ export default function MessageBubble({ message }) {
   const isUser = message.role === "user";
   const activeTools = (message.tool_calls || []).filter((tc) => ACTIVE_STATUSES.includes(tc.status));
 
+  // One language per bubble: the direction follows the language the text is ACTUALLY in,
+  // so an English reply inside an English interface is always LTR with left-aligned text,
+  // never RTL because the thread once held Arabic.
+  const replyIsArabic = !isUser && hasArabicScript(message.content);
+  const bubbleDir = replyIsArabic ? "rtl" : "ltr";
+
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-tr-md px-3.5 py-2.5 bg-primary text-primary-foreground shadow-sm">
+        <div
+          dir="auto"
+          className="max-w-[80%] rounded-2xl rounded-tr-md px-3.5 py-2.5 bg-primary text-primary-foreground shadow-sm"
+        >
           <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
         </div>
       </div>
@@ -40,7 +50,10 @@ export default function MessageBubble({ message }) {
       <div className="shrink-0 mt-0.5">
         <AmeenEmblem size={30} tone="outline" />
       </div>
-      <div className="max-w-[85%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm">
+      <div
+        dir={bubbleDir}
+        className="max-w-[85%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm text-start"
+      >
         {message.content && (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}

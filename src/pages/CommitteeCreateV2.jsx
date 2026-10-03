@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowRight, Loader2, Plus, X, Users } from "lucide-react";
+import { ArrowRight, Loader2, Plus, X } from "lucide-react";
 import { L } from "@/lib/l10n";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { Button } from "@/components/ui/button";
@@ -142,12 +142,12 @@ export default function CommitteeCreateV2() {
   return (
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to={`/o/${orgRef}`} className="hover:text-foreground">الجهة</Link>
+        <Link to={`/o/${orgRef}`} className="hover:text-foreground">{L.pair("الجهة", "Organization")}</Link>
         <span>›</span>
-        <span className="text-foreground">إنشاء لجنة</span>
+        <span className="text-foreground">{L.pair("إنشاء لجنة", "Create Committee")}</span>
       </div>
 
-      <h1 className="text-xl font-bold">إنشاء لجنة جديدة · Create Committee</h1>
+      <h1 className="text-xl font-bold">{L.pair("إنشاء لجنة جديدة", "Create Committee")}</h1>
 
       {error && <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-sm text-destructive">{error}</div>}
 
@@ -172,8 +172,8 @@ export default function CommitteeCreateV2() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>اسم اللجنة (عربي) *</Label>
-            <Input value={form.name_ar} onChange={(e) => update("name_ar", e.target.value)} placeholder="اللجنة العليا للحوكمة" />
+            <Label>{L.pair("اسم اللجنة (عربي) *", "Committee Name (Arabic) *")}</Label>
+            <Input value={form.name_ar} onChange={(e) => update("name_ar", e.target.value)} placeholder={L.pair("اللجنة العليا للحوكمة", "Supreme Governance Committee")} />
           </div>
           <div className="space-y-1.5">
             <Label>Committee Name (English) *</Label>
@@ -183,13 +183,13 @@ export default function CommitteeCreateV2() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>النوع · Type</Label>
+            <Label>{L.pair("النوع", "Type")}</Label>
             <select value={form.type} onChange={(e) => update("type", e.target.value)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm">
               {COMMITTEE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label>التصنيف · Classification</Label>
+            <Label>{L.pair("التصنيف", "Classification")}</Label>
             <select value={form.classification} onChange={(e) => update("classification", e.target.value)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm">
               {CLASSIFICATIONS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
@@ -198,8 +198,8 @@ export default function CommitteeCreateV2() {
 
         {(form.type === "joint_committee" || form.type === "cross_institutional") && (
           <div className="space-y-2 p-3 rounded-md bg-accent/5 border border-accent/20">
-            <Label>الجهات المشاركة · Participating Organizations</Label>
-            <p className="text-xs text-muted-foreground">أضف معرّفات الجهات المشاركة في هذه اللجنة المشتركة · Add the organization IDs of participating institutions</p>
+            <Label>{L.pair("الجهات المشاركة", "Participating Organizations")}</Label>
+            <p className="text-xs text-muted-foreground">{L.pair("أضف معرّفات الجهات المشاركة في هذه اللجنة المشتركة", "Add the organization IDs of the participating institutions")}</p>
             {form.participating_organization_ids.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {form.participating_organization_ids.map((oid, i) => (
@@ -220,63 +220,63 @@ export default function CommitteeCreateV2() {
         )}
 
         <div className="space-y-1.5">
-          <Label>الصلاحية · Mandate</Label>
-          <Textarea value={form.mandate} onChange={(e) => update("mandate", e.target.value)} placeholder="نص الصلاحية والنطاق" rows={3} />
+          <Label>{L.pair("الصلاحية", "Mandate")}</Label>
+          <Textarea value={form.mandate} onChange={(e) => update("mandate", e.target.value)} placeholder={L.pair("نص الصلاحية والنطاق", "Mandate and scope text")} rows={3} />
         </div>
 
         <div className="space-y-1.5">
-          <Label>الجهة المعيِّنة · Appointing Authority</Label>
-          <Input value={form.appointing_authority} onChange={(e) => update("appointing_authority", e.target.value)} placeholder="مجلس الوزراء" />
+          <Label>{L.pair("الجهة المعيِّنة", "Appointing Authority")}</Label>
+          <Input value={form.appointing_authority} onChange={(e) => update("appointing_authority", e.target.value)} placeholder={L.pair("مجلس الوزراء", "Council of Ministers")} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>بداية المدة · Term Start</Label>
+            <Label>{L.pair("بداية المدة", "Term Start")}</Label>
             <LocalizedDatePicker value={form.term_start} onChange={(v) => update("term_start", v)} />
           </div>
           <div className="space-y-1.5">
-            <Label>نهاية المدة · Term End</Label>
+            <Label>{L.pair("نهاية المدة", "Term End")}</Label>
             <LocalizedDatePicker value={form.term_end} onChange={(v) => update("term_end", v)} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>الرئيس · Chair</Label>
-            <Input value={form.chair_name} onChange={(e) => update("chair_name", e.target.value)} placeholder="السيد/ة ..." />
+            <Label>{L.pair("الرئيس", "Chair")}</Label>
+            <Input value={form.chair_name} onChange={(e) => update("chair_name", e.target.value)} placeholder={L.pair("السيد/ة ...", "Mr/Ms …")} />
           </div>
           <div className="space-y-1.5">
-            <Label>الأمين · Secretary</Label>
-            <Input value={form.secretary_name} onChange={(e) => update("secretary_name", e.target.value)} placeholder="السيد/ة ..." />
+            <Label>{L.pair("الأمين", "Secretary")}</Label>
+            <Input value={form.secretary_name} onChange={(e) => update("secretary_name", e.target.value)} placeholder={L.pair("السيد/ة ...", "Mr/Ms …")} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label>النصاب · Quorum</Label>
+            <Label>{L.pair("النصاب", "Quorum")}</Label>
             <Input type="number" value={form.quorum_count} onChange={(e) => update("quorum_count", parseInt(e.target.value) || 3)} min={1} />
           </div>
           <div className="space-y-1.5">
-            <Label>قاعدة التصويت · Voting Rule</Label>
+            <Label>{L.pair("قاعدة التصويت", "Voting Rule")}</Label>
             <select value={form.voting_rule} onChange={(e) => update("voting_rule", e.target.value)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm">
               {VOTING_RULES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label>دورية الاجتماعات · Cadence</Label>
+            <Label>{L.pair("دورية الاجتماعات", "Meeting Cadence")}</Label>
             <select value={form.meeting_cadence} onChange={(e) => update("meeting_cadence", e.target.value)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm">
-              <option value="weekly">أسبوعي</option>
-              <option value="biweekly">كل أسبوعين</option>
-              <option value="monthly">شهري</option>
-              <option value="quarterly">فصلي</option>
-              <option value="ad_hoc">حسب الحاجة</option>
+              <option value="weekly">{L.pair("أسبوعي", "Weekly")}</option>
+              <option value="biweekly">{L.pair("كل أسبوعين", "Biweekly")}</option>
+              <option value="monthly">{L.pair("شهري", "Monthly")}</option>
+              <option value="quarterly">{L.pair("فصلي", "Quarterly")}</option>
+              <option value="ad_hoc">{L.pair("حسب الحاجة", "Ad hoc")}</option>
             </select>
           </div>
         </div>
 
         {/* Additional members */}
         <div className="space-y-2 pt-2 border-t border-border">
-          <Label>أعضاء إضافيون · Additional Members</Label>
+          <Label>{L.pair("أعضاء إضافيون", "Additional Members")}</Label>
           {members.length > 0 && (
             <div className="space-y-1.5">
               {members.map((m, i) => (
@@ -291,14 +291,14 @@ export default function CommitteeCreateV2() {
           )}
           <div className="flex items-end gap-2">
             <div className="flex-1">
-              <Input value={newMember.full_name} onChange={(e) => setNewMember((m) => ({ ...m, full_name: e.target.value }))} placeholder="اسم العضو" className="text-sm" />
+              <Input value={newMember.full_name} onChange={(e) => setNewMember((m) => ({ ...m, full_name: e.target.value }))} placeholder={L.pair("اسم العضو", "Member name")} className="text-sm" />
             </div>
             <select value={newMember.role} onChange={(e) => setNewMember((m) => ({ ...m, role: e.target.value }))} className="h-9 rounded-md border border-input bg-transparent px-2 text-sm">
-              <option value="member">عضو</option>
-              <option value="vice_chair">نائب رئيس</option>
-              <option value="alternate">بديل</option>
-              <option value="observer">مراقب</option>
-              <option value="advisor">مستشار</option>
+              <option value="member">{L.pair("عضو", "Member")}</option>
+              <option value="vice_chair">{L.pair("نائب رئيس", "Vice Chair")}</option>
+              <option value="alternate">{L.pair("بديل", "Alternate")}</option>
+              <option value="observer">{L.pair("مراقب", "Observer")}</option>
+              <option value="advisor">{L.pair("مستشار", "Advisor")}</option>
             </select>
             <Button size="sm" variant="outline" onClick={addMember}><Plus className="w-4 h-4" /></Button>
           </div>
