@@ -130,6 +130,13 @@ export const WORKSTREAM_STATUS = {
   closed: { ar: "مغلق", en: "Closed", color: "text-muted-foreground bg-secondary" },
 };
 
+export const FIRST_MEETING_STATUS = {
+  not_yet_scheduled: { ar: "لم يُحدَّد بعد", en: "Not yet scheduled", color: "text-muted-foreground bg-secondary" },
+  scheduled: { ar: "مجدول", en: "Scheduled", color: "text-blue-700 bg-blue-50" },
+  held: { ar: "منعقد", en: "Held", color: "text-emerald-700 bg-emerald-50" },
+  status_pending_confirmation: { ar: "قيد تأكيد الحالة", en: "Status pending confirmation", color: "text-amber-700 bg-amber-50" },
+};
+
 export const WORKSTREAM_ROLE = {
   lead: { ar: "قائد المسار", en: "Workstream Lead" },
   deputy_lead: { ar: "نائب قائد المسار", en: "Deputy Lead" },
@@ -215,7 +222,7 @@ const BILINGUAL_LABEL_MAPS = [
   PRIORITY, READINESS, AGENDA_ITEM_STATUS, ESCALATION_LEVEL, CLASSIFICATION,
   MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE, AUTHORITY_LEVELS,
   DEPENDENCY_TYPE, DEPENDENCY_STATUS, SCENARIO_TYPE, SCENARIO_STATUS,
-  AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE,
+  AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE, FIRST_MEETING_STATUS,
 ];
 
 function bindEntryToActiveLanguage(entry) {

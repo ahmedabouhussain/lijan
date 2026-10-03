@@ -10,9 +10,9 @@ import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { Progress } from "@/components/ui/progress";
 import {
   Network, ChevronLeft, ChevronRight, Target, Users2, Building2,
-  CalendarDays, FileText, CheckSquare, Flag,
+  CalendarDays, FileText, CheckSquare, Flag, CalendarClock,
 } from "lucide-react";
-import { WORKSTREAM_STATUS, WORKSTREAM_ROLE, ACTION_STATUS, PRIORITY } from "@/lib/raqeemUtils";
+import { WORKSTREAM_STATUS, WORKSTREAM_ROLE, ACTION_STATUS, PRIORITY, FIRST_MEETING_STATUS } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
 
 function Section({ icon: Icon, title, children, count }) {
@@ -52,14 +52,14 @@ export default function WorkstreamDetail() {
       <div className="space-y-4">
         <Link to={`${base}/workstreams`} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
           <Arrow className="w-3.5 h-3.5 rotate-180" />
-          {t("مسارات العمل", "Workstreams")}
+          {t("مجموعات العمل", "Work Groups")}
         </Link>
         <EmptyState
           icon={Network}
-          title={t("مسار العمل غير متاح", "Workstream unavailable")}
+          title={t("مجموعة العمل غير متاحة", "Work group unavailable")}
           description={t(
-            "مسار العمل المطلوب غير مرتبط بهذه اللجنة أو لم تُمنح لك صلاحية الوصول إليه.",
-            "This workstream is not part of this committee, or you do not have access to it."
+            "مجموعة العمل المطلوبة غير مرتبطة بهذه اللجنة أو لم تُمنح لك صلاحية الوصول إليها.",
+            "This work group is not part of this committee, or you do not have access to it."
           )}
         />
       </div>
@@ -84,7 +84,7 @@ export default function WorkstreamDetail() {
     <div className="space-y-4">
       <Link to={`${base}/workstreams`} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
         <Arrow className="w-3.5 h-3.5 rotate-180" />
-        {t("مسارات العمل", "Workstreams")}
+        {t("مجموعات العمل", "Work Groups")}
       </Link>
 
       <PageHeader
@@ -93,6 +93,18 @@ export default function WorkstreamDetail() {
         subtitle={lang === "ar" ? ws.mandate_ar : ws.mandate_en}
         badge={<StatusBadge label={status.label} colorClass={status.colorClass} />}
       />
+
+      <div className="raqeem-card p-4 flex items-center justify-between gap-3">
+        <span className="text-xs text-muted-foreground inline-flex items-center gap-1.5">
+          <CalendarClock className="w-3.5 h-3.5" aria-hidden="true" />
+          {t("الاجتماع الأول", "First meeting")}
+        </span>
+        <span className="text-sm font-medium">
+          {ws.first_meeting_status === "held" && ws.first_meeting_date
+            ? L.date(ws.first_meeting_date)
+            : L.status(FIRST_MEETING_STATUS, ws.first_meeting_status || "not_yet_scheduled", ws.first_meeting_status).label}
+        </span>
+      </div>
 
       <div className="raqeem-card p-4">
         <div className="flex items-center justify-between gap-3 mb-1.5">
@@ -143,9 +155,9 @@ export default function WorkstreamDetail() {
         </Section>
       </div>
 
-      <Section icon={Users2} title={t("أعضاء مسار العمل", "Workstream members")} count={members.length}>
+      <Section icon={Users2} title={t("أعضاء مجموعة العمل", "Work group members")} count={members.length}>
         {members.length === 0 ? (
-          <NoRecords>{t("لم يُعيَّن أعضاء لهذا المسار بعد.", "No members assigned to this workstream yet.")}</NoRecords>
+          <NoRecords>{t("لم يُعيَّن أعضاء لهذه المجموعة بعد.", "No members assigned to this work group yet.")}</NoRecords>
         ) : (
           <div className="divide-y divide-border -mx-4">
             {members.map((m) => {
@@ -174,7 +186,7 @@ export default function WorkstreamDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <Section icon={CheckSquare} title={t("الإجراءات", "Actions")} count={actions.length}>
           {actions.length === 0 ? (
-            <NoRecords>{t("لا توجد إجراءات مرتبطة بهذا المسار.", "No actions linked to this workstream.")}</NoRecords>
+            <NoRecords>{t("لا توجد إجراءات مرتبطة بهذه المجموعة.", "No actions linked to this work group.")}</NoRecords>
           ) : (
             <ul className="divide-y divide-border -mx-4">
               {actions.map((a) => {
@@ -224,7 +236,7 @@ export default function WorkstreamDetail() {
 
         <Section icon={FileText} title={t("الوثائق", "Documents")} count={documents.length}>
           {documents.length === 0 ? (
-            <NoRecords>{t("لا توجد وثائق مرتبطة بهذا المسار.", "No documents linked to this workstream.")}</NoRecords>
+            <NoRecords>{t("لا توجد وثائق مرتبطة بهذه المجموعة.", "No documents linked to this work group.")}</NoRecords>
           ) : (
             <ul className="divide-y divide-border -mx-4">
               {documents.map((d) => (
@@ -238,7 +250,7 @@ export default function WorkstreamDetail() {
 
         <Section icon={Flag} title={t("المبادرات", "Initiatives")} count={initiatives.length}>
           {initiatives.length === 0 ? (
-            <NoRecords>{t("لا توجد مبادرات مرتبطة بهذا المسار.", "No initiatives linked to this workstream.")}</NoRecords>
+            <NoRecords>{t("لا توجد مبادرات مرتبطة بهذه المجموعة.", "No initiatives linked to this work group.")}</NoRecords>
           ) : (
             <ul className="divide-y divide-border -mx-4">
               {initiatives.map((i) => (

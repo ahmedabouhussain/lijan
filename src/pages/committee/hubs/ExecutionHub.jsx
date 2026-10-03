@@ -18,7 +18,7 @@ export default function ExecutionHub() {
       hubLabelEn="Execution & Follow-up"
       tabs={[
         { key: "actions", label: "الإجراءات", labelEn: "Actions", icon: CheckSquare, component: CommitteeActions },
-        { key: "workstreams", label: "مسارات العمل", labelEn: "Workstreams", icon: Layers, component: CommitteeWorkstreams },
+        { key: "workstreams", label: "مجموعات العمل", labelEn: "Work Groups", icon: Layers, component: CommitteeWorkstreams },
         { key: "evidence", label: "الأدلة", labelEn: "Evidence", icon: FileCheck, component: CommitteeEvidence },
         { key: "risks", label: "المخاطر", labelEn: "Risks", icon: Network, component: CommitteeRisks, roles: ADMIN_ROLES },
         { key: "dependencies", label: "التبعيات", labelEn: "Dependencies", icon: GitBranch, component: CommitteeDependencies, roles: ADMIN_ROLES },
