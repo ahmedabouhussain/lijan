@@ -59,11 +59,13 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
       : null;
 
   // Isolation key: conversations never cross actor / organization / committee / context.
+  // The interface language is part of the key: each language keeps its own thread, so the
+  // reply language «أمين» is told to use always matches the language the reader is seeing.
   const metadata = useMemo(() => {
-    const m = { scope: scopeKey, context_key: contextKey };
+    const m = { scope: scopeKey, context_key: contextKey, response_language: lang };
     if (scopeName) m.scope_name = scopeName;
     return m;
-  }, [scopeKey, contextKey, scopeName]);
+  }, [scopeKey, contextKey, scopeName, lang]);
   const metadataKey = JSON.stringify(metadata);
 
   // Crossing into another context starts a clean, non-mixing thread.
@@ -74,6 +76,16 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     setMessages([]);
     setScopeNotice(contextLabel);
   }, [scopeKey, contextLabel]);
+
+  // Changing the interface language starts a clean thread in that language —
+  // «أمين» answers in the language of the interface.
+  const prevLangRef = useRef(lang);
+  useEffect(() => {
+    if (prevLangRef.current === lang) return;
+    prevLangRef.current = lang;
+    setConversation(null);
+    setMessages([]);
+  }, [lang]);
 
   useEffect(() => {
     if (!open || conversation || !isActive || accessDenied) return;
@@ -90,7 +102,10 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
           agent_name: agentName,
           metadata: {
             name: `${name} · ${scopeName || contextLabel}`,
-            context: `السياق: ${contextLabel} · الدور: ${roleLabel}`,
+            context:
+              lang === "ar"
+                ? `السياق: ${contextLabel} · الدور: ${roleLabel} · لغة الرد: العربية الفصحى الرسمية`
+                : `Context: ${contextLabel} · Role: ${roleLabel} · Reply language: English only — write the entire reply in English, including headings, labels and table columns.`,
             ...meta,
           },
         });
