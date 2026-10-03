@@ -32,6 +32,7 @@ import GovernancePolicies from '@/pages/GovernancePolicies';
 import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
+import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
 
 // Organization Portal (Level 2)
 import OrgLayout from '@/components/raqeem/OrgLayout';
@@ -195,6 +196,9 @@ const AuthenticatedApp = () => {
 
         {/* Notification Preferences */}
         <Route path="/notification-preferences" element={<NotificationPreferences />} />
+
+        {/* National Committee Adoption & Impact Showcase — founder/admin only */}
+        <Route path="/national-adoption-showcase" element={<NationalAdoptionShowcase />} />
 
         {/* Legacy detail routes (still accessible) */}
         <Route path="/meetings/:id" element={<MeetingDetail />} />

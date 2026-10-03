@@ -1,0 +1,142 @@
+{
+  "name": "EvidenceSubmissionEntry",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "workstream_en": {
+      "type": "string",
+      "title": "Workstream (English)"
+    },
+    "workstream_ar": {
+      "type": "string",
+      "title": "\u0645\u0633\u0627\u0631 \u0627\u0644\u0639\u0645\u0644"
+    },
+    "entity_name": {
+      "type": "string",
+      "title": "Entity Name"
+    },
+    "entity_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u062c\u0647\u0629"
+    },
+    "entity_type": {
+      "type": "string",
+      "title": "Entity Type",
+      "enum": [
+        "member",
+        "non_member"
+      ],
+      "default": "member"
+    },
+    "nomination_status": {
+      "type": "string",
+      "title": "Nomination Status",
+      "enum": [
+        "received",
+        "awaiting_submission",
+        "exemption_not_confirmed"
+      ],
+      "default": "received"
+    },
+    "data_status": {
+      "type": "string",
+      "title": "Data Status",
+      "enum": [
+        "received",
+        "awaiting_submission",
+        "needs_reconciliation",
+        "deadline_not_confirmed",
+        "exemption_not_confirmed"
+      ],
+      "default": "awaiting_submission"
+    },
+    "source_reference": {
+      "type": "string",
+      "title": "Source Reference"
+    },
+    "source_as_of": {
+      "type": "string",
+      "title": "Source As Of",
+      "format": "date"
+    },
+    "unresolved_questions": {
+      "type": "string",
+      "title": "Unresolved Questions"
+    },
+    "is_aggregate_placeholder": {
+      "type": "boolean",
+      "title": "Aggregate Placeholder (identities not in source)",
+      "default": false
+    },
+    "aggregate_count": {
+      "type": "number",
+      "title": "Aggregate Count (if placeholder)",
+      "default": 1
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_scenario_id": {
+      "type": "string",
+      "title": "Demo Scenario ID"
+    }
+  },
+  "required": [
+    "committee_id",
+    "entity_name",
+    "entity_type",
+    "data_status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
