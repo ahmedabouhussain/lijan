@@ -14,6 +14,18 @@
       "type": "string",
       "title": "Committee ID"
     },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID (where the action was assigned)"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Related Agenda Item ID"
+    },
+    "workstream_id": {
+      "type": "string",
+      "title": "Owning Workstream ID"
+    },
     "title": {
       "type": "string",
       "title": "Action Title"
@@ -26,6 +38,10 @@
       "type": "string",
       "title": "Owner"
     },
+    "owner_organization_id": {
+      "type": "string",
+      "title": "Owner Organization ID"
+    },
     "responsible_department": {
       "type": "string",
       "title": "Responsible Department"
@@ -33,6 +49,10 @@
     "contributors": {
       "type": "string",
       "title": "Contributors"
+    },
+    "required_evidence": {
+      "type": "string",
+      "title": "Required Evidence"
     },
     "deadline": {
       "type": "string",
@@ -136,6 +156,25 @@
         "overdue"
       ],
       "default": "assigned"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
     }
   },
   "required": [

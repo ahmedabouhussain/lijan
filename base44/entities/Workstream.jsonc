@@ -1,0 +1,167 @@
+{
+  "name": "Workstream",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "code": {
+      "type": "string",
+      "title": "Workstream Code (stable identifier)"
+    },
+    "name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0645\u0633\u0627\u0631 \u0627\u0644\u0639\u0645\u0644"
+    },
+    "name_en": {
+      "type": "string",
+      "title": "Workstream Name (English)"
+    },
+    "mandate_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0635"
+    },
+    "mandate_en": {
+      "type": "string",
+      "title": "Mandate (English)"
+    },
+    "lead_name": {
+      "type": "string",
+      "title": "Lead Name (English)"
+    },
+    "lead_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0642\u0627\u0626\u062f \u0627\u0644\u0645\u0633\u0627\u0631"
+    },
+    "lead_organization_id": {
+      "type": "string",
+      "title": "Lead Organization ID"
+    },
+    "participating_organization_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Participating Organization IDs"
+    },
+    "latest_update_ar": {
+      "type": "string",
+      "title": "\u0622\u062e\u0631 \u0645\u0633\u062a\u062c\u062f"
+    },
+    "latest_update_en": {
+      "type": "string",
+      "title": "Latest Update (English)"
+    },
+    "next_steps_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u062e\u0637\u0648\u0627\u062a \u0627\u0644\u062a\u0627\u0644\u064a\u0629"
+    },
+    "next_steps_en": {
+      "type": "string",
+      "title": "Next Steps (English)"
+    },
+    "meeting_cadence": {
+      "type": "string",
+      "title": "Meeting Cadence",
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "quarterly",
+        "ad_hoc"
+      ],
+      "default": "monthly"
+    },
+    "progress_percent": {
+      "type": "number",
+      "title": "Progress %",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "sequence": {
+      "type": "number",
+      "title": "Sequence",
+      "default": 1
+    },
+    "status": {
+      "type": "string",
+      "title": "Workstream Status",
+      "enum": [
+        "active",
+        "in_preparation",
+        "on_hold",
+        "closed"
+      ],
+      "default": "active"
+    },
+    "source_reference": {
+      "type": "string",
+      "title": "Source Reference"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "committee_id",
+    "name_ar",
+    "name_en",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

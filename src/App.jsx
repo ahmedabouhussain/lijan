@@ -80,6 +80,8 @@ import CommitteeNotifications from '@/pages/committee/CommitteeNotifications';
 import CommitteeClosure from '@/pages/committee/CommitteeClosure';
 import CommitteeSettings from '@/pages/committee/CommitteeSettings';
 import ProductCatalog from '@/pages/committee/ProductCatalog';
+import CommitteeWorkstreams from '@/pages/committee/CommitteeWorkstreams';
+import WorkstreamDetail from '@/pages/committee/WorkstreamDetail';
 import PeopleFormationHub from '@/pages/committee/hubs/PeopleFormationHub';
 import MeetingsHub from '@/pages/committee/hubs/MeetingsHub';
 import RecordsHub from '@/pages/committee/hubs/RecordsHub';
@@ -153,6 +155,8 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/execution" element={<ExecutionHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/intelligence" element={<IntelligenceHub />} />
           <Route path="/o/:orgRef/c/:committeeRef/governance" element={<GovernanceHub />} />
+          <Route path="/o/:orgRef/c/:committeeRef/workstreams" element={<CommitteeWorkstreams />} />
+          <Route path="/o/:orgRef/c/:committeeRef/workstreams/:workstreamId" element={<WorkstreamDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/meetings/:id" element={<MeetingDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/calendar" element={<CommitteeCalendar />} />
           <Route path="/o/:orgRef/c/:committeeRef/agenda" element={<CommitteeAgenda />} />

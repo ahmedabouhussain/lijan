@@ -1,0 +1,131 @@
+{
+  "name": "WorkstreamMembership",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "workstream_id": {
+      "type": "string",
+      "title": "Workstream ID"
+    },
+    "committee_membership_id": {
+      "type": "string",
+      "title": "Committee Membership ID (link to the member's committee seat)"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name (English)"
+    },
+    "full_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644"
+    },
+    "represented_organization_id": {
+      "type": "string",
+      "title": "Represented Organization ID"
+    },
+    "role": {
+      "type": "string",
+      "title": "Workstream Role",
+      "enum": [
+        "lead",
+        "deputy_lead",
+        "member",
+        "contributor",
+        "observer"
+      ],
+      "default": "member"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "inactive",
+        "ended"
+      ],
+      "default": "active"
+    },
+    "term_start": {
+      "type": "string",
+      "title": "Term Start",
+      "format": "date"
+    },
+    "term_end": {
+      "type": "string",
+      "title": "Term End",
+      "format": "date"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "workstream_id",
+    "full_name",
+    "role",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.organization_id": "{{user.data.active_org_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

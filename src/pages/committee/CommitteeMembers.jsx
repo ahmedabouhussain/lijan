@@ -7,6 +7,7 @@ import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
+import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
@@ -40,6 +41,9 @@ export default function CommitteeMembers() {
   if (!data) return <TableSkeleton rows={5} />;
   const { members, committee } = data;
   const ordered = [...members].sort((a, b) => (ROLE_ORDER[a.role] || 99) - (ROLE_ORDER[b.role] || 99));
+  // Institutional identity (name + approved logo) resolved once for the whole committee context.
+  const orgIndex = data.org_index || {};
+  const displayName = (m) => (lang === "ar" ? m.full_name_ar || m.full_name : m.full_name);
 
   const handleEnd = async (memberId) => {
     await execute("EndCommitteeMembership", {
@@ -96,13 +100,16 @@ export default function CommitteeMembers() {
             <div key={m.id} className="flex items-center justify-between p-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0 text-sm font-medium text-foreground">
-                  {(m.full_name || "?").charAt(0)}
+                  {displayName(m).charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{m.full_name}</div>
-                  <div className="text-xs text-muted-foreground truncate">
-                    {m.institution_name || "—"}
-                    {m.user_email && ` · ${m.user_email}`}
+                  <div className="text-sm font-medium text-foreground truncate">{displayName(m)}</div>
+                  <div className="mt-0.5">
+                    <OrganizationIdentity
+                      org={orgIndex[m.represented_organization_id]}
+                      size="row"
+                      nameClassName="text-xs text-muted-foreground"
+                    />
                   </div>
                 </div>
               </div>

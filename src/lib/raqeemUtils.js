@@ -116,9 +116,26 @@ export const MEMBER_ROLE = {
   chair: { ar: "الرئيس", en: "Chair" },
   vice_chair: { ar: "نائب الرئيس", en: "Vice Chair" },
   secretary: { ar: "الأمين", en: "Secretary" },
+  committee_administrator: { ar: "مدير اللجنة", en: "Committee Administrator" },
   member: { ar: "عضو", en: "Member" },
+  alternate: { ar: "بديل", en: "Alternate" },
   observer: { ar: "مراقب", en: "Observer" },
   advisor: { ar: "مستشار", en: "Advisor" },
+};
+
+export const WORKSTREAM_STATUS = {
+  active: { ar: "نشط", en: "Active", color: "text-emerald-700 bg-emerald-50" },
+  in_preparation: { ar: "قيد التحضير", en: "In Preparation", color: "text-amber-700 bg-amber-50" },
+  on_hold: { ar: "متوقف مؤقتًا", en: "On Hold", color: "text-destructive bg-red-50" },
+  closed: { ar: "مغلق", en: "Closed", color: "text-muted-foreground bg-secondary" },
+};
+
+export const WORKSTREAM_ROLE = {
+  lead: { ar: "قائد المسار", en: "Workstream Lead" },
+  deputy_lead: { ar: "نائب قائد المسار", en: "Deputy Lead" },
+  member: { ar: "عضو", en: "Member" },
+  contributor: { ar: "مساهم", en: "Contributor" },
+  observer: { ar: "مراقب", en: "Observer" },
 };
 
 export const AUTHORITY_LEVELS = {
@@ -198,7 +215,7 @@ const BILINGUAL_LABEL_MAPS = [
   PRIORITY, READINESS, AGENDA_ITEM_STATUS, ESCALATION_LEVEL, CLASSIFICATION,
   MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE, AUTHORITY_LEVELS,
   DEPENDENCY_TYPE, DEPENDENCY_STATUS, SCENARIO_TYPE, SCENARIO_STATUS,
-  AI_OUTPUT_TYPE, AI_OUTPUT_STATUS,
+  AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE,
 ];
 
 function bindEntryToActiveLanguage(entry) {
