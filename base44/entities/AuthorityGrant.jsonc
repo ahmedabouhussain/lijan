@@ -1,0 +1,140 @@
+{
+  "name": "AuthorityGrant",
+  "type": "object",
+  "properties": {
+    "person_key": {
+      "type": "string",
+      "title": "Person Key (governed demo persona identifier)"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "committee_membership_id": {
+      "type": "string",
+      "title": "Committee Membership ID"
+    },
+    "role": {
+      "type": "string",
+      "title": "Committee Role",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary",
+        "member"
+      ]
+    },
+    "authority_type": {
+      "type": "string",
+      "title": "Authority Type",
+      "enum": [
+        "chair_authority",
+        "vice_chair_support",
+        "secretary_administration",
+        "member_contribution"
+      ]
+    },
+    "requires_delegation": {
+      "type": "boolean",
+      "title": "Requires Active Delegation to Act as Chair",
+      "default": false
+    },
+    "delegation_status": {
+      "type": "string",
+      "title": "Delegation Status",
+      "enum": [
+        "none",
+        "requested",
+        "active",
+        "expired"
+      ],
+      "default": "none"
+    },
+    "delegated_by_name": {
+      "type": "string",
+      "title": "Delegated By"
+    },
+    "delegation_valid_from": {
+      "type": "string",
+      "title": "Delegation Valid From",
+      "format": "date"
+    },
+    "delegation_valid_until": {
+      "type": "string",
+      "title": "Delegation Valid Until",
+      "format": "date"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification",
+      "enum": [
+        "source_based_demonstration",
+        "synthetic_demonstration"
+      ],
+      "default": "synthetic_demonstration"
+    },
+    "purpose": {
+      "type": "string",
+      "title": "Purpose / Scope Note"
+    },
+    "conflict_status": {
+      "type": "string",
+      "title": "Conflict Status",
+      "enum": [
+        "none",
+        "declared"
+      ],
+      "default": "none"
+    },
+    "permitted_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Permitted Actions (server-evaluated)"
+    },
+    "validity_start": {
+      "type": "string",
+      "title": "Validity Start",
+      "format": "date"
+    },
+    "validity_end": {
+      "type": "string",
+      "title": "Validity End",
+      "format": "date"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": true
+    },
+    "demo_scenario_id": {
+      "type": "string",
+      "title": "Demo Scenario ID"
+    }
+  },
+  "required": [
+    "person_key",
+    "committee_id",
+    "role",
+    "authority_type"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
