@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, Search, X, Building2, Check } from "lucide-react";
 import { QATARI_ENTITIES, ENTITY_CATEGORIES, getEntitiesByCategory, findEntity } from "@/lib/qatariEntities";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 
 /**
  * Smart searchable entity dropdown.
@@ -64,11 +65,14 @@ function scoreMatch(query, entity) {
 export default function EntitySearchSelect({
   value,
   onChange,
-  placeholder = "ابحث أو اختر الجهة · Search or select entity",
+  placeholder,
   includeOther = false,
-  otherLabel = "جهة أخرى غير مدرجة · Other entity not listed",
+  otherLabel,
   className,
 }) {
+  const { t, lang } = useLanguage();
+  const label = placeholder || t("ابحث أو اختر الجهة", "Search or select entity");
+  const otherText = otherLabel || t("جهة أخرى غير مدرجة", "Other entity not listed");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
@@ -122,11 +126,11 @@ export default function EntitySearchSelect({
     Object.entries(filtered).forEach(([catKey, entities]) => {
       entities.forEach((e) => items.push({ type: "entity", catKey, entity: e }));
     });
-    if (includeOther && (!query.trim() || normalizeAr(otherLabel).includes(normalizeAr(query)))) {
+    if (includeOther && (!query.trim() || normalizeAr(otherText).includes(normalizeAr(query)))) {
       items.push({ type: "other" });
     }
     return items;
-  }, [filtered, includeOther, query, otherLabel]);
+  }, [filtered, includeOther, query, otherText]);
 
   useEffect(() => {
     setHighlightIndex(0);
@@ -170,7 +174,7 @@ export default function EntitySearchSelect({
     if (el) el.scrollIntoView({ block: "nearest" });
   }, [highlightIndex, open]);
 
-  const showOther = includeOther && (!query.trim() || normalizeAr(otherLabel).includes(normalizeAr(query)));
+  const showOther = includeOther && (!query.trim() || normalizeAr(otherText).includes(normalizeAr(query)));
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -192,10 +196,10 @@ export default function EntitySearchSelect({
         <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
         <span className="flex-1 truncate text-right">
           {value === OTHER_ID
-            ? otherLabel
+            ? otherText
             : selected
-              ? `${selected.ar} — ${selected.en}`
-              : placeholder}
+              ? (lang === "ar" ? selected.ar : selected.en)
+              : label}
         </span>
         {selected ? (
           <span
@@ -226,7 +230,7 @@ export default function EntitySearchSelect({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="اكتب للبحث... · Type to search..."
+              placeholder={t("اكتب للبحث...", "Type to search...")}
               className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground"
               autoFocus
             />
@@ -245,7 +249,7 @@ export default function EntitySearchSelect({
           <div ref={listRef} className="max-h-64 overflow-y-auto py-1">
             {flatItems.length === 0 ? (
               <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                لا نتائج · No results found
+                {t("لا نتائج", "No results found")}
               </div>
             ) : (
               <>
@@ -255,7 +259,7 @@ export default function EntitySearchSelect({
                   return (
                     <div key={catKey}>
                       <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/20 sticky top-0">
-                        {cat.ar} — {cat.en}
+                        {lang === "ar" ? cat.ar : cat.en}
                       </div>
                       {entities.map((entity) => {
                         const flatIdx = flatItems.findIndex((i) => i.type === "entity" && i.entity.id === entity.id);
@@ -296,7 +300,7 @@ export default function EntitySearchSelect({
                       value === OTHER_ID && "bg-primary/15"
                     )}
                   >
-                    <span className="flex-1 text-right italic text-muted-foreground">{otherLabel}</span>
+                    <span className="flex-1 text-right italic text-muted-foreground">{otherText}</span>
                     {value === OTHER_ID && <Check className="w-3.5 h-3.5 text-primary shrink-0" />}
                   </button>
                 )}

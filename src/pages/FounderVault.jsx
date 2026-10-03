@@ -16,6 +16,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import VaultEntryForm from "@/components/raqeem/VaultEntryForm";
 import PageNav from "@/components/raqeem/PageNav";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const STATUS_LABELS = {
   active: { label: "ساري", color: "bg-emerald-100 text-emerald-700" },
@@ -27,6 +28,7 @@ const STATUS_LABELS = {
 };
 
 export default function FounderVault() {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -80,9 +82,9 @@ export default function FounderVault() {
           </div>
           <div className="flex-1">
             <div className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">
-              Protected Module · وحدة محمية
+              {t("وحدة محمية", "Protected Module")}
             </div>
-            <h1 className="text-xl font-bold">خزنة المؤسس · Founder Vault</h1>
+            <h1 className="text-xl font-bold">{t("خزنة المؤسس", "Founder Vault")}</h1>
             <p className="text-sm text-primary-foreground/70 mt-1">
               العقل الاستراتيجي المحمي للِجان™ — فلسفة المنتج، المعمارية، والقرارات المعمارية المسجلة
             </p>
@@ -156,7 +158,7 @@ export default function FounderVault() {
         <TabsContent value="adr" className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              Architectural Decision Records · قرارات معمارية مسجلة كأصل تقني
+              {t("قرارات معمارية مسجلة كأصل تقني", "Architectural Decision Records")}
             </p>
             <button
               onClick={() => openForm("adr")}

@@ -4,6 +4,7 @@ import { Upload, FileText, Sparkles, Loader2, X, CheckCircle2 } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const DOC_TYPES = [
   { value: "decision", label: "قرار" },
@@ -15,6 +16,7 @@ const DOC_TYPES = [
 ];
 
 export default function EstablishingDocumentSection({ value, onChange, onExtracted }) {
+  const { t } = useLanguage();
   const [uploading, setUploading] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [error, setError] = useState("");
@@ -62,7 +64,7 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <FileText className="w-4 h-4 text-primary" />
-        <Label className="text-sm font-semibold">قرار الإنشاء / ميثاق اللجنة · Establishing Document</Label>
+        <Label className="text-sm font-semibold">{t("قرار الإنشاء / ميثاق اللجنة", "Establishing Document")}</Label>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

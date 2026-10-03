@@ -205,6 +205,7 @@ function GovernancePolicyContent() {
 
 /* ── Classification Policy ── */
 function ClassificationPolicyContent() {
+  const { t } = useLanguage();
   const levels = [
     {
       levelAr: "عام",
@@ -285,8 +286,8 @@ function ClassificationPolicyContent() {
 
       {/* Classification Levels */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3" dir="rtl">
-          مستويات التصنيف <span className="text-muted-foreground" dir="ltr">· Classification Levels</span>
+        <h3 className="text-sm font-semibold text-foreground mb-3">
+          {t("مستويات التصنيف", "Classification Levels")}
         </h3>
         <div className="space-y-3">
           {levels.map((l, i) => (
@@ -310,8 +311,8 @@ function ClassificationPolicyContent() {
 
       {/* Handling Rules */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3" dir="rtl">
-          قواعد التعامل <span className="text-muted-foreground" dir="ltr">· Handling Rules</span>
+        <h3 className="text-sm font-semibold text-foreground mb-3">
+          {t("قواعد التعامل", "Handling Rules")}
         </h3>
         <ul className="space-y-3">
           {rules.map((r, i) => (

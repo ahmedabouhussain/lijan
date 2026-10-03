@@ -4,6 +4,7 @@ import { Users, Check, X, Clock, Mail, Loader2, ShieldCheck } from "lucide-react
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const STATUS_CONFIG = {
   present: { label: "حاضر", icon: Check, activeClass: "bg-emerald-600 text-white border-emerald-600", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -16,6 +17,7 @@ const ROLE_ORDER = { chair: 0, vice_chair: 1, secretary: 2, member: 3, observer:
 const ROLE_LABELS = { chair: "رئيس", vice_chair: "نائب", secretary: "أمين", member: "عضو", observer: "مراقب", advisor: "مستشار" };
 
 export default function AttendancePanel({ meeting, members, attendance, canCertify, onChanged }) {
+  const { t } = useLanguage();
   const [certifying, setCertifying] = useState(false);
   const [localStatus, setLocalStatus] = useState({});
 
@@ -69,7 +71,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
     <div className="raqeem-card p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold flex items-center gap-2">
-          <Users className="w-4 h-4 text-primary" /> الحضور والنصاب · Attendance & Quorum
+          <Users className="w-4 h-4 text-primary" /> {t("الحضور والنصاب", "Attendance & Quorum")}
         </h2>
         {canCertify && isLive && (
           <Button size="sm" onClick={certify} disabled={certifying || Object.keys(localStatus).length === 0}>

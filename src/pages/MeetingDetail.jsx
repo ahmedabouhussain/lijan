@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const MEETING_MODES = {
   physical: "حضوري",
@@ -23,6 +24,7 @@ const MEETING_MODES = {
 };
 
 export default function MeetingDetail() {
+  const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
   const [loading, setLoading] = useState(true);
   const [meeting, setMeeting] = useState(null);
@@ -252,7 +254,7 @@ export default function MeetingDetail() {
         {/* Agenda */}
         <div className="raqeem-card p-5">
           <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" /> جدول الأعمال · Agenda
+            <Clock className="w-4 h-4 text-primary" /> {t("جدول الأعمال", "Agenda")}
           </h2>
           <AgendaManager meetingId={id} items={agendaItems} onChanged={load} />
         </div>
@@ -261,7 +263,7 @@ export default function MeetingDetail() {
         <div className="raqeem-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold flex items-center gap-2">
-              <Gavel className="w-4 h-4 text-primary" /> القرارات · Decisions
+              <Gavel className="w-4 h-4 text-primary" /> {t("القرارات", "Decisions")}
             </h2>
             {!showDecisionForm && (
               <button onClick={() => setShowDecisionForm(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">

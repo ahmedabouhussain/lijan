@@ -9,6 +9,7 @@ import ProofChain from "@/components/raqeem/ProofChain";
 import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function DetailRow({ icon: Icon, label, value }) {
   return (
@@ -23,6 +24,7 @@ function DetailRow({ icon: Icon, label, value }) {
 }
 
 export default function DecisionDetail() {
+  const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
   const [loading, setLoading] = useState(true);
   const [decision, setDecision] = useState(null);
@@ -115,7 +117,7 @@ export default function DecisionDetail() {
       {/* Workflow */}
       <div className="raqeem-card p-5">
         <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
-          <Gavel className="w-4 h-4 text-primary" /> دورة عمل القرار · Decision Workflow
+          <Gavel className="w-4 h-4 text-primary" /> {t("دورة عمل القرار", "Decision Workflow")}
         </h2>
         <DecisionWorkflow decision={decision} onChanged={load} />
       </div>
@@ -146,7 +148,7 @@ export default function DecisionDetail() {
       {decision.dependencies && (
         <div className="raqeem-card p-5">
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <Link2 className="w-4 h-4 text-primary" /> التبعيات · Dependencies
+            <Link2 className="w-4 h-4 text-primary" /> {t("التبعيات", "Dependencies")}
           </h2>
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">{decision.dependencies}</p>
         </div>
@@ -154,7 +156,7 @@ export default function DecisionDetail() {
 
       <div className="raqeem-card p-5">
         <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <CheckSquare className="w-4 h-4 text-primary" /> إجراءات التنفيذ · Execution Actions
+          <CheckSquare className="w-4 h-4 text-primary" /> {t("إجراءات التنفيذ", "Execution Actions")}
         </h2>
         {actions.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">لا توجد إجراءات تنفيذية مسندة</p>

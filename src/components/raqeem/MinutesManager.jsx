@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { FileText, Sparkles, Check, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { useLanguage } from "@/lib/LanguageContext";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
 
 export default function MinutesManager({ meeting, committee, members, attendance, minutes, onChanged }) {
+  const { t } = useLanguage();
   const [generating, setGenerating] = useState(false);
   const [editing, setEditing] = useState(false);
   const [body, setBody] = useState(minutes?.body || "");
@@ -132,7 +134,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
       <div className="raqeem-card p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-primary" /> الحضور · Attendance
+            <UserCheck className="w-4 h-4 text-primary" /> {t("الحضور", "Attendance")}
           </h3>
           <div className="flex items-center gap-2 text-xs">
             <span className={quorumMet ? "text-emerald-700" : "text-destructive"}>
@@ -178,7 +180,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
       <div className="raqeem-card p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <FileText className="w-4 h-4 text-primary" /> محضر الاجتماع · Minutes
+            <FileText className="w-4 h-4 text-primary" /> {t("محضر الاجتماع", "Minutes")}
           </h3>
           {minutes && <StatusBadge label={MINUTES_STATUS[minutes.status]?.ar || minutes.status} colorClass={MINUTES_STATUS[minutes.status]?.color} />}
         </div>
@@ -266,7 +268,7 @@ export default function MinutesManager({ meeting, committee, members, attendance
               <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex items-center gap-2 mb-3">
                   <PenLine className="w-4 h-4 text-primary" />
-                  <h4 className="text-sm font-semibold text-foreground">التوقيعات الإلكترونية · E-Signatures</h4>
+                  <h4 className="text-sm font-semibold text-foreground">{t("التوقيعات الإلكترونية", "E-Signatures")}</h4>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {signatures.filter((s) => s.status === "active").map((sig) => (

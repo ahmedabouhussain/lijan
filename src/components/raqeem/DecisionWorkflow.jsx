@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ESCALATION_LEVEL } from "@/lib/raqeemUtils";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function DecisionWorkflow({ decision, onChanged }) {
+  const { t } = useLanguage();
   const [showVoting, setShowVoting] = useState(false);
   const [showEscalate, setShowEscalate] = useState(false);
   const [showSupersede, setShowSupersede] = useState(false);
@@ -167,7 +169,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
     <div className="space-y-4">
       <div className="p-3 rounded-md bg-amber-50 border border-amber-200 flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-        <p className="text-xs text-amber-800">معطل مؤقتاً أثناء تأمين سير العمل المحكوم · Temporarily unavailable while the governed workflow is being secured</p>
+        <p className="text-xs text-amber-800">{t("معطل مؤقتاً أثناء تأمين سير العمل المحكوم", "Temporarily unavailable while the governed workflow is being secured")}</p>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-muted-foreground">الحالة الحالية:</span>
@@ -211,7 +213,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {showVoting && (
         <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">تسجيل التصويت الفردي · Individual Roll-Call Vote</h4>
+            <h4 className="text-sm font-semibold">{t("تسجيل التصويت الفردي", "Individual Roll-Call Vote")}</h4>
             <button onClick={() => setShowVoting(false)} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>
@@ -278,7 +280,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {showEscalate && (
         <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">تصعيد القرار · Escalate</h4>
+            <h4 className="text-sm font-semibold">{t("تصعيد القرار", "Escalate")}</h4>
             <button onClick={() => setShowEscalate(false)} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>
@@ -295,7 +297,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {showSupersede && (
         <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">إلغاء بقرار لاحق · Supersede</h4>
+            <h4 className="text-sm font-semibold">{t("إلغاء بقرار لاحق", "Supersede")}</h4>
             <button onClick={() => setShowSupersede(false)} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>

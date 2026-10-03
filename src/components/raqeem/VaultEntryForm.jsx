@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { X } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const TYPE_DEFAULTS = {
   adr: { codePrefix: "ADR", category: "Architecture" },
@@ -15,6 +16,7 @@ const TYPE_DEFAULTS = {
 };
 
 export default function VaultEntryForm({ type, onCreated, onCancel }) {
+  const { t } = useLanguage();
   const defaults = TYPE_DEFAULTS[type] || TYPE_DEFAULTS.adr;
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -49,15 +51,15 @@ export default function VaultEntryForm({ type, onCreated, onCancel }) {
       >
         <X className="w-4 h-4" />
       </button>
-      <h3 className="text-sm font-semibold text-foreground mb-4">إضافة جديدة · New Entry</h3>
+      <h3 className="text-sm font-semibold text-foreground mb-4">{t("إضافة جديدة", "New Entry")}</h3>
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label className="text-xs">الرمز · Code</Label>
+            <Label className="text-xs">{t("الرمز", "Code")}</Label>
             <Input value={form.code} onChange={(e) => update("code", e.target.value)} placeholder={`${defaults.codePrefix}-00X`} />
           </div>
           <div>
-            <Label className="text-xs">التصنيف · Category</Label>
+            <Label className="text-xs">{t("التصنيف", "Category")}</Label>
             <Input value={form.category} onChange={(e) => update("category", e.target.value)} />
           </div>
         </div>
@@ -70,7 +72,7 @@ export default function VaultEntryForm({ type, onCreated, onCancel }) {
           <Input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="Title" />
         </div>
         <div>
-          <Label className="text-xs">المحتوى · Content</Label>
+          <Label className="text-xs">{t("المحتوى", "Content")}</Label>
           <Textarea value={form.content} onChange={(e) => update("content", e.target.value)} rows={4} placeholder="التفاصيل..." />
         </div>
         <div className="flex justify-end gap-2 pt-1">

@@ -62,7 +62,7 @@ export default function MemorySectionRenderer({ sections, lang = "ar" }) {
               <p className="text-sm text-foreground/80 leading-relaxed">{summary}</p>
             ) : (
               <p className="text-sm text-muted-foreground italic">
-                {lang === "ar" ? "أدلة غير كافية — Insufficient Evidence" : "Insufficient Evidence"}
+                {lang === "ar" ? "أدلة غير كافية" : "Insufficient Evidence"}
               </p>
             )}
 
@@ -70,7 +70,7 @@ export default function MemorySectionRenderer({ sections, lang = "ar" }) {
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {section.source_references.map((ref, j) => (
                   <span key={j} className="text-xs px-2 py-0.5 rounded bg-secondary text-muted-foreground">
-                    {ref.record_type || "سجل"} {ref.record_number || ref.record_id?.slice(-8) || ""}
+                    {ref.record_type || (lang === "ar" ? "سجل" : "Record")} {ref.record_number || ref.record_id?.slice(-8) || ""}
                   </span>
                 ))}
               </div>

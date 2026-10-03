@@ -4,6 +4,7 @@ import { Upload, FileText, Plus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const DOC_TYPES = [
   { value: "memo", label: "مذكرة" },
@@ -17,6 +18,7 @@ const DOC_TYPES = [
 ];
 
 export default function SupportingDocumentsSection({ value, onChange }) {
+  const { t } = useLanguage();
   const [uploadingIdx, setUploadingIdx] = useState(null);
   const [newDoc, setNewDoc] = useState({ title: "", document_type: "memo" });
 
@@ -49,7 +51,7 @@ export default function SupportingDocumentsSection({ value, onChange }) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <FileText className="w-4 h-4 text-primary" />
-        <Label className="text-sm font-semibold">وثائق داعمة · Supporting Documents</Label>
+        <Label className="text-sm font-semibold">{t("وثائق داعمة", "Supporting Documents")}</Label>
       </div>
 
       {value.length > 0 && (

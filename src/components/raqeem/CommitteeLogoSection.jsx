@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Upload, Sparkles, X, Loader2, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 
 const TYPE_LABELS_AR = {
@@ -19,6 +20,7 @@ const TYPE_LABELS_AR = {
 };
 
 export default function CommitteeLogoSection({ value, onChange, committeeInfo }) {
+  const { t } = useLanguage();
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -73,7 +75,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
 
   return (
     <div className="space-y-2">
-      <Label>شعار اللجنة · Committee Logo</Label>
+      <Label>{t("شعار اللجنة", "Committee Logo")}</Label>
 
       {value ? (
         <div className="flex items-center gap-3">

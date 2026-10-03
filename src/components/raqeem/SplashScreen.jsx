@@ -11,7 +11,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 // Phases: "video" → "reveal" → "exit". Tap anywhere to skip.
 // Maroon background throughout; brand reveal is text-based (no white rectangle on maroon).
 export default function SplashScreen({ onFinish }) {
-  const { lang } = useLanguage();
+  const { t, lang } = useLanguage();
   const [phase, setPhase] = useState("video");
   const phaseRef = useRef("video");
   const timersRef = useRef([]);
@@ -141,7 +141,7 @@ export default function SplashScreen({ onFinish }) {
         }`}
         style={{ color: BRAND_COLORS.gold }}
       >
-        اضغط للتخطي · Tap to skip
+        {t("اضغط للتخطي", "Tap to skip")}
       </div>
     </div>
   );

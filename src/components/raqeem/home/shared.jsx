@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ChevronLeft, ArrowRight } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export const GOVERNANCE_ROLES = {
   executive: { ar: "تنفيذي", en: "Executive" },
@@ -25,6 +26,7 @@ export function StatCard({ icon: Icon, label, value, accent }) {
 }
 
 export function SectionCard({ icon: Icon, title, to, toLabel, empty, emptyText, children }) {
+  const { t } = useLanguage();
   return (
     <div className="raqeem-card p-5">
       <div className="flex items-center justify-between mb-4">
@@ -34,12 +36,12 @@ export function SectionCard({ icon: Icon, title, to, toLabel, empty, emptyText, 
         </div>
         {to && (
           <Link to={to} className="text-xs text-primary hover:underline flex items-center gap-1">
-            {toLabel || "عرض الكل"} <ChevronLeft className="w-3 h-3" />
+            {toLabel || t("عرض الكل", "View all")} <ChevronLeft className="w-3 h-3" />
           </Link>
         )}
       </div>
       {empty ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">{emptyText || "لا توجد عناصر"}</p>
+        <p className="text-sm text-muted-foreground py-4 text-center">{emptyText || t("لا توجد عناصر", "No items")}</p>
       ) : (
         children
       )}

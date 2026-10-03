@@ -1,5 +1,6 @@
 import React from "react";
 import { Users, ArrowLeft, Plus, Minus, RefreshCw, Equal } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const ROLE_LABELS = {
   chair: "رئيس", vice_chair: "نائب رئيس", secretary: "أمين",
@@ -9,6 +10,7 @@ const ROLE_LABELS = {
 // FormationDiff — side-by-side visual comparison of two formation version snapshots.
 // Shows added members, removed members, role changes, and unchanged members.
 export default function FormationDiff({ versionA, versionB }) {
+  const { t } = useLanguage();
   if (!versionA || !versionB) return null;
 
   const parseSnapshot = (v) => {
@@ -44,12 +46,12 @@ export default function FormationDiff({ versionA, versionB }) {
       {/* Version headers */}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div className="p-2 rounded-md bg-secondary/40">
-          <div className="font-semibold text-foreground">النسخة A · #{versionA.version_number}</div>
+          <div className="font-semibold text-foreground">{t("النسخة A", "Version A")} · #{versionA.version_number}</div>
           <div className="text-muted-foreground">{versionA.effective_date} — {versionA.end_date || "الآن"}</div>
           {versionA.reason_for_change && <div className="text-muted-foreground truncate">{versionA.reason_for_change}</div>}
         </div>
         <div className="p-2 rounded-md bg-secondary/40">
-          <div className="font-semibold text-foreground">النسخة B · #{versionB.version_number}</div>
+          <div className="font-semibold text-foreground">{t("النسخة B", "Version B")} · #{versionB.version_number}</div>
           <div className="text-muted-foreground">{versionB.effective_date} — {versionB.end_date || "الآن"}</div>
           {versionB.reason_for_change && <div className="text-muted-foreground truncate">{versionB.reason_for_change}</div>}
         </div>

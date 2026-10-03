@@ -65,7 +65,7 @@ export const EffectiveActorProvider = ({ children }) => {
         entity_id: session.demo_session_id,
         entity_title: session.display_name_ar,
         actor_user_id: user?.id || 'anonymous',
-        actor_name: user?.full_name || 'زائر مجهول · Anonymous Visitor',
+        actor_name: user?.full_name || 'زائر مجهول',
         actor_email: user?.email || 'anonymous@visitor',
         description: 'Demo experience exploration started',
         user_agent: navigator.userAgent,

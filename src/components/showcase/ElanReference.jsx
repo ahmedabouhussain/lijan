@@ -1,7 +1,9 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function ElanReference({ data }) {
+  const { t } = useLanguage();
   const meeting = data.elanMeeting;
   const items = data.elanAgendaItems || [];
   if (!meeting) return null;
@@ -10,7 +12,7 @@ export default function ElanReference({ data }) {
     <div className="space-y-4" dir="rtl">
       <div>
         <h2 className="text-lg font-bold">مرجع أجندة إعلان — اللجنة التنفيذية</h2>
-        <Badge variant="outline" className="mt-1">دور تجريبي افتراضي · Synthetic Demonstration Role</Badge>
+        <Badge variant="outline" className="mt-1">{t("دور تجريبي افتراضي", "Synthetic Demonstration Role")}</Badge>
       </div>
       <div className="raqeem-card p-3 text-xs text-muted-foreground">
         تم إنشاء بيانات هذا الاجتماع من نموذج أجندة مرفق. لا يثبت المستند الحضور أو الرئاسة أو صدور قرارات.
