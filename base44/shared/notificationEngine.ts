@@ -19,6 +19,13 @@ export interface NotificationParams {
   correlation_id?: string;
   actor_name?: string;
   deep_link?: string; // override; otherwise from template
+  // Explicit bilingual content overrides — used when the caller composes the notice itself
+  // (e.g. an AI-authored brief) instead of relying on a stored template. Both languages are
+  // always supplied together so no surface ever falls back across languages.
+  subject_ar?: string;
+  subject_en?: string;
+  body_ar?: string;
+  body_en?: string;
 }
 
 export function renderTemplate(template: string, context: Record<string, any> = {}): string {
@@ -85,10 +92,10 @@ export async function dispatchNotification(base44: any, params: NotificationPara
 
   // 3. Build fallback template if none configured
   const channel = params.channel || template?.channel || 'in_app';
-  const subjectAr = template ? renderTemplate(template.subject_template_ar, context) : `${event_type}`;
-  const subjectEn = template ? renderTemplate(template.subject_template_en, context) : `${event_type}`;
-  const bodyAr = template ? renderTemplate(template.body_template_ar, context) : renderTemplate('{{message}}', context);
-  const bodyEn = template ? renderTemplate(template.body_template_en, context) : renderTemplate('{{message}}', context);
+  const subjectAr = params.subject_ar || (template ? renderTemplate(template.subject_template_ar, context) : `${event_type}`);
+  const subjectEn = params.subject_en || (template ? renderTemplate(template.subject_template_en, context) : `${event_type}`);
+  const bodyAr = params.body_ar || (template ? renderTemplate(template.body_template_ar, context) : renderTemplate('{{message}}', context));
+  const bodyEn = params.body_en || (template ? renderTemplate(template.body_template_en, context) : renderTemplate('{{message}}', context));
   const deepLink = params.deep_link || (template ? renderTemplate(template.deep_link_template, context) : '');
 
   // 4. Check user preferences
