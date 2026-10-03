@@ -6,6 +6,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Plus, ChevronLeft, ChevronRight, Users, Building2, ShieldCheck, Lock } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { Image } from "@/components/ui/image";
 import { L } from "@/lib/l10n";
 
 export default function OrgPortal() {
@@ -38,9 +39,18 @@ export default function OrgPortal() {
       <div className="raqeem-card p-5" style={{ borderTop: `4px solid ${org.branding_primary_color || "hsl(var(--primary))"}` }}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ background: org.branding_primary_color || "hsl(var(--primary))" }}>
-              <Building2 className="w-6 h-6 text-white" />
-            </div>
+            {org.logo_url ? (
+              <Image
+                src={org.logo_url}
+                alt={L.name(org)}
+                fittingType="fit"
+                className="h-12 w-20 shrink-0 rounded bg-white"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ background: org.branding_primary_color || "hsl(var(--primary))" }}>
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+            )}
             <div>
               <h1 className="text-lg font-bold text-foreground">{L.name(org)}</h1>
             </div>

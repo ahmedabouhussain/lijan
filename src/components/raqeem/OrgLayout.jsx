@@ -11,6 +11,7 @@ import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import { Image } from "@/components/ui/image";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { L } from "@/lib/l10n";
@@ -85,23 +86,23 @@ function OrgShell() {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Brand */}
+      {/* Organization identity — the approved logo of the organization this portal belongs to */}
       <div className="px-5 py-5 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
-            <BrandLogo className="w-full h-full" />
+            {org.logo_url ? (
+              <Image src={org.logo_url} alt={L.name(org)} fittingType="fit" className="w-full h-full" />
+            ) : (
+              <BrandLogo className="w-full h-full" />
+            )}
           </div>
-          <BrandWordmark variant="light" />
+          <div className="min-w-0">
+            <div className="text-sm text-sidebar-foreground font-medium truncate">{L.name(org)}</div>
+            <div className="text-[10px] text-sidebar-foreground/40 truncate">{t(org.name_en, org.name_ar)}</div>
+          </div>
         </Link>
-      </div>
-
-      {/* Organization context */}
-      <div className="px-5 py-3 border-b border-sidebar-border">
-        <div className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wider mb-1">{t("المنظمة", "Organization")}</div>
-        <div className="text-sm text-sidebar-foreground font-medium truncate">{L.name(org)}</div>
-        <div className="text-[10px] text-sidebar-foreground/40 truncate">{org.name_en}</div>
         {portal.sandbox_badge && (
-          <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] bg-amber-900/30 text-amber-200">
+          <span className="inline-block mt-2 px-1.5 py-0.5 rounded text-[10px] bg-amber-900/30 text-amber-200">
             {t("بيئة تجريبية", "Sandbox")}
           </span>
         )}
@@ -190,7 +191,8 @@ function OrgShell() {
         <NotificationCenter />
       </div>
       <div className="px-5 py-3 border-t border-sidebar-border space-y-1">
-        <div className="text-[10px] text-sidebar-foreground/40">{t("سلطة موثقة · قرار مُسنَد · أثر محفوظ", "Governed Authority · Evidence-Based Decisions · Preserved Impact")}</div>
+        <BrandWordmark variant="light" />
+        <div className="text-[10px] text-sidebar-foreground/40 mt-1">{t("سلطة موثقة · قرار مُسنَد · أثر محفوظ", "Governed Authority · Evidence-Based Decisions · Preserved Impact")}</div>
         <PoweredByConnection variant="light" />
       </div>
     </div>
@@ -221,9 +223,13 @@ function OrgShell() {
           </button>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
-              <BrandLogo className="w-full h-full" />
+              {org.logo_url ? (
+                <Image src={org.logo_url} alt={L.name(org)} fittingType="fit" className="w-full h-full" />
+              ) : (
+                <BrandLogo className="w-full h-full" />
+              )}
             </div>
-            <span className="font-bold text-sm">{L.name(org)}</span>
+            <span className="font-bold text-sm truncate">{L.name(org)}</span>
           </div>
           <div className="w-5" />
         </header>
