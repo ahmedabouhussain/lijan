@@ -46,7 +46,7 @@ const ROLE_LABELS = {
 export default function UnifiedWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isDemoMode, effectiveActor } = useEffectiveActor();
+  const { isDemoMode, effectiveActor, demoPersonaKey } = useEffectiveActor();
   const { t, lang } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +56,10 @@ export default function UnifiedWorkspace() {
     let stale = false;
     (async () => {
       try {
-        const res = await base44.functions.invoke("GetMyOrganizations", { demo_mode: isDemoMode });
+        const res = await base44.functions.invoke("GetMyOrganizations", {
+          demo_mode: isDemoMode,
+          demo_persona: demoPersonaKey,
+        });
         if (stale) return;
         const d = res.data || res;
         if (d.error) setError(d.error);
@@ -68,7 +71,7 @@ export default function UnifiedWorkspace() {
       if (!stale) setLoading(false);
     })();
     return () => { stale = true; };
-  }, [isDemoMode]);
+  }, [isDemoMode, demoPersonaKey]);
 
   if (loading) {
     return <WorkspaceSkeleton />;
