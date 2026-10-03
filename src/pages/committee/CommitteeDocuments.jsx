@@ -12,6 +12,7 @@ import { FileText, Download, Plus, Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const DOC_TYPES = [
   { value: "memo", label_ar: "مذكرة", label_en: "Memo" },
@@ -107,7 +108,7 @@ export default function CommitteeDocuments() {
             <div key={d.id} className="raqeem-card p-4 flex items-center gap-3">
               <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium truncate">{d.title_ar || d.title}</div>
+                <div className="text-sm font-medium truncate">{L.title(d)}</div>
                 <div className="text-xs text-muted-foreground">
                   {d.document_type && t(DOC_TYPES.find((t2) => t2.value === d.document_type)?.label_ar || d.document_type, d.document_type)}
                   {d.classification && ` · ${d.classification}`}

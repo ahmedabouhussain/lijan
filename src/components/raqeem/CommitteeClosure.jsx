@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { L } from "@/lib/l10n";
 import { base44 } from "@/api/base44Client";
 import { Lock, AlertTriangle, CheckCircle2, Sparkles, Archive, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,8 +51,8 @@ export default function CommitteeClosure({ committee, members, meetings, decisio
       await base44.entities.FounderVaultEntry.create({
         entry_type: "institutional_memory",
         code: `MEM-${committee.name_en?.substring(0, 20) || committee.id.substring(0, 8)}`,
-        title: `ذاكرة مؤسسية: ${committee.name_ar || committee.name_en}`,
-        title_ar: `ذاكرة مؤسسية: ${committee.name_ar || committee.name_en}`,
+        title: `ذاكرة مؤسسية: ${L.name(committee)}`,
+        title_ar: `ذاكرة مؤسسية: ${L.name(committee)}`,
         category: "إغلاق لجنة",
         content: memorySummary,
         status: "completed",

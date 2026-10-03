@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { L } from "@/lib/l10n";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +71,7 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
               <SelectTrigger><SelectValue placeholder="اختر اللجنة" /></SelectTrigger>
               <SelectContent>
                 {committees.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name_ar || c.name_en}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>{L.name(c)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -101,7 +102,7 @@ export default function DeliberationFormDialog({ open, onOpenChange, committees,
                 <SelectItem value="none">بدون قرار مرتبط</SelectItem>
                 {decisions.map((d) => (
                   <SelectItem key={d.id} value={d.id}>
-                    {d.decision_number ? `${d.decision_number} — ` : ""}{d.title || d.title_ar || "قرار"}
+                    {d.decision_number ? `${d.decision_number} — ` : ""}{L.title(d) || L.pair("قرار", "Decision")}
                   </SelectItem>
                 ))}
               </SelectContent>

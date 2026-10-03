@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { AGENDA_ITEM_STATUS, READINESS, CLASSIFICATION } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 
 export default function AgendaManager({ meetingId, items = [], onChanged }) {
   const [show, setShow] = useState(false);
@@ -54,7 +55,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
         entity_type: "AgendaItem",
         entity_id: itemId,
         new_value: status,
-        description: `تغيير حالة بند الجدول إلى ${AGENDA_ITEM_STATUS[status]?.ar}`,
+        description: `${L.pair("تغيير حالة بند الجدول إلى", "Agenda item status changed to")} ${L.label(AGENDA_ITEM_STATUS, status, status)}`,
       });
       onChanged();
     } catch {}
@@ -68,7 +69,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
         entity_type: "AgendaItem",
         entity_id: itemId,
         new_value: readiness,
-        description: `تحديث جاهزية البند إلى ${READINESS[readiness]?.ar}`,
+        description: `${L.pair("تحديث جاهزية البند إلى", "Item readiness updated to")} ${L.label(READINESS, readiness, readiness)}`,
       });
       onChanged();
     } catch {}
@@ -155,11 +156,11 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                   <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground flex-wrap">
                     {item.presenter && <span>المقدم: {item.presenter}</span>}
                     {item.time_allocation_minutes && <span>{item.time_allocation_minutes} دقيقة</span>}
-                    {item.readiness && <StatusBadge label={READINESS[item.readiness]?.ar} colorClass={READINESS[item.readiness]?.color} />}
+                    {item.readiness && <StatusBadge label={L.label(READINESS, item.readiness, item.readiness)} colorClass={READINESS[item.readiness]?.color} />}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <StatusBadge label={AGENDA_ITEM_STATUS[item.status]?.ar || item.status} colorClass={AGENDA_ITEM_STATUS[item.status]?.color} />
+                  <StatusBadge label={L.label(AGENDA_ITEM_STATUS, item.status, item.status)} colorClass={AGENDA_ITEM_STATUS[item.status]?.color} />
                   <button onClick={() => remove(item.id)} className="text-muted-foreground hover:text-destructive">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

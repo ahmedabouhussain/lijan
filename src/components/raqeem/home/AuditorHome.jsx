@@ -1,4 +1,5 @@
 import React from "react";
+import { L } from "@/lib/l10n";
 import {
   ShieldAlert,
   FileWarning,
@@ -138,7 +139,7 @@ export default function AuditorHome({ data }) {
           {reopenedRecords.slice(0, 5).map((r, i) => (
             <AttentionItem
               key={r.id || i}
-              title={r.title || r.name_ar || r.name_en}
+              title={r.title || L.name(r)}
               subtitle={r.decision_number || r.status}
               badge={<StatusBadge label={r.status === "superseded" ? DECISION_STATUS.superseded.ar : COMMITTEE_STATUS[r.status]?.ar || r.status} colorClass="text-amber-700 bg-amber-50" />}
               to={r.decision_number ? "/decisions" : "/committees"}
@@ -164,7 +165,7 @@ export default function AuditorHome({ data }) {
           {closureReady.slice(0, 5).map((item) => (
             <AttentionItem
               key={item.id}
-              title={item.title || item.name_ar || item.name_en}
+              title={item.title || L.name(item)}
               subtitle={item.status === "closing" ? "لجنة قيد الإغلاق" : "إجراء قيد المراجعة"}
               badge={<StatusBadge label="بانتظار الإغلاق" colorClass="text-amber-700 bg-amber-50" />}
               to={item.status === "closing" ? "/committees" : "/execution"}

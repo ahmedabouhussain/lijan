@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { L } from "@/lib/l10n";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
@@ -46,7 +47,7 @@ function CommitteeCard({ c }) {
           </div>
           <div className="min-w-0">
             <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-              {c.name_ar || c.name_en}
+              {L.name(c)}
             </div>
             <div className="text-xs text-muted-foreground truncate">{c.name_en}</div>
           </div>

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ESCALATION_LEVEL } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 
 export default function DecisionWorkflow({ decision, onChanged }) {
   const { t } = useLanguage();
@@ -41,7 +42,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
     try {
       const oldStatus = decision.status;
       await base44.entities.Decision.update(decision.id, { status: newStatus });
-      await log(action, `${descLabel}: ${DECISION_STATUS[oldStatus]?.ar} → ${DECISION_STATUS[newStatus]?.ar}`, oldStatus, newStatus);
+      await log(action, `${descLabel}: ${L.label(DECISION_STATUS, oldStatus, oldStatus)} → ${L.label(DECISION_STATUS, newStatus, newStatus)}`, oldStatus, newStatus);
       onChanged();
     } catch {}
     setSaving(false);
@@ -108,7 +109,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
         dissent: dissentParts.join(" | ") || undefined,
         status: outcome,
       });
-      await log("vote", `تصويت فردي: ${forCount} موافق / ${againstCount} رافض / ${abstainCount} ممتنع — النتيجة: ${DECISION_STATUS[outcome]?.ar}`, decision.status, outcome);
+      await log("vote", `${L.pair("تصويت فردي", "Individual vote")}: ${forCount} ${L.pair("موافق", "for")} / ${againstCount} ${L.pair("رافض", "against")} / ${abstainCount} ${L.pair("ممتنع", "abstain")} — ${L.pair("النتيجة", "Result")}: ${L.label(DECISION_STATUS, outcome, outcome)}`, decision.status, outcome);
       setShowVoting(false);
       onChanged();
     } catch {}
@@ -119,7 +120,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
     setSaving(true);
     try {
       await base44.entities.Decision.update(decision.id, { escalation_level: escalationLevel });
-      await log("escalate", `تصعيد إلى مستوى: ${ESCALATION_LEVEL[escalationLevel]?.ar}`, decision.escalation_level || "none", escalationLevel);
+      await log("escalate", `${L.pair("تصعيد إلى مستوى", "Escalated to level")}: ${L.label(ESCALATION_LEVEL, escalationLevel, escalationLevel)}`, decision.escalation_level || "none", escalationLevel);
       setShowEscalate(false);
       onChanged();
     } catch {}
@@ -173,9 +174,9 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-muted-foreground">الحالة الحالية:</span>
-        <StatusBadge label={DECISION_STATUS[status]?.ar || status} colorClass={DECISION_STATUS[status]?.color} size="md" />
+        <StatusBadge label={L.label(DECISION_STATUS, status, status)} colorClass={DECISION_STATUS[status]?.color} size="md" />
         {decision.escalation_level && decision.escalation_level !== "none" && (
-          <StatusBadge label={`تصعيد: ${ESCALATION_LEVEL[decision.escalation_level]?.ar || decision.escalation_level}`} colorClass="text-amber-700 bg-amber-50" />
+          <StatusBadge label={`${L.pair("تصعيد", "Escalation")}: ${L.label(ESCALATION_LEVEL, decision.escalation_level, decision.escalation_level)}`} colorClass="text-amber-700 bg-amber-50" />
         )}
       </div>
 

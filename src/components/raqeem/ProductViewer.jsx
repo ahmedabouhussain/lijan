@@ -83,7 +83,7 @@ export default function ProductViewer({ product, lang = "ar" }) {
       <div className="raqeem-card p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-base font-bold text-foreground">{product.title_ar || product.title}</h2>
+            <h2 className="text-base font-bold text-foreground">{(product[`title_${lang}`] || product.title)}</h2>
             {product.source_title && product.source_title !== product.title && (
               <p className="text-xs text-muted-foreground mt-0.5">{product.source_title}</p>
             )}

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { L } from "@/lib/l10n";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle,
@@ -165,7 +166,7 @@ export default function GovernanceOverview({ data, roleLabel, RoleIcon }) {
         items.push({
           urgency: "normal",
           icon: ShieldCheck,
-          title: c.name_ar || c.name_en,
+          title: L.name(c),
           subtitle: "بانتظار استكمال الحوكمة والتفعيل",
           badge: <StatusBadge label="مسودة" colorClass="text-muted-foreground bg-secondary" />,
           to: `/committees/${c.id}`,

@@ -126,7 +126,7 @@ export default function VerifyRecord() {
           </div>
 
           <div>
-            <p className="text-lg font-bold text-foreground">{record.title || record.title_ar || "—"}</p>
+            <p className="text-lg font-bold text-foreground">{(lang === "ar" ? record.title_ar : record.title) || record.title || "—"}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {t("نوع المنتج", "Product Type")}: {record.product_type || "—"}
             </p>

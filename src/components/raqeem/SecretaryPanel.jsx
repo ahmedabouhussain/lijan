@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FileText, Calendar, AlertTriangle, CheckSquare, Clock, Sparkles } from "lucide-react";
 import { MEETING_STATUS, MINUTES_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { L } from "@/lib/l10n";
 
 export default function SecretaryPanel({ committeeId, meetings, decisions, actions, minutes }) {
   // Meetings needing agenda preparation: scheduled, agenda not ready
@@ -68,7 +69,7 @@ export default function SecretaryPanel({ committeeId, meetings, decisions, actio
               <div className="space-y-1">
                 {task.items.slice(0, 4).map((item) => {
                   const id = task.key === "minutes_pending" ? item.meeting_id : item.id;
-                  const title = item.title || item.title_ar || item.member_name || "—";
+                  const title = L.title(item) || item.member_name || "—";
                   const sub = item.deadline ? `موعد: ${formatDate(item.deadline)}` : item.date ? formatDate(item.date) : "";
                   return (
                     <Link

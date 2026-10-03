@@ -1,4 +1,5 @@
 import React from "react";
+import { L } from "@/lib/l10n";
 import { Link } from "react-router-dom";
 import {
   CalendarClock,
@@ -89,7 +90,7 @@ export default function ChairHome({ data }) {
             <div key={q.committee.id} className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
               <div className="min-w-0">
                 <Link to={`/committees/${q.committee.id}`} className="text-sm font-medium text-foreground truncate block hover:underline">
-                  {q.committee.name_ar || q.committee.name_en}
+                  {L.name(q.committee)}
                 </Link>
                 <div className="text-xs text-muted-foreground">{q.activeCount} / {q.quorum} أعضاء نشطون</div>
               </div>
@@ -128,7 +129,7 @@ export default function ChairHome({ data }) {
           {mandateProgress.slice(0, 5).map((mp) => (
             <div key={mp.committee.id} className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
               <Link to={`/committees/${mp.committee.id}`} className="text-sm font-medium text-foreground truncate hover:underline">
-                {mp.committee.name_ar || mp.committee.name_en}
+                {L.name(mp.committee)}
               </Link>
               <StatusBadge
                 label={mp.complete ? "حوكمة مكتملة" : "قيد الاستكمال"}

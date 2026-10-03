@@ -11,6 +11,7 @@ import { Network, Plus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const RISK_LEVEL = {
   low: { ar: "منخفض", en: "Low", color: "bg-emerald-50 text-emerald-700" },
@@ -127,7 +128,7 @@ export default function CommitteeRisks() {
             return (
               <div key={r.id} className="raqeem-card p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{r.title_ar || r.title}</span>
+                  <span className="text-sm font-medium">{L.title(r)}</span>
                   <StatusBadge label={t(ri.ar, ri.en)} colorClass={ri.color} />
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">

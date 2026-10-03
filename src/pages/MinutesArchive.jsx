@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { L } from "@/lib/l10n";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import {
@@ -119,7 +120,7 @@ export default function MinutesArchive() {
               <SelectContent>
                 <SelectItem value="all">جميع اللجان</SelectItem>
                 {committees.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name_ar || c.name_en}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>{L.name(c)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

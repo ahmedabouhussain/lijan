@@ -1,4 +1,5 @@
 // LIJAN shared utilities — bilingual labels, status maps, helpers
+import { getActiveLang } from "@/lib/l10n";
 
 export const COMMITTEE_TYPES = {
   permanent_council: { ar: "مجلس دائم", en: "Permanent Council" },
@@ -180,12 +181,39 @@ export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {
     const d = new Date(dateStr);
-    const locale = document.documentElement.lang === "ar" ? "ar-QA" : "en-GB";
+    const locale = getActiveLang() === "ar" ? "ar-QA" : "en-GB";
     return d.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" });
   } catch {
     return dateStr;
   }
 }
+
+// ── Single-language guarantee ────────────────────────────────────────────────
+// Every bilingual label entry resolves to the ACTIVE language when it is read, so
+// no surface can render the other language's label. Arabic pages → Arabic labels,
+// English pages → English labels. The language comes from the ONE language engine
+// (never from the DOM), and `t(MAP[k]?.ar, MAP[k]?.en)` keeps working unchanged.
+const BILINGUAL_LABEL_MAPS = [
+  COMMITTEE_TYPES, COMMITTEE_STATUS, MEETING_STATUS, DECISION_STATUS, ACTION_STATUS,
+  PRIORITY, READINESS, AGENDA_ITEM_STATUS, ESCALATION_LEVEL, CLASSIFICATION,
+  MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE, AUTHORITY_LEVELS,
+  DEPENDENCY_TYPE, DEPENDENCY_STATUS, SCENARIO_TYPE, SCENARIO_STATUS,
+  AI_OUTPUT_TYPE, AI_OUTPUT_STATUS,
+];
+
+function bindEntryToActiveLanguage(entry) {
+  if (!entry || typeof entry !== "object") return;
+  const ar = entry.ar;
+  const en = entry.en ?? ar;
+  if (ar === undefined && en === undefined) return;
+  const read = () => (getActiveLang() === "ar" ? ar ?? en : en ?? ar);
+  delete entry.ar;
+  delete entry.en;
+  Object.defineProperty(entry, "ar", { get: read, enumerable: true, configurable: true });
+  Object.defineProperty(entry, "en", { get: read, enumerable: true, configurable: true });
+}
+
+BILINGUAL_LABEL_MAPS.forEach((map) => Object.values(map || {}).forEach(bindEntryToActiveLanguage));
 
 export function isOverdue(dateStr) {
   if (!dateStr) return false;

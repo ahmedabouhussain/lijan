@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { L } from "@/lib/l10n";
 import { useLanguage } from "@/lib/LanguageContext";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -138,7 +139,7 @@ async function buildChain(entityType, entityId) {
             label: { ar: "اللجنة والصلاحية", en: "Committee & Mandate" }[document.documentElement.dir === "rtl" ? "ar" : "en"],
             icon: ScrollText,
             value: true,
-            detail: committee.name_ar || committee.name_en,
+            detail: L.name(committee),
             link: null, // internal nav
           });
         }

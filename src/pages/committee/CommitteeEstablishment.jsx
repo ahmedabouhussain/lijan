@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { L } from "@/lib/l10n";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
@@ -100,7 +101,7 @@ export default function CommitteeEstablishment() {
   };
 
   const submit = async () => {
-    if (!form.title_ar || !form.file_url) { setMsg("العنوان العربي والملف مطلوبان"); return; }
+    if (!form.title_ar || !form.file_url) { setMsg(L.pair("العنوان العربي والملف مطلوبان", "The Arabic title and the file are required")); return; }
     setUploading(true);
     try {
       const res = await base44.functions.invoke("UploadFoundingInstrument", {

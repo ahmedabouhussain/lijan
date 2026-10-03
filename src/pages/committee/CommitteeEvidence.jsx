@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeEvidence() {
   const { data, reload } = useCommittee();
@@ -55,7 +56,7 @@ export default function CommitteeEvidence() {
             <div key={a.id} className="raqeem-card p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{a.title_ar || a.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate">{L.title(a)}</div>
                   <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
                 </div>
                 <StatusBadge label={a.status === "evidence_pending" ? t("بانتظار الدليل", "Evidence Pending") : t("قيد المراجعة", "Under Review")} colorClass="bg-amber-50 text-amber-700" />

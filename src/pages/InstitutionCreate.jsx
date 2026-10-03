@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Building2, ChevronRight, Check } from "lucide-react";
 import { CLASSIFICATION } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 
 const INSTITUTION_TYPES = {
   ministry: { ar: "وزارة", en: "Ministry" },
@@ -168,7 +169,7 @@ export default function InstitutionCreate() {
             <div className="pt-4 border-t border-border space-y-1.5">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">المراجعة</div>
               <div className="text-sm"><span className="text-muted-foreground">الاسم:</span> {form.name_ar} · {form.name_en}</div>
-              <div className="text-sm"><span className="text-muted-foreground">النوع:</span> {INSTITUTION_TYPES[form.type]?.ar}</div>
+              <div className="text-sm"><span className="text-muted-foreground">{L.pair("النوع", "Type")}:</span> {L.label(INSTITUTION_TYPES, form.type, form.type)}</div>
               <div className="text-sm"><span className="text-muted-foreground">التصنيف:</span> {CLASSIFICATION[form.classification_policy]?.ar}</div>
             </div>
           </>

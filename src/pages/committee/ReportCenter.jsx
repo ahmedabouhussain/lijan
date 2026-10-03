@@ -7,6 +7,7 @@ import ProductViewer from "@/components/raqeem/ProductViewer";
 import { FileText, Loader2, Search, ChevronRight, ChevronLeft, Check, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { L } from "@/lib/l10n";
 
 const STATUS_FILTERS = [
   { value: "all", label_ar: "الكل", label_en: "All" },
@@ -134,7 +135,7 @@ export default function ReportCenter() {
                 <FileText className="w-4 h-4 text-primary" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium truncate">{inst.title_ar || inst.title}</div>
+                <div className="text-sm font-medium truncate">{L.title(inst)}</div>
                 <div className="text-xs text-muted-foreground">
                   {inst.product_type} · {inst.export_format?.toUpperCase()} · {inst.classification}
                 </div>

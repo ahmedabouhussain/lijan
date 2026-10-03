@@ -14,6 +14,7 @@ import ChairHomeEnhanced from "@/components/raqeem/homes/ChairHomeEnhanced";
 import SecretaryHomeEnhanced from "@/components/raqeem/homes/SecretaryHomeEnhanced";
 import MemberHomeEnhanced from "@/components/raqeem/homes/MemberHomeEnhanced";
 import ObserverHomeEnhanced from "@/components/raqeem/homes/ObserverHomeEnhanced";
+import { L } from "@/lib/l10n";
 import {
   UserCircle, ArrowLeft, Lock, ChevronDown, ChevronUp, History,
 } from "lucide-react";
@@ -76,13 +77,13 @@ export default function CommitteeHome() {
           </Link>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground tracking-tight">{committee.name_ar || committee.name_en}</h1>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">{L.name(committee)}</h1>
               {committee.name_en && committee.name_ar && (
                 <p className="text-xs text-muted-foreground mt-0.5">{committee.name_en}</p>
               )}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="md" />
+              <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="md" />
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/5 text-primary border border-primary/15">
                 <UserCircle className="w-4 h-4" aria-hidden="true" />
                 {roleLabel}
@@ -134,7 +135,7 @@ export default function CommitteeHome() {
           open={timeMachineOpen}
           onClose={() => setTimeMachineOpen(false)}
           committeeId={committee.id}
-          committeeName={committee.name_ar || committee.name_en}
+          committeeName={L.name(committee)}
         />
       )}
     </div>

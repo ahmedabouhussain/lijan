@@ -6,6 +6,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Gavel, ChevronLeft, Users } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function OrgCommittees() {
   const { data } = useOrg();
@@ -41,11 +42,11 @@ export default function OrgCommittees() {
                 className="raqeem-card p-4 flex items-center justify-between hover:bg-secondary/30 transition-colors"
               >
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{c.name_ar || c.name_en}</div>
-                  <div className="text-xs text-muted-foreground truncate">{c.name_en} · {COMMITTEE_TYPES[c.type]?.ar || c.type}</div>
+                  <div className="text-sm font-medium text-foreground truncate">{L.name(c)}</div>
+                  <div className="text-xs text-muted-foreground truncate">{L.label(COMMITTEE_TYPES, c.type, c.type)}</div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <StatusBadge label={COMMITTEE_STATUS[c.status]?.ar || c.status} colorClass={COMMITTEE_STATUS[c.status]?.color} />
+                  <StatusBadge label={L.label(COMMITTEE_STATUS, c.status, c.status)} colorClass={COMMITTEE_STATUS[c.status]?.color} />
                   <ChevronLeft className="w-4 h-4 text-muted-foreground" />
                 </div>
               </Link>

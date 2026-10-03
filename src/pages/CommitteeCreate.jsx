@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { L } from "@/lib/l10n";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Check, ChevronLeft, ChevronRight, X, Sparkles, Wand2 } from "lucide-react";
@@ -450,7 +451,7 @@ export default function CommitteeCreate() {
                 <div className="space-y-1.5">
                   {suggestedMembers.map((m, i) => (
                     <div key={i} className="flex items-center justify-between text-xs">
-                      <span className="font-medium text-foreground">{m.full_name_ar || m.full_name}</span>
+                      <span className="font-medium text-foreground">{L.name(m, "full_name")}</span>
                       <span className="text-muted-foreground">{m.role} · {m.authority_level}</span>
                     </div>
                   ))}

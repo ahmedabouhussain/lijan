@@ -16,11 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 
 const MEETING_MODES = {
-  physical: "حضوري",
-  online: "عن بُعد",
-  hybrid: "مختلط",
+  physical: { ar: "حضوري", en: "Physical" },
+  online: { ar: "عن بُعد", en: "Online" },
+  hybrid: { ar: "مختلط", en: "Hybrid" },
 };
 
 export default function MeetingDetail() {
@@ -187,7 +188,7 @@ export default function MeetingDetail() {
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {formatDate(meeting.date)}</span>
-            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {meeting.location || MEETING_MODES[meeting.mode] || "—"}</span>
+            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {meeting.location || L.label(MEETING_MODES, meeting.mode, "—")}</span>
             <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> النصاب: {meeting.quorum_required}</span>
             {meeting.provider && meeting.provider !== "none" && (
               <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> {meeting.provider}</span>

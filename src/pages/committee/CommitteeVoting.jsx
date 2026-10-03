@@ -10,6 +10,7 @@ import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { CheckSquare, Gavel, Loader2, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeVoting() {
   const { data, reload } = useCommittee();
@@ -48,7 +49,7 @@ export default function CommitteeVoting() {
         role={my_role}
         isOversight={is_oversight}
         isRecused={is_recused}
-        committeeName={committee.name_ar || committee.name_en}
+        committeeName={L.name(committee)}
       />
 
       {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
@@ -65,7 +66,7 @@ export default function CommitteeVoting() {
                 <Link to={`${base}/decisions/${d.id}`} className="text-sm font-medium text-foreground hover:text-primary">
                   {d.title}
                 </Link>
-                <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </div>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span>{t("موافق", "For")}: <strong className="text-foreground">{d.vote_for || 0}</strong></span>

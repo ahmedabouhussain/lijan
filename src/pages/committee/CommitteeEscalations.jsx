@@ -11,6 +11,7 @@ import { TrendingUp, Plus, ArrowUpCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const ESCALATION = {
   none: { ar: "لا يوجد", en: "None", color: "bg-secondary text-muted-foreground" },
@@ -105,7 +106,7 @@ export default function CommitteeEscalations() {
             return (
               <div key={a.id} className="raqeem-card p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{a.title_ar || a.title}</span>
+                  <span className="text-sm font-medium">{L.title(a)}</span>
                   <StatusBadge label={t(ei.ar, ei.en)} colorClass={ei.color} />
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">

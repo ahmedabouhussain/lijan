@@ -12,6 +12,7 @@ import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { Users, Plus, UserMinus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { L } from "@/lib/l10n";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, committee_administrator: 4, member: 5, alternate: 6, observer: 7, advisor: 8 };
 
@@ -109,7 +110,7 @@ export default function CommitteeMembers() {
                 {m.role === "alternate" && !m.activated && (
                   <StatusBadge label={t("بديل غير مفعّل", "Inactive Alternate")} colorClass="bg-secondary text-muted-foreground" />
                 )}
-                <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
+                <StatusBadge label={L.label(MEMBER_ROLE, m.role, m.role)} colorClass={MEMBER_ROLE[m.role]?.color} />
                 {canManageMembership && m.status === "active" && (
                   <Button
                     size="sm"

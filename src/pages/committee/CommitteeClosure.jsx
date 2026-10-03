@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeClosure() {
   const { data, reload } = useCommittee();
@@ -53,7 +54,7 @@ export default function CommitteeClosure() {
           <div className="raqeem-card p-5">
             <h3 className="text-sm font-semibold mb-3">{t("حالة اللجنة", "Committee Status")}</h3>
             <div className="flex items-center gap-2 mb-4">
-              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
+              <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">{t("القرارات الصادرة", "Issued Decisions")}</span><span>{(data.registers?.decisions || []).filter((d) => ["issued", "completed", "closed"].includes(d.status)).length}</span></div>

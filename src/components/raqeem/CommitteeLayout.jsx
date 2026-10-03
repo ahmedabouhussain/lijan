@@ -16,6 +16,7 @@ import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PageNav from "@/components/raqeem/PageNav";
 import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
+import { L } from "@/lib/l10n";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
@@ -40,7 +41,7 @@ function CommitteeShell() {
   const { orgRef, committeeRef } = useParams();
   const location = useLocation();
   const { data, loading, error } = useCommittee();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [infoCollapsed, setInfoCollapsed] = useState(false);
   const [showDocHub, setShowDocHub] = useState(true);
@@ -59,7 +60,7 @@ function CommitteeShell() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex" dir={document.documentElement.dir}>
+      <div className="min-h-screen bg-background flex" dir={dir}>
         <aside className="hidden lg:flex w-60 shrink-0 bg-sidebar flex-col">
           <div className="px-4 py-2.5 border-b border-sidebar-border">
             <div className="flex items-center gap-2">
@@ -141,14 +142,14 @@ function CommitteeShell() {
           onClick={() => setInfoCollapsed(!infoCollapsed)}
           className="w-full flex items-center justify-between"
         >
-          <h1 className="text-sm font-bold text-sidebar-foreground leading-tight text-right">{committee.name_ar || committee.name_en}</h1>
+          <h1 className="text-sm font-bold text-sidebar-foreground leading-tight">{L.name(committee)}</h1>
           <ChevronDown className={cn("w-4 h-4 text-sidebar-foreground/40 transition-transform shrink-0", infoCollapsed ? "" : "rotate-180")} />
         </button>
         {!infoCollapsed && (
           <>
             <p className="text-[11px] text-sidebar-foreground/50 mt-0.5">{committee.name_en}</p>
             <div className="flex items-center gap-2 mt-2">
-              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="sm" />
+              <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} size="sm" />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sidebar-accent/30 text-sidebar-accent-foreground">
                 <UserCircle className="w-3 h-3" />
                 {roleLabel}
@@ -220,7 +221,7 @@ function CommitteeShell() {
       {/* User profile */}
       {(() => {
         const myMembership = (data.my_memberships || [])[0];
-        const displayName = myMembership?.full_name_ar || myMembership?.full_name || user?.full_name || user?.email || "";
+        const displayName = L.name(myMembership, "full_name") || user?.full_name || user?.email || "";
         const displayEmail = user?.email || "";
         return (
           <div className="px-4 py-2.5 border-t border-sidebar-border flex items-center gap-2.5">
@@ -248,7 +249,7 @@ function CommitteeShell() {
   );
 
   return (
-    <div className="min-h-screen bg-background flex" dir={document.documentElement.dir}>
+    <div className="min-h-screen bg-background flex" dir={dir}>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-60 shrink-0 bg-sidebar flex-col">
         <SidebarContent />
@@ -278,7 +279,7 @@ function CommitteeShell() {
             <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
               <BrandLogo className="w-full h-full" />
             </div>
-            <span className="font-bold text-sm">{committee.name_ar || committee.name_en}</span>
+            <span className="font-bold text-sm">{L.name(committee)}</span>
           </div>
           <div className="flex items-center gap-2">
             <NotificationCenter />

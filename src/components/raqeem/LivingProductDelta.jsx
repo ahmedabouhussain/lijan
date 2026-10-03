@@ -181,7 +181,7 @@ export default function LivingProductDelta({ committeeId, productType, lastGener
             {delta.newDecisions.map((d) => (
               <div key={d.id} className="flex items-center gap-2 text-xs py-1 border-b border-border last:border-0">
                 <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
-                <span className="text-foreground truncate">{d.title_ar || d.title}</span>
+                <span className="text-foreground truncate">{(d[`title_${lang}`] || d.title)}</span>
               </div>
             ))}
           </div>
@@ -198,7 +198,7 @@ export default function LivingProductDelta({ committeeId, productType, lastGener
             {delta.closedActions.map((a) => (
               <div key={a.id} className="flex items-center gap-2 text-xs py-1 border-b border-border last:border-0">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-                <span className="text-foreground truncate">{a.title_ar || a.title}</span>
+                <span className="text-foreground truncate">{(a[`title_${lang}`] || a.title)}</span>
               </div>
             ))}
           </div>

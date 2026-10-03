@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Gavel, Calendar, FileText, Users, CheckSquare, AlertTriangle, ChevronLeft } from "lucide-react";
 import { MEETING_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { L } from "@/lib/l10n";
 
 const ROLE_ICONS = {
   chair: Gavel,
@@ -50,9 +51,9 @@ export default function CommitteeHome({ committee, members, meetings, decisions,
             urgency: d.status === "voting" ? "high" : "normal",
             icon: Gavel,
             title: d.title,
-            subtitle: `قرار ${DECISION_STATUS[d.status]?.ar || d.status}`,
+            subtitle: `${L.pair("قرار", "Decision")} ${L.label(DECISION_STATUS, d.status, d.status)}`,
             to: `/decisions/${d.id}`,
-            badge: <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />,
+            badge: <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />,
           });
         });
     }
@@ -96,7 +97,7 @@ export default function CommitteeHome({ committee, members, meetings, decisions,
             title: m.title || m.title_ar,
             subtitle: `${formatDate(m.date)} · ${days === 0 ? "اليوم" : `بعد ${days} يوم`}`,
             to: `/meetings/${m.id}`,
-            badge: <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />,
+            badge: <StatusBadge label={L.label(MEETING_STATUS, m.status, m.status)} colorClass={MEETING_STATUS[m.status]?.color} />,
           });
         }
       });
@@ -110,7 +111,7 @@ export default function CommitteeHome({ committee, members, meetings, decisions,
           title: a.title,
           subtitle: `${a.owner_name || "—"} · متأخر`,
           to: "/execution",
-          badge: <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />,
+          badge: <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />,
         });
       });
 
@@ -165,7 +166,7 @@ export default function CommitteeHome({ committee, members, meetings, decisions,
 
           <div className="flex-1 space-y-2 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl font-bold text-foreground truncate">{committee.name_ar || committee.name_en}</h1>
+              <h1 className="text-xl font-bold text-foreground truncate">{L.name(committee)}</h1>
               <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium shrink-0 ${roleBadgeClass}`}>
                 <RoleIcon className="w-3 h-3" /> {roleLabel.ar} · {roleLabel.en}
               </span>

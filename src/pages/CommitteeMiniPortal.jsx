@@ -9,6 +9,7 @@ import {
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES, MEMBER_ROLE, MEETING_STATUS, DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
@@ -99,7 +100,7 @@ export default function CommitteeMiniPortal() {
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link to={`/o/${orgRef2}`} className="hover:text-foreground">المنظمة</Link>
         <ChevronLeft className="w-4 h-4" />
-        <span className="text-foreground truncate">{committee.name_ar || committee.name_en}</span>
+        <span className="text-foreground truncate">{L.name(committee)}</span>
       </div>
 
       {/* Committee Identity Header */}
@@ -120,11 +121,11 @@ export default function CommitteeMiniPortal() {
 
           <div className="flex-1 min-w-0 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl font-bold text-foreground truncate">{committee.name_ar || committee.name_en}</h1>
-              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
+              <h1 className="text-xl font-bold text-foreground truncate">{L.name(committee)}</h1>
+              <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-secondary text-secondary-foreground">
                 <UserCircle className="w-3 h-3" />
-                {is_oversight ? "إشراف قراءة فقط" : MEMBER_ROLE[my_role]?.ar || my_role}
+                {is_oversight ? L.pair("إشراف قراءة فقط", "Read-only Oversight") : L.label(MEMBER_ROLE, my_role, my_role)}
               </span>
               {is_recused && <StatusBadge label="متتنحّ" colorClass="bg-red-50 text-red-700" />}
             </div>
@@ -211,7 +212,7 @@ export default function CommitteeMiniPortal() {
                       <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
                       <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
                     </div>
-                    <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                    <StatusBadge label={L.label(MEETING_STATUS, m.status, m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -233,7 +234,7 @@ export default function CommitteeMiniPortal() {
                       <div className="text-sm font-medium text-foreground truncate">{m.full_name}</div>
                       <div className="text-xs text-muted-foreground">{m.institution_name || "—"}</div>
                     </div>
-                    <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
+                    <StatusBadge label={L.label(MEMBER_ROLE, m.role, m.role)} colorClass={MEMBER_ROLE[m.role]?.color} />
                   </div>
                 ))}
               </div>
@@ -255,7 +256,7 @@ export default function CommitteeMiniPortal() {
                       <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
                       {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                     </div>
-                    <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                    <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -279,7 +280,7 @@ export default function CommitteeMiniPortal() {
                   </div>
                   <div className="flex items-center gap-2">
                     {m.role === "alternate" && !m.activated && <StatusBadge label="بديل غير مفعّل" colorClass="bg-secondary text-muted-foreground" />}
-                    <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
+                    <StatusBadge label={L.label(MEMBER_ROLE, m.role, m.role)} colorClass={MEMBER_ROLE[m.role]?.color} />
                   </div>
                 </div>
               ))}
@@ -299,7 +300,7 @@ export default function CommitteeMiniPortal() {
                 {meetings.upcoming.map((m) => (
                   <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                     <div><div className="text-sm font-medium">{m.title || m.title_ar}</div><div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div></div>
-                    <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                    <StatusBadge label={L.label(MEETING_STATUS, m.status, m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -314,7 +315,7 @@ export default function CommitteeMiniPortal() {
                 {meetings.previous.map((m) => (
                   <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                     <div><div className="text-sm font-medium">{m.title || m.title_ar}</div><div className="text-xs text-muted-foreground">{formatDate(m.date)}</div></div>
-                    <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                    <StatusBadge label={L.label(MEETING_STATUS, m.status, m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -333,7 +334,7 @@ export default function CommitteeMiniPortal() {
               {registers.decisions.map((d) => (
                 <Link key={d.id} to={`/decisions/${d.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                   <div><div className="text-sm font-medium">{d.title}</div>{d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}</div>
-                  <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                  <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
                 </Link>
               ))}
             </div>
@@ -351,7 +352,7 @@ export default function CommitteeMiniPortal() {
               {registers.actions.map((a) => (
                 <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div><div className="text-sm font-medium">{a.title}</div><div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div></div>
-                  <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                  <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
                 </div>
               ))}
             </div>

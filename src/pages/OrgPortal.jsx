@@ -6,6 +6,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Plus, ChevronLeft, ChevronRight, Users, Building2, ShieldCheck, Lock } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function OrgPortal() {
   const { data } = useOrg();
@@ -41,8 +42,7 @@ export default function OrgPortal() {
               <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-foreground">{org.name_ar || org.name_en}</h1>
-              <p className="text-sm text-muted-foreground">{org.name_en}</p>
+              <h1 className="text-lg font-bold text-foreground">{L.name(org)}</h1>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -104,17 +104,16 @@ export default function OrgPortal() {
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">
-                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">{c.name_ar || c.name_en}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{c.name_en}</p>
+                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">{L.name(c)}</h3>
                     </div>
-                    <StatusBadge label={COMMITTEE_STATUS[c.status]?.ar || c.status} colorClass={COMMITTEE_STATUS[c.status]?.color} />
+                    <StatusBadge label={L.label(COMMITTEE_STATUS, c.status, c.status)} colorClass={COMMITTEE_STATUS[c.status]?.color} />
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
                       <ShieldCheck className="w-3 h-3" />
                       {committeeRoleLabel}
                     </span>
-                    <span>· {COMMITTEE_TYPES[c.type]?.ar || c.type}</span>
+                    <span>· {L.label(COMMITTEE_TYPES, c.type, c.type)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{t("الدخول للجنة", "Enter Committee")}</span>
@@ -146,10 +145,9 @@ export default function OrgPortal() {
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">
-                      <h3 className="text-sm font-bold text-foreground truncate">{c.name_ar || c.name_en}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{c.name_en}</p>
+                      <h3 className="text-sm font-bold text-foreground truncate">{L.name(c)}</h3>
                     </div>
-                    <StatusBadge label={COMMITTEE_STATUS[c.status]?.ar || c.status} colorClass={COMMITTEE_STATUS[c.status]?.color} />
+                    <StatusBadge label={L.label(COMMITTEE_STATUS, c.status, c.status)} colorClass={COMMITTEE_STATUS[c.status]?.color} />
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Lock className="w-3 h-3" />

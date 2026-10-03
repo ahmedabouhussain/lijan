@@ -13,6 +13,7 @@ import NotificationCenter from "@/components/raqeem/NotificationCenter";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
+import { L } from "@/lib/l10n";
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
@@ -97,7 +98,7 @@ function OrgShell() {
       {/* Organization context */}
       <div className="px-5 py-3 border-b border-sidebar-border">
         <div className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wider mb-1">{t("المنظمة", "Organization")}</div>
-        <div className="text-sm text-sidebar-foreground font-medium truncate">{org.name_ar || org.name_en}</div>
+        <div className="text-sm text-sidebar-foreground font-medium truncate">{L.name(org)}</div>
         <div className="text-[10px] text-sidebar-foreground/40 truncate">{org.name_en}</div>
         {portal.sandbox_badge && (
           <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] bg-amber-900/30 text-amber-200">
@@ -222,7 +223,7 @@ function OrgShell() {
             <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
               <BrandLogo className="w-full h-full" />
             </div>
-            <span className="font-bold text-sm">{org.name_ar || org.name_en}</span>
+            <span className="font-bold text-sm">{L.name(org)}</span>
           </div>
           <div className="w-5" />
         </header>

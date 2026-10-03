@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { L } from "@/lib/l10n";
 
 const READINESS = {
   ready: { ar: "جاهز", en: "Ready", color: "bg-emerald-100 text-emerald-700" },
@@ -116,7 +117,7 @@ export default function CommitteeAgenda() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-mono">#{a.sequence}</span>
-                    <span className="text-sm font-medium">{a.title_ar || a.title}</span>
+                    <span className="text-sm font-medium">{L.title(a)}</span>
                   </div>
                   <div className="flex gap-1.5">
                     <StatusBadge label={t(ri.ar, ri.en)} colorClass={ri.color} />

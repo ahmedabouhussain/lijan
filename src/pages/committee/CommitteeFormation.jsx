@@ -14,6 +14,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import FormationImpactPreview from "@/components/raqeem/FormationImpactPreview";
 import { MEMBER_ROLE } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
@@ -163,7 +164,7 @@ export default function CommitteeFormation() {
                   </div>
                 </div>
               </div>
-              <StatusBadge label={MEMBER_ROLE[m.role]?.ar || m.role} colorClass={MEMBER_ROLE[m.role]?.color} />
+              <StatusBadge label={L.label(MEMBER_ROLE, m.role, m.role)} colorClass={MEMBER_ROLE[m.role]?.color} />
             </div>
           ))
         )}

@@ -1,4 +1,5 @@
 import React from "react";
+import { L } from "@/lib/l10n";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -77,7 +78,7 @@ export default function ExecutiveHome({ data }) {
           {quorumExceptions.slice(0, 5).map((c) => (
             <AttentionItem
               key={c.id}
-              title={c.name_ar || c.name_en}
+              title={L.name(c)}
               subtitle={!c.chair_name ? "بدون رئيس معيّن" : "نصاب غير مكتمل"}
               badge={<StatusBadge label="استثناء" colorClass="text-destructive bg-red-50" />}
               to={`/committees/${c.id}`}

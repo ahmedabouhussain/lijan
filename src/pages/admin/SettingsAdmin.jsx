@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { L } from "@/lib/l10n";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -58,7 +59,7 @@ export default function SettingsAdmin() {
             {institutions.map((inst) => (
               <div key={inst.id} className="px-5 py-3 flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-sm font-medium">{inst.name_ar || inst.name_en}</div>
+                  <div className="text-sm font-medium">{L.name(inst)}</div>
                   <div className="text-xs text-muted-foreground">{inst.name_en}</div>
                 </div>
                 <div className="text-xs text-muted-foreground">

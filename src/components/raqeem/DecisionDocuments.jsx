@@ -113,7 +113,7 @@ export default function DecisionDocuments({ decision, committee }) {
                 <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground truncate">
-                    {doc.title || doc.title_ar || "—"}
+                    {(lang === "ar" ? doc.title_ar : doc.title) || doc.title || "—"}
                   </div>
                   <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
                     <span>{DOC_TYPES[doc.document_type]?.[lang] || doc.document_type}</span>
@@ -154,7 +154,7 @@ export default function DecisionDocuments({ decision, committee }) {
             <option value="">{isAr ? "— اختر مستند للربط —" : "— Select document to link —"}</option>
             {availableDocs.map((doc) => (
               <option key={doc.id} value={doc.id}>
-                {doc.title || doc.title_ar || "—"} · {DOC_TYPES[doc.document_type]?.[lang] || doc.document_type}
+                {(lang === "ar" ? doc.title_ar : doc.title) || doc.title || "—"} · {DOC_TYPES[doc.document_type]?.[lang] || doc.document_type}
               </option>
             ))}
           </select>

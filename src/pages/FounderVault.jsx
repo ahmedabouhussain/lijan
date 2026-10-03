@@ -17,6 +17,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import VaultEntryForm from "@/components/raqeem/VaultEntryForm";
 import PageNav from "@/components/raqeem/PageNav";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
 
 const STATUS_LABELS = {
   active: { label: "ساري", color: "bg-emerald-100 text-emerald-700" },
@@ -144,7 +145,7 @@ export default function FounderVault() {
                   <span className="text-xs font-mono text-accent">{e.code || `CH-${e.sequence || ""}`}</span>
                   <StatusBadge label={STATUS_LABELS[e.status]?.label || e.status} colorClass={STATUS_LABELS[e.status]?.color} />
                 </div>
-                <h3 className="text-base font-semibold text-foreground mb-1">{e.title_ar || e.title}</h3>
+                <h3 className="text-base font-semibold text-foreground mb-1">{L.title(e)}</h3>
                 {e.title && e.title_ar && <p className="text-xs text-muted-foreground mb-3">{e.title}</p>}
                 {e.content && (
                   <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{e.content}</p>
@@ -181,7 +182,7 @@ export default function FounderVault() {
                     <span className="text-xs text-muted-foreground">استُبدل بـ {e.superseded_by}</span>
                   )}
                 </div>
-                <h3 className="text-base font-semibold text-foreground mb-1">{e.title_ar || e.title}</h3>
+                <h3 className="text-base font-semibold text-foreground mb-1">{L.title(e)}</h3>
                 {e.content && (
                   <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed mt-2">{e.content}</p>
                 )}
@@ -210,7 +211,7 @@ export default function FounderVault() {
               <div key={e.id} className="raqeem-card p-4 flex items-start gap-3">
                 <div className="w-1 self-stretch rounded-full bg-primary shrink-0" />
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">{e.title_ar || e.title}</h3>
+                  <h3 className="text-sm font-semibold text-foreground">{L.title(e)}</h3>
                   {e.content && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{e.content}</p>}
                 </div>
               </div>
@@ -238,7 +239,7 @@ export default function FounderVault() {
               {byType("moat").map((e, i) => (
                 <div key={e.id} className="raqeem-card p-4">
                   <div className="text-xs font-mono text-accent mb-1">{String(i + 1).padStart(2, "0")}</div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">{e.title_ar || e.title}</h3>
+                  <h3 className="text-sm font-semibold text-foreground mb-1">{L.title(e)}</h3>
                   {e.content && <p className="text-sm text-muted-foreground leading-relaxed">{e.content}</p>}
                 </div>
               ))}
@@ -271,7 +272,7 @@ export default function FounderVault() {
                   </div>
                   <div className="raqeem-card p-4 flex-1 mb-3">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-sm font-semibold text-foreground">{e.title_ar || e.title}</h3>
+                      <h3 className="text-sm font-semibold text-foreground">{L.title(e)}</h3>
                       <StatusBadge label={STATUS_LABELS[e.status]?.label || e.status} colorClass={STATUS_LABELS[e.status]?.color} />
                     </div>
                     {e.content && <p className="text-sm text-muted-foreground leading-relaxed">{e.content}</p>}
@@ -296,7 +297,7 @@ export default function FounderVault() {
                   <span className="text-xs font-mono text-accent">{e.code || "MEM"}</span>
                   <StatusBadge label={STATUS_LABELS[e.status]?.label || e.status} colorClass={STATUS_LABELS[e.status]?.color} />
                 </div>
-                <h3 className="text-base font-semibold text-foreground mb-2">{e.title_ar || e.title}</h3>
+                <h3 className="text-base font-semibold text-foreground mb-2">{L.title(e)}</h3>
                 {e.content && (
                   <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{e.content}</p>
                 )}

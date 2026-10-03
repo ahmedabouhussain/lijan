@@ -19,6 +19,17 @@
     <title>لِجان™ | LIJAN™ — National Councils & Committees OS</title>
   </head>
   <body>
+    <!-- Language engine: apply the stored language before first paint so a page
+         never flashes the other language or direction. -->
+    <script>
+      (function () {
+        try {
+          var l = localStorage.getItem("raqeem_lang") || "ar";
+          document.documentElement.lang = l;
+          document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -195,7 +195,7 @@ export default function InstitutionalTimeMachine({ open, onClose, committeeId, c
                   </h4>
                   {snapshot.decisions.map((d) => (
                     <div key={d.id} className="flex items-center justify-between text-xs py-1">
-                      <span className="text-foreground truncate">{d.title_ar || d.title || "—"}</span>
+                      <span className="text-foreground truncate">{(d[`title_${lang}`] || d.title) || "—"}</span>
                       <span className="text-muted-foreground shrink-0 mr-2">{formatDate(d.created_date)}</span>
                     </div>
                   ))}
@@ -210,7 +210,7 @@ export default function InstitutionalTimeMachine({ open, onClose, committeeId, c
                   </h4>
                   {snapshot.openActions.map((a) => (
                     <div key={a.id} className="flex items-center justify-between text-xs py-1">
-                      <span className="text-foreground truncate">{a.title_ar || a.title || "—"}</span>
+                      <span className="text-foreground truncate">{(a[`title_${lang}`] || a.title) || "—"}</span>
                       <StatusBadge
                         label={a.priority || "—"}
                         colorClass={a.priority === "urgent" ? "bg-red-100 text-red-700" : "bg-secondary text-muted-foreground"}

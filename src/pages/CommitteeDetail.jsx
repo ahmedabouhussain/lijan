@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { L } from "@/lib/l10n";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
@@ -131,7 +132,7 @@ export default function CommitteeDetail() {
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link to="/committees" className="hover:text-foreground">اللجان</Link>
         <ChevronRight className="w-4 h-4 rotate-180" />
-        <span className="text-foreground truncate">{committee.name_ar || committee.name_en}</span>
+        <span className="text-foreground truncate">{L.name(committee)}</span>
       </div>
 
       {/* Committee Home — role-based landing */}
@@ -214,7 +215,7 @@ export default function CommitteeDetail() {
                       <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
                       <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {m.mode}</div>
                     </div>
-                    <StatusBadge label={MEETING_STATUS[m.status]?.ar || m.status} colorClass={MEETING_STATUS[m.status]?.color} />
+                    <StatusBadge label={L.label(MEETING_STATUS, m.status, m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -236,7 +237,7 @@ export default function CommitteeDetail() {
                       <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
                       {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                     </div>
-                    <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                    <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
                   </Link>
                 ))}
               </div>
@@ -263,7 +264,7 @@ export default function CommitteeDetail() {
                       <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
                       <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
                     </div>
-                    <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                    <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
                   </div>
                 ))}
               </div>

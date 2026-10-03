@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeDecisions() {
   const { data, reload } = useCommittee();
@@ -84,7 +85,7 @@ export default function CommitteeDecisions() {
                   <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
                   {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                 </div>
-                <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </Link>
             ))}
           </div>
@@ -108,7 +109,7 @@ export default function CommitteeDecisions() {
                     {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                   </div>
                 </div>
-                <StatusBadge label={DECISION_STATUS[d.status]?.ar || d.status} colorClass={DECISION_STATUS[d.status]?.color} />
+                <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </Link>
             ))}
           </div>

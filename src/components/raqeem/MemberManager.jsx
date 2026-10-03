@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { UserPlus, Trash2, X } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEMBER_ROLE, CLASSIFICATION } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 
 const AUTHORITY_LEVELS = {
   decision: { ar: "قرار", en: "Decision" },
@@ -39,7 +40,7 @@ export default function MemberManager({ committeeId, members, onChanged }) {
       await base44.entities.AuditLog.create({
         action: "create",
         entity_type: "CommitteeMember",
-        entity_title: form.full_name_ar || form.full_name,
+        entity_title: L.name(form, "full_name"),
         description: `إضافة عضو للجنة`,
         authority_context: form.role,
       });
@@ -57,7 +58,7 @@ export default function MemberManager({ committeeId, members, onChanged }) {
       action: "update",
       entity_type: "CommitteeMember",
       entity_id: m.id,
-      entity_title: m.full_name_ar || m.full_name,
+      entity_title: L.name(m, "full_name"),
       description: "إنهاء عضوية",
     });
     onChanged();
@@ -126,7 +127,7 @@ export default function MemberManager({ committeeId, members, onChanged }) {
         {members.map((m) => (
           <div key={m.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
             <div className="min-w-0">
-              <div className="text-sm font-medium text-foreground truncate">{m.full_name_ar || m.full_name}</div>
+              <div className="text-sm font-medium text-foreground truncate">{L.name(m, "full_name")}</div>
               <div className="text-xs text-muted-foreground truncate">
                 {m.institution_name && `${m.institution_name} · `}
                 {AUTHORITY_LEVELS[m.authority_level]?.ar || m.authority_level}

@@ -12,6 +12,7 @@ import { CheckSquare, AlertTriangle, Clock, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeActions() {
   const { data, reload } = useCommittee();
@@ -45,7 +46,7 @@ export default function CommitteeActions() {
         role={my_role}
         isOversight={is_oversight}
         isRecused={is_recused}
-        committeeName={committee.name_ar || committee.name_en}
+        committeeName={L.name(committee)}
       />
 
       {/* Summary */}
@@ -82,7 +83,7 @@ export default function CommitteeActions() {
                     <span className="text-amber-700">{formatDate(a.deadline)}</span>
                   </div>
                 </div>
-                <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
               </div>
             ))}
           </div>
@@ -103,7 +104,7 @@ export default function CommitteeActions() {
                       {a.owner_name} · {formatDate(a.deadline)}
                     </div>
                   </div>
-                  <StatusBadge label={ACTION_STATUS[a.status]?.ar || a.status} colorClass={ACTION_STATUS[a.status]?.color} />
+                  <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
                 </div>
                 {/* Progress bar */}
                 <div className="flex items-center gap-2 mt-2">

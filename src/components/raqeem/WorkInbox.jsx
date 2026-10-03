@@ -7,6 +7,7 @@ import {
   FileText, Clock, CheckCircle2, Inbox, ChevronLeft,
 } from "lucide-react";
 import { detectSilentFailures } from "@/components/raqeem/SilentFailureRadar";
+import { L } from "@/lib/l10n";
 
 /**
  * WorkInbox — «ما المطلوب مني الآن؟»
@@ -33,7 +34,7 @@ export default function WorkInbox({ data, base }) {
       icon: Gavel,
       title: t("قرار يحتاج اعتمادك", "Decision Awaiting Your Approval"),
       reason: t("مسودة قرار جاهزة لمراجعتك واعتمادها", "A decision draft is ready for your review and approval"),
-      committee: committee.name_ar || committee.name_en,
+      committee: L.name(committee),
       priority: "high",
       actionLabel: t("مراجعة القرار", "Review Decision"),
       to: `${base}/decisions/${d.id}`,
@@ -47,7 +48,7 @@ export default function WorkInbox({ data, base }) {
       icon: Vote,
       title: t("تصويت معلق", "Pending Vote"),
       reason: t("تصويت مفتوح ينتظر صوتك", "An open vote is waiting for your ballot"),
-      committee: committee.name_ar || committee.name_en,
+      committee: L.name(committee),
       priority: "urgent",
       actionLabel: t("التصويت الآن", "Vote Now"),
       to: `${base}/voting`,
@@ -61,7 +62,7 @@ export default function WorkInbox({ data, base }) {
       icon: FileSignature,
       title: t("توقيع معلق", "Pending Signature"),
       reason: t("وثيقة تنتظر توقيعك الرسمي", "A document awaits your official signature"),
-      committee: committee.name_ar || committee.name_en,
+      committee: L.name(committee),
       priority: "high",
       actionLabel: t("توقيع", "Sign"),
       to: `${base}/signatures`,
@@ -79,7 +80,7 @@ export default function WorkInbox({ data, base }) {
       icon: AlertTriangle,
       title: t("إجراء متأخر", "Overdue Action"),
       reason: t("إجراء تجاوز موعده النهائي", "An action has passed its deadline"),
-      committee: committee.name_ar || committee.name_en,
+      committee: L.name(committee),
       deadline: a.deadline ? new Date(a.deadline).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") : null,
       priority: "urgent",
       actionLabel: t("معالجة الإجراء", "Address Action"),
@@ -94,7 +95,7 @@ export default function WorkInbox({ data, base }) {
       icon: FileText,
       title: t("مستند يحتاج مراجعتك", "Document Needs Your Review"),
       reason: t("وثيقة بانتظار مراجعتك قبل الإصدار", "A document awaits your review before publication"),
-      committee: committee.name_ar || committee.name_en,
+      committee: L.name(committee),
       priority: "normal",
       actionLabel: t("مراجعة", "Review"),
       to: `${base}/documents`,
@@ -219,7 +220,7 @@ export default function WorkInbox({ data, base }) {
                     <CalendarClock className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar || t("اجتماع", "Meeting")}</h4>
+                    <h4 className="text-sm font-medium text-foreground truncate">{L.title(m) || t("اجتماع", "Meeting")}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {m.date ? new Date(m.date).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : "—"}
                     </p>

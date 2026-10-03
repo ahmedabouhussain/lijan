@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 export default function CommitteeSettings() {
   const { data, reload } = useCommittee();
@@ -86,7 +87,7 @@ export default function CommitteeSettings() {
           <div className="raqeem-card p-4 space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">{t("الحالة", "Status")}</span>
-              <StatusBadge label={COMMITTEE_STATUS[committee.status]?.ar || committee.status} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
+              <StatusBadge label={L.label(COMMITTEE_STATUS, committee.status, committee.status)} colorClass={COMMITTEE_STATUS[committee.status]?.color} />
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">{t("النوع", "Type")}</span>
