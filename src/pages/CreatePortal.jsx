@@ -298,7 +298,7 @@ export default function CreatePortal() {
 
               {/* Access request pending */}
               {resolution.result === 'access_request_pending' && (
-                <div className="p-4 rounded-md bg-blue-50 border border-blue-200 text-sm text-blue-800">
+                <div className="p-4 rounded-md bg-state-info-surface border border-border text-sm text-state-info-ink">
                   <p className="font-medium">طلب الانضمام قيد المراجعة</p>
                   <p className="text-xs mt-1">Your join request is pending review by the organization owner.</p>
                 </div>

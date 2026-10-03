@@ -145,7 +145,7 @@ export default function ReportCenter() {
                 <span className={`text-xs px-2 py-0.5 rounded ${
                   inst.status === "approved" ? "bg-emerald-50 text-emerald-700" :
                   inst.status === "published" ? "bg-green-100 text-green-700" :
-                  inst.status === "generated" ? "bg-blue-50 text-blue-700" :
+                  inst.status === "generated" ? "bg-state-info-surface text-state-info-ink" :
                   "bg-secondary text-muted-foreground"
                 }`}>
                   {inst.status === "approved" ? t("معتمد", "Approved") :

@@ -36,6 +36,8 @@ import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
+import LegacyCommitteeRedirect from '@/components/routing/LegacyCommitteeRedirect';
+import ParamRedirect from '@/components/routing/ParamRedirect';
 // Central institutional identity register — platform administration only.
 const OrganizationAssetsAdmin = lazy(() => import('@/pages/OrganizationAssetsAdmin'));
 
@@ -141,6 +143,9 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      {/* Retired public routes → their current home */}
+      <Route path="/institutions/new" element={<Navigate to="/create-portal" replace />} />
+      <Route path="/dr-hamad-experience/*" element={<Navigate to="/explore/dr-hamad" replace />} />
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         {/* Organization Portal (Level 2) */}
@@ -245,7 +250,10 @@ const AuthenticatedApp = () => {
         <Route path="/dependencies" element={<Navigate to="/" replace />} />
         <Route path="/scenarios" element={<Navigate to="/" replace />} />
         <Route path="/integrations" element={<Navigate to="/" replace />} />
-        <Route path="/admin" element={<Navigate to="/" replace />} />
+        <Route path="/admin/*" element={<Navigate to="/" replace />} />
+        <Route path="/committees/new" element={<Navigate to="/" replace />} />
+        <Route path="/committees/:id" element={<LegacyCommitteeRedirect />} />
+        <Route path="/o/:orgRef/c/:committeeRef/charter" element={<ParamRedirect to="/o/:orgRef/c/:committeeRef/establishment" />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

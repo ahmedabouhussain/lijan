@@ -1,11 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { MEETING_STATUS, DECISION_STATUS, formatDate } from "@/lib/raqeemUtils";
-import { Calendar, FileText, Gavel, Lock, Eye } from "lucide-react";
+import { Calendar, FileText, Gavel, Lock } from "lucide-react";
 
-export default function ObserverHome({ data, base }) {
+export default function ObserverHome({ data }) {
   const { t } = useLanguage();
   const { meetings, registers } = data;
 
@@ -17,9 +16,9 @@ export default function ObserverHome({ data, base }) {
   return (
     <div className="space-y-4">
       {/* Read-only notice */}
-      <div className="raqeem-card p-4 border-l-4 border-l-blue-400">
+      <div className="raqeem-card p-4 border-s-4 border-s-state-info-ink">
         <div className="flex items-start gap-3">
-          <Lock className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+          <Lock className="w-5 h-5 text-state-info-ink shrink-0 mt-0.5" />
           <div>
             <div className="text-sm font-bold text-foreground">{t("وضع المراقب", "Observer Mode")}</div>
             <div className="text-xs text-muted-foreground mt-1 leading-relaxed">

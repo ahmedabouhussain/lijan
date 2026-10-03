@@ -1,25 +1,9 @@
 /**
- * Deprecated hue families — NOT part of the LIJAN identity.
- *
- * Blue, sky, cyan, teal, indigo, violet, purple, pink and fuchsia are forbidden as
- * decorative or status colours. Their scales are remapped onto the institutional warm
- * neutral ramp so that no such colour can render anywhere on the platform, including
- * class names assembled at runtime that a source scan cannot see. New work must use the
- * semantic `state-*` tokens (state-success-ink, state-warning-surface, …) instead.
+ * Colour policy: status and emphasis use the semantic `state-*` tokens and the
+ * institutional tokens (primary, accent, muted, border). Blue, sky, cyan, teal, indigo,
+ * violet, purple, pink and fuchsia are not part of the LIJAN identity and are not used
+ * anywhere in the platform source.
  */
-const DEPRECATED_HUE_RAMP = {
-  50: '#F3F0EA',
-  100: '#EBE6DD',
-  200: '#DCD5C8',
-  300: '#C9C0AF',
-  400: '#A9A196',
-  500: '#8A8378',
-  600: '#6E7377',
-  700: '#4A4F53',
-  800: '#3A3F43',
-  900: '#2A2E31',
-  950: '#1F2123',
-};
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -85,16 +69,6 @@ module.exports = {
   				danger: { surface: 'hsl(var(--state-danger-surface))', ink: 'hsl(var(--state-danger-ink))' },
   				ceremonial: { surface: 'hsl(var(--state-ceremonial-surface))', ink: 'hsl(var(--state-ceremonial-ink))' }
   			},
-  			/* Legacy hue families remapped to institutional neutrals (see DEPRECATED_HUE_RAMP). */
-  			sky: DEPRECATED_HUE_RAMP,
-  			blue: DEPRECATED_HUE_RAMP,
-  			cyan: DEPRECATED_HUE_RAMP,
-  			teal: DEPRECATED_HUE_RAMP,
-  			indigo: DEPRECATED_HUE_RAMP,
-  			violet: DEPRECATED_HUE_RAMP,
-  			purple: DEPRECATED_HUE_RAMP,
-  			fuchsia: DEPRECATED_HUE_RAMP,
-  			pink: DEPRECATED_HUE_RAMP,
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',

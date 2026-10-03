@@ -36,7 +36,7 @@ const INSTRUMENT_TYPES = [
 
 const STATUS_COLORS = {
   draft: "bg-secondary text-secondary-foreground",
-  verified: "bg-blue-100 text-blue-700",
+  verified: "bg-state-info-surface text-state-info-ink",
   approved: "bg-green-100 text-green-700",
   superseded: "bg-amber-100 text-amber-700",
   repealed: "bg-destructive/15 text-destructive",

@@ -45,7 +45,7 @@ const SECTION_ICONS = {
 
 const STATUS_BADGES = {
   draft: { label_ar: "مسودة", label_en: "Draft", class: "bg-secondary text-secondary-foreground" },
-  generated: { label_ar: "مُولّد", label_en: "Generated", class: "bg-blue-50 text-blue-700" },
+  generated: { label_ar: "مُولّد", label_en: "Generated", class: "bg-state-info-surface text-state-info-ink" },
   in_review: { label_ar: "قيد المراجعة", label_en: "In Review", class: "bg-amber-50 text-amber-700" },
   approved: { label_ar: "معتمد", label_en: "Approved", class: "bg-emerald-50 text-emerald-700" },
   published: { label_ar: "منشور", label_en: "Published", class: "bg-green-100 text-green-700" },

@@ -201,7 +201,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
               {item.status !== "decided" && item.status !== "withdrawn" && (
                 <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border flex-wrap">
                   {item.status === "pending" && (
-                    <button onClick={() => changeStatus(item.id, "in_discussion")} className="text-[10px] px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100">
+                    <button onClick={() => changeStatus(item.id, "in_discussion")} className="text-[10px] px-2 py-1 rounded bg-state-progress-surface text-state-progress-ink hover:bg-state-progress-surface/70">
                       {t("بدء المناقشة", "Start discussion")}
                     </button>
                   )}

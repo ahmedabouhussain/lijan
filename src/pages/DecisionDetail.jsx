@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ChevronRight, Gavel, FileText, User, Clock, Scale, CheckSquare, MessageSquare, GitBranch, Link2 } from "lucide-react";
-import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { ChevronRight, Gavel, CheckSquare, Link2 } from "lucide-react";
+import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
@@ -11,18 +11,7 @@ import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
-
-function DetailRow({ icon: Icon, label, value }) {
-  return (
-    <div className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
-      <Icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-      <div className="flex-1 min-w-0">
-        <div className="text-xs text-muted-foreground">{label}</div>
-        <div className="text-sm text-foreground mt-0.5 whitespace-pre-wrap">{value || "—"}</div>
-      </div>
-    </div>
-  );
-}
+import LocalizedField from "@/components/raqeem/LocalizedField";
 
 export default function DecisionDetail() {
   const { t } = useLanguage();
@@ -92,21 +81,26 @@ export default function DecisionDetail() {
     );
   }
 
+  // Inside a committee workspace every link stays in that workspace; the legacy flat
+  // route (/decisions/:id) falls back to the redirecting legacy committee route.
+  const basePath = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}` : "";
+  const committeeHref = basePath || (committee ? `/committees/${committee.id}` : null);
+
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-        {committee && <Link to={`/committees/${committee.id}`} className="hover:text-foreground">{L.name(committee)}</Link>}
-        {committee && <ChevronRight className="w-4 h-4 rotate-180" />}
-        {meeting && <Link to={`/meetings/${meeting.id}`} className="hover:text-foreground">{L.title(meeting)}</Link>}
-        {meeting && <ChevronRight className="w-4 h-4 rotate-180" />}
-        <span className="text-foreground truncate">{L.title(decision)}</span>
+        {committee && <Link to={committeeHref} className="hover:text-foreground"><LocalizedField entity="Committee" record={committee} /></Link>}
+        {committee && <ChevronRight className="w-4 h-4 rtl:rotate-180" aria-hidden="true" />}
+        {meeting && <Link to={`${basePath}/meetings/${meeting.id}`} className="hover:text-foreground"><LocalizedField entity="Meeting" record={meeting} base="title" /></Link>}
+        {meeting && <ChevronRight className="w-4 h-4 rtl:rotate-180" aria-hidden="true" />}
+        <span className="text-foreground truncate"><LocalizedField entity="Decision" record={decision} base="title" /></span>
       </div>
 
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2 flex-wrap">
-          <h1 className="text-2xl font-bold text-foreground">{L.title(decision)}</h1>
+          <h1 className="text-2xl font-bold text-foreground"><LocalizedField entity="Decision" record={decision} base="title" /></h1>
           {decision.decision_number && <span className="text-sm text-muted-foreground font-mono">{decision.decision_number}</span>}
           <ProofChainDrawer entityType="Decision" entityId={decision.id} entityTitle={L.title(decision)} />
         </div>
@@ -126,8 +120,9 @@ export default function DecisionDetail() {
         committee={committee}
         meeting={meeting}
         votes={votes}
-        actions={actions}
         supersedingDecision={supersedingDecision}
+        committeeHref={committeeHref}
+        basePath={basePath}
       />
 
       {/* Immutable Proof Chain Snapshot */}
@@ -163,7 +158,7 @@ export default function DecisionDetail() {
             {actions.map((a) => (
               <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate"><LocalizedField entity="Action" record={a} base="title" /></div>
                   <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
                 </div>
                 <StatusBadge label={t(ACTION_STATUS[a.status]?.ar || a.status, ACTION_STATUS[a.status]?.en || a.status)} colorClass={ACTION_STATUS[a.status]?.color} />

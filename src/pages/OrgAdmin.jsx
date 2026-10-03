@@ -118,7 +118,7 @@ export default function OrgAdmin() {
                   )}
                   <StatusBadge
                     label={m.role === "owner" ? t("مالك", "Owner") : m.role === "admin" ? t("مدير", "Admin") : t("عضو", "Member")}
-                    colorClass={m.role === "owner" ? "bg-primary/10 text-primary" : m.role === "admin" ? "bg-blue-100 text-blue-700" : "bg-secondary text-muted-foreground"}
+                    colorClass={m.role === "owner" ? "bg-primary/10 text-primary" : m.role === "admin" ? "bg-state-info-surface text-state-info-ink" : "bg-secondary text-muted-foreground"}
                   />
                   {m.role !== "owner" && (
                     <>

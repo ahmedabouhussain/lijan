@@ -217,7 +217,7 @@ function ClassificationPolicyContent() {
     {
       levelAr: "داخلي",
       levelEn: "Internal",
-      color: "bg-blue-100 text-blue-700 border-blue-200",
+      color: "bg-state-info-surface text-state-info-ink border-border",
       descAr: "معلومات للاستخدام الداخلي للجهة وأعضاء اللجان. لا تُنشر خارج السياق المؤسسي.",
       descEn: "Information for internal use by the entity and committee members. Not published outside the institutional context.",
     },

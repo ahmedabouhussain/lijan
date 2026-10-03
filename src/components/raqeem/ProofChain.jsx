@@ -2,116 +2,45 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   ScrollText, Scale, FileText, GitFork, MessageSquare, Vote, AlertTriangle,
-  User, Clock, CheckCircle2, TrendingUp, GitBranch, XCircle, ShieldCheck,
+  User, Clock, CheckCircle2, TrendingUp, GitBranch, ShieldCheck,
 } from "lucide-react";
-import { formatDate } from "@/lib/raqeemUtils";
+import { useLanguage } from "@/lib/LanguageContext";
+import { dateOf } from "@/lib/l10n";
+import LocalizedField from "@/components/raqeem/LocalizedField";
+import ProofChainVotes from "@/components/raqeem/ProofChainVotes";
 
 /**
  * ProofChain — renders a decision as a self-contained "proof certificate".
- * Each step in the chain shows whether the evidence is present or missing,
- * making the decision's completeness visible at a glance.
- * This is the "Proof-Carrying Decision" differentiator — no competitor has this.
+ * Each step shows whether its evidence is present or missing, in ONE language:
+ * the active one. Links stay inside the committee workspace (basePath).
  */
-export default function ProofChain({ decision, committee, meeting, votes, actions, supersedingDecision }) {
+export default function ProofChain({ decision, committee, meeting, votes, supersedingDecision, committeeHref, basePath }) {
+  const { t, lang } = useLanguage();
+
   const steps = [
-    {
-      key: "mandate",
-      icon: ScrollText,
-      label: "الصلاحية · Mandate",
-      value: committee?.mandate,
-      link: committee ? `/committees/${committee.id}` : null,
-      linkLabel: committee?.name_ar,
-      required: true,
-    },
-    {
-      key: "legal",
-      icon: Scale,
-      label: "الأساس القانوني · Legal Basis",
-      value: decision.legal_basis,
-      required: true,
-    },
-    {
-      key: "proposal",
-      icon: FileText,
-      label: "المقترح · Proposal",
-      value: decision.proposal,
-      required: true,
-    },
-    {
-      key: "alternatives",
-      icon: GitFork,
-      label: "البدائل · Alternatives",
-      value: decision.alternatives,
-      required: false,
-    },
-    {
-      key: "deliberation",
-      icon: MessageSquare,
-      label: "المناقشة · Deliberation",
-      value: decision.deliberation_summary,
-      required: false,
-    },
+    { key: "mandate", icon: ScrollText, label: t("الصلاحية", "Mandate"), value: committee?.mandate, link: committeeHref, required: true },
+    { key: "legal", icon: Scale, label: t("الأساس القانوني", "Legal Basis"), value: decision.legal_basis, required: true },
+    { key: "proposal", icon: FileText, label: t("المقترح", "Proposal"), value: decision.proposal, required: true },
+    { key: "alternatives", icon: GitFork, label: t("البدائل", "Alternatives"), value: decision.alternatives, required: false },
+    { key: "deliberation", icon: MessageSquare, label: t("المناقشة", "Deliberation"), value: decision.deliberation_summary, required: false },
     {
       key: "votes",
       icon: Vote,
-      label: "التصويت · Votes",
+      label: t("التصويت", "Votes"),
       value: votes.length > 0
-        ? `موافق ${decision.vote_for || 0} · رافض ${decision.vote_against || 0} · ممتنع ${decision.vote_abstain || 0} (${votes.length} صوت فردي)`
+        ? t(
+            `موافق ${decision.vote_for || 0} · رافض ${decision.vote_against || 0} · ممتنع ${decision.vote_abstain || 0} (${votes.length} صوت فردي)`,
+            `For ${decision.vote_for || 0} · Against ${decision.vote_against || 0} · Abstain ${decision.vote_abstain || 0} (${votes.length} individual votes)`
+          )
         : null,
       required: true,
-      detail: votes.length > 0 ? (
-        <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
-          {votes.map((v) => {
-            const cfg = {
-              for: { label: "موافق", color: "text-emerald-700" },
-              against: { label: "رافض", color: "text-destructive" },
-              abstain: { label: "ممتنع", color: "text-muted-foreground" },
-            }[v.vote_choice] || { label: v.vote_choice, color: "text-muted-foreground" };
-            return (
-              <div key={v.id} className="flex items-center justify-between text-xs">
-                <span className="text-foreground font-medium truncate">{v.voter_name}</span>
-                <span className={cfg.color}>{cfg.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      ) : null,
+      detail: votes.length > 0 ? <ProofChainVotes votes={votes} /> : null,
     },
-    {
-      key: "dissent",
-      icon: AlertTriangle,
-      label: "المخالفة · Dissent",
-      value: decision.dissent,
-      required: false,
-    },
-    {
-      key: "owner",
-      icon: User,
-      label: "مسؤول التنفيذ · Owner",
-      value: decision.owner_name,
-      required: true,
-    },
-    {
-      key: "deadline",
-      icon: Clock,
-      label: "موعد التنفيذ · Deadline",
-      value: decision.deadline ? formatDate(decision.deadline) : null,
-      required: true,
-    },
-    {
-      key: "outcome",
-      icon: CheckCircle2,
-      label: "النتيجة · Outcome",
-      value: decision.outcome,
-      required: false,
-    },
-    {
-      key: "impact",
-      icon: TrendingUp,
-      label: "تقييم الأثر · Impact",
-      value: decision.impact,
-      required: false,
-    },
+    { key: "dissent", icon: AlertTriangle, label: t("المخالفة", "Dissent"), value: decision.dissent, required: false },
+    { key: "owner", icon: User, label: t("مسؤول التنفيذ", "Execution Owner"), value: decision.owner_name, required: true },
+    { key: "deadline", icon: Clock, label: t("موعد التنفيذ", "Deadline"), value: decision.deadline ? dateOf(decision.deadline, lang) : null, required: true },
+    { key: "outcome", icon: CheckCircle2, label: t("النتيجة", "Outcome"), value: decision.outcome, required: false },
+    { key: "impact", icon: TrendingUp, label: t("تقييم الأثر", "Impact Assessment"), value: decision.impact, required: false },
   ];
 
   const completedCount = steps.filter((s) => s.value).length;
@@ -121,65 +50,58 @@ export default function ProofChain({ decision, committee, meeting, votes, action
   const isProven = completedRequired === requiredSteps.length;
 
   return (
-    <div className="raqeem-card p-5 border-r-4 border-r-primary">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
+    <div className="raqeem-card p-5 border-s-4 border-s-primary">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-primary" /> سلسلة البرهان · Proof-Carrying Decision
+            <ShieldCheck className="w-4 h-4 text-primary" /> {t("سلسلة البرهان", "Proof-Carrying Decision")}
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">كل قرار يحمل سنده وحيثياته وأدلته وأصواته ونتيجته وأثره</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {t("كل قرار يحمل سنده وحيثياته وأدلته وأصواته ونتيجته وأثره", "Every decision carries its mandate, rationale, evidence, votes, outcome and impact")}
+          </p>
         </div>
-        <div className="text-center">
-          <div className={`text-2xl font-bold ${isProven ? "text-emerald-600" : "text-amber-600"}`}>{proofScore}%</div>
-          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${isProven ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-            {isProven ? "برهان مكتمل" : `${completedRequired}/${requiredSteps.length} إلزامي`}
+        <div className="text-center shrink-0">
+          <div className={`text-2xl font-bold ${isProven ? "text-state-success-ink" : "text-state-warning-ink"}`}>{proofScore}%</div>
+          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${isProven ? "bg-state-success-surface text-state-success-ink" : "bg-state-warning-surface text-state-warning-ink"}`}>
+            {isProven ? t("برهان مكتمل", "Proof complete") : t(`${completedRequired}/${requiredSteps.length} إلزامي`, `${completedRequired}/${requiredSteps.length} required`)}
           </div>
         </div>
       </div>
 
-      {/* Proof chain timeline */}
       <div className="relative">
-        <div className="absolute right-[15px] top-2 bottom-2 w-0.5 bg-border" />
+        <div className="absolute start-[15px] top-2 bottom-2 w-0.5 bg-border" />
         <div className="space-y-3">
           {steps.map((step) => {
             const Icon = step.icon;
             const has = !!step.value;
-            const isRequired = step.required;
             return (
               <div key={step.key} className="flex items-start gap-3 relative">
-                <div
-                  className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    has
-                      ? "bg-emerald-100 text-emerald-700"
-                      : isRequired
-                      ? "bg-red-50 text-destructive"
-                      : "bg-secondary text-muted-foreground/50"
-                  }`}
-                >
+                <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${has ? "bg-state-success-surface text-state-success-ink" : step.required ? "bg-state-danger-surface text-destructive" : "bg-secondary text-muted-foreground/50"}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0 pb-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-foreground">{step.label}</span>
                     {has ? (
-                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    ) : isRequired ? (
-                      <span className="text-[10px] text-destructive font-medium">إلزامي ناقص</span>
+                      <CheckCircle2 className="w-3 h-3 text-state-success-ink" />
+                    ) : step.required ? (
+                      <span className="text-[10px] text-destructive font-medium">{t("إلزامي ناقص", "Required — missing")}</span>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground/60">اختياري</span>
+                      <span className="text-[10px] text-muted-foreground/60">{t("اختياري", "Optional")}</span>
                     )}
                   </div>
                   {has ? (
                     <div className="mt-1">
-                      {step.link ? (
-                        <Link to={step.link} className="text-xs text-primary hover:underline">{step.linkLabel}: </Link>
+                      {step.link && committee ? (
+                        <Link to={step.link} className="text-xs text-primary hover:underline">
+                          <LocalizedField entity="Committee" record={committee} />
+                        </Link>
                       ) : null}
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">{step.value}</p>
                       {step.detail}
                     </div>
                   ) : (
-                    <p className="text-xs text-muted-foreground/40 italic mt-0.5">غير محدد</p>
+                    <p className="text-xs text-muted-foreground/40 italic mt-0.5">{t("غير محدد", "Not specified")}</p>
                   )}
                 </div>
               </div>
@@ -188,21 +110,23 @@ export default function ProofChain({ decision, committee, meeting, votes, action
         </div>
       </div>
 
-      {/* Supersession */}
       {supersedingDecision && (
         <div className="mt-4 pt-4 border-t border-border flex items-center gap-2 p-3 bg-secondary/30 rounded-md">
           <GitBranch className="w-4 h-4 text-muted-foreground shrink-0" />
           <div className="text-xs">
-            <span className="text-muted-foreground">أُلغي بقرار لاحق: </span>
-            <Link to={`/decisions/${supersedingDecision.id}`} className="text-primary hover:underline font-medium">{supersedingDecision.title}</Link>
+            <span className="text-muted-foreground">{t("أُلغي بقرار لاحق:", "Superseded by a later decision:")} </span>
+            <Link to={`${basePath}/decisions/${supersedingDecision.id}`} className="text-primary hover:underline font-medium">
+              <LocalizedField entity="Decision" record={supersedingDecision} base="title" />
+            </Link>
           </div>
         </div>
       )}
 
-      {/* Meeting context */}
       {meeting && (
         <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-          <Link to={`/meetings/${meeting.id}`} className="text-primary hover:underline">الاجتماع: {meeting.title}</Link>
+          <Link to={`${basePath}/meetings/${meeting.id}`} className="text-primary hover:underline">
+            {t("الاجتماع:", "Meeting:")} <LocalizedField entity="Meeting" record={meeting} base="title" />
+          </Link>
         </div>
       )}
     </div>

@@ -24,11 +24,11 @@ export default function MemoryReviewPanel({ record, canApprove, canReview, onRev
   };
 
   const statusConfig = {
-    generated: { label: t("مُولَّد", "Generated"), class: "bg-blue-50 text-blue-700" },
+    generated: { label: t("مُولَّد", "Generated"), class: "bg-state-info-surface text-state-info-ink" },
     under_review: { label: t("قيد المراجعة", "Under Review"), class: "bg-amber-50 text-amber-700" },
     approved: { label: t("معتمَد", "Approved"), class: "bg-emerald-50 text-emerald-700" },
     rejected: { label: t("مرفوض", "Rejected"), class: "bg-destructive/10 text-destructive" },
-    amended: { label: t("مُعدَّل", "Amended"), class: "bg-purple-50 text-purple-700" },
+    amended: { label: t("مُعدَّل", "Amended"), class: "bg-state-progress-surface text-state-progress-ink" },
   };
   const badge = statusConfig[record.status] || statusConfig.generated;
 

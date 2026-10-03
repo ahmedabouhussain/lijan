@@ -22,7 +22,7 @@ const PRODUCT_TYPE_LABELS = {
 
 const STATUS_META = {
   draft: { ar: "مسودة", en: "Draft", icon: Clock, color: "text-muted-foreground", bg: "bg-secondary" },
-  generated: { ar: "مُولّد", en: "Generated", icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
+  generated: { ar: "مُولّد", en: "Generated", icon: FileText, color: "text-state-info-ink", bg: "bg-state-info-surface" },
   in_review: { ar: "قيد المراجعة", en: "In Review", icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
   approved: { ar: "معتمد", en: "Approved", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
   published: { ar: "منشور", en: "Published", icon: CheckCircle2, color: "text-green-700", bg: "bg-green-100" },

@@ -20,11 +20,11 @@ import { L } from "@/lib/l10n";
 const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
 
 const PROPOSE_ACTIONS = [
-  { type: "rename", label: "اقتراح إعادة تسمية", labelEn: "Propose Renaming", icon: Type, color: "text-blue-600" },
+  { type: "rename", label: "اقتراح إعادة تسمية", labelEn: "Propose Renaming", icon: Type, color: "text-state-info-ink" },
   { type: "amend_mandate", label: "اقتراح تعديل الصلاحية", labelEn: "Propose Mandate Amendment", icon: FileText, color: "text-amber-600" },
   { type: "add_member", label: "اقتراح تعيين عضو", labelEn: "Propose Member Appointment", icon: UserPlus, color: "text-green-600" },
   { type: "end_member", label: "اقتراح إنهاء عضوية", labelEn: "Propose End of Membership", icon: UserMinus, color: "text-red-600" },
-  { type: "reconstitute", label: "اقتراح إعادة تشكيل", labelEn: "Propose Reconstitution", icon: RefreshCw, color: "text-purple-600" },
+  { type: "reconstitute", label: "اقتراح إعادة تشكيل", labelEn: "Propose Reconstitution", icon: RefreshCw, color: "text-primary" },
 ];
 
 const AMENDMENT_LABELS = {
@@ -37,14 +37,14 @@ const AMENDMENT_LABELS = {
 
 const STATUS_COLORS = {
   draft: "bg-secondary text-muted-foreground",
-  ai_processing: "bg-blue-100 text-blue-700",
-  secretary_review: "bg-indigo-100 text-indigo-700",
-  governance_review: "bg-purple-100 text-purple-700",
+  ai_processing: "bg-state-neutral-surface text-state-neutral-ink",
+  secretary_review: "bg-state-info-surface text-state-info-ink",
+  governance_review: "bg-state-info-surface text-state-info-ink",
   legal_review: "bg-amber-100 text-amber-700",
   returned: "bg-orange-100 text-orange-700",
-  pending_approval: "bg-cyan-100 text-cyan-700",
+  pending_approval: "bg-state-warning-surface text-state-warning-ink",
   approved: "bg-green-100 text-green-700",
-  scheduled: "bg-violet-100 text-violet-700",
+  scheduled: "bg-state-progress-surface text-state-progress-ink",
   effective: "bg-green-600 text-white",
   rejected: "bg-red-100 text-red-700",
   cancelled: "bg-gray-200 text-gray-600",

@@ -2,19 +2,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { MessageSquareText, Gavel, Calendar, FileText } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { useLanguage } from "@/lib/LanguageContext";
+import { dateOf } from "@/lib/l10n";
 
 const STATUS_CONFIG = {
-  open: { label: "مفتوح", colorClass: "bg-blue-50 text-blue-700" },
-  concluded: { label: "مُختتم", colorClass: "bg-emerald-50 text-emerald-700" },
-  deferred: { label: "مؤجل", colorClass: "bg-amber-50 text-amber-700" },
-  archived: { label: "مؤرشف", colorClass: "bg-slate-100 text-slate-600" },
+  open: { ar: "مفتوح", en: "Open", colorClass: "bg-state-info-surface text-state-info-ink" },
+  concluded: { ar: "مُختتم", en: "Concluded", colorClass: "bg-state-success-surface text-state-success-ink" },
+  deferred: { ar: "مؤجل", en: "Deferred", colorClass: "bg-state-warning-surface text-state-warning-ink" },
+  archived: { ar: "مؤرشف", en: "Archived", colorClass: "bg-state-neutral-surface text-state-neutral-ink" },
 };
 
 export default function DeliberationCard({ deliberation, committeeName, decisionTitle, decisionLink }) {
+  const { t, lang } = useLanguage();
   const status = STATUS_CONFIG[deliberation.status] || STATUS_CONFIG.concluded;
-  const date = deliberation.deliberated_at
-    ? new Date(deliberation.deliberated_at).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" })
-    : "—";
+  const date = deliberation.deliberated_at ? dateOf(deliberation.deliberated_at, lang) : "—";
 
   return (
     <div className="raqeem-card p-5 hover:shadow-md transition-shadow flex flex-col">
@@ -28,7 +29,7 @@ export default function DeliberationCard({ deliberation, committeeName, decision
             <p className="text-xs text-muted-foreground truncate">{committeeName || "—"}</p>
           </div>
         </div>
-        <StatusBadge label={status.label} colorClass={status.colorClass} />
+        <StatusBadge label={t(status.ar, status.en)} colorClass={status.colorClass} />
       </div>
 
       <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">
@@ -37,7 +38,7 @@ export default function DeliberationCard({ deliberation, committeeName, decision
 
       {deliberation.outcome && (
         <div className="mb-3 p-2.5 rounded-md bg-secondary/50">
-          <p className="text-xs font-medium text-muted-foreground mb-0.5">النتيجة</p>
+          <p className="text-xs font-medium text-muted-foreground mb-0.5">{t("النتيجة", "Outcome")}</p>
           <p className="text-sm text-foreground line-clamp-2">{deliberation.outcome}</p>
         </div>
       )}

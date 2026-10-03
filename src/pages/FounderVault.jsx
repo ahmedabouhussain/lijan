@@ -23,7 +23,7 @@ const STATUS_LABELS = {
   active: { label: "ساري", color: "bg-emerald-100 text-emerald-700" },
   superseded: { label: "مُستبدل", color: "bg-amber-100 text-amber-700" },
   deprecated: { label: "ملغى", color: "bg-muted text-muted-foreground" },
-  planned: { label: "مخطط", color: "bg-blue-100 text-blue-700" },
+  planned: { label: "مخطط", color: "bg-state-info-surface text-state-info-ink" },
   in_progress: { label: "جارٍ", color: "bg-amber-100 text-amber-700" },
   completed: { label: "مكتمل", color: "bg-emerald-100 text-emerald-700" },
 };

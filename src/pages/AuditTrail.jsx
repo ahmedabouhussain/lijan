@@ -37,14 +37,14 @@ const ENTITY_LABELS = {
 
 const ACTION_LABELS = {
   create: { ar: "إنشاء", en: "Create", color: "text-emerald-700 bg-emerald-50" },
-  update: { ar: "تحديث", en: "Update", color: "text-blue-700 bg-blue-50" },
+  update: { ar: "تحديث", en: "Update", color: "text-state-info-ink bg-state-info-surface" },
   delete: { ar: "حذف", en: "Delete", color: "text-destructive bg-destructive/10" },
   status_change: { ar: "تغيير حالة", en: "Status Change", color: "text-amber-700 bg-amber-50" },
   issue: { ar: "إصدار", en: "Issue", color: "text-primary bg-primary/10" },
   approve: { ar: "اعتماد", en: "Approve", color: "text-emerald-700 bg-emerald-50" },
   reject: { ar: "رفض", en: "Reject", color: "text-destructive bg-destructive/10" },
   sign: { ar: "توقيع", en: "Sign", color: "text-accent bg-accent/10" },
-  vote: { ar: "تصويت", en: "Vote", color: "text-blue-700 bg-blue-50" },
+  vote: { ar: "تصويت", en: "Vote", color: "text-state-info-ink bg-state-info-surface" },
   close: { ar: "إغلاق", en: "Close", color: "text-muted-foreground bg-secondary" },
   escalate: { ar: "تصعيد", en: "Escalate", color: "text-orange-700 bg-orange-50" },
   activate: { ar: "تفعيل", en: "Activate", color: "text-emerald-700 bg-emerald-50" },

@@ -37,16 +37,16 @@ const REVIEW_STAGES = [
 const STATUS_COLORS = {
   draft: "bg-secondary text-secondary-foreground",
   pending_approval: "bg-amber-100 text-amber-700",
-  approved: "bg-blue-100 text-blue-700",
+  approved: "bg-state-progress-surface text-state-progress-ink",
   effective: "bg-green-100 text-green-700",
   rejected: "bg-destructive/15 text-destructive",
   returned: "bg-orange-100 text-orange-700",
   cancelled: "bg-secondary text-muted-foreground",
   superseded: "bg-secondary text-muted-foreground",
-  secretary_review: "bg-blue-100 text-blue-700",
-  governance_review: "bg-indigo-100 text-indigo-700",
-  legal_review: "bg-violet-100 text-violet-700",
-  scheduled: "bg-cyan-100 text-cyan-700",
+  secretary_review: "bg-state-info-surface text-state-info-ink",
+  governance_review: "bg-state-info-surface text-state-info-ink",
+  legal_review: "bg-state-info-surface text-state-info-ink",
+  scheduled: "bg-state-progress-surface text-state-progress-ink",
 };
 
 const STATUS_LABELS = {
@@ -405,7 +405,7 @@ export default function CommitteeAmendments() {
               )}
               {a.status === "scheduled" && (
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
-                  <span className="text-xs text-cyan-700 inline-flex items-center gap-1">
+                  <span className="text-xs text-state-progress-ink inline-flex items-center gap-1">
                     <CalendarClock className="w-3.5 h-3.5" aria-hidden="true" />
                     {t("سيُنفَّذ تلقائيًا في", "Takes effect automatically on")} {a.effective_date}
                   </span>

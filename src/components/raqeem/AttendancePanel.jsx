@@ -12,7 +12,7 @@ const STATUS_CONFIG = {
   present: { label: { ar: "حاضر", en: "Present" }, icon: Check, activeClass: "bg-emerald-600 text-white border-emerald-600", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   absent: { label: { ar: "غائب", en: "Absent" }, icon: X, activeClass: "bg-red-600 text-white border-red-600", badgeClass: "bg-red-50 text-red-700 border-red-200" },
   apologies: { label: { ar: "اعتذار", en: "Apologies" }, icon: Mail, activeClass: "bg-amber-600 text-white border-amber-600", badgeClass: "bg-amber-50 text-amber-700 border-amber-200" },
-  late: { label: { ar: "متأخر", en: "Late" }, icon: Clock, activeClass: "bg-blue-600 text-white border-blue-600", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
+  late: { label: { ar: "متأخر", en: "Late" }, icon: Clock, activeClass: "bg-state-progress-ink text-primary-foreground border-state-progress-ink", badgeClass: "bg-state-progress-surface text-state-progress-ink border-border" },
 };
 
 const ROLE_ORDER = { chair: 0, vice_chair: 1, secretary: 2, member: 3, observer: 4, advisor: 5 };

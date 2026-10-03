@@ -1,12 +1,17 @@
 /* LIJAN™ app shell — installability plus an offline screen, and nothing else.
  *
+ * Served from /lijan-sw.js: the platform reserves /sw.js on the hosted domain, so the
+ * worker lives at its own root-level path and still controls scope "/".
+ *
  * This worker deliberately caches NO application response: no page, no API call,
  * no bundle. Governance data, sessions and builds are therefore never served from
  * a cache, so a signed-out or re-authorized user can never be shown stale records,
  * and a new release can never be masked by an old copy. Only the offline screen is
- * precached, and it is served solely when a navigation request fails offline. */
+ * precached, and it is served solely when a page navigation fails offline. Requests
+ * that need the network (saves, votes, signatures) are never intercepted, so they
+ * fail visibly offline instead of reporting a false success. */
 
-const SHELL_CACHE = "lijan-shell-v1";
+const SHELL_CACHE = "lijan-shell-v2";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
