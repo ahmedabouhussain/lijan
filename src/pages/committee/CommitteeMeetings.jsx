@@ -78,10 +78,10 @@ export default function CommitteeMeetings() {
           </div>
           {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div><Label>{t("العنوان", "Title")}</Label><Input value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Quarterly Review" /></div>
-            <div><Label>{t("التاريخ والوقت", "Date & Time")}</Label><Input type="datetime-local" value={form.date} onChange={(e) => setForm(f => ({ ...f, date: e.target.value }))} /></div>
-            <div><Label>{t("الوضع", "Mode")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">{t("حضوري", "Physical")}</option><option value="online">{t("افتراضي", "Online")}</option><option value="hybrid">{t("مختلط", "Hybrid")}</option></select></div>
-            <div><Label>{t("المزود", "Provider")}</Label><select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">{t("بدون", "None")}</option><option value="teams">{t("Teams", "Teams")}</option><option value="zoom">{t("Zoom", "Zoom")}</option><option value="external_link">{t("رابط خارجي", "External Link")}</option></select></div>
+            <div><Label>{t("العنوان", "Title")}</Label><Input aria-label={t("العنوان", "Title")} value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Quarterly Review" /></div>
+            <div><Label>{t("التاريخ والوقت", "Date & Time")}</Label><Input aria-label={t("التاريخ والوقت", "Date & Time")} type="datetime-local" value={form.date} onChange={(e) => setForm(f => ({ ...f, date: e.target.value }))} /></div>
+            <div><Label>{t("الوضع", "Mode")}</Label><select aria-label={t("الوضع", "Mode")} className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.mode} onChange={(e) => setForm(f => ({ ...f, mode: e.target.value }))}><option value="physical">{t("حضوري", "Physical")}</option><option value="online">{t("افتراضي", "Online")}</option><option value="hybrid">{t("مختلط", "Hybrid")}</option></select></div>
+            <div><Label>{t("المزود", "Provider")}</Label><select aria-label={t("المزود", "Provider")} className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.provider} onChange={(e) => setForm(f => ({ ...f, provider: e.target.value }))}><option value="none">{t("بدون", "None")}</option><option value="teams">{t("Teams", "Teams")}</option><option value="zoom">{t("Zoom", "Zoom")}</option><option value="external_link">{t("رابط خارجي", "External Link")}</option></select></div>
           </div>
           <RecurrenceConfig
             value={{

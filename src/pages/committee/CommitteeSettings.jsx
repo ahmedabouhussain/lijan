@@ -74,9 +74,9 @@ export default function CommitteeSettings() {
             <button onClick={() => setEditing(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
           </div>
           {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
-          <div><Label>{t("الاسم بالعربية", "Name (Arabic)")}</Label><Input value={form.name_ar} onChange={(e) => setForm(f => ({ ...f, name_ar: e.target.value }))} /></div>
-          <div><Label>{t("الاسم بالإنجليزية", "Name (English)")}</Label><Input value={form.name_en} onChange={(e) => setForm(f => ({ ...f, name_en: e.target.value }))} /></div>
-          <div><Label>{t("الوصف", "Description")}</Label><Textarea value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} rows={3} /></div>
+          <div><Label>{t("الاسم بالعربية", "Name (Arabic)")}</Label><Input aria-label={t("الاسم بالعربية", "Name (Arabic)")} value={form.name_ar} onChange={(e) => setForm(f => ({ ...f, name_ar: e.target.value }))} /></div>
+          <div><Label>{t("الاسم بالإنجليزية", "Name (English)")}</Label><Input aria-label={t("الاسم بالإنجليزية", "Name (English)")} value={form.name_en} onChange={(e) => setForm(f => ({ ...f, name_en: e.target.value }))} /></div>
+          <div><Label>{t("الوصف", "Description")}</Label><Textarea aria-label={t("الوصف", "Description")} value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} rows={3} /></div>
           <Button onClick={submit} disabled={submitting} className="w-full min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("حفظ", "Save")}
           </Button>

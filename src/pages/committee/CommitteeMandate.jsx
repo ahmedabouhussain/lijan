@@ -84,10 +84,10 @@ export default function CommitteeMandate() {
             <Info className="w-3.5 h-3.5 shrink-0" />
             {t("التغييرات الجوهرية في الصلاحية تتطلب تعديلاً رسمياً مع تاريخ سريان.", "Material mandate changes require a formal amendment with effective date.")}
           </div>
-          <div><Label>{t("نص الصلاحية", "Mandate Text")}</Label><Textarea value={form[KEY.mandate] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.mandate]: e.target.value }))} rows={4} /></div>
-          <div><Label>{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</Label><Textarea value={form[KEY.scope] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.scope]: e.target.value }))} rows={3} /></div>
-          <div><Label>{t("الجهة المؤسِّسة", "Establishing Authority")}</Label><Input value={form[KEY.establishing_authority] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.establishing_authority]: e.target.value }))} /></div>
-          <div><Label>{t("متطلبات التقارير", "Reporting Requirements")}</Label><Textarea value={form[KEY.reporting_requirements] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.reporting_requirements]: e.target.value }))} rows={2} /></div>
+          <div><Label>{t("نص الصلاحية", "Mandate Text")}</Label><Textarea aria-label={t("نص الصلاحية", "Mandate Text")} value={form[KEY.mandate] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.mandate]: e.target.value }))} rows={4} /></div>
+          <div><Label>{t("النطاق والمسؤوليات", "Scope & Responsibilities")}</Label><Textarea aria-label={t("النطاق والمسؤوليات", "Scope & Responsibilities")} value={form[KEY.scope] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.scope]: e.target.value }))} rows={3} /></div>
+          <div><Label>{t("الجهة المؤسِّسة", "Establishing Authority")}</Label><Input aria-label={t("الجهة المؤسِّسة", "Establishing Authority")} value={form[KEY.establishing_authority] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.establishing_authority]: e.target.value }))} /></div>
+          <div><Label>{t("متطلبات التقارير", "Reporting Requirements")}</Label><Textarea aria-label={t("متطلبات التقارير", "Reporting Requirements")} value={form[KEY.reporting_requirements] || ""} onChange={(e) => setForm(f => ({ ...f, [KEY.reporting_requirements]: e.target.value }))} rows={2} /></div>
           <Button onClick={submit} disabled={submitting} className="w-full min-h-[44px]">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("حفظ", "Save")}
           </Button>

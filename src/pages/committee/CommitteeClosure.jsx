@@ -83,7 +83,7 @@ export default function CommitteeClosure() {
                 <button onClick={() => setShowClose(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
               </div>
               {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
-              <div><Label>{t("سبب الإغلاق", "Closure Reason")}</Label><Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} placeholder="Term completed" /></div>
+              <div><Label>{t("سبب الإغلاق", "Closure Reason")}</Label><Textarea aria-label={t("سبب الإغلاق", "Closure Reason")} value={reason} onChange={(e) => setReason(e.target.value)} rows={2} placeholder="Term completed" /></div>
               <div className="flex gap-2">
                 <Button variant="outline" disabled={submitting} onClick={() => submit(true)} className="flex-1">
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("بدء الإغلاق", "Initiate")}

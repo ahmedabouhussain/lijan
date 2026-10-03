@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
@@ -14,23 +15,23 @@ import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const AMENDMENT_TYPES = [
-  { value: "add_member", label: "إضافة عضو" },
-  { value: "end_member", label: "إنهاء عضوية" },
-  { value: "change_role", label: "تغيير دور" },
-  { value: "reconstitute", label: "إعادة تشكيل" },
-  { value: "rename", label: "إعادة تسمية" },
-  { value: "amend_mandate", label: "تعديل الصلاحية" },
-  { value: "change_quorum", label: "تغيير النصاب" },
-  { value: "change_voting_rule", label: "تغيير قاعدة التصويت" },
-  { value: "extend_committee", label: "تمديد اللجنة" },
-  { value: "renew_committee", label: "تجديد اللجنة" },
-  { value: "other", label: "أخرى" },
+  { value: "add_member", ar: "إضافة عضو", en: "Add member" },
+  { value: "end_member", ar: "إنهاء عضوية", en: "End membership" },
+  { value: "change_role", ar: "تغيير دور", en: "Change role" },
+  { value: "reconstitute", ar: "إعادة تشكيل", en: "Reconstitute" },
+  { value: "rename", ar: "إعادة تسمية", en: "Rename" },
+  { value: "amend_mandate", ar: "تعديل الصلاحية", en: "Amend mandate" },
+  { value: "change_quorum", ar: "تغيير النصاب", en: "Change quorum" },
+  { value: "change_voting_rule", ar: "تغيير قاعدة التصويت", en: "Change voting rule" },
+  { value: "extend_committee", ar: "تمديد اللجنة", en: "Extend committee" },
+  { value: "renew_committee", ar: "تجديد اللجنة", en: "Renew committee" },
+  { value: "other", ar: "أخرى", en: "Other" },
 ];
 
 const REVIEW_STAGES = [
-  { key: "secretary_review", label: "مراجعة الأمين", seq: 1 },
-  { key: "governance_review", label: "مراجعة الحوكمة", seq: 2 },
-  { key: "legal_review", label: "المراجعة القانونية", seq: 3 },
+  { key: "secretary_review", ar: "مراجعة الأمين", en: "Secretary review", seq: 1 },
+  { key: "governance_review", ar: "مراجعة الحوكمة", en: "Governance review", seq: 2 },
+  { key: "legal_review", ar: "المراجعة القانونية", en: "Legal review", seq: 3 },
 ];
 
 const STATUS_COLORS = {
@@ -49,13 +50,22 @@ const STATUS_COLORS = {
 };
 
 const STATUS_LABELS = {
-  draft: "مسودة", pending_approval: "بانتظار الاعتماد", approved: "معتمد", effective: "نافذ",
-  rejected: "مرفوض", returned: "مُرجَع", cancelled: "ملغي", superseded: "مُستبدَل",
-  secretary_review: "مراجعة الأمين", governance_review: "مراجعة الحوكمة",
-  legal_review: "مراجعة قانونية", scheduled: "مجدول للنفاذ",
+  draft: ["مسودة", "Draft"],
+  pending_approval: ["بانتظار الاعتماد", "Pending approval"],
+  approved: ["معتمد", "Approved"],
+  effective: ["نافذ", "Effective"],
+  rejected: ["مرفوض", "Rejected"],
+  returned: ["مُرجَع للتصحيح", "Returned for correction"],
+  cancelled: ["ملغي", "Cancelled"],
+  superseded: ["مُستبدَل", "Superseded"],
+  secretary_review: ["مراجعة الأمين", "Secretary review"],
+  governance_review: ["مراجعة الحوكمة", "Governance review"],
+  legal_review: ["مراجعة قانونية", "Legal review"],
+  scheduled: ["مجدول للنفاذ", "Scheduled to take effect"],
 };
 
 export default function CommitteeAmendments() {
+  const { t } = useLanguage();
   const { data, reload } = useCommittee();
   const { getTitle } = usePageConfig("amendments");
   const [amendments, setAmendments] = useState([]);
@@ -68,6 +78,15 @@ export default function CommitteeAmendments() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const presetType = urlParams.get("type");
+
+  const typeLabel = (v) => {
+    const found = AMENDMENT_TYPES.find((x) => x.value === v);
+    return found ? t(found.ar, found.en) : v;
+  };
+  const statusLabel = (s) => {
+    const pair = STATUS_LABELS[s];
+    return pair ? t(pair[0], pair[1]) : s;
+  };
 
   const [form, setForm] = useState({
     amendment_type: presetType || "add_member",
@@ -111,7 +130,7 @@ export default function CommitteeAmendments() {
   useEffect(() => { load(); }, [data?.committee?.id]);
 
   const propose = async () => {
-    if (!form.description) { setMsg("الوصف مطلوب"); return; }
+    if (!form.description) { setMsg(t("الوصف مطلوب", "A description is required")); return; }
     setBusy("propose");
     setMsg("");
     try {
@@ -127,47 +146,53 @@ export default function CommitteeAmendments() {
       const d = res.data || res;
       if (d.error) { setMsg(d.error); }
       else {
-        setMsg(`تم إنشاء مقترح التعديل. الأثر: ${d.impact_summary}`);
+        setMsg(`${t("تم إنشاء مقترح التعديل. الأثر:", "The amendment proposal was created. Impact:")} ${d.impact_summary}`);
         setShowForm(false);
         setForm({ amendment_type: "add_member", description: "", source_instrument_ref: "", effective_date: "", after_state: {} });
         load();
       }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setBusy("");
   };
 
   const approve = async (id) => {
-    if (!confirm("تأكيد اعتماد هذا التعديل ونفاذه؟")) return;
+    if (!confirm(t("تأكيد اعتماد هذا التعديل ونفاذه؟", "Approve this amendment and make it effective?"))) return;
     setBusy(`approve-${id}`);
     setMsg("");
     try {
       const res = await base44.functions.invoke("ApproveCommitteeAmendment", { amendment_id: id });
       const d = res.data || res;
       if (d.error) { setMsg(d.error); }
-      else { setMsg(`تم اعتماد التعديل — نسخة تشكيل #${d.formation_version}`); load(); reload(); }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+      else {
+        setMsg(`${t("تم اعتماد التعديل — نسخة تشكيل", "Amendment approved — formation version")} #${d.formation_version}`);
+        load(); reload();
+      }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setBusy("");
   };
 
   const reject = async (id) => {
-    if (!confirm("رفض هذا التعديل؟")) return;
+    if (!confirm(t("رفض هذا التعديل؟", "Reject this amendment?"))) return;
     setBusy(`reject-${id}`);
     try {
       const res = await base44.functions.invoke("TransitionAmendmentStatus", { amendment_id: id, transition: "reject" });
       const d = res.data || res;
       if (d.error) setMsg(d.error); else load();
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setBusy("");
   };
 
   const transition = async (id, action, extra = {}) => {
     const labels = {
-      submit: "إرسال للاعتماد", submit_for_review: "إرسال للمراجعة متعددة المراحل",
-      advance_review: "تجاوز مرحلة المراجعة", return: "إرجاع للتصحيح",
-      schedule: "جدولة للنفاذ المستقبلي", cancel: "إلغاء",
+      submit: t("إرسال للاعتماد", "Submitted for approval"),
+      submit_for_review: t("إرسال للمراجعة متعددة المراحل", "Sent for multi-stage review"),
+      advance_review: t("تجاوز مرحلة المراجعة", "Advanced past the review stage"),
+      return: t("إرجاع للتصحيح", "Returned for correction"),
+      schedule: t("جدولة للنفاذ المستقبلي", "Scheduled for future effect"),
+      cancel: t("إلغاء", "Cancelled"),
     };
     if (action === "schedule") {
-      const date = prompt("تاريخ النفاذ المستقبلي (YYYY-MM-DD):");
+      const date = prompt(t("تاريخ النفاذ المستقبلي (YYYY-MM-DD):", "Future effective date (YYYY-MM-DD):"));
       if (!date) return;
       extra.effective_date = date;
     }
@@ -175,8 +200,12 @@ export default function CommitteeAmendments() {
     try {
       const res = await base44.functions.invoke("TransitionAmendmentStatus", { amendment_id: id, transition: action, ...extra });
       const d = res.data || res;
-      if (d.error) setMsg(d.error); else { setMsg(`${labels[action]} — الحالة: ${d.new_status}`); load(); }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+      if (d.error) setMsg(d.error);
+      else {
+        setMsg(`${labels[action]} — ${t("الحالة", "Status")}: ${statusLabel(d.new_status)}`);
+        load();
+      }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setBusy("");
   };
 
@@ -189,56 +218,71 @@ export default function CommitteeAmendments() {
       });
       const d = res.data || res;
       if (d.error) setMsg(d.error);
-      else { setMsg(`تجاوز مرحلة المراجعة — الحالة: ${d.new_status}`); load(); setReviewForm({ amendmentId: null, comments: "" }); }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+      else {
+        setMsg(`${t("تجاوز مرحلة المراجعة — الحالة:", "Advanced past the review stage — status:")} ${statusLabel(d.new_status)}`);
+        load();
+        setReviewForm({ amendmentId: null, comments: "" });
+      }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setBusy("");
   };
 
   if (!data) return <TableSkeleton rows={4} />;
 
   return (
-    <div className="space-y-4" dir="rtl">
+    <div className="space-y-4">
       <PageHeader
         icon={GitBranch}
         title={getTitle("التعديلات المحوَّكة", "Governed Amendments")}
         actions={
           <Button size="sm" onClick={() => setShowForm((s) => !s)}>
-            <Plus className="w-4 h-4" aria-hidden="true" /> اقتراح تعديل
+            <Plus className="w-4 h-4" aria-hidden="true" /> {t("اقتراح تعديل", "Propose amendment")}
           </Button>
         }
       />
 
-      {msg && <div className="p-3 rounded-md bg-secondary text-sm">{msg}</div>}
+      {msg && <div className="p-3 rounded-md bg-secondary text-sm" role="status">{msg}</div>}
 
       {showForm && (
         <div className="raqeem-card p-4 space-y-3">
-          <Label className="text-sm font-semibold">اقتراح تعديل محوَّك</Label>
+          <Label className="text-sm font-semibold">{t("اقتراح تعديل محوَّك", "Propose a governed amendment")}</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs">نوع التعديل</Label>
+              <Label className="text-xs" htmlFor="amendment-type">{t("نوع التعديل", "Amendment type")}</Label>
               <select
+                id="amendment-type"
                 value={form.amendment_type}
                 onChange={(e) => setForm((f) => ({ ...f, amendment_type: e.target.value }))}
                 className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
               >
-                {AMENDMENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {AMENDMENT_TYPES.map((x) => <option key={x.value} value={x.value}>{t(x.ar, x.en)}</option>)}
               </select>
             </div>
             <div>
               <LocalizedDatePicker
-                label="تاريخ النفاذ (اختياري — للمستقبلي)"
+                label={t("تاريخ النفاذ (اختياري — للمستقبلي)", "Effective date (optional — for future effect)")}
                 value={form.effective_date}
                 onChange={(v) => setForm((f) => ({ ...f, effective_date: v }))}
               />
             </div>
           </div>
           <div>
-            <Label className="text-xs">الوصف / السبب</Label>
-            <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={2} />
+            <Label className="text-xs" htmlFor="amendment-description">{t("الوصف / السبب", "Description / reason")}</Label>
+            <Textarea
+              id="amendment-description"
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              rows={2}
+            />
           </div>
           <div>
-            <Label className="text-xs">مرجع السند الرسمي</Label>
-            <Input value={form.source_instrument_ref} onChange={(e) => setForm((f) => ({ ...f, source_instrument_ref: e.target.value }))} placeholder="رقم القرار / المرسوم" />
+            <Label className="text-xs" htmlFor="amendment-reference">{t("مرجع السند الرسمي", "Official instrument reference")}</Label>
+            <Input
+              id="amendment-reference"
+              value={form.source_instrument_ref}
+              onChange={(e) => setForm((f) => ({ ...f, source_instrument_ref: e.target.value }))}
+              placeholder={t("رقم القرار / المرسوم", "Decision / decree number")}
+            />
           </div>
           <div className="rounded-md border border-border p-3 bg-secondary/20">
             <AmendmentFormBuilder
@@ -248,17 +292,23 @@ export default function CommitteeAmendments() {
             />
           </div>
           <Button size="sm" disabled={busy === "propose"} onClick={propose} className="inline-flex items-center gap-2">
-            {busy === "propose" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            إنشاء مقترح + تحليل الأثر
+            {busy === "propose" ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
+            {t("إنشاء مقترح + تحليل الأثر", "Create proposal + impact analysis")}
           </Button>
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+        <div className="flex justify-center py-8" role="status" aria-live="polite">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" aria-hidden="true" />
+          <span className="sr-only">{t("جارٍ التحميل", "Loading")}</span>
+        </div>
       ) : amendments.length === 0 ? (
         <div className="raqeem-card p-6 text-center text-sm text-muted-foreground">
-          لا توجد تعديلات. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح → تحليل أثر → مراجعة متعددة المراحل → اعتماد → نفاذ.
+          {t(
+            "لا توجد تعديلات. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح → تحليل أثر → مراجعة متعددة المراحل → اعتماد → نفاذ.",
+            "No amendments. Every formal change follows a governed path: proposal → impact analysis → multi-stage review → approval → effect."
+          )}
         </div>
       ) : (
         <div className="space-y-2">
@@ -266,23 +316,25 @@ export default function CommitteeAmendments() {
             <div key={a.id} className="raqeem-card p-3 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium">
-                    {AMENDMENT_TYPES.find((t) => t.value === a.amendment_type)?.label || a.amendment_type}
-                  </div>
+                  <div className="text-sm font-medium">{typeLabel(a.amendment_type)}</div>
                   {a.description && <div className="text-xs text-muted-foreground truncate">{a.description}</div>}
-                  {a.source_instrument_ref && <div className="text-xs text-muted-foreground">السند: {a.source_instrument_ref}</div>}
-                  {a.effective_date && <div className="text-xs text-muted-foreground">نفاذ: {a.effective_date}</div>}
+                  {a.source_instrument_ref && (
+                    <div className="text-xs text-muted-foreground">{t("السند:", "Instrument:")} {a.source_instrument_ref}</div>
+                  )}
+                  {a.effective_date && (
+                    <div className="text-xs text-muted-foreground">{t("نفاذ:", "Effective:")} {a.effective_date}</div>
+                  )}
                 </div>
-                <StatusBadge label={STATUS_LABELS[a.status] || a.status} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
+                <StatusBadge label={statusLabel(a.status)} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
               </div>
               {a.impact_summary && (
                 <div className="flex items-start gap-1.5 p-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
                   <span>{a.impact_summary}</span>
                 </div>
               )}
               {a.proposed_by_name && (
-                <div className="text-xs text-muted-foreground">اقترح: {a.proposed_by_name}</div>
+                <div className="text-xs text-muted-foreground">{t("اقترح:", "Proposed by:")} {a.proposed_by_name}</div>
               )}
 
               {/* Review chain progress for amendments in review */}
@@ -302,63 +354,64 @@ export default function CommitteeAmendments() {
               {a.status === "draft" && (
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   <Button size="sm" variant="default" disabled={busy === `submit_for_review-${a.id}`} onClick={() => transition(a.id, "submit_for_review")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إرسال للمراجعة متعددة المراحل
+                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Send className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إرسال للمراجعة متعددة المراحل", "Send for multi-stage review")}
                   </Button>
                   <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إرسال مباشر للاعتماد
+                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Send className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إرسال مباشر للاعتماد", "Send directly for approval")}
                   </Button>
                   <Button size="sm" variant="ghost" disabled={busy === `reject-${a.id}`} onClick={() => reject(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
-                    {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
-                    رفض
+                    {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <X className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("رفض", "Reject")}
                   </Button>
                 </div>
               )}
               {a.status === "returned" && (
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   <Button size="sm" variant="default" disabled={busy === `submit_for_review-${a.id}`} onClick={() => transition(a.id, "submit_for_review")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إعادة إرسال للمراجعة
+                    {busy === `submit_for_review-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Send className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إعادة إرسال للمراجعة", "Resend for review")}
                   </Button>
                   <Button size="sm" variant="outline" disabled={busy === `submit-${a.id}`} onClick={() => transition(a.id, "submit")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    إعادة إرسال مباشر
+                    {busy === `submit-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Send className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إعادة إرسال مباشر", "Resend directly")}
                   </Button>
                 </div>
               )}
               {a.status === "pending_approval" && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
                   <Button size="sm" variant="outline" disabled={busy === `approve-${a.id}`} onClick={() => approve(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `approve-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                    اعتماد ونفاذ
+                    {busy === `approve-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Check className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("اعتماد ونفاذ", "Approve and make effective")}
                   </Button>
                   <Button size="sm" variant="ghost" disabled={busy === `return-${a.id}`} onClick={() => transition(a.id, "return")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `return-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
-                    إرجاع للتصحيح
+                    {busy === `return-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إرجاع للتصحيح", "Return for correction")}
                   </Button>
                   <Button size="sm" variant="ghost" disabled={busy === `reject-${a.id}`} onClick={() => reject(a.id)} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
-                    {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
-                    رفض
+                    {busy === `reject-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <X className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("رفض", "Reject")}
                   </Button>
                 </div>
               )}
               {a.status === "approved" && a.effective_date && (
                 <div className="flex items-center gap-2 pt-1">
                   <Button size="sm" variant="outline" disabled={busy === `schedule-${a.id}`} onClick={() => transition(a.id, "schedule")} className="inline-flex items-center gap-1.5 h-7 text-xs">
-                    {busy === `schedule-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CalendarClock className="w-3.5 h-3.5" />}
-                    جدولة للنفاذ المستقبلي
+                    {busy === `schedule-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <CalendarClock className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("جدولة للنفاذ المستقبلي", "Schedule for future effect")}
                   </Button>
                 </div>
               )}
               {a.status === "scheduled" && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
                   <span className="text-xs text-cyan-700 inline-flex items-center gap-1">
-                    <CalendarClock className="w-3.5 h-3.5" /> سيُنفَّذ تلقائيًا في {a.effective_date}
+                    <CalendarClock className="w-3.5 h-3.5" aria-hidden="true" />
+                    {t("سيُنفَّذ تلقائيًا في", "Takes effect automatically on")} {a.effective_date}
                   </span>
                   <Button size="sm" variant="ghost" disabled={busy === `cancel-${a.id}`} onClick={() => transition(a.id, "cancel")} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
-                    {busy === `cancel-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
-                    إلغاء الجدولة
+                    {busy === `cancel-${a.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <X className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إلغاء الجدولة", "Cancel the schedule")}
                   </Button>
                 </div>
               )}
@@ -371,13 +424,14 @@ export default function CommitteeAmendments() {
 }
 
 function ReviewChain({ amendment, stages, reviewForm, setReviewForm, onAdvance, onReturn, onReject, busy }) {
+  const { t } = useLanguage();
   const currentSeq = REVIEW_STAGES.find((s) => s.key === amendment.status)?.seq;
   const isReviewStage = ["secretary_review", "governance_review", "legal_review"].includes(amendment.status);
 
   return (
     <div className="p-2.5 rounded-md bg-secondary/30 space-y-2.5">
       {/* Stage progress indicator */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 flex-wrap">
         {REVIEW_STAGES.map((stage, i) => {
           const stageRecord = stages.find((s) => s.stage === stage.key);
           const isDone = stageRecord && stageRecord.status === "completed";
@@ -390,18 +444,18 @@ function ReviewChain({ amendment, stages, reviewForm, setReviewForm, onAdvance, 
                 isDone || isPast ? "bg-green-100 text-green-700" :
                 "bg-secondary text-muted-foreground"
               }`}>
-                {isDone || isPast ? <Check className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center text-[10px]">{stage.seq}</span>}
-                {stage.label}
+                {isDone || isPast ? <Check className="w-3 h-3" aria-hidden="true" /> : <span className="w-3 h-3 flex items-center justify-center text-[10px]">{stage.seq}</span>}
+                {t(stage.ar, stage.en)}
               </div>
-              {i < REVIEW_STAGES.length - 1 && <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" />}
+              {i < REVIEW_STAGES.length - 1 && <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" aria-hidden="true" />}
             </React.Fragment>
           );
         })}
-        <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" />
+        <ArrowRightCircle className="w-3 h-3 text-muted-foreground rotate-180" aria-hidden="true" />
         <div className={`px-2 py-1 rounded text-xs ${
           amendment.status === "pending_approval" ? "bg-amber-100 text-amber-700 font-medium" : "bg-secondary text-muted-foreground"
         }`}>
-          اعتماد
+          {t("اعتماد", "Approval")}
         </div>
       </div>
 
@@ -410,7 +464,7 @@ function ReviewChain({ amendment, stages, reviewForm, setReviewForm, onAdvance, 
         <div className="space-y-1">
           {stages.filter((s) => s.status === "completed").map((s) => (
             <div key={s.id} className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-green-600" />
+              <Check className="w-3 h-3 text-green-600" aria-hidden="true" />
               <span className="font-medium">{s.stage_label}</span>
               <span>— {s.reviewer_name}</span>
               {s.comments && <span className="truncate">· {s.comments}</span>}
@@ -423,23 +477,24 @@ function ReviewChain({ amendment, stages, reviewForm, setReviewForm, onAdvance, 
       {isReviewStage && (
         <div className="space-y-2 pt-1">
           <Input
-            placeholder="ملاحظات المراجعة (اختياري)..."
+            aria-label={t("ملاحظات المراجعة", "Review notes")}
+            placeholder={t("ملاحظات المراجعة (اختياري)...", "Review notes (optional)...")}
             value={reviewForm.amendmentId === amendment.id ? reviewForm.comments : ""}
             onChange={(e) => setReviewForm({ amendmentId: amendment.id, comments: e.target.value })}
             className="h-7 text-xs"
           />
           <div className="flex items-center gap-2 flex-wrap">
             <Button size="sm" variant="default" disabled={busy === `advance_review-${amendment.id}`} onClick={onAdvance} className="inline-flex items-center gap-1.5 h-7 text-xs">
-              {busy === `advance_review-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-              تجاوز هذه المرحلة
+              {busy === `advance_review-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Check className="w-3.5 h-3.5" aria-hidden="true" />}
+              {t("تجاوز هذه المرحلة", "Advance past this stage")}
             </Button>
             <Button size="sm" variant="ghost" disabled={busy === `return-${amendment.id}`} onClick={onReturn} className="inline-flex items-center gap-1.5 h-7 text-xs">
-              {busy === `return-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
-              إرجاع للتصحيح
+              {busy === `return-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />}
+              {t("إرجاع للتصحيح", "Return for correction")}
             </Button>
             <Button size="sm" variant="ghost" disabled={busy === `reject-${amendment.id}`} onClick={onReject} className="inline-flex items-center gap-1.5 h-7 text-xs text-destructive">
-              {busy === `reject-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
-              رفض
+              {busy === `reject-${amendment.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <X className="w-3.5 h-3.5" aria-hidden="true" />}
+              {t("رفض", "Reject")}
             </Button>
           </div>
         </div>

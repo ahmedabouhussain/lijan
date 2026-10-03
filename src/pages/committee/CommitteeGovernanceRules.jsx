@@ -105,23 +105,23 @@ export default function CommitteeGovernanceRules() {
           </div>
           <div>
             <Label>{t("النصاب", "Quorum Count")}</Label>
-            <Input type="number" value={form.quorum_count} onChange={(e) => setForm(f => ({ ...f, quorum_count: e.target.value }))} />
+            <Input aria-label={t("النصاب", "Quorum Count")} type="number" value={form.quorum_count} onChange={(e) => setForm(f => ({ ...f, quorum_count: e.target.value }))} />
           </div>
           <div>
             <Label>{t("قاعدة التصويت", "Voting Rule")}</Label>
-            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.voting_rule} onChange={(e) => setForm(f => ({ ...f, voting_rule: e.target.value }))}>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" aria-label={t("قاعدة التصويت", "Voting Rule")} value={form.voting_rule} onChange={(e) => setForm(f => ({ ...f, voting_rule: e.target.value }))}>
               {VOTING_RULES.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
             </select>
           </div>
           <div>
             <Label>{t("دورة الاجتماعات", "Meeting Cadence")}</Label>
-            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.meeting_cadence} onChange={(e) => setForm(f => ({ ...f, meeting_cadence: e.target.value }))}>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" aria-label={t("دورة الاجتماعات", "Meeting Cadence")} value={form.meeting_cadence} onChange={(e) => setForm(f => ({ ...f, meeting_cadence: e.target.value }))}>
               {CADENCE.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
             </select>
           </div>
           <div>
             <Label>{t("التصنيف", "Classification")}</Label>
-            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={form.classification} onChange={(e) => setForm(f => ({ ...f, classification: e.target.value }))}>
+            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" aria-label={t("التصنيف", "Classification")} value={form.classification} onChange={(e) => setForm(f => ({ ...f, classification: e.target.value }))}>
               {CLASSIFICATION.map((r) => <option key={r.value} value={r.value}>{t(r.label_ar, r.label_en)}</option>)}
             </select>
           </div>

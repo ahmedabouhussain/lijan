@@ -50,13 +50,13 @@ export default function CommitteeCalendar() {
       {/* Filters */}
       <div className="flex items-center gap-2 flex-wrap">
         <Filter className="w-4 h-4 text-muted-foreground" />
-        <select className="h-8 rounded-md border border-input px-2 text-xs bg-transparent" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <select aria-label={t("تصفية الحالة", "Status filter")} className="h-8 rounded-md border border-input px-2 text-xs bg-transparent" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="all">{t("كل الحالات", "All Statuses")}</option>
           <option value="scheduled">{t("مجدول", "Scheduled")}</option>
           <option value="completed">{t("مكتملة", "Completed")}</option>
           <option value="cancelled">{t("ملغاة", "Cancelled")}</option>
         </select>
-        <select className="h-8 rounded-md border border-input px-2 text-xs bg-transparent" value={modeFilter} onChange={(e) => setModeFilter(e.target.value)}>
+        <select aria-label={t("تصفية الوضع", "Mode filter")} className="h-8 rounded-md border border-input px-2 text-xs bg-transparent" value={modeFilter} onChange={(e) => setModeFilter(e.target.value)}>
           <option value="all">{t("كل الأنواع", "All Modes")}</option>
           <option value="physical">{t("حضوري", "Physical")}</option>
           <option value="online">{t("افتراضي", "Online")}</option>

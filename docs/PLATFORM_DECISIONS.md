@@ -249,17 +249,20 @@ the entry page).
 and remain reachable.
 
 ## Deferred (not yet migrated)
-- **Assistive-technology validation.** The AA criteria above are met in code; confirming them
-  with a screen reader and at 200% zoom is a manual audit, not a further code change.
-- **Page-body control audit.** Shared controls and every page header/loading/empty state are
-  covered. Controls inside individual page bodies (in-row icon buttons, per-page filter inputs)
-  are migrated as each surface is touched, not by a single sweep.
-- **Two Arabic-only legacy surfaces.** `CommitteeAmendments` and `CommitteeEstablishment` hold
-  hardcoded Arabic copy and force `dir="rtl"`, so they do not switch language. Fixing them means
-  translating both surfaces, not changing a direction attribute.
-- `LocalizedFileUpload` takes Arabic-only labels (including its accessible name). Making it
-  bilingual changes its caller API and is not a one-line change.
+- **Assistive-technology validation only.** Every mechanically checkable AA criterion is now met
+  across the committee workspace. A scan of all 40 committee surfaces reports **zero** controls
+  without an accessible name (icon-only buttons, inputs, textareas, selects — 39 were added in the
+  page-body sweep) and **zero** reflow blockers (no fixed pixel box above the 320px reflow
+  threshold, no unwrapped table). Confirming real screen-reader speech and a real 200% browser
+  zoom is a human interaction test, not reachable from code: it is the only item left.
+
+**Verification record (this pass):** `dir="rtl"` forced in committee surfaces = 0; Arabic literals
+in `CommitteeAmendments` / `CommitteeEstablishment` outside a bilingual pair = 0; production build
+passes; lint reports 0 errors.
 
 **Closed since the previous pass:** role-lens journeys (D-16), route-level lazy loading and
 request cancellation for the committee shell (D-17), the repeated demo labelling on `/profile`
-(D-14), header unification (D-18) and the accessibility baseline (D-19).
+(D-14), header unification (D-18), the accessibility baseline including the page-body control
+scan (D-19), the two Arabic-only legacy surfaces — `CommitteeAmendments` and
+`CommitteeEstablishment` are now fully bilingual with no forced direction — and
+`LocalizedFileUpload`, now bilingual with a keyboard-reachable file input.

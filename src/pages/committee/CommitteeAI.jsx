@@ -88,7 +88,7 @@ export default function CommitteeAI() {
           <h3 className="text-sm font-semibold">{t("إنشاء مخرج ذكاء اصطناعي", "Generate AI Output")}</h3>
           <div>
             <label className="text-xs text-muted-foreground">{t("نوع المهمة", "Task Type")}</label>
-            <select className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={taskType} onChange={(e) => setTaskType(e.target.value)}>
+            <select aria-label={t("نوع المهمة", "Task Type")} className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent" value={taskType} onChange={(e) => setTaskType(e.target.value)}>
               {TASK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{t(o.label_ar, o.label_en)}</option>)}
             </select>
           </div>

@@ -175,7 +175,7 @@ export default function CommitteeNotifications() {
                     </button>
                     {canManageNotifications && (
                       <>
-                        <button onClick={() => { setEditing(tmpl); setShowForm(true); }} className="p-1.5 rounded-md text-muted-foreground hover:text-primary">
+                        <button onClick={() => { setEditing(tmpl); setShowForm(true); }} aria-label={t("تحرير القالب", "Edit template")} className="p-1.5 rounded-md text-muted-foreground hover:text-primary">
                           <Settings className="w-4 h-4" />
                         </button>
                         <button onClick={() => deleteTemplate(tmpl.id)} className="p-1.5 rounded-md text-muted-foreground hover:text-destructive">
@@ -234,7 +234,7 @@ function TemplateForm({ editing, orgId, committeeId, onClose, onSuccess }) {
         <div>
           <Label className="text-xs">{t("نوع الحدث", "Event Type")}</Label>
           <select
-            value={form.event_type}
+            aria-label={t("نوع الحدث", "Event Type")} value={form.event_type}
             onChange={(e) => setForm({ ...form, event_type: e.target.value })}
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
           >
@@ -244,7 +244,7 @@ function TemplateForm({ editing, orgId, committeeId, onClose, onSuccess }) {
         <div>
           <Label className="text-xs">{t("القناة", "Channel")}</Label>
           <select
-            value={form.channel}
+            aria-label={t("القناة", "Channel")} value={form.channel}
             onChange={(e) => setForm({ ...form, channel: e.target.value })}
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
           >
@@ -256,7 +256,7 @@ function TemplateForm({ editing, orgId, committeeId, onClose, onSuccess }) {
         <div>
           <Label className="text-xs">{t("الأولوية", "Priority")}</Label>
           <select
-            value={form.priority}
+            aria-label={t("الأولوية", "Priority")} value={form.priority}
             onChange={(e) => setForm({ ...form, priority: e.target.value })}
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
           >
@@ -270,26 +270,26 @@ function TemplateForm({ editing, orgId, committeeId, onClose, onSuccess }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <Label className="text-xs">{t("عنوان (عربي)", "Subject (Arabic)")}</Label>
-          <Input value={form.subject_template_ar} onChange={(e) => setForm({ ...form, subject_template_ar: e.target.value })} placeholder="اجتماع: {{meeting_title}}" />
+          <Input aria-label={t("موضوع القالب (عربي)", "Subject template (Arabic)")} value={form.subject_template_ar} onChange={(e) => setForm({ ...form, subject_template_ar: e.target.value })} placeholder="اجتماع: {{meeting_title}}" />
         </div>
         <div>
           <Label className="text-xs">{t("عنوان (إنجليزي)", "Subject (English)")}</Label>
-          <Input dir="ltr" value={form.subject_template_en} onChange={(e) => setForm({ ...form, subject_template_en: e.target.value })} placeholder="Meeting: {{meeting_title}}" />
+          <Input aria-label={t("موضوع القالب (إنجليزي)", "Subject template (English)")} dir="ltr" value={form.subject_template_en} onChange={(e) => setForm({ ...form, subject_template_en: e.target.value })} placeholder="Meeting: {{meeting_title}}" />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <Label className="text-xs">{t("نص (عربي)", "Body (Arabic)")}</Label>
-          <Textarea rows={3} value={form.body_template_ar} onChange={(e) => setForm({ ...form, body_template_ar: e.target.value })} placeholder="تمت دعوتك لاجتماع {{meeting_title}} بتاريخ {{meeting_date}}" />
+          <Textarea aria-label={t("نص القالب (عربي)", "Body template (Arabic)")} rows={3} value={form.body_template_ar} onChange={(e) => setForm({ ...form, body_template_ar: e.target.value })} placeholder="تمت دعوتك لاجتماع {{meeting_title}} بتاريخ {{meeting_date}}" />
         </div>
         <div>
           <Label className="text-xs">{t("نص (إنجليزي)", "Body (English)")}</Label>
-          <Textarea rows={3} dir="ltr" value={form.body_template_en} onChange={(e) => setForm({ ...form, body_template_en: e.target.value })} placeholder="You are invited to {{meeting_title}} on {{meeting_date}}" />
+          <Textarea aria-label={t("نص القالب (إنجليزي)", "Body template (English)")} rows={3} dir="ltr" value={form.body_template_en} onChange={(e) => setForm({ ...form, body_template_en: e.target.value })} placeholder="You are invited to {{meeting_title}} on {{meeting_date}}" />
         </div>
       </div>
       <div>
         <Label className="text-xs">{t("رابط عميق", "Deep Link Template")}</Label>
-        <Input dir="ltr" value={form.deep_link_template} onChange={(e) => setForm({ ...form, deep_link_template: e.target.value })} placeholder="/o/{{org_slug}}/c/{{committee_slug}}/meetings/{{meeting_id}}" />
+        <Input aria-label={t("قالب الرابط المباشر", "Deep link template")} dir="ltr" value={form.deep_link_template} onChange={(e) => setForm({ ...form, deep_link_template: e.target.value })} placeholder="/o/{{org_slug}}/c/{{committee_slug}}/meetings/{{meeting_id}}" />
       </div>
       <div className="flex items-center gap-2">
         <Button size="sm" disabled={saving} onClick={save}>{saving ? t("جارٍ الحفظ...", "Saving...") : t("حفظ", "Save")}</Button>

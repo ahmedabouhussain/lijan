@@ -73,7 +73,7 @@ export default function CommitteeEvidence() {
                     <div className="mt-2 space-y-2">
                       <div>
                         <Label className="text-xs">{t("رابط الدليل", "Evidence URL")}</Label>
-                        <Input value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" />
+                        <Input aria-label={t("رابط الدليل", "Evidence URL")} value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" />
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" disabled={submitting || !evidenceUrl.trim()} onClick={() => handleUpload(a.id)} className="min-h-[36px] flex-1">

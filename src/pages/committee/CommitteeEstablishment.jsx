@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { L } from "@/lib/l10n";
+import { useLanguage } from "@/lib/LanguageContext";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
@@ -8,31 +8,30 @@ import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle, Check, 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LocalizedFileUpload from "@/components/raqeem/LocalizedFileUpload";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 const INSTRUMENT_TYPES = [
-  { value: "law", label: "قانون / لائحة" },
-  { value: "amiri_decree", label: "مرسوم أميري" },
-  { value: "amiri_decision", label: "قرار أميري" },
-  { value: "council_of_ministers_decision", label: "قرار مجلس الوزراء" },
-  { value: "ministerial_decision", label: "قرار وزاري" },
-  { value: "administrative_decision", label: "قرار إداري" },
-  { value: "board_resolution", label: "قرار مجلس" },
-  { value: "executive_decision", label: "قرار تنفيذي" },
-  { value: "circular", label: "تعميم" },
-  { value: "directive", label: "توجيه" },
-  { value: "official_memorandum", label: "مذكرة رسمية" },
-  { value: "official_letter", label: "خطاب رسمي" },
-  { value: "charter", label: "ميثاق" },
-  { value: "terms_of_reference", label: "اختصاصات" },
-  { value: "policy_instrument", label: "أداة سياسة" },
-  { value: "inter_entity_agreement", label: "اتفاقية بين جهات" },
-  { value: "internal_governance_instrument", label: "أداة حوكمة داخلية" },
-  { value: "other", label: "أخرى" },
+  { value: "law", ar: "قانون / لائحة", en: "Law / Regulation" },
+  { value: "amiri_decree", ar: "مرسوم أميري", en: "Amiri Decree" },
+  { value: "amiri_decision", ar: "قرار أميري", en: "Amiri Decision" },
+  { value: "council_of_ministers_decision", ar: "قرار مجلس الوزراء", en: "Council of Ministers Decision" },
+  { value: "ministerial_decision", ar: "قرار وزاري", en: "Ministerial Decision" },
+  { value: "administrative_decision", ar: "قرار إداري", en: "Administrative Decision" },
+  { value: "board_resolution", ar: "قرار مجلس", en: "Board Resolution" },
+  { value: "executive_decision", ar: "قرار تنفيذي", en: "Executive Decision" },
+  { value: "circular", ar: "تعميم", en: "Circular" },
+  { value: "directive", ar: "توجيه", en: "Directive" },
+  { value: "official_memorandum", ar: "مذكرة رسمية", en: "Official Memorandum" },
+  { value: "official_letter", ar: "خطاب رسمي", en: "Official Letter" },
+  { value: "charter", ar: "ميثاق", en: "Charter" },
+  { value: "terms_of_reference", ar: "اختصاصات", en: "Terms of Reference" },
+  { value: "policy_instrument", ar: "أداة سياسة", en: "Policy Instrument" },
+  { value: "inter_entity_agreement", ar: "اتفاقية بين جهات", en: "Inter-Entity Agreement" },
+  { value: "internal_governance_instrument", ar: "أداة حوكمة داخلية", en: "Internal Governance Instrument" },
+  { value: "other", ar: "أخرى", en: "Other" },
 ];
 
 const STATUS_COLORS = {
@@ -44,7 +43,17 @@ const STATUS_COLORS = {
   archived: "bg-secondary text-muted-foreground",
 };
 
+const STATUS_LABELS = {
+  draft: ["مسودة", "Draft"],
+  verified: ["موثَّق", "Verified"],
+  approved: ["معتمد", "Approved"],
+  superseded: ["مُستبدَل", "Superseded"],
+  repealed: ["ملغى", "Repealed"],
+  archived: ["مؤرشف", "Archived"],
+};
+
 export default function CommitteeEstablishment() {
+  const { t } = useLanguage();
   const { data, reload } = useCommittee();
   const { getTitle } = usePageConfig("establishment");
   const [instruments, setInstruments] = useState([]);
@@ -56,6 +65,15 @@ export default function CommitteeEstablishment() {
   const [confirming, setConfirming] = useState("");
   const [creatingDraft, setCreatingDraft] = useState("");
   const [msg, setMsg] = useState("");
+
+  const typeLabel = (v) => {
+    const found = INSTRUMENT_TYPES.find((x) => x.value === v);
+    return found ? t(found.ar, found.en) : v;
+  };
+  const statusLabel = (s) => {
+    const pair = STATUS_LABELS[s];
+    return pair ? t(pair[0], pair[1]) : s;
+  };
 
   const [form, setForm] = useState({
     instrument_type: "ministerial_decision",
@@ -96,13 +114,16 @@ export default function CommitteeEstablishment() {
         file_size: file.size,
       }));
     } catch (err) {
-      setMsg("تعذّر رفع الملف");
+      setMsg(t("تعذّر رفع الملف", "The file could not be uploaded"));
     }
     setUploading(false);
   };
 
   const submit = async () => {
-    if (!form.title_ar || !form.file_url) { setMsg(L.pair("العنوان العربي والملف مطلوبان", "The Arabic title and the file are required")); return; }
+    if (!form.title_ar || !form.file_url) {
+      setMsg(t("العنوان العربي والملف مطلوبان", "The Arabic title and the file are required"));
+      return;
+    }
     setUploading(true);
     try {
       const res = await base44.functions.invoke("UploadFoundingInstrument", {
@@ -111,12 +132,12 @@ export default function CommitteeEstablishment() {
       const d = res.data || res;
       if (d.error) { setMsg(d.error); }
       else {
-        setMsg("تم تسجيل السند التأسيسي");
+        setMsg(t("تم تسجيل السند التأسيسي", "The founding instrument was recorded"));
         setShowForm(false);
         setForm({ instrument_type: "ministerial_decision", custom_type: "", title_ar: "", title_en: "", file_url: "" });
         loadInstruments();
       }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setUploading(false);
   };
 
@@ -128,7 +149,7 @@ export default function CommitteeEstablishment() {
       const d = res.data || res;
       if (d.error) { setMsg(d.error); }
       else { setExtraction({ instrumentId, data: d.extracted, warning: d.warning }); loadInstruments(); }
-    } catch (e) { setMsg(e?.message || "خطأ في الاستخراج"); }
+    } catch (e) { setMsg(e?.message || t("خطأ في الاستخراج", "Extraction failed")); }
     setExtracting("");
   };
 
@@ -138,8 +159,11 @@ export default function CommitteeEstablishment() {
       const res = await base44.functions.invoke("ConfirmExtractedInstrumentFields", { instrument_id: instrumentId });
       const d = res.data || res;
       if (d.error) setMsg(d.error);
-      else { setMsg("تم تأكيد البيانات المستخرجة — جاهزة لإنشاء مسودة اللجنة"); loadInstruments(); }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+      else {
+        setMsg(t("تم تأكيد البيانات المستخرجة — جاهزة لإنشاء مسودة اللجنة", "The extracted data was confirmed — ready to create the committee draft"));
+        loadInstruments();
+      }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setConfirming("");
   };
 
@@ -149,102 +173,125 @@ export default function CommitteeEstablishment() {
       const res = await base44.functions.invoke("CreateCommitteeDraftFromInstrument", { instrument_id: instrumentId });
       const d = res.data || res;
       if (d.error) setMsg(d.error);
-      else { setMsg(`تم إنشاء مسودة اللجنة — ${d.members_created} أعضاء، نسخة تشكيل #${d.formation_version}`); loadInstruments(); }
-    } catch (e) { setMsg(e?.message || "خطأ"); }
+      else {
+        setMsg(`${t("تم إنشاء مسودة اللجنة", "Committee draft created")} — ${d.members_created} ${t("أعضاء", "members")}، ${t("نسخة تشكيل", "formation version")} #${d.formation_version}`);
+        loadInstruments();
+      }
+    } catch (e) { setMsg(e?.message || t("خطأ", "Error")); }
     setCreatingDraft("");
   };
 
   if (!data) return <TableSkeleton rows={4} />;
 
   return (
-    <div className="space-y-4" dir="rtl">
+    <div className="space-y-4">
       <PageHeader
         icon={ScrollText}
         title={getTitle("التأسيس والسندات", "Establishment & Instruments")}
         actions={
           <Button size="sm" onClick={() => setShowForm((s) => !s)}>
-            <Upload className="w-4 h-4" aria-hidden="true" /> تسجيل سند
+            <Upload className="w-4 h-4" aria-hidden="true" /> {t("تسجيل سند", "Record instrument")}
           </Button>
         }
       />
 
-      {msg && <div className="p-3 rounded-md bg-secondary text-sm">{msg}</div>}
+      {msg && <div className="p-3 rounded-md bg-secondary text-sm" role="status">{msg}</div>}
 
       {showForm && (
         <div className="raqeem-card p-4 space-y-3">
-          <Label className="text-sm font-semibold">تسجيل سند تأسيس رسمي</Label>
+          <Label className="text-sm font-semibold">{t("تسجيل سند تأسيس رسمي", "Record an official founding instrument")}</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs">نوع السند</Label>
+              <Label className="text-xs" htmlFor="inst-type">{t("نوع السند", "Instrument type")}</Label>
               <select
+                id="inst-type"
                 value={form.instrument_type}
                 onChange={(e) => setForm((f) => ({ ...f, instrument_type: e.target.value }))}
                 className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
               >
-                {INSTRUMENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {INSTRUMENT_TYPES.map((x) => <option key={x.value} value={x.value}>{t(x.ar, x.en)}</option>)}
               </select>
             </div>
             <div>
-              <Label className="text-xs">العنوان العربي *</Label>
-              <Input value={form.title_ar} onChange={(e) => setForm((f) => ({ ...f, title_ar: e.target.value }))} />
+              <Label className="text-xs" htmlFor="inst-title-ar">{t("العنوان العربي *", "Arabic title *")}</Label>
+              <Input id="inst-title-ar" value={form.title_ar} onChange={(e) => setForm((f) => ({ ...f, title_ar: e.target.value }))} />
             </div>
             <div>
-              <Label className="text-xs">العنوان الإنجليزي</Label>
-              <Input dir="ltr" value={form.title_en} onChange={(e) => setForm((f) => ({ ...f, title_en: e.target.value }))} />
+              <Label className="text-xs" htmlFor="inst-title-en">{t("العنوان الإنجليزي", "English title")}</Label>
+              <Input id="inst-title-en" dir="ltr" value={form.title_en} onChange={(e) => setForm((f) => ({ ...f, title_en: e.target.value }))} />
             </div>
             <div>
-              <Label className="text-xs">رقم السند</Label>
-              <Input value={form.instrument_number} onChange={(e) => setForm((f) => ({ ...f, instrument_number: e.target.value }))} />
+              <Label className="text-xs" htmlFor="inst-number">{t("رقم السند", "Instrument number")}</Label>
+              <Input id="inst-number" value={form.instrument_number} onChange={(e) => setForm((f) => ({ ...f, instrument_number: e.target.value }))} />
             </div>
             <div>
-              <Label className="text-xs">جهة الإصدار</Label>
-              <Input value={form.issuing_authority} onChange={(e) => setForm((f) => ({ ...f, issuing_authority: e.target.value }))} />
+              <Label className="text-xs" htmlFor="inst-authority">{t("جهة الإصدار", "Issuing authority")}</Label>
+              <Input id="inst-authority" value={form.issuing_authority} onChange={(e) => setForm((f) => ({ ...f, issuing_authority: e.target.value }))} />
             </div>
             <div>
-              <Label className="text-xs">تاريخ الإصدار</Label>
-              <LocalizedDatePicker value={form.issue_date} onChange={(v) => setForm((f) => ({ ...f, issue_date: v }))} />
+              <LocalizedDatePicker
+                label={t("تاريخ الإصدار", "Issue date")}
+                value={form.issue_date}
+                onChange={(v) => setForm((f) => ({ ...f, issue_date: v }))}
+              />
             </div>
             <div>
-              <Label className="text-xs">تاريخ النفاذ</Label>
-              <LocalizedDatePicker value={form.effective_date} onChange={(v) => setForm((f) => ({ ...f, effective_date: v }))} />
+              <LocalizedDatePicker
+                label={t("تاريخ النفاذ", "Effective date")}
+                value={form.effective_date}
+                onChange={(v) => setForm((f) => ({ ...f, effective_date: v }))}
+              />
             </div>
             <div>
-              <Label className="text-xs">المرجع الرسمي</Label>
-              <Input value={form.official_reference} onChange={(e) => setForm((f) => ({ ...f, official_reference: e.target.value }))} />
+              <Label className="text-xs" htmlFor="inst-reference">{t("المرجع الرسمي", "Official reference")}</Label>
+              <Input id="inst-reference" value={form.official_reference} onChange={(e) => setForm((f) => ({ ...f, official_reference: e.target.value }))} />
             </div>
           </div>
           {form.instrument_type === "other" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Input placeholder="النوع المخصص" value={form.custom_type} onChange={(e) => setForm((f) => ({ ...f, custom_type: e.target.value }))} />
-              <Input placeholder="جهة الإصدار (مخصص)" value={form.issuing_authority_custom} onChange={(e) => setForm((f) => ({ ...f, issuing_authority_custom: e.target.value }))} />
+              <div>
+                <Label className="text-xs" htmlFor="inst-custom-type">{t("النوع المخصص", "Custom type")}</Label>
+                <Input id="inst-custom-type" value={form.custom_type} onChange={(e) => setForm((f) => ({ ...f, custom_type: e.target.value }))} />
+              </div>
+              <div>
+                <Label className="text-xs" htmlFor="inst-custom-authority">{t("جهة الإصدار (مخصص)", "Issuing authority (custom)")}</Label>
+                <Input id="inst-custom-authority" value={form.issuing_authority_custom} onChange={(e) => setForm((f) => ({ ...f, issuing_authority_custom: e.target.value }))} />
+              </div>
             </div>
           )}
           <div>
-            <Label className="text-xs">الملف الرسمي (PDF / صورة / Word)</Label>
+            <Label className="text-xs">{t("الملف الرسمي (PDF / صورة / Word)", "Official file (PDF / image / Word)")}</Label>
             <LocalizedFileUpload
+              label={t("رفع الملف الرسمي", "Upload the official file")}
               value={{ file_url: form.file_url, file_name: form.original_filename, file_size: form.file_size }}
               onUpload={async (file) => {
                 setUploading(true);
                 try {
                   const { file_url } = await base44.integrations.Core.UploadFile({ file });
                   setForm((f) => ({ ...f, file_url, original_filename: file.name, mime_type: file.type, file_size: file.size }));
-                } catch { setMsg("تعذّر رفع الملف"); }
+                } catch { setMsg(t("تعذّر رفع الملف", "The file could not be uploaded")); }
                 setUploading(false);
               }}
             />
           </div>
           <Button size="sm" disabled={uploading || !form.file_url} onClick={submit} className="inline-flex items-center gap-2">
-            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            حفظ السند
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Upload className="w-4 h-4" aria-hidden="true" />}
+            {t("حفظ السند", "Save instrument")}
           </Button>
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+        <div className="flex justify-center py-8" role="status" aria-live="polite">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" aria-hidden="true" />
+          <span className="sr-only">{t("جارٍ التحميل", "Loading")}</span>
+        </div>
       ) : instruments.length === 0 ? (
         <div className="raqeem-card p-6 text-center text-sm text-muted-foreground">
-          لا توجد سندات تأسيس مسجَّلة. ابدأ بتسجيل السند الرسمي للجنة.
+          {t(
+            "لا توجد سندات تأسيس مسجَّلة. ابدأ بتسجيل السند الرسمي للجنة.",
+            "No founding instruments are recorded. Start by recording the committee's official instrument."
+          )}
         </div>
       ) : (
         <div className="space-y-2">
@@ -254,22 +301,22 @@ export default function CommitteeEstablishment() {
                 <div className="min-w-0">
                   <div className="text-sm font-medium truncate">{inst.title_ar}</div>
                   <div className="text-xs text-muted-foreground truncate">
-                    {INSTRUMENT_TYPES.find((t) => t.value === inst.instrument_type)?.label || inst.instrument_type}
+                    {typeLabel(inst.instrument_type)}
                     {inst.instrument_number ? ` · ${inst.instrument_number}` : ""}
                     {inst.issuing_authority ? ` · ${inst.issuing_authority}` : ""}
                     {inst.issue_date ? ` · ${inst.issue_date}` : ""}
                   </div>
                 </div>
-                <StatusBadge label={inst.document_status} colorClass={STATUS_COLORS[inst.document_status] || "bg-secondary"} />
+                <StatusBadge label={statusLabel(inst.document_status)} colorClass={STATUS_COLORS[inst.document_status] || "bg-secondary"} />
               </div>
               {inst.file_url && (
                 <div className="flex items-center gap-2">
                   <a href={inst.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
-                    <FileText className="w-3.5 h-3.5" /> {inst.original_filename || "الملف"}
+                    <FileText className="w-3.5 h-3.5" aria-hidden="true" /> {inst.original_filename || t("الملف", "File")}
                   </a>
                   {inst.signature_detected && (
                     <span className="text-xs text-amber-600 inline-flex items-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5" /> توقيع مرصود — غير موثَّق
+                      <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" /> {t("توقيع مرصود — غير موثَّق", "Signature detected — not authenticated")}
                     </span>
                   )}
                 </div>
@@ -281,11 +328,11 @@ export default function CommitteeEstablishment() {
                   onClick={() => runExtraction(inst.id)}
                   className="inline-flex items-center gap-2"
                 >
-                  {extracting === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                  استخراج بالذكاء الاصطناعي
+                  {extracting === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {t("استخراج بالذكاء الاصطناعي", "AI extraction")}
                 </Button>
                 {inst.extraction_status === "extracted" && (
-                  <span className="text-xs text-green-600">تم الاستخراج — بانتظار المراجعة</span>
+                  <span className="text-xs text-green-600">{t("تم الاستخراج — بانتظار المراجعة", "Extracted — awaiting review")}</span>
                 )}
               </div>
               {extraction?.instrumentId === inst.id && extraction.data && (
@@ -306,14 +353,14 @@ export default function CommitteeEstablishment() {
                   onClick={() => confirmExtraction(inst.id)}
                   className="inline-flex items-center gap-2 h-7 text-xs"
                 >
-                  {confirming === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                  تأكيد البيانات المستخرجة
+                  {confirming === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Check className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {t("تأكيد البيانات المستخرجة", "Confirm the extracted data")}
                 </Button>
               )}
               {inst.extraction_status === "confirmed" && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-green-600 inline-flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" /> تم التأكيد
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" /> {t("تم التأكيد", "Confirmed")}
                   </span>
                   <Button
                     size="sm" variant="default"
@@ -321,8 +368,8 @@ export default function CommitteeEstablishment() {
                     onClick={() => createDraftFromInstrument(inst.id)}
                     className="inline-flex items-center gap-2 h-7 text-xs"
                   >
-                    {creatingDraft === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FilePlus2 className="w-3.5 h-3.5" />}
-                    إنشاء مسودة لجنة من السند
+                    {creatingDraft === inst.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <FilePlus2 className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {t("إنشاء مسودة لجنة من السند", "Create a committee draft from the instrument")}
                   </Button>
                 </div>
               )}
@@ -334,30 +381,67 @@ export default function CommitteeEstablishment() {
   );
 }
 
+const EXTRACTION_FIELD_LABELS = {
+  // Instrument fields
+  instrument_type: ["نوع السند", "Instrument type"],
+  instrument_number: ["رقم السند", "Instrument number"],
+  issuing_authority: ["جهة الإصدار", "Issuing authority"],
+  issuer_name: ["اسم المُصدِر", "Issuer name"],
+  issuer_capacity: ["صفة المُصدِر", "Issuer capacity"],
+  issue_date: ["تاريخ الإصدار", "Issue date"],
+  effective_date: ["تاريخ النفاذ", "Effective date"],
+  expiry_date: ["تاريخ الانتهاء", "Expiry date"],
+  official_reference: ["المرجع الرسمي", "Official reference"],
+  jurisdiction: ["الاختصاص", "Jurisdiction"],
+  title_ar: ["العنوان (عربي)", "Title (Arabic)"],
+  title_en: ["العنوان (إنجليزي)", "Title (English)"],
+  // Committee fields
+  name_ar: ["الاسم (عربي)", "Name (Arabic)"],
+  name_en: ["الاسم (إنجليزي)", "Name (English)"],
+  type: ["النوع", "Type"],
+  mandate: ["الصلاحية", "Mandate"],
+  appointing_authority: ["جهة التعيين", "Appointing authority"],
+  term_start: ["بداية المدة", "Term start"],
+  term_end: ["نهاية المدة", "Term end"],
+  classification: ["التصنيف", "Classification"],
+  quorum_count: ["النصاب", "Quorum"],
+  voting_rule: ["قاعدة التصويت", "Voting rule"],
+  meeting_cadence: ["إيقاع الاجتماعات", "Meeting cadence"],
+  chair_name: ["اسم الرئيس", "Chair name"],
+  secretary_name: ["اسم الأمين", "Secretary name"],
+  // Formation fields
+  members: ["الأعضاء", "Members"],
+  full_name: ["الاسم الكامل", "Full name"],
+  role: ["الدور", "Role"],
+  institution_name: ["الجهة الممثلة", "Represented entity"],
+  // Governance fields
+  governance_rules: ["قواعد الحوكمة", "Governance rules"],
+  reporting_requirements: ["متطلبات التقارير", "Reporting requirements"],
+};
+
+const CONFIDENCE_LABELS = {
+  high: ["عالية", "High"],
+  medium: ["متوسطة", "Medium"],
+  low: ["منخفضة", "Low"],
+};
+
 function ExtractionView({ data }) {
-  const FIELD_LABELS = {
-    // Instrument fields
-    instrument_type: "نوع السند", instrument_number: "رقم السند", issuing_authority: "جهة الإصدار",
-    issuer_name: "اسم المُصدِر", issuer_capacity: "صفة المُصدِر", issue_date: "تاريخ الإصدار",
-    effective_date: "تاريخ النفاذ", expiry_date: "تاريخ الانتهاء", official_reference: "المرجع الرسمي",
-    jurisdiction: "الاختصاص", title_ar: "العنوان (عربي)", title_en: "العنوان (إنجليزي)",
-    // Committee fields
-    name_ar: "الاسم (عربي)", name_en: "الاسم (إنجليزي)", type: "النوع", mandate: "الصلاحية",
-    appointing_authority: "جهة التعيين", term_start: "بداية المدة", term_end: "نهاية المدة",
-    classification: "التصنيف", quorum_count: "النصاب", voting_rule: "قاعدة التصويت",
-    meeting_cadence: "إيقاع الاجتماعات", chair_name: "اسم الرئيس", secretary_name: "اسم الأمين",
-    // Formation fields
-    members: "الأعضاء", full_name: "الاسم الكامل", role: "الدور", institution_name: "الجهة الممثلة",
-    // Governance fields
-    governance_rules: "قواعد الحوكمة", reporting_requirements: "متطلبات التقارير",
+  const { t } = useLanguage();
+
+  const fieldLabel = (k) => {
+    const pair = EXTRACTION_FIELD_LABELS[k];
+    return pair ? t(pair[0], pair[1]) : k;
   };
-  const CONF_LABELS = { high: "عالية", medium: "متوسطة", low: "منخفضة" };
+  const confidenceLabel = (c) => {
+    const pair = CONFIDENCE_LABELS[c];
+    return pair ? t(pair[0], pair[1]) : c;
+  };
 
   const sections = [
-    { title: "بيانات السند", fields: data.instrument },
-    { title: "بيانات اللجنة", fields: data.committee },
-    { title: "التشكيل", fields: data.formation },
-    { title: "الحوكمة", fields: data.governance },
+    { key: "instrument", title: t("بيانات السند", "Instrument data"), fields: data.instrument },
+    { key: "committee", title: t("بيانات اللجنة", "Committee data"), fields: data.committee },
+    { key: "formation", title: t("التشكيل", "Formation"), fields: data.formation },
+    { key: "governance", title: t("الحوكمة", "Governance"), fields: data.governance },
   ];
   return (
     <div className="space-y-2">
@@ -366,7 +450,7 @@ function ExtractionView({ data }) {
         const entries = Object.entries(sec.fields).filter(([, v]) => v && (!v.confidence || v.confidence !== "not_found"));
         if (entries.length === 0) return null;
         return (
-          <div key={sec.title}>
+          <div key={sec.key}>
             <div className="font-semibold text-foreground">{sec.title}</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mt-1">
               {entries.map(([k, v]) => {
@@ -375,13 +459,13 @@ function ExtractionView({ data }) {
                 if (!val) return null;
                 return (
                   <div key={k} className="flex items-center gap-1">
-                    <span className="text-muted-foreground">{FIELD_LABELS[k] || k}:</span>
+                    <span className="text-muted-foreground">{fieldLabel(k)}:</span>
                     <span className="truncate">{String(val).slice(0, 80)}</span>
                     {conf && (
                       <span className={
                         conf === "high" ? "text-green-600" :
                         conf === "medium" ? "text-amber-600" : "text-destructive"
-                      }>· {CONF_LABELS[conf] || conf}</span>
+                      }>· {confidenceLabel(conf)}</span>
                     )}
                   </div>
                 );

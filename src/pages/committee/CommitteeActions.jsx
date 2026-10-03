@@ -145,7 +145,7 @@ export default function CommitteeActions() {
               <button onClick={() => setCloseModal(null)}><X className="w-4 h-4 text-muted-foreground" /></button>
             </div>
             <p className="text-xs text-muted-foreground">{t("يجب تقديم رابط دليل الإنجاز قبل الإغلاق.", "Evidence URL is required before closure.")}</p>
-            <div><Label>{t("رابط الدليل", "Evidence URL")}</Label><Input value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" /></div>
+            <div><Label>{t("رابط الدليل", "Evidence URL")}</Label><Input aria-label={t("رابط الدليل", "Evidence URL")} value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" /></div>
             <Button disabled={updating === closeModal || !evidenceUrl.trim()} onClick={async () => {
               setUpdating(closeModal);
               await base44.functions.invoke("CloseAction", { action_id: closeModal, evidence_url: evidenceUrl });

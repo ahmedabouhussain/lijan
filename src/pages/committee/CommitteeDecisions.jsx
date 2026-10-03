@@ -67,9 +67,9 @@ export default function CommitteeDecisions() {
             <button onClick={() => setShowCreate(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
           </div>
           {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
-          <div><Label>{t("العنوان", "Title")}</Label><Input value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Approve Digital Health Strategy" /></div>
-          <div><Label>{t("المقترح", "Proposal")}</Label><Textarea value={form.proposal} onChange={(e) => setForm(f => ({ ...f, proposal: e.target.value }))} rows={3} /></div>
-          <div><Label>{t("الأساس القانوني", "Legal Basis")}</Label><Input value={form.legal_basis} onChange={(e) => setForm(f => ({ ...f, legal_basis: e.target.value }))} placeholder="Ministry Decree 2026/14" /></div>
+          <div><Label>{t("العنوان", "Title")}</Label><Input aria-label={t("العنوان", "Title")} value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Approve Digital Health Strategy" /></div>
+          <div><Label>{t("المقترح", "Proposal")}</Label><Textarea aria-label={t("المقترح", "Proposal")} value={form.proposal} onChange={(e) => setForm(f => ({ ...f, proposal: e.target.value }))} rows={3} /></div>
+          <div><Label>{t("الأساس القانوني", "Legal Basis")}</Label><Input aria-label={t("الأساس القانوني", "Legal Basis")} value={form.legal_basis} onChange={(e) => setForm(f => ({ ...f, legal_basis: e.target.value }))} placeholder="Ministry Decree 2026/14" /></div>
           <Button onClick={submit} disabled={submitting} className="w-full">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("إنشاء المسودة", "Create Draft")}</Button>
         </div>
       )}

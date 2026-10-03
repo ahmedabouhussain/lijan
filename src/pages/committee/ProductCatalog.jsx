@@ -176,7 +176,7 @@ export default function ProductCatalog({ onGenerate }) {
         <div className="relative flex-1">
           <Search className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input
-            value={search}
+            aria-label={t("ابحث عن منتج...", "Search products...")} value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("ابحث عن منتج...", "Search products...")}
             className="pl-9"

@@ -97,14 +97,14 @@ export default function CommitteeAgenda() {
           </div>
           {error && <div className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>}
           <div><Label>{t("الاجتماع", "Meeting")}</Label>
-            <select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.meeting_id} onChange={(e) => setForm(f => ({ ...f, meeting_id: e.target.value }))}>
+            <select aria-label={t("الاجتماع", "Meeting")} className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.meeting_id} onChange={(e) => setForm(f => ({ ...f, meeting_id: e.target.value }))}>
               <option value="">{t("— اختر —", "— Select —")}</option>
               {upcomingMeetings.map((m) => <option key={m.id} value={m.id}>{m.title || m.title_ar} — {new Date(m.date).toLocaleDateString()}</option>)}
             </select>
           </div>
-          <div><Label>{t("العنوان", "Title")}</Label><Input value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Review Q3 Budget" /></div>
-          <div><Label>{t("الهدف", "Objective")}</Label><Textarea value={form.objective} onChange={(e) => setForm(f => ({ ...f, objective: e.target.value }))} rows={2} /></div>
-          <div><Label>{t("المقدم", "Presenter")}</Label><Input value={form.presenter} onChange={(e) => setForm(f => ({ ...f, presenter: e.target.value }))} placeholder="Dr. Sara Al-Kuwari" /></div>
+          <div><Label>{t("العنوان", "Title")}</Label><Input aria-label={t("العنوان", "Title")} value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Review Q3 Budget" /></div>
+          <div><Label>{t("الهدف", "Objective")}</Label><Textarea aria-label={t("الهدف", "Objective")} value={form.objective} onChange={(e) => setForm(f => ({ ...f, objective: e.target.value }))} rows={2} /></div>
+          <div><Label>{t("المقدم", "Presenter")}</Label><Input aria-label={t("المقدم", "Presenter")} value={form.presenter} onChange={(e) => setForm(f => ({ ...f, presenter: e.target.value }))} placeholder="Dr. Sara Al-Kuwari" /></div>
           <Button onClick={submit} disabled={submitting} className="w-full">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t("إضافة", "Add")}</Button>
         </div>
       )}
