@@ -17,12 +17,14 @@ import SignaturePad from "@/components/raqeem/SignaturePad";
 import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
-import { DEMO_USER } from "@/../base44/shared/demoDataset";
+import { resolveDemoPersona } from "@/lib/demoPersonas";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import DemoBanner from "@/components/raqeem/DemoBanner";
 
 export default function Profile() {
-  const { isDemoMode, effectiveActor } = useEffectiveActor();
+  const { isDemoMode, effectiveActor, demoPersonaKey } = useEffectiveActor();
+  const { t, lang } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -43,11 +45,12 @@ export default function Profile() {
 
   useEffect(() => {
     if (isDemoMode) {
-      // Demo mode: use effective actor (Fahad) — never touch the real user record
+      // Demo mode: use the active demo persona — never touch the real user record
+      const persona = resolveDemoPersona(demoPersonaKey);
       setUser(effectiveActor);
-      setFullName(DEMO_USER.name_ar);
-      setTitle(DEMO_USER.job_title_ar);
-      setInstitutionEmail(DEMO_USER.email);
+      setFullName(persona.name_ar);
+      setTitle(persona.job_title_ar);
+      setInstitutionEmail(persona.email);
       setGovernanceRole("member"); // Demo users are never admin
       setLoading(false);
     } else {
@@ -71,7 +74,7 @@ export default function Profile() {
         .catch(() => {})
         .finally(() => setLoading(false));
     }
-  }, [isDemoMode, effectiveActor]);
+  }, [isDemoMode, effectiveActor, demoPersonaKey]);
 
   const handleAvatar = async (e) => {
     const file = e.target.files?.[0];
@@ -136,19 +139,19 @@ export default function Profile() {
   }
 
   if (!user) {
-    return <p className="text-muted-foreground text-center py-20">تعذر تحميل الملف</p>;
+    return <p className="text-muted-foreground text-center py-20">{t("تعذر تحميل الملف", "Could not load the profile")}</p>;
   }
 
   const initials = (user.full_name || "؟").split(" ").map((w) => w[0]).slice(0, 2).join("");
-  const demoPersona = isDemoMode ? DEMO_USER : null;
+  const demoPersona = isDemoMode ? resolveDemoPersona(demoPersonaKey) : null;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {isDemoMode && <DemoBanner />}
       <PageNav />
       <div>
-        <h1 className="text-2xl font-bold text-foreground">الملف الشخصي · Profile</h1>
-        <p className="text-sm text-muted-foreground mt-1">هويتك داخل لِجان™</p>
+        <h1 className="text-2xl font-bold text-foreground">{t("الملف الشخصي", "Profile")}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t("هويتك داخل لِجان™", "Your identity within LIJAN™")}</p>
       </div>
 
       {/* Identity header card */}
@@ -168,7 +171,7 @@ export default function Profile() {
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
                 className="absolute bottom-0 left-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary-dark transition-colors disabled:opacity-50"
-                title="تغيير الصورة"
+                title={t("تغيير الصورة", "Change photo")}
               >
                 {uploading ? (
                   <div className="w-3.5 h-3.5 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
@@ -188,16 +191,19 @@ export default function Profile() {
 
           <div className="flex items-center gap-2 mt-4 flex-wrap">
             {isDemoMode ? (
-              <StatusBadge label="حساب تجريبي · Demo Account" colorClass="bg-accent/15 text-accent-foreground" />
+              <StatusBadge
+                label={t("حساب تجريبي", "Demo Account")}
+                colorClass="bg-accent/15 text-accent-foreground"
+              />
             ) : (
               <StatusBadge
-                label={user.role === "admin" ? "مدير · Admin" : "مستخدم · User"}
+                label={user.role === "admin" ? t("مدير", "Admin") : t("مستخدم", "User")}
                 colorClass={user.role === "admin" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}
               />
             )}
             {!isDemoMode && (
               <StatusBadge
-                label={`${GOVERNANCE_ROLES[governanceRole]?.ar || "عضو"} · ${GOVERNANCE_ROLES[governanceRole]?.en || "Member"}`}
+                label={(lang === "ar" ? GOVERNANCE_ROLES[governanceRole]?.ar : GOVERNANCE_ROLES[governanceRole]?.en) || t("عضو", "Member")}
                 colorClass="bg-accent/15 text-accent-foreground"
               />
             )}
@@ -215,32 +221,38 @@ export default function Profile() {
         <div className="raqeem-card p-6 space-y-4 border-accent/30">
           <div className="flex items-center gap-2 pb-3 border-b border-border">
             <Shield className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold text-foreground">هوية الشخصية التجريبية · Demo Persona Identity</h2>
-            <StatusBadge label="تجريبي · Demo" colorClass="bg-accent/15 text-accent-foreground" />
+            <h2 className="text-sm font-semibold text-foreground">{t("هوية الشخصية التجريبية", "Demo Persona Identity")}</h2>
+            <StatusBadge label={t("تجريبي", "Demo")} colorClass="bg-accent/15 text-accent-foreground" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs mb-1 block text-muted-foreground">الاسم · Name</Label>
-              <div className="text-sm font-medium text-foreground">{demoPersona.name_ar}</div>
-              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.name_en}</div>
+              <Label className="text-xs mb-1 block text-muted-foreground">{t("الاسم", "Name")}</Label>
+              <div className="text-sm font-medium text-foreground">
+                {lang === "ar" ? demoPersona.name_ar : demoPersona.name_en}
+              </div>
             </div>
             <div>
-              <Label className="text-xs mb-1 block text-muted-foreground">البريد الإلكتروني · Email</Label>
+              <Label className="text-xs mb-1 block text-muted-foreground">{t("البريد الإلكتروني", "Email")}</Label>
               <div className="text-sm font-medium text-foreground" dir="ltr">{demoPersona.email}</div>
             </div>
             <div>
-              <Label className="text-xs mb-1 block text-muted-foreground">الصفة الوظيفية · Job Title</Label>
-              <div className="text-sm font-medium text-foreground">{demoPersona.job_title_ar}</div>
-              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.job_title_en}</div>
+              <Label className="text-xs mb-1 block text-muted-foreground">{t("الصفة الوظيفية", "Job Title")}</Label>
+              <div className="text-sm font-medium text-foreground">
+                {lang === "ar" ? demoPersona.job_title_ar : demoPersona.job_title_en}
+              </div>
             </div>
             <div>
-              <Label className="text-xs mb-1 block text-muted-foreground">الجهة الأساسية · Primary Organization</Label>
-              <div className="text-sm font-medium text-foreground">{demoPersona.primary_org_ar}</div>
-              <div className="text-xs text-muted-foreground" dir="ltr">{demoPersona.primary_org_en}</div>
+              <Label className="text-xs mb-1 block text-muted-foreground">{t("الجهة الأساسية", "Primary Organization")}</Label>
+              <div className="text-sm font-medium text-foreground">
+                {lang === "ar" ? demoPersona.primary_org_ar : demoPersona.primary_org_en}
+              </div>
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
-            هذه هوية تجريبية لعرض قدرات المنصة — البيانات غير حقيقية · This is a fictional persona for demo purposes
+            {t(
+              "هذه هوية تجريبية لعرض قدرات المنصة — البيانات غير حقيقية",
+              "This is a fictional persona for demonstration purposes"
+            )}
           </p>
         </div>
       )}
@@ -249,24 +261,27 @@ export default function Profile() {
       <div className="raqeem-card p-6 space-y-5">
         <div className="flex items-center gap-2 pb-3 border-b border-border">
           <Building2 className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">الجهة المؤسسية · Institutional Affiliation</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("الجهة المؤسسية", "Institutional Affiliation")}</h2>
         </div>
         <p className="text-xs text-muted-foreground -mt-2">
-          جهتك التابع لها — تُستخدم لمطابقة دخولك في بوابة الدخول المؤسسية · Your affiliated entity — used to match your entry at the Institutional Portal
+          {t(
+            "جهتك التابع لها — تُستخدم لمطابقة دخولك في بوابة الدخول المؤسسية",
+            "Your affiliated entity — used to match your entry at the Institutional Entry Portal"
+          )}
         </p>
 
         <div>
-          <Label className="text-xs mb-1.5 block">الجهة · Institution</Label>
+          <Label className="text-xs mb-1.5 block">{t("الجهة", "Institution")}</Label>
           <EntitySearchSelect
             value={institutionId}
             onChange={setInstitutionId}
-            placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+            placeholder={t("— ابحث أو اختر الجهة —", "— Search or select entity —")}
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label className="text-xs mb-1.5 block">البريد المؤسسي · Official Email</Label>
+            <Label className="text-xs mb-1.5 block">{t("البريد المؤسسي", "Official Email")}</Label>
             <Input
               type="email"
               dir="ltr"
@@ -276,8 +291,12 @@ export default function Profile() {
             />
           </div>
           <div>
-            <Label className="text-xs mb-1.5 block">الإدارة · Department</Label>
-            <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="مثال: إدارة الشؤون القانونية" />
+            <Label className="text-xs mb-1.5 block">{t("الإدارة", "Department")}</Label>
+            <Input
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder={t("مثال: إدارة الشؤون القانونية", "e.g. Legal Affairs Department")}
+            />
           </div>
         </div>
 
@@ -285,8 +304,16 @@ export default function Profile() {
           <div className="flex items-start gap-2 p-3 bg-primary/5 rounded-md">
             <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <p className="text-xs text-foreground">
-              <span className="font-medium">{findEntity(institutionId)?.ar || ""}</span>
-              <span className="text-muted-foreground"> — ستظهر هذه الجهة كمطابقة عند دخولك من بوابة الدخول المؤسسية</span>
+              <span className="font-medium">
+                {(lang === "ar" ? findEntity(institutionId)?.ar : findEntity(institutionId)?.en) || ""}
+              </span>
+              <span className="text-muted-foreground">
+                {" — "}
+                {t(
+                  "ستظهر هذه الجهة كمطابقة عند دخولك من بوابة الدخول المؤسسية",
+                  "This entity will appear as a match when you sign in from the Institutional Entry Portal"
+                )}
+              </span>
             </p>
           </div>
         )}
@@ -296,35 +323,44 @@ export default function Profile() {
       <div className="raqeem-card p-6 space-y-5">
         <div className="flex items-center gap-2 pb-3 border-b border-border">
           <Shield className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">تفاصيل الحساب · Account Details</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("تفاصيل الحساب", "Account Details")}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label className="text-xs mb-1.5 block">الاسم الكامل · Full Name</Label>
-            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
+            <Label className="text-xs mb-1.5 block">{t("الاسم الكامل", "Full Name")}</Label>
+            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={t("الاسم الكامل", "Full Name")} />
           </div>
           <div>
-            <Label className="text-xs mb-1.5 block">البريد الإلكتروني · Email</Label>
+            <Label className="text-xs mb-1.5 block">{t("البريد الإلكتروني", "Email")}</Label>
             <Input value={user.email} disabled className="bg-muted/50" />
           </div>
           <div>
-            <Label className="text-xs mb-1.5 block">المسمى الوظيفي · Job Title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: مدير عام" />
+            <Label className="text-xs mb-1.5 block">{t("المسمى الوظيفي", "Job Title")}</Label>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t("مثال: مدير عام", "e.g. Director General")}
+            />
           </div>
           <div>
-            <Label className="text-xs mb-1.5 block">الهاتف · Phone</Label>
+            <Label className="text-xs mb-1.5 block">{t("الهاتف", "Phone")}</Label>
             <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+974 ..." />
           </div>
         </div>
 
         <div>
-          <Label className="text-xs mb-1.5 block">نبذة تعريفية · Bio</Label>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="نبذة مختصرة عنك" rows={3} />
+          <Label className="text-xs mb-1.5 block">{t("نبذة تعريفية", "Bio")}</Label>
+          <Textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder={t("نبذة مختصرة عنك", "A short introduction about you")}
+            rows={3}
+          />
         </div>
 
         <div>
-          <Label className="text-xs mb-1.5 block">دور الحوكمة · Governance Role</Label>
+          <Label className="text-xs mb-1.5 block">{t("دور الحوكمة", "Governance Role")}</Label>
           <Select value={governanceRole} onValueChange={setGovernanceRole}>
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -332,26 +368,28 @@ export default function Profile() {
             <SelectContent>
               {Object.entries(GOVERNANCE_ROLES).map(([key, role]) => (
                 <SelectItem key={key} value={key}>
-                  {role.ar} · {role.en}
+                  {lang === "ar" ? role.ar : role.en}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-[10px] text-muted-foreground mt-1">يحدد تجربة لوحة التحكم المناسبة لدورك · Determines your home dashboard experience</p>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            {t("يحدد تجربة لوحة التحكم المناسبة لدورك", "Determines your home dashboard experience")}
+          </p>
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-border">
           <Button variant="ghost" size="sm" onClick={logout} className="text-muted-foreground">
-            <LogOut className="w-4 h-4 mr-1.5" /> تسجيل الخروج
+            <LogOut className="w-4 h-4 mr-1.5" /> {t("تسجيل الخروج", "Log Out")}
           </Button>
           <div className="flex items-center gap-3">
             {saved && (
               <span className="text-xs text-emerald-600 inline-flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> تم الحفظ
+                <CheckCircle2 className="w-3.5 h-3.5" /> {t("تم الحفظ", "Saved")}
               </span>
             )}
             <Button size="sm" onClick={save} disabled={saving || uploading}>
-              <Save className="w-4 h-4 mr-1.5" /> {saving ? "جارٍ الحفظ..." : "حفظ التغييرات"}
+              <Save className="w-4 h-4 mr-1.5" /> {saving ? t("جارٍ الحفظ...", "Saving...") : t("حفظ التغييرات", "Save Changes")}
             </Button>
           </div>
         </div>
@@ -364,8 +402,10 @@ export default function Profile() {
             <Bell className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-foreground">تفضيلات الإشعارات · Notification Preferences</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">تحكم في قنوات وتوقيت استلام إشعاراتك · Control how and when you receive notifications</p>
+            <h2 className="text-sm font-semibold text-foreground">{t("تفضيلات الإشعارات", "Notification Preferences")}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {t("تحكم في قنوات وتوقيت استلام إشعاراتك", "Control how and when you receive notifications")}
+            </p>
           </div>
         </div>
         <span className="text-muted-foreground group-hover:text-primary text-sm">←</span>
@@ -375,10 +415,13 @@ export default function Profile() {
       <div className="raqeem-card p-6 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border">
           <PenLine className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">التوقيع الإلكتروني · E-Signature</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("التوقيع الإلكتروني", "E-Signature")}</h2>
         </div>
         <p className="text-xs text-muted-foreground -mt-1">
-          خصّص توقيعك المستخدم لاعتماد المحاضر والقرارات رسمياً · Customize your signature used to formally approve minutes and decisions
+          {t(
+            "خصّص توقيعك المستخدم لاعتماد المحاضر والقرارات رسمياً",
+            "Customize the signature used to formally approve minutes and decisions"
+          )}
         </p>
         <SignaturePad
           value={{ text: sigText, image_url: sigImage }}

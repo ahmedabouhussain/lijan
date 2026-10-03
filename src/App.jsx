@@ -33,8 +33,6 @@ import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
-import DrHamadMyCommittees from '@/pages/DrHamadMyCommittees';
-import DrHamadCommitteeDetail from '@/pages/DrHamadCommitteeDetail';
 
 // Organization Portal (Level 2)
 import OrgLayout from '@/components/raqeem/OrgLayout';
@@ -120,8 +118,6 @@ const AuthenticatedApp = () => {
       <Route path="/governance-policies" element={<GovernancePolicies />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
-      <Route path="/dr-hamad-experience" element={<DrHamadMyCommittees />} />
-      <Route path="/dr-hamad-experience/:committeeRef" element={<DrHamadCommitteeDetail />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

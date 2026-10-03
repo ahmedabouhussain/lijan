@@ -7,7 +7,7 @@ const CommitteeContext = createContext(null);
 
 export function CommitteeProvider({ children }) {
   const { committeeRef } = useParams();
-  const { isDemoMode } = useEffectiveActor();
+  const { isDemoMode, demoPersonaKey } = useEffectiveActor();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,7 +19,7 @@ export function CommitteeProvider({ children }) {
     setLoading(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("GetCommitteeMiniPortal", { public_id: publicId, demo_mode: isDemoMode });
+      const res = await base44.functions.invoke("GetCommitteeMiniPortal", { public_id: publicId, demo_mode: isDemoMode, demo_persona: demoPersonaKey });
       const d = res.data || res;
       if (d.error) setError(d.error);
       else setData(d);
@@ -27,7 +27,7 @@ export function CommitteeProvider({ children }) {
       setError(e?.response?.data?.error || e?.message || "تعذّر تحميل اللجنة");
     }
     setLoading(false);
-  }, [publicId, isDemoMode]);
+  }, [publicId, isDemoMode, demoPersonaKey]);
 
   useEffect(() => { reload(); }, [reload]);
 

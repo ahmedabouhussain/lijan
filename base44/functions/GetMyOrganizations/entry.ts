@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { DEMO_USER, DEMO_USER_ID, DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 
 // GetMyOrganizations — resolves the current user's organization memberships
 // AND committee memberships across ALL organizations.
@@ -18,18 +19,22 @@ export default async function(req) {
 
     const sr = base44.asServiceRole;
 
-    // DEMO MODE: Return Fahad's demo data, scoped by demo_dataset flag
+    // DEMO MODE: resolve the requested demo persona (defaults to the platform demo user).
+    // Every persona is a governed demo user — virtual user id + demo dataset — resolved
+    // through this one path, so no persona has its own lookup.
     if (demoMode) {
+      const persona = resolveDemoPersona(payload.demo_persona);
+
       const demoOrgs = await sr.entities.Organization
-        .filter({ is_demo_data: true, demo_dataset: DEMO_DATASET })
+        .filter({ is_demo_data: true, demo_dataset: persona.dataset })
         .catch(() => { return []; });
 
       const demoCommitteeMemberships = await sr.entities.CommitteeMembership
-        .filter({ user_id: DEMO_USER_ID, status: 'active' })
+        .filter({ user_id: persona.user_id, status: 'active' })
         .catch(() => { return []; });
 
       const demoOrgMemberships = await sr.entities.OrganizationMembership
-        .filter({ user_id: DEMO_USER_ID, status: 'active' })
+        .filter({ user_id: persona.user_id, status: 'active' })
         .catch(() => { return []; });
 
       const organizations = [];
@@ -51,7 +56,7 @@ export default async function(req) {
           branding_primary_color: org.branding_primary_color,
           logo_url: org.logo_url,
           my_role: orgMembership ? orgMembership.role : 'member',
-          is_primary: org.public_id === 'DEMO-ORG-AUDIT-COUNCIL',
+          is_primary: org.public_id === persona.primary_org_public_id,
         });
       }
 
@@ -91,14 +96,14 @@ export default async function(req) {
       });
 
       const userProfile = {
-        display_name_ar: DEMO_USER.name_ar,
-        display_name_en: DEMO_USER.name_en,
-        job_title_ar: DEMO_USER.job_title_ar,
-        job_title_en: DEMO_USER.job_title_en,
-        primary_org_ar: DEMO_USER.primary_org_ar,
-        primary_org_en: DEMO_USER.primary_org_en,
+        display_name_ar: persona.name_ar,
+        display_name_en: persona.name_en,
+        job_title_ar: persona.job_title_ar,
+        job_title_en: persona.job_title_en,
+        primary_org_ar: persona.primary_org_ar,
+        primary_org_en: persona.primary_org_en,
         is_demo_user: true,
-        demo_persona_key: DEMO_USER.persona_key,
+        demo_persona_key: persona.key,
       };
 
       return Response.json({

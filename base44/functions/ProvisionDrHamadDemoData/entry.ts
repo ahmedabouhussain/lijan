@@ -1,14 +1,20 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import {
-  DR_HAMAD_PERSONA, DR_HAMAD_PERSON_KEY, DR_HAMAD_ORGS, DR_HAMAD_COMMITTEES,
-  DEMO_SCENARIO_ID,
+  DR_HAMAD_PERSONA, DR_HAMAD_PERSON_KEY, DR_HAMAD_DATASET, DR_HAMAD_ORGS, DR_HAMAD_COMMITTEES,
 } from '../../shared/drHamadDataset.ts';
 
-// ProvisionDrHamadDemoData — idempotent seed for the Dr. Hamad governed demonstration
-// persona: one QDB organization (primary), one ELAN organization (committee owner only),
-// seven committees, seven independent CommitteeMembership records, and a dedicated
-// AuthorityGrant per committee that encodes the real authority boundary (never a bare
-// role string). Re-running this function updates in place — it never duplicates records.
+// ProvisionDrHamadDemoData — idempotent seed for the Dr. Hamad demonstration persona.
+//
+// ARCHITECTURE (identical to the platform demo-user provisioning):
+// - ONE governed demo *user*: DR_HAMAD_PERSON_KEY (a DEMO-USER-* virtual id) + DR_HAMAD_DATASET.
+// - Every record carries is_demo_data + demo_dataset, so the persona is isolated from real
+//   data and from every other persona's dataset.
+// - Memberships are keyed by the persona's virtual user id — the founder's account is never
+//   touched, and no record is ever written against the real authenticated user.
+// - Re-running updates in place and never duplicates.
+//
+// The persona then enters the platform exactly like any other demo user: the same session
+// layer, the same workspace, the same organization and committee pages.
 
 export default async function (req) {
   try {
@@ -19,22 +25,69 @@ export default async function (req) {
     }
     const sr = base44.asServiceRole;
 
-    // ── Organizations ──
-    const orgByKey = {};
-    for (const [key, org] of Object.entries(DR_HAMAD_ORGS)) {
-      const existing = await sr.entities.Organization.filter({ public_id: org.public_id }).catch(() => []);
-      if (existing && existing.length > 0) {
-        orgByKey[key] = existing[0];
-      } else {
-        orgByKey[key] = await sr.entities.Organization.create({
-          ...org,
-          status: 'sandbox_active',
-          is_demo_data: true,
-          demo_dataset: DEMO_SCENARIO_ID,
-        });
+    // ── Legacy cleanup ──
+    // An earlier revision keyed this persona by a bare person key. Remove those rows so the
+    // persona resolves from a single identity (virtual user id + demo dataset) and never
+    // appears twice in a committee's member register.
+    const LEGACY_PERSON_KEY = 'demo-dr-hamad-majeegheer';
+    for (const entity of ['CommitteeMembership', 'AuthorityGrant']) {
+      const stale = await sr.entities[entity]
+        .filter(entity === 'CommitteeMembership'
+          ? { user_id: LEGACY_PERSON_KEY }
+          : { person_key: LEGACY_PERSON_KEY })
+        .catch(() => []);
+      for (const row of (stale || [])) {
+        await sr.entities[entity].delete(row.id).catch(() => {});
       }
     }
+
+    // ── Organizations (upsert by public_id — always refreshed) ──
+    const orgByKey = {};
+    for (const [key, org] of Object.entries(DR_HAMAD_ORGS)) {
+      const payload = {
+        public_id: org.public_id,
+        slug: org.slug,
+        name_ar: org.name_ar,
+        name_en: org.name_en,
+        type: org.type,
+        description: org.description,
+        status: 'sandbox_active',
+        classification_policy: 'internal',
+        branding_primary_color: '#8A1538',
+        country: 'QA',
+        timezone: 'Asia/Qatar',
+        default_locale: 'ar',
+        retention_policy_years: 7,
+        is_demo_data: true,
+        demo_dataset: DR_HAMAD_DATASET,
+      };
+      const existing = (await sr.entities.Organization.filter({ public_id: org.public_id }).catch(() => []))[0];
+      orgByKey[key] = existing
+        ? await sr.entities.Organization.update(existing.id, payload)
+        : await sr.entities.Organization.create(payload);
+    }
     const qdb = orgByKey.QDB;
+
+    // ── Organization memberships — the persona's own organization access ──
+    for (const [key, org] of Object.entries(orgByKey)) {
+      const existing = (await sr.entities.OrganizationMembership
+        .filter({ organization_id: org.id, user_id: DR_HAMAD_PERSON_KEY }).catch(() => []))[0];
+      const payload = {
+        organization_id: org.id,
+        user_id: DR_HAMAD_PERSON_KEY,
+        user_email: DR_HAMAD_PERSONA.email,
+        user_name: DR_HAMAD_PERSONA.name_en,
+        role: key === 'QDB' ? 'owner' : 'member',
+        status: 'active',
+        is_demo_data: true,
+        demo_dataset: DR_HAMAD_DATASET,
+      };
+      if (existing) {
+        await sr.entities.OrganizationMembership.update(existing.id, payload);
+      } else {
+        await sr.entities.OrganizationMembership.create({ ...payload, joined_at: new Date().toISOString() });
+      }
+    }
 
     const results = [];
 
@@ -55,7 +108,7 @@ export default async function (req) {
         status: 'active',
         classification: 'internal',
         is_demo_data: true,
-        demo_dataset: DEMO_SCENARIO_ID,
+        demo_dataset: DR_HAMAD_DATASET,
       };
       if (committee) {
         committee = await sr.entities.Committee.update(committee.id, committeePayload);
@@ -63,7 +116,7 @@ export default async function (req) {
         committee = await sr.entities.Committee.create(committeePayload);
       }
 
-      // CommitteeMembership for Dr. Hamad (one independent record per committee)
+      // CommitteeMembership for the persona (one independent record per committee)
       let membership = (await sr.entities.CommitteeMembership.filter({
         committee_id: committee.id, user_id: DR_HAMAD_PERSON_KEY,
       }).catch(() => []))[0];
@@ -82,7 +135,7 @@ export default async function (req) {
         term_start: '2026-01-01',
         term_end: '2027-12-31',
         is_demo_data: true,
-        demo_dataset: DEMO_SCENARIO_ID,
+        demo_dataset: DR_HAMAD_DATASET,
       };
       if (membership) {
         membership = await sr.entities.CommitteeMembership.update(membership.id, membershipPayload);
@@ -112,7 +165,7 @@ export default async function (req) {
         validity_start: '2026-01-01',
         validity_end: '2027-12-31',
         is_demo_data: true,
-        demo_scenario_id: DEMO_SCENARIO_ID,
+        demo_scenario_id: DR_HAMAD_DATASET,
       };
       if (grant) {
         grant = await sr.entities.AuthorityGrant.update(grant.id, grantPayload);
@@ -120,7 +173,9 @@ export default async function (req) {
         grant = await sr.entities.AuthorityGrant.create(grantPayload);
       }
 
-      // ── Minimal realistic bilingual content so no committee is empty ──
+      // ── Minimal realistic content so no committee is empty ──
+      const demoFlags = { is_demo_data: true, demo_dataset: DR_HAMAD_DATASET };
+
       const existingMeetings = await sr.entities.Meeting.filter({ committee_id: committee.id }).catch(() => []);
       let meeting = existingMeetings[0];
       if (!meeting) {
@@ -138,8 +193,7 @@ export default async function (req) {
           status: 'scheduled',
           agenda_ready: true,
           quorum_required: 4,
-          is_demo_data: true,
-          demo_dataset: DEMO_SCENARIO_ID,
+          ...demoFlags,
         });
       }
 
@@ -157,6 +211,7 @@ export default async function (req) {
             objective: topic,
             readiness: idx === 0 ? 'ready' : 'needs_attention',
             status: 'pending',
+            ...demoFlags,
           })
         ));
       }
@@ -172,6 +227,7 @@ export default async function (req) {
           title_ar: `قرار بشأن ${def.topics_ar?.[0] || def.mandate_ar}`,
           proposal: def.mandate_en,
           status: def.role === 'chair' ? 'in_review' : 'proposed',
+          ...demoFlags,
         });
       }
 
@@ -188,6 +244,7 @@ export default async function (req) {
           deadline: deadline.toISOString().slice(0, 10),
           priority: 'medium',
           status: 'in_progress',
+          ...demoFlags,
         });
       }
 
@@ -202,13 +259,30 @@ export default async function (req) {
           classification: 'internal',
           owner_name: DR_HAMAD_PERSONA.name_ar,
           status: 'in_review',
+          ...demoFlags,
         });
       }
 
       results.push({ committee: def.name_en, role: def.role, committee_id: committee.id });
     }
 
-    return Response.json({ status: 'success', scenario_id: DEMO_SCENARIO_ID, qdb_org_id: qdb.id, committees: results });
+    // ── Feature flag (same convention as the platform demo flag) ──
+    const flagKey = 'dr_hamad_demo_provisioned';
+    const flagDesc = `Dr. Hamad demo persona provisioned. Dataset: ${DR_HAMAD_DATASET}. Persona user: ${DR_HAMAD_PERSON_KEY}`;
+    const existingFlag = (await sr.entities.FeatureFlag.filter({ key: flagKey }).catch(() => []))[0];
+    if (existingFlag) {
+      await sr.entities.FeatureFlag.update(existingFlag.id, { enabled: true, description: flagDesc });
+    } else {
+      await sr.entities.FeatureFlag.create({ key: flagKey, enabled: true, description: flagDesc, organization_id: null });
+    }
+
+    return Response.json({
+      status: 'success',
+      persona_key: DR_HAMAD_PERSON_KEY,
+      dataset: DR_HAMAD_DATASET,
+      primary_org_id: qdb.id,
+      committees: results,
+    });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

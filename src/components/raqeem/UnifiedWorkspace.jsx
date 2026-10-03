@@ -89,14 +89,14 @@ export default function UnifiedWorkspace() {
   // In demo mode, always use the demo persona's identity — never fall back to the real user.
   // This prevents identity mixing (e.g., showing the founder's name alongside the demo email).
   const displayName = isDemoMode
-    ? (lang === "ar" ? effectiveActor?.data?.display_name_ar : effectiveActor?.data?.display_name_en) || t("فهد الفهيدي", "Fahad Al-Fihaidi")
+    ? (lang === "ar" ? effectiveActor?.data?.display_name_ar : effectiveActor?.data?.display_name_en) || effectiveActor?.full_name || ""
     : (user_profile?.display_name_ar || user?.full_name || t("المستخدم", "User"));
   const displayJobTitle = isDemoMode
     ? (lang === "ar" ? effectiveActor?.data?.job_title_ar : effectiveActor?.data?.job_title_en)
-    : (user_profile?.job_title_ar);
+    : (lang === "ar" ? user_profile?.job_title_ar : user_profile?.job_title_en);
   const displayOrg = isDemoMode
     ? (lang === "ar" ? effectiveActor?.data?.primary_org_ar : effectiveActor?.data?.primary_org_en)
-    : (user_profile?.primary_org_ar);
+    : (lang === "ar" ? user_profile?.primary_org_ar : user_profile?.primary_org_en);
 
   if (organizations.length === 0) {
     return (
@@ -167,8 +167,9 @@ export default function UnifiedWorkspace() {
                   <Building2 className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <div className="text-sm font-semibold text-foreground truncate">{org.name_ar || org.name_en}</div>
-                  <div className="text-xs text-muted-foreground truncate">{org.name_en}</div>
+                  <div className="text-sm font-semibold text-foreground truncate">
+                    {lang === "ar" ? (org.name_ar || org.name_en) : (org.name_en || org.name_ar)}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {org.is_primary && (
@@ -214,9 +215,11 @@ export default function UnifiedWorkspace() {
                             <Users className="w-4 h-4 text-accent" />
                           </div>
                           <div className="flex-1 min-w-0 text-left">
-                            <div className="text-sm font-medium text-foreground truncate">{c.name_ar || c.name_en}</div>
+                            <div className="text-sm font-medium text-foreground truncate">
+                              {lang === "ar" ? (c.name_ar || c.name_en) : (c.name_en || c.name_ar)}
+                            </div>
                             <div className="text-xs text-muted-foreground truncate">
-                              {c.name_en} · {COMMITTEE_TYPES[c.type]?.[lang] || c.type}
+                              {COMMITTEE_TYPES[c.type]?.[lang] || c.type}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { DEMO_USER_ID, DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 
 // GetCommitteeMiniPortal — verified read for the Committee Mini-Portal Home.
 // Verifies committee membership server-side, returns committee + members + meetings + registers.
@@ -14,28 +14,30 @@ export default async function(req) {
     const sr = base44.asServiceRole;
 
     const body = await req.json().catch(() => ({}));
-    const { committee_id, public_id, demo_mode } = body;
+    const { committee_id, public_id, demo_mode, demo_persona } = body;
     const demoMode = demo_mode === true;
 
-    // ── DEMO MODE: Use DEMO_USER_ID, only demo data ──
+    // ── DEMO MODE: resolve the demo persona, then only that persona's demo data ──
     if (demoMode) {
+      const persona = resolveDemoPersona(demo_persona);
+
       let committee;
       if (public_id) {
-        const list = await sr.entities.Committee.filter({ public_id, is_demo_data: true, demo_dataset: DEMO_DATASET }).catch(() => []);
+        const list = await sr.entities.Committee.filter({ public_id, is_demo_data: true, demo_dataset: persona.dataset }).catch(() => []);
         committee = (list || [])[0];
         if (!committee) {
           committee = await sr.entities.Committee.get(public_id).catch(() => null);
-          if (committee && (!committee.is_demo_data || committee.demo_dataset !== DEMO_DATASET)) committee = null;
+          if (committee && (!committee.is_demo_data || committee.demo_dataset !== persona.dataset)) committee = null;
         }
       } else if (committee_id) {
         committee = await sr.entities.Committee.get(committee_id).catch(() => null);
-        if (committee && (!committee.is_demo_data || committee.demo_dataset !== DEMO_DATASET)) committee = null;
+        if (committee && (!committee.is_demo_data || committee.demo_dataset !== persona.dataset)) committee = null;
       }
       if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
 
       // Demo committee membership
       const cmMemberships = await sr.entities.CommitteeMembership
-        .filter({ committee_id: committee.id, user_id: DEMO_USER_ID, status: 'active' })
+        .filter({ committee_id: committee.id, user_id: persona.user_id, status: 'active' })
         .catch(() => []);
       const now = new Date().toISOString().split('T')[0];
       const activeMemberships = (cmMemberships || []).filter((m) => {
@@ -55,8 +57,7 @@ export default async function(req) {
       const recusals = await sr.entities.Recusal
         .filter({ committee_id: committee.id, status: 'active' })
         .catch(() => []);
-      const demoUserName = 'فهد الفهيدي';
-      const isRecused = (recusals || []).some((r) => r.member_name === demoUserName);
+      const isRecused = (recusals || []).some((r) => r.member_name === persona.name_ar);
 
       // All members
       const allMembers = await sr.entities.CommitteeMembership

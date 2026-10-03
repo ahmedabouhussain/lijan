@@ -3,8 +3,14 @@
 // Seven independent CommitteeMembership + AuthorityGrant records — never a single global role.
 // Never mixed with any other demo persona (Fahad Al-Fihaidi, Ahmed Abouhussain, etc.).
 
-export const DR_HAMAD_PERSON_KEY = "demo-dr-hamad-majeegheer";
+// Same virtual-identity convention as the platform demo user (DEMO-USER-*): the persona is
+// a governed demo *user* whose memberships and grants are keyed by this id.
+export const DR_HAMAD_PERSON_KEY = "DEMO-USER-DR-HAMAD-MAJEEGHEER";
 export const DR_HAMAD_INTERNAL_EMAIL = "dr.hamad.majeegheer.demo@lijan.example";
+
+// Demo dataset key — scopes this persona's data exactly the way the platform demo dataset
+// scopes the platform demo user's data. Never mixed with another persona's dataset.
+export const DR_HAMAD_DATASET = "DR_HAMAD_GOVERNED_DEMO_V1";
 
 export const DR_HAMAD_PERSONA = {
   person_key: DR_HAMAD_PERSON_KEY,
@@ -18,9 +24,12 @@ export const DR_HAMAD_PERSONA = {
   primary_org_ar: "بنك قطر للتنمية",
   primary_org_en: "Qatar Development Bank",
   primary_org_abbr: "QDB",
+  primary_org_public_id: "DEMO-ORG-QDB",
+  job_title_ar: "حساب تجريبي حوكمي تنفيذي",
+  job_title_en: "Governed Executive Demonstration Persona",
 };
 
-export const DEMO_SCENARIO_ID = "DEMO-DR-HAMAD-2026";
+export const DEMO_SCENARIO_ID = DR_HAMAD_DATASET;
 
 // ── Organizations ──
 // QDB (primary, employer, represented org in every committee) + ELAN Group (owns one

@@ -388,8 +388,8 @@ async function cleanAllDemoData(sr) {
     let deleted = 0;
     const seenIds = new Set();
     try {
-      // 1) Clean by is_demo_data flag
-      const demoRecords = await sr.entities[entity].filter({ is_demo_data: true }).catch(() => { return []; });
+      // 1) Clean ONLY this persona's dataset — never another demo persona's records
+      const demoRecords = await sr.entities[entity].filter({ is_demo_data: true, demo_dataset: DEMO_DATASET }).catch(() => { return []; });
       for (const r of (demoRecords || [])) {
         if (seenIds.has(r.id)) continue;
         seenIds.add(r.id);
@@ -411,7 +411,7 @@ async function cleanAllDemoData(sr) {
         const allRecords = await sr.entities[entity].list().catch(() => { return []; });
         for (const r of (allRecords || [])) {
           if (seenIds.has(r.id)) continue;
-          if (r.public_id && r.public_id.startsWith("DEMO-")) {
+          if (r.public_id && r.public_id.startsWith("DEMO-") && r.demo_dataset === DEMO_DATASET) {
             seenIds.add(r.id);
             await sr.entities[entity].delete(r.id).catch(() => {});
             deleted++;
@@ -428,11 +428,11 @@ async function cleanAllDemoData(sr) {
         // Find demo committee IDs (by is_demo_data flag or DEMO- public_id prefix)
         let demoCommitteeIds = [];
         try {
-          const flagged = await sr.entities.Committee.filter({ is_demo_data: true }).catch(() => { return []; });
+          const flagged = await sr.entities.Committee.filter({ is_demo_data: true, demo_dataset: DEMO_DATASET }).catch(() => { return []; });
           demoCommitteeIds = (flagged || []).map(c => c.id);
           const allComms = await sr.entities.Committee.list().catch(() => { return []; });
           for (const c of (allComms || [])) {
-            if (c.public_id && c.public_id.startsWith("DEMO-") && !demoCommitteeIds.includes(c.id)) {
+            if (c.public_id && c.public_id.startsWith("DEMO-") && c.demo_dataset === DEMO_DATASET && !demoCommitteeIds.includes(c.id)) {
               demoCommitteeIds.push(c.id);
             }
           }

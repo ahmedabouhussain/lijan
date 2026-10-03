@@ -200,32 +200,24 @@ export default function EntryPortal() {
               <Image src="https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/8c4576066_image.png" alt="LIJAN™" fittingType="fit" className="w-full h-full" />
             </div>
             <div className="leading-tight">
-              <div dir="rtl" className="font-bold text-2xl tracking-tight flex items-start gap-0.5">
-                {BRAND.nameAr}
+              <div dir={lang === "ar" ? "rtl" : "ltr"} className="font-bold text-2xl tracking-tight flex items-start gap-0.5">
+                {lang === "ar" ? BRAND.nameAr : BRAND.nameEn}
                 <sup className="text-xs mt-1">™</sup>
-              </div>
-              <div dir="ltr" className="text-xs text-primary-foreground/60 uppercase tracking-wider flex items-start gap-0.5">
-                {BRAND.nameEn}
-                <sup className="text-[8px] mt-0.5">™</sup>
               </div>
             </div>
           </div>
 
           <h1 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">
-            بوابة الدخول المؤسسية
-            <span className="block text-accent text-xl lg:text-2xl mt-2">Institutional Entry Portal</span>
+            {t("بوابة الدخول المؤسسية", "Institutional Entry Portal")}
           </h1>
           <p className="text-primary-foreground/70 text-sm lg:text-base leading-relaxed max-w-md">
-            {BRAND.descriptorAr} — {BRAND.taglineAr}.
-            <span className="block mt-1 text-primary-foreground/50 text-sm">
-              {BRAND.descriptorEn} — {BRAND.taglineEn}.
-            </span>
+            {t(`${BRAND.descriptorAr} — ${BRAND.taglineAr}.`, `${BRAND.descriptorEn} — ${BRAND.taglineEn}.`)}
           </p>
 
           <div className="relative z-10 mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-foreground/10 border border-primary-foreground/20">
             <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span className="text-xs text-primary-foreground/80">
-              هوية مؤسسية واحدة لكل خدمات الحوكمة · One identity for all governance services
+              {t("هوية مؤسسية واحدة لكل خدمات الحوكمة", "One identity for all governance services")}
             </span>
           </div>
         </div>
@@ -238,7 +230,7 @@ export default function EntryPortal() {
           ].map((item) => (
             <div key={item.ar} className="flex items-center gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-              <span className="text-sm text-primary-foreground/80">{item.ar} · {item.en}</span>
+              <span className="text-sm text-primary-foreground/80">{lang === "ar" ? item.ar : item.en}</span>
             </div>
           ))}
         </div>
@@ -257,7 +249,7 @@ export default function EntryPortal() {
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-1">{t("تسجيل الدخول", "Sign In")}</h2>
             <p className="text-sm text-muted-foreground">
-              اختر جهتك وأدخل بريدك لبدء إنشاء اللجان · Select your entity and enter your email to begin
+              {t("اختر جهتك وأدخل بريدك لبدء إنشاء اللجان", "Select your entity and enter your email to begin")}
             </p>
           </div>
 
@@ -266,12 +258,12 @@ export default function EntryPortal() {
             <div>
               <Label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
-                الجهة المؤسسية · Institution
+                {t("الجهة المؤسسية", "Institution")}
               </Label>
               <EntitySearchSelect
                 value={entityId}
                 onChange={setEntityId}
-                placeholder="— ابحث أو اختر الجهة · Search or select entity —"
+                placeholder={t("— ابحث أو اختر الجهة —", "— Search or select entity —")}
               />
             </div>
 
@@ -279,7 +271,7 @@ export default function EntryPortal() {
             <div>
               <Label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-                البريد الإلكتروني المؤسسي · Official Email
+                {t("البريد الإلكتروني المؤسسي", "Official Email")}
               </Label>
               <Input
                 type="email"
@@ -306,7 +298,12 @@ export default function EntryPortal() {
                   return (
                     <div className="p-3 bg-emerald-50 text-emerald-700 text-sm rounded-md flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 shrink-0" />
-                      <span>جهتك وبريدك مطابقان لملفك — سيتم تحويلك لتسجيل الدخول · Your entity and email match your profile — you'll be redirected to sign in</span>
+                      <span>
+                        {t(
+                          "جهتك وبريدك مطابقان لملفك — سيتم تحويلك لتسجيل الدخول",
+                          "Your entity and email match your profile — you'll be redirected to sign in"
+                        )}
+                      </span>
                     </div>
                   );
                 }
@@ -322,18 +319,18 @@ export default function EntryPortal() {
               {submitting ? (
                 <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> {t("جارٍ التحويل...", "Redirecting...")}</>
               ) : (
-                <>متابعة · Continue {lang === "ar" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}</>
+                <>{t("متابعة", "Continue")} {lang === "ar" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}</>
               )}
             </button>
           </form>
 
           <div className="pt-4 border-t border-border text-center">
-            <p className="text-xs text-muted-foreground mb-2">لديك حساب بالفعل؟ · Already have an account?</p>
+            <p className="text-xs text-muted-foreground mb-2">{t("لديك حساب بالفعل؟", "Already have an account?")}</p>
             <button
               onClick={() => navigate("/login?returnTo=" + encodeURIComponent("/"))}
               className="text-sm text-primary hover:underline font-medium"
             >
-              تسجيل الدخول · Sign in
+              {t("تسجيل الدخول", "Sign in")}
             </button>
           </div>
 
@@ -366,13 +363,22 @@ export default function EntryPortal() {
               className="w-full inline-flex items-center justify-center gap-2 border border-accent/40 text-accent px-5 py-3 rounded-md text-sm font-medium hover:bg-accent/10 transition-colors"
             >
               <Sparkles className="w-4 h-4" />
-              استكشاف التجربة · Explore Experience
+              {t("استكشاف التجربة", "Explore Experience")}
             </button>
           </div>
 
           <div className="pt-2">
             <button
-              onClick={() => navigate("/dr-hamad-experience")}
+              onClick={() => {
+                const demoKeys = [
+                  "activeOrganizationId", "activeCommitteeId", "activeMembershipId",
+                  "activeDemoPersona", "lastCommitteeRoute", "committeeQueryCache",
+                  "raqeem_active_org", "raqeem_active_committee",
+                ];
+                demoKeys.forEach((k) => localStorage.removeItem(k));
+                enterDemo("DR_HAMAD_MAJEEGHEER");
+                setShowWorkspace(true);
+              }}
               className="w-full text-right border border-accent/40 rounded-md p-3 hover:bg-accent/5 transition-colors"
               dir={lang === "ar" ? "rtl" : "ltr"}
             >
@@ -415,26 +421,15 @@ export default function EntryPortal() {
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-            باستخدامك للمنصة فإنك توافق على الالتزام بـ
+            {t("باستخدامك للمنصة فإنك توافق على الالتزام بـ", "By using this platform you agree to comply with the")}
             <button
               type="button"
               onClick={() => navigate("/governance-policies")}
               className="text-primary hover:underline font-medium mx-0.5"
             >
-              سياسات الحوكمة والتصنيف المؤسسي
+              {t("سياسات الحوكمة والتصنيف المؤسسي", "Governance & Institutional Classification Policies")}
             </button>
             .
-            <span className="block">
-              By using this platform you agree to comply with the
-              <button
-                type="button"
-                onClick={() => navigate("/governance-policies")}
-                className="text-primary hover:underline font-medium mx-0.5"
-              >
-                Governance & Institutional Classification Policies
-              </button>
-              .
-            </span>
           </p>
         </div>
       </div>

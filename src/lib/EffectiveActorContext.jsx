@@ -10,7 +10,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
-import { DEMO_USER } from '@/../base44/shared/demoDataset';
+import { resolveDemoPersona, DEFAULT_DEMO_PERSONA_KEY } from '@/lib/demoPersonas';
 
 const DEMO_SESSION_KEY = 'lijan_demo_session';
 
@@ -35,16 +35,21 @@ export const EffectiveActorProvider = ({ children }) => {
     return null;
   });
 
-  const enterDemo = useCallback(() => {
+  // Enter the governed demo experience as a chosen persona. Every persona resolves through
+  // the shared registry — one identity path for every demo user, no per-persona special case.
+  const enterDemo = useCallback((personaKey = DEFAULT_DEMO_PERSONA_KEY) => {
+    const persona = resolveDemoPersona(personaKey);
     const session = {
-      actor_id: DEMO_USER.persona_key,
-      display_name_ar: DEMO_USER.name_ar,
-      display_name_en: DEMO_USER.name_en,
-      email: DEMO_USER.email,
-      job_title_ar: DEMO_USER.job_title_ar,
-      job_title_en: DEMO_USER.job_title_en,
-      primary_org_ar: DEMO_USER.primary_org_ar,
-      primary_org_en: DEMO_USER.primary_org_en,
+      persona_key: persona.key,
+      actor_id: persona.user_id,
+      display_name_ar: persona.name_ar,
+      display_name_en: persona.name_en,
+      email: persona.email,
+      job_title_ar: persona.job_title_ar,
+      job_title_en: persona.job_title_en,
+      primary_org_ar: persona.primary_org_ar,
+      primary_org_en: persona.primary_org_en,
+      primary_org_public_id: persona.primary_org_public_id,
       is_demo: true,
       demo_session_id: `demo-${Date.now()}`,
       started_at: new Date().toISOString(),
@@ -100,7 +105,7 @@ export const EffectiveActorProvider = ({ children }) => {
           primary_org_ar: demoSession.primary_org_ar,
           primary_org_en: demoSession.primary_org_en,
           is_demo_user: true,
-          demo_persona_key: DEMO_USER.persona_key,
+          demo_persona_key: demoSession.persona_key,
         },
       }
     : user;
@@ -111,6 +116,7 @@ export const EffectiveActorProvider = ({ children }) => {
         effectiveActor,
         isDemoMode,
         demoSession,
+        demoPersonaKey: demoSession?.persona_key || null,
         enterDemo,
         exitDemo,
         // The real authenticated user (always Ahmed when in demo mode)

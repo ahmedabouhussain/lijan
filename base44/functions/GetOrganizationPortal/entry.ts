@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { DEMO_USER_ID, DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 
 // GetOrganizationPortal — verified read for the Organization Portal Home.
 // Verifies membership server-side, returns org + committees + counts.
@@ -14,27 +15,29 @@ export default async function(req) {
     const sr = base44.asServiceRole;
 
     const body = await req.json().catch(() => ({}));
-    const { public_id, demo_mode } = body;
+    const { public_id, demo_mode, demo_persona } = body;
     if (!public_id) return Response.json({ error: 'public_id is required' }, { status: 400 });
 
     const demoMode = demo_mode === true;
 
-    // ── DEMO MODE: Use DEMO_USER_ID, only demo data ──
+    // ── DEMO MODE: resolve the demo persona, then only that persona's demo data ──
     if (demoMode) {
+      const persona = resolveDemoPersona(demo_persona);
+
       // Find demo organization by public_id
       let orgs = await sr.entities.Organization
-        .filter({ public_id, is_demo_data: true, demo_dataset: DEMO_DATASET })
+        .filter({ public_id, is_demo_data: true, demo_dataset: persona.dataset })
         .catch(() => []);
       let org = (orgs || [])[0];
       if (!org) {
         org = await sr.entities.Organization.get(public_id).catch(() => null);
-        if (org && (!org.is_demo_data || org.demo_dataset !== DEMO_DATASET)) org = null;
+        if (org && (!org.is_demo_data || org.demo_dataset !== persona.dataset)) org = null;
       }
       if (!org) return Response.json({ error: 'Organization not found' }, { status: 404 });
 
       // Demo org membership
       const memberships = await sr.entities.OrganizationMembership
-        .filter({ organization_id: org.id, user_id: DEMO_USER_ID, status: 'active' })
+        .filter({ organization_id: org.id, user_id: persona.user_id, status: 'active' })
         .catch(() => []);
       const membership = (memberships || [])[0];
 
@@ -51,7 +54,7 @@ export default async function(req) {
 
       // Demo user's committee memberships in this org
       const myCommitteeMemberships = await sr.entities.CommitteeMembership
-        .filter({ organization_id: org.id, user_id: DEMO_USER_ID, status: 'active' })
+        .filter({ organization_id: org.id, user_id: persona.user_id, status: 'active' })
         .catch(() => []);
       const myCommitteeIds = new Set((myCommitteeMemberships || []).map((m) => m.committee_id));
       const myCommitteeRoles = {};
