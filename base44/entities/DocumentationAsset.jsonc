@@ -1,0 +1,146 @@
+{
+  "name": "DocumentationAsset",
+  "type": "object",
+  "properties": {
+    "asset_key": {
+      "type": "string",
+      "title": "Asset Key (release + language + relative file path)"
+    },
+    "release_id": {
+      "type": "string",
+      "title": "Release ID"
+    },
+    "deliverable_id": {
+      "type": "string",
+      "title": "Deliverable ID"
+    },
+    "language": {
+      "type": "string",
+      "title": "Language Edition",
+      "enum": [
+        "ar",
+        "en"
+      ],
+      "default": "en"
+    },
+    "category": {
+      "type": "string",
+      "title": "Library Category",
+      "enum": [
+        "executive_pack",
+        "platform_capabilities",
+        "operating_model",
+        "user_guides",
+        "it_integration",
+        "security_data",
+        "implementation_training",
+        "support_continuity",
+        "templates_checklists"
+      ]
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0648\u062b\u064a\u0642\u0629"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Document Title (English)"
+    },
+    "purpose_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u063a\u0631\u0636"
+    },
+    "purpose_en": {
+      "type": "string",
+      "title": "Purpose (English)"
+    },
+    "relative_path": {
+      "type": "string",
+      "title": "Relative Path in Package"
+    },
+    "filename": {
+      "type": "string",
+      "title": "Filename"
+    },
+    "file_uri": {
+      "type": "string",
+      "title": "Secure File Reference"
+    },
+    "format": {
+      "type": "string",
+      "title": "File Format",
+      "enum": [
+        "docx",
+        "pdf",
+        "pptx",
+        "xlsx",
+        "zip"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "title": "Document Version"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification Level",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "confidential"
+    },
+    "owner": {
+      "type": "string",
+      "title": "Owning Office"
+    },
+    "editable": {
+      "type": "boolean",
+      "title": "Editable Document",
+      "default": false
+    },
+    "archival": {
+      "type": "boolean",
+      "title": "Archival Document",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Asset Status",
+      "enum": [
+        "active",
+        "superseded"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "asset_key",
+    "release_id",
+    "language",
+    "title_en",
+    "file_uri",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

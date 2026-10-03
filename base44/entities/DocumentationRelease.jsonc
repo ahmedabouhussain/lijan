@@ -1,0 +1,176 @@
+{
+  "name": "DocumentationRelease",
+  "type": "object",
+  "properties": {
+    "release_id": {
+      "type": "string",
+      "title": "Release ID (stable identifier)"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "release_date": {
+      "type": "string",
+      "title": "Release Date",
+      "format": "date"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0639\u0646\u0648\u0627\u0646"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Title (English)"
+    },
+    "subtitle_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0648\u0635\u0641"
+    },
+    "subtitle_en": {
+      "type": "string",
+      "title": "Description (English)"
+    },
+    "classification_ar": {
+      "type": "string",
+      "title": "\u0628\u064a\u0627\u0646 \u0627\u0644\u062a\u0635\u0646\u064a\u0641"
+    },
+    "classification_en": {
+      "type": "string",
+      "title": "Classification Statement (English)"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification Level",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "confidential"
+    },
+    "release_badge_ar": {
+      "type": "string",
+      "title": "\u0634\u0627\u0631\u0629 \u0627\u0644\u0625\u0635\u062f\u0627\u0631"
+    },
+    "release_badge_en": {
+      "type": "string",
+      "title": "Release Badge (English)"
+    },
+    "status_note_ar": {
+      "type": "string",
+      "title": "\u0645\u0644\u0627\u062d\u0638\u0629 \u0627\u0644\u062d\u0627\u0644\u0629"
+    },
+    "status_note_en": {
+      "type": "string",
+      "title": "Status Note (English)"
+    },
+    "zip_file_uri": {
+      "type": "string",
+      "title": "Package Archive Reference"
+    },
+    "zip_filename": {
+      "type": "string",
+      "title": "Package Filename"
+    },
+    "zip_mime_type": {
+      "type": "string",
+      "title": "Package MIME Type",
+      "default": "application/zip"
+    },
+    "zip_size_bytes": {
+      "type": "number",
+      "title": "Package Size (bytes)"
+    },
+    "sha256": {
+      "type": "string",
+      "title": "SHA-256 Checksum"
+    },
+    "total_files": {
+      "type": "number",
+      "title": "Total Packaged Files"
+    },
+    "word_documents": {
+      "type": "number",
+      "title": "Editable Word Documents"
+    },
+    "pdf_documents": {
+      "type": "number",
+      "title": "Archival PDF Documents"
+    },
+    "presentations": {
+      "type": "number",
+      "title": "Executive Presentations"
+    },
+    "workbooks": {
+      "type": "number",
+      "title": "Operational Workbooks"
+    },
+    "editions": {
+      "type": "number",
+      "title": "Language Editions"
+    },
+    "owner": {
+      "type": "string",
+      "title": "Owning Office"
+    },
+    "status": {
+      "type": "string",
+      "title": "Release Status",
+      "enum": [
+        "active",
+        "superseded",
+        "withdrawn"
+      ],
+      "default": "active"
+    },
+    "supersedes_release_id": {
+      "type": "string",
+      "title": "Supersedes Release ID"
+    },
+    "superseded_by_release_id": {
+      "type": "string",
+      "title": "Superseded By Release ID"
+    },
+    "published_by_name": {
+      "type": "string",
+      "title": "Published By"
+    },
+    "published_by_user_id": {
+      "type": "string",
+      "title": "Published By User ID"
+    },
+    "published_at": {
+      "type": "string",
+      "title": "Published At",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "release_id",
+    "version",
+    "title_ar",
+    "title_en",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -23,6 +23,18 @@
       "title": "User Email",
       "format": "email"
     },
+    "release_id": {
+      "type": "string",
+      "title": "Release ID"
+    },
+    "asset_key": {
+      "type": "string",
+      "title": "Document Asset Key"
+    },
+    "category": {
+      "type": "string",
+      "title": "Document Category"
+    },
     "document_key": {
       "type": "string",
       "title": "Document Key"
@@ -55,7 +67,7 @@
     "version": {
       "type": "string",
       "title": "Document Version",
-      "default": "1.0"
+      "default": "1.1"
     },
     "action": {
       "type": "string",
@@ -63,9 +75,25 @@
       "enum": [
         "download",
         "preview",
-        "pack_download"
+        "pack_download",
+        "language_selected",
+        "category_selected"
       ],
       "default": "download"
+    },
+    "result": {
+      "type": "string",
+      "title": "Result",
+      "enum": [
+        "success",
+        "failure",
+        "denied"
+      ],
+      "default": "success"
+    },
+    "error_reference": {
+      "type": "string",
+      "title": "Non-sensitive Error Reference"
     },
     "file_size_bytes": {
       "type": "number",

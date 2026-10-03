@@ -1,0 +1,9 @@
+Noto Naskh Arabic — local font bundle
+========================================
+Copyright: Copyright 2022 The Noto Project Authors (https://github.com/notofonts/arabic)
+Version: Version 2.021; ttfautohint (v1.8.4.16-eb64)
+License: This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+License URL: https://openfontlicense.org
+
+Bundled weights in this delivery: Regular 400 and Bold 700.
+No synthetic Medium, SemiBold, or artificial bold has been created.
