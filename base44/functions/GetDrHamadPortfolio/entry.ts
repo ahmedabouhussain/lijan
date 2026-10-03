@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { DR_HAMAD_PERSONA, DR_HAMAD_PERSON_KEY, DEMO_SCENARIO_ID } from '../../shared/drHamadDataset.ts';
+import { DR_HAMAD_PERSONA, DR_HAMAD_PERSON_KEY, DEMO_SCENARIO_ID, DR_HAMAD_COMMITTEES } from '../../shared/drHamadDataset.ts';
+
+const DEF_BY_PUBLIC_ID = new Map(DR_HAMAD_COMMITTEES.map((d) => [d.public_id, d]));
 
 // GetDrHamadPortfolio — returns Dr. Hamad's seven committee memberships with role,
 // committee-owning organization, represented organization (always QDB), and workload

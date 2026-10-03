@@ -370,6 +370,27 @@ export default function EntryPortal() {
             </button>
           </div>
 
+          <div className="pt-2">
+            <button
+              onClick={() => navigate("/dr-hamad-experience")}
+              className="w-full text-right border border-accent/40 rounded-md p-3 hover:bg-accent/5 transition-colors"
+              dir={lang === "ar" ? "rtl" : "ltr"}
+            >
+              <div className="text-sm font-semibold text-foreground">{t("الدكتور حمد سالم مجيغير", "Dr. Hamad Salem Majeegheer")}</div>
+              <div className="text-xs text-muted-foreground">{t("بنك قطر للتنمية", "Qatar Development Bank")}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t(
+                  "عضو ورئيس ونائب رئيس وأمين سر عبر مجموعة من اللجان الوطنية والمؤسسية",
+                  "Serving as Chair, Vice-Chair, Member and Committee Secretary across national and institutional committees"
+                )}
+              </p>
+              <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-accent font-medium">
+                <Sparkles className="w-3.5 h-3.5" />
+                {t("دخول تجربة الدكتور حمد", "Enter Dr. Hamad's Experience")}
+              </div>
+            </button>
+          </div>
+
           <div className="flex justify-center">
             <PoweredByConnection variant="dark" />
           </div>
