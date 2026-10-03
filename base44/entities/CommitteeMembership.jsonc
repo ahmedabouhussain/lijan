@@ -27,6 +27,14 @@
       "type": "string",
       "title": "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644"
     },
+    "post_ar": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0646\u0635\u0628 \u0627\u0644\u0645\u0624\u0633\u0633\u064a"
+    },
+    "post_en": {
+      "type": "string",
+      "title": "Institutional Post (English)"
+    },
     "role": {
       "type": "string",
       "title": "Committee Role",

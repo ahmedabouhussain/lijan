@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";
 import { Progress } from "@/components/ui/progress";
-import { ACTION_STATUS, PRIORITY } from "@/lib/raqeemUtils";
+import { ACTION_STATUS, INITIATIVE_STATUS, PRIORITY } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
 
 function Board({ icon: Icon, title, count, children, empty }) {
@@ -60,7 +60,7 @@ export default function DecisionActionBoard({ initiatives = [], decisions = [], 
                 {isAr ? i.objective_ar || i.objective : i.objective}
               </p>
               <div className="mt-2 flex items-center flex-wrap gap-2">
-                <StatusBadge label={L.status(ACTION_STATUS, i.status, i.status)?.label || i.status} colorClass="bg-secondary text-muted-foreground" />
+                <StatusBadge label={L.label(INITIATIVE_STATUS, i.status, i.status)} colorClass={L.color(INITIATIVE_STATUS, i.status, "bg-secondary text-muted-foreground")} />
                 {i.proposed_owner && (
                   <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
                     <OrganizationMark org={orgIndex[i.owner_organization_id]} size="row" />

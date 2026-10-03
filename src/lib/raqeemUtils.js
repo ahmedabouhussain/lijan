@@ -123,6 +123,17 @@ export const MEMBER_ROLE = {
   advisor: { ar: "مستشار", en: "Advisor" },
 };
 
+export const INITIATIVE_STATUS = {
+  proposed: { ar: "مقترحة", en: "Proposed", color: "text-muted-foreground bg-secondary" },
+  under_review: { ar: "قيد الدراسة", en: "Under Review", color: "text-amber-700 bg-amber-50" },
+  prioritized: { ar: "ذات أولوية", en: "Prioritized", color: "text-blue-700 bg-blue-50" },
+  approved: { ar: "معتمدة", en: "Approved", color: "text-emerald-700 bg-emerald-50" },
+  in_delivery: { ar: "قيد التنفيذ", en: "In Delivery", color: "text-blue-700 bg-blue-50" },
+  blocked: { ar: "متعثرة", en: "Blocked", color: "text-destructive bg-red-50" },
+  measuring_impact: { ar: "قياس الأثر", en: "Measuring Impact", color: "text-indigo-700 bg-indigo-50" },
+  closed: { ar: "مغلقة", en: "Closed", color: "text-muted-foreground bg-secondary" },
+};
+
 export const WORKSTREAM_STATUS = {
   active: { ar: "نشط", en: "Active", color: "text-emerald-700 bg-emerald-50" },
   in_preparation: { ar: "قيد التحضير", en: "In Preparation", color: "text-amber-700 bg-amber-50" },
@@ -138,8 +149,8 @@ export const FIRST_MEETING_STATUS = {
 };
 
 export const WORKSTREAM_ROLE = {
-  lead: { ar: "قائد المسار", en: "Workstream Lead" },
-  deputy_lead: { ar: "نائب قائد المسار", en: "Deputy Lead" },
+  lead: { ar: "قائد مجموعة العمل", en: "Work Group Lead" },
+  deputy_lead: { ar: "نائب قائد مجموعة العمل", en: "Deputy Work Group Lead" },
   member: { ar: "عضو", en: "Member" },
   contributor: { ar: "مساهم", en: "Contributor" },
   observer: { ar: "مراقب", en: "Observer" },
@@ -223,6 +234,7 @@ const BILINGUAL_LABEL_MAPS = [
   MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE, AUTHORITY_LEVELS,
   DEPENDENCY_TYPE, DEPENDENCY_STATUS, SCENARIO_TYPE, SCENARIO_STATUS,
   AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE, FIRST_MEETING_STATUS,
+  INITIATIVE_STATUS,
 ];
 
 function bindEntryToActiveLanguage(entry) {

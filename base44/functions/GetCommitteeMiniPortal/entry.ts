@@ -20,17 +20,22 @@ async function buildOrgIndex(sr: any, ids: any[]) {
   await Promise.all(unique.map(async (id) => {
     const org = await sr.entities.Organization.get(id).catch(() => null);
     if (org) {
-      const asset = assetIndex[id];
+      const slot = assetIndex[id] || {};
+      // The registry's approved + activated asset is the runtime source; the organization
+      // record is the fallback. A page never hotlinks an official website.
+      const primary = slot.primary?.stored_path || org.logo_url || null;
       index[id] = {
         id: org.id,
         public_id: org.public_id || null,
         slug: org.slug || null,
         name_ar: org.name_ar,
         name_en: org.name_en,
-        // The registry's approved + activated asset is the runtime source; the organization
-        // record is the fallback. A page never hotlinks an official website.
-        logo_url: asset?.stored_path || org.logo_url || null,
-        asset_version: asset?.version || null,
+        // Each background tone resolves its own edition, so a dark ground never gets the
+        // primary mark and vice versa.
+        logo_url: primary,
+        logo_on_dark_url: slot.on_dark?.stored_path || primary,
+        asset_version: slot.primary?.version || null,
+        asset_version_on_dark: slot.on_dark?.version || null,
       };
     }
   }));

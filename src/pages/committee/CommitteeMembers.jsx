@@ -124,6 +124,9 @@ export default function CommitteeMembers() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground truncate">{displayName(m)}</div>
+                  {(lang === "ar" ? m.post_ar : m.post_en) && (
+                    <div className="text-xs text-muted-foreground truncate">{lang === "ar" ? m.post_ar : m.post_en}</div>
+                  )}
                   <div className="mt-0.5">
                     {(() => {
                       const org = orgIndex[m.represented_organization_id];

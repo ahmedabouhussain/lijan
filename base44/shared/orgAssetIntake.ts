@@ -93,6 +93,78 @@ export function validateAssetBytes(bytes: Uint8Array, contentType: string, url: 
   return { ok: false, reason: 'unsupported_format' };
 }
 
+const MAX_PACK_BYTES = 6_000_000;
+const MIN_PACK_LONG_SIDE = 400;
+
+/**
+ * Intake rules for an APPROVED identity pack — the sanctioned delivery channel for a whole
+ * institutional identity set at once (the LIJAN national committee pack).
+ *
+ * A pack is not an ad-hoc URL import: every file arrives with a published manifest (owner,
+ * publisher, declared format) and a published SHA-256, and the caller must present the manifest's
+ * own fingerprint. Byte integrity is therefore checked against the manifest rather than by the
+ * size heuristic used for a single URL import — which is what lets a small, genuine primary file
+ * (a 447px raster, a JPEG reproduction) enter the registry instead of being refused.
+ *
+ * Vector quality is still enforced: a pack SVG must be a real, self-contained vector document.
+ * Nothing off-policy can enter, because only a platform administrator can run a pack import.
+ */
+export function validatePackAsset(
+  bytes: Uint8Array,
+  contentType: string,
+  fileName: string
+): IntakeResult {
+  const lower = (contentType || '').toLowerCase();
+  const name = fileName || 'asset';
+
+  if (bytes.byteLength > MAX_PACK_BYTES) return { ok: false, reason: 'asset_too_large' };
+
+  const looksSvg = lower.includes('svg') || name.toLowerCase().endsWith('.svg');
+  const looksPng = lower.includes('png') || name.toLowerCase().endsWith('.png');
+  const looksJpg = lower.includes('jpeg') || lower.includes('jpg') || /\.jpe?g$/i.test(name);
+
+  if (looksSvg) {
+    const head = new TextDecoder().decode(bytes.slice(0, 400)).toLowerCase();
+    if (!head.includes('<svg')) return { ok: false, reason: 'not_a_vector_document' };
+    if (head.includes('base64')) return { ok: false, reason: 'svg_embeds_raster' };
+    return { ok: true, mime_type: 'image/svg+xml', width: null, height: null, file_name: name };
+  }
+
+  if (looksPng) {
+    const size = pngSize(bytes);
+    if (!size) return { ok: false, reason: 'not_a_png_document' };
+    if (Math.max(size.width, size.height) < MIN_PACK_LONG_SIDE) return { ok: false, reason: 'png_below_400px' };
+    return { ok: true, mime_type: 'image/png', width: size.width, height: size.height, file_name: name };
+  }
+
+  if (looksJpg) {
+    const size = jpegSize(bytes);
+    if (!size) return { ok: false, reason: 'not_a_jpeg_document' };
+    if (Math.max(size.width, size.height) < MIN_PACK_LONG_SIDE) return { ok: false, reason: 'jpeg_below_400px' };
+    return { ok: true, mime_type: 'image/jpeg', width: size.width, height: size.height, file_name: name };
+  }
+
+  return { ok: false, reason: 'unsupported_format' };
+}
+
+/** JPEG intrinsic size from the SOF marker. */
+function jpegSize(bytes: Uint8Array): { width: number; height: number } | null {
+  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const SOF = [0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf];
+  let i = 2;
+  while (i < bytes.byteLength - 9) {
+    if (view.getUint8(i) !== 0xff) { i++; continue; }
+    const marker = view.getUint8(i + 1);
+    if (SOF.includes(marker)) {
+      return { height: view.getUint16(i + 5), width: view.getUint16(i + 7) };
+    }
+    if (marker === 0xd8 || marker === 0xd9 || (marker >= 0xd0 && marker <= 0xd7)) { i += 2; continue; }
+    i += 2 + view.getUint16(i + 2);
+  }
+  return null;
+}
+
 /** SHA-256 of the asset bytes, hex encoded — the registry's integrity fingerprint. */
 export async function sha256Hex(bytes: Uint8Array): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', bytes);
