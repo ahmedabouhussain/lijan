@@ -53,6 +53,20 @@ export default function CommitteeWorkstreams() {
   const initiatives = data.registers?.initiatives || [];
   const base = `/o/${orgRef}/c/${committeeRef}`;
 
+  // The committee seat an institution holds — DERIVED from the committee's own members, so a work
+  // group's lead institution is traceable to its seat without storing a false link on the delegate.
+  const seatByOrg = {};
+  for (const m of (data.members || [])) {
+    const oid = m.represented_organization_id;
+    if (!oid) continue;
+    const cur = seatByOrg[oid];
+    if (!cur || (m.protocol_order ?? 99) < (cur.protocol_order ?? 99)) seatByOrg[oid] = m;
+  }
+  const seatName = (oid) => {
+    const m = oid ? seatByOrg[oid] : null;
+    return m ? (lang === "ar" ? m.full_name_ar || m.full_name : m.full_name) : null;
+  };
+
   if (workGroups.length === 0) {
     return (
       <div className="space-y-4">
@@ -97,6 +111,7 @@ export default function CommitteeWorkstreams() {
               initiativesCount={counts.initiativesCount}
               openActionsCount={counts.openActionsCount}
               nextDeadline={counts.nextDeadline}
+              leadSeatName={seatName(wg.lead_organization_id)}
               href={`${base}/workstreams/${wg.id}`}
             />
           );

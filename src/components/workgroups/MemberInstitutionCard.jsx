@@ -9,8 +9,9 @@ import { UserRoundCheck, Building2, CheckSquare } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";
+import InstitutionSeatLine from "@/components/workgroups/InstitutionSeatLine";
 
-export default function MemberInstitutionCard({ membership, org, logoUrl, workGroupRoleLabel, roleColorClass }) {
+export default function MemberInstitutionCard({ membership, org, logoUrl, workGroupRoleLabel, roleColorClass, seatHolderName = null }) {
   const { t, lang } = useLanguage();
   const isAr = lang === "ar";
   const person = isAr ? membership.full_name_ar || membership.full_name : membership.full_name;
@@ -47,6 +48,7 @@ export default function MemberInstitutionCard({ membership, org, logoUrl, workGr
             <Building2 className="w-3 h-3 text-muted-foreground shrink-0" aria-hidden="true" />
             {orgName || t("غير محددة", "Not specified")}
           </div>
+          <InstitutionSeatLine seatHolderName={seatHolderName} className="mt-0.5" />
         </div>
       </div>
     </div>

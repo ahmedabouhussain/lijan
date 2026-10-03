@@ -8,6 +8,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import OrganizationIdentity from "@/components/raqeem/OrganizationIdentity";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";
+import InstitutionSeatLine from "@/components/workgroups/InstitutionSeatLine";
 import WorkGroupMetrics from "@/components/workgroups/WorkGroupMetrics";
 import MemberInstitutionCard from "@/components/workgroups/MemberInstitutionCard";
 import WorkGroupTimeline from "@/components/workgroups/WorkGroupTimeline";
@@ -133,6 +134,21 @@ export default function WorkstreamDetail() {
   const leadOrg = workGroup.lead_organization_id ? orgIndex[workGroup.lead_organization_id] : null;
   const participants = (workGroup.participating_organization_ids || []).map((id) => orgIndex[id]).filter(Boolean);
 
+  // The committee seat an institution holds — DERIVED from the committee's own members. It is the
+  // INSTITUTION's seat, a fact separate from the delegate's own seat, so it is labelled as such and
+  // never stored on the delegate's record.
+  const seatByOrg = {};
+  for (const m of (data.members || [])) {
+    const oid = m.represented_organization_id;
+    if (!oid) continue;
+    const cur = seatByOrg[oid];
+    if (!cur || (m.protocol_order ?? 99) < (cur.protocol_order ?? 99)) seatByOrg[oid] = m;
+  }
+  const seatName = (oid) => {
+    const m = oid ? seatByOrg[oid] : null;
+    return m ? (lang === "ar" ? m.full_name_ar || m.full_name : m.full_name) : null;
+  };
+
   const scrollToDocs = () => document.getElementById("wg-docs")?.scrollIntoView({ behavior: "smooth", block: "start" });
   const briefLead = () =>
     ameen?.askAmeen?.(
@@ -173,6 +189,7 @@ export default function WorkstreamDetail() {
                 {lang === "ar" ? workGroup.lead_name_ar || workGroup.lead_name : workGroup.lead_name}
               </div>
               <div className="text-xs text-muted-foreground">{leadOrg ? (lang === "ar" ? leadOrg.name_ar : leadOrg.name_en) : t("غير محددة", "Not specified")}</div>
+              <InstitutionSeatLine seatHolderName={seatName(workGroup.lead_organization_id)} className="mt-0.5" />
             </div>
           </div>
 
@@ -256,11 +273,14 @@ export default function WorkstreamDetail() {
           ) : (
             <ul className="space-y-2">
               {participants.map((org) => (
-                <li key={org.id} className="flex items-center justify-between gap-2">
-                  <OrganizationIdentity org={org} size="row" nameClassName="text-xs" />
-                  {org.id === workGroup.lead_organization_id && (
-                    <StatusBadge label={t("الرئاسة", "Lead")} colorClass="text-primary bg-primary/10" />
-                  )}
+                <li key={org.id}>
+                  <div className="flex items-center justify-between gap-2">
+                    <OrganizationIdentity org={org} size="row" nameClassName="text-xs" />
+                    {org.id === workGroup.lead_organization_id && (
+                      <StatusBadge label={t("الرئاسة", "Lead")} colorClass="text-primary bg-primary/10" />
+                    )}
+                  </div>
+                  <InstitutionSeatLine seatHolderName={seatName(org.id)} className="mt-0.5" />
                 </li>
               ))}
             </ul>
@@ -284,6 +304,7 @@ export default function WorkstreamDetail() {
                     membership={{ ...m, _openActions: assigned }}
                     org={org}
                     logoUrl={org?.logo_url}
+                    seatHolderName={seatName(m.represented_organization_id)}
                     workGroupRoleLabel={L.label(WORKSTREAM_ROLE, m.role, m.role)}
                     roleColorClass={m.role === "lead" ? "text-primary bg-primary/10" : "bg-secondary text-muted-foreground"}
                   />

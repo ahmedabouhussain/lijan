@@ -7,6 +7,7 @@ import { Network, Users2, CalendarClock, Flag, CheckSquare, ChevronLeft, Chevron
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";
+import InstitutionSeatLine from "@/components/workgroups/InstitutionSeatLine";
 import { WORKSTREAM_STATUS, FIRST_MEETING_STATUS } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
 
@@ -21,6 +22,7 @@ export default function WorkGroupCard({
   initiativesCount = 0,
   openActionsCount = 0,
   nextDeadline = null,
+  leadSeatName = null,
   href,
 }) {
   const { t, lang } = useLanguage();
@@ -55,6 +57,7 @@ export default function WorkGroupCard({
             {t("رئيس المجموعة", "Work group lead")}
           </div>
           <div className="text-xs font-medium text-foreground truncate">{leadName || t("غير معيّن", "Not appointed")}</div>
+          <InstitutionSeatLine seatHolderName={leadSeatName} className="mt-0.5" />
         </div>
       </div>
 
