@@ -23,7 +23,7 @@ const MEETING_MODES = {
 };
 
 export default function MeetingDetail() {
-  const { id } = useParams();
+  const { id, orgRef, committeeRef } = useParams();
   const [loading, setLoading] = useState(true);
   const [meeting, setMeeting] = useState(null);
   const [committee, setCommittee] = useState(null);
@@ -53,7 +53,12 @@ export default function MeetingDetail() {
 
   async function load() {
     try {
-      const m = await base44.entities.Meeting.get(id);
+      // A stale or deleted meeting link must not surface as an app error.
+      const m = await base44.entities.Meeting.get(id).catch(() => null);
+      if (!m) {
+        setMeeting(null);
+        return;
+      }
       setMeeting(m);
       if (m.committee_id) {
         const c = await base44.entities.Committee.get(m.committee_id).catch(() => null);
@@ -145,10 +150,16 @@ export default function MeetingDetail() {
   }
 
   if (!meeting) {
+    const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/meetings` : "/";
     return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground">الاجتماع غير موجود</p>
-        <Link to="/calendar" className="text-primary hover:underline mt-2 inline-block">العودة للتقويم</Link>
+      <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
+        <h2 className="text-lg font-semibold text-foreground mb-1">الاجتماع غير متوفر</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.
+        </p>
+        <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
+          العودة إلى قائمة الاجتماعات
+        </Link>
       </div>
     );
   }

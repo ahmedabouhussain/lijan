@@ -23,7 +23,7 @@ function DetailRow({ icon: Icon, label, value }) {
 }
 
 export default function DecisionDetail() {
-  const { id } = useParams();
+  const { id, orgRef, committeeRef } = useParams();
   const [loading, setLoading] = useState(true);
   const [decision, setDecision] = useState(null);
   const [committee, setCommittee] = useState(null);
@@ -34,7 +34,12 @@ export default function DecisionDetail() {
 
   async function load() {
     try {
-      const d = await base44.entities.Decision.get(id);
+      // A stale or deleted decision link must not surface as an app error.
+      const d = await base44.entities.Decision.get(id).catch(() => null);
+      if (!d) {
+        setDecision(null);
+        return;
+      }
       setDecision(d);
       if (d.committee_id) {
         const c = await base44.entities.Committee.get(d.committee_id).catch(() => null);
@@ -70,10 +75,16 @@ export default function DecisionDetail() {
   }
 
   if (!decision) {
+    const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/decisions` : "/";
     return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground">القرار غير موجود</p>
-        <Link to="/decisions" className="text-primary hover:underline mt-2 inline-block">العودة للقرارات</Link>
+      <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
+        <h2 className="text-lg font-semibold text-foreground mb-1">القرار غير متوفر</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.
+        </p>
+        <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
+          العودة إلى سجل القرارات
+        </Link>
       </div>
     );
   }
