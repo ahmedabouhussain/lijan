@@ -34,9 +34,17 @@
       "type": "string",
       "title": "\u0627\u0644\u0625\u062c\u0631\u0627\u0621"
     },
+    "title_en": {
+      "type": "string",
+      "title": "Action Title (English)"
+    },
     "owner_name": {
       "type": "string",
       "title": "Owner"
+    },
+    "owner_name_en": {
+      "type": "string",
+      "title": "Owner (English)"
     },
     "owner_organization_id": {
       "type": "string",
@@ -46,6 +54,10 @@
       "type": "string",
       "title": "Responsible Department"
     },
+    "responsible_department_en": {
+      "type": "string",
+      "title": "Responsible Department (English)"
+    },
     "contributors": {
       "type": "string",
       "title": "Contributors"
@@ -53,6 +65,10 @@
     "required_evidence": {
       "type": "string",
       "title": "Required Evidence"
+    },
+    "required_evidence_en": {
+      "type": "string",
+      "title": "Required Evidence (English)"
     },
     "deadline": {
       "type": "string",

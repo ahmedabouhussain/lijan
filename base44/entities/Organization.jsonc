@@ -108,6 +108,10 @@
       "type": "string",
       "title": "Description"
     },
+    "description_en": {
+      "type": "string",
+      "title": "Description (English)"
+    },
     "country": {
       "type": "string",
       "title": "Country",

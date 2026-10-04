@@ -54,6 +54,10 @@
       "type": "string",
       "title": "Delegated By"
     },
+    "delegated_by_name_en": {
+      "type": "string",
+      "title": "Delegated By (English)"
+    },
     "delegation_valid_from": {
       "type": "string",
       "title": "Delegation Valid From",
@@ -76,6 +80,10 @@
     "purpose": {
       "type": "string",
       "title": "Purpose / Scope Note"
+    },
+    "purpose_en": {
+      "type": "string",
+      "title": "Purpose / Scope Note (English)"
     },
     "conflict_status": {
       "type": "string",

@@ -53,6 +53,10 @@
       "type": "string",
       "title": "Proposed Owner"
     },
+    "proposed_owner_en": {
+      "type": "string",
+      "title": "Proposed Owner (English)"
+    },
     "owner_verification_status": {
       "type": "string",
       "title": "Owner Verification Status",
@@ -66,29 +70,57 @@
       "type": "string",
       "title": "Supporting Entities"
     },
+    "supporting_entities_en": {
+      "type": "string",
+      "title": "Supporting Entities (English)"
+    },
     "dependencies": {
       "type": "string",
       "title": "Dependencies"
+    },
+    "dependencies_en": {
+      "type": "string",
+      "title": "Dependencies (English)"
     },
     "required_evidence": {
       "type": "string",
       "title": "Required Evidence"
     },
+    "required_evidence_en": {
+      "type": "string",
+      "title": "Required Evidence (English)"
+    },
     "risks": {
       "type": "string",
       "title": "Risks / Blockers"
+    },
+    "risks_en": {
+      "type": "string",
+      "title": "Risks / Blockers (English)"
     },
     "requested_decision": {
       "type": "string",
       "title": "Requested Committee Decision"
     },
+    "requested_decision_en": {
+      "type": "string",
+      "title": "Requested Committee Decision (English)"
+    },
     "milestones": {
       "type": "string",
       "title": "Milestones"
     },
+    "milestones_en": {
+      "type": "string",
+      "title": "Milestones (English)"
+    },
     "impact_indicators": {
       "type": "string",
       "title": "Impact Indicators"
+    },
+    "impact_indicators_en": {
+      "type": "string",
+      "title": "Impact Indicators (English)"
     },
     "source_reference": {
       "type": "string",
@@ -112,6 +144,10 @@
     "next_permitted_action": {
       "type": "string",
       "title": "Next Permitted Action"
+    },
+    "next_permitted_action_en": {
+      "type": "string",
+      "title": "Next Permitted Action (English)"
     },
     "sequence": {
       "type": "number",

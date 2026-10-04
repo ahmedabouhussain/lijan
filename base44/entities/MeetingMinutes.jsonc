@@ -20,90 +20,91 @@
     },
     "call_to_order": {
       "type": "string",
-      "title": "Call to Order",
-      "format": "date-time"
+      "title": "Call to Order"
     },
     "adjournment": {
       "type": "string",
-      "title": "Adjournment",
-      "format": "date-time"
+      "title": "Adjournment"
     },
     "present_count": {
       "type": "number",
-      "title": "Present Count",
-      "default": 0
+      "title": "Present Count"
     },
     "absent_count": {
       "type": "number",
-      "title": "Absent Count",
-      "default": 0
+      "title": "Absent Count"
     },
     "apologies_count": {
       "type": "number",
-      "title": "Apologies Count",
-      "default": 0
+      "title": "Apologies Count"
     },
     "quorum_met": {
       "type": "boolean",
-      "title": "Quorum Met",
-      "default": false
+      "title": "Quorum Met"
     },
     "previous_minutes_approved": {
       "type": "boolean",
-      "title": "Previous Minutes Approved",
-      "default": false
+      "title": "Previous Minutes Approved"
     },
     "body": {
       "type": "string",
       "title": "Minutes Body (Markdown)"
     },
+    "body_en": {
+      "type": "string",
+      "title": "Minutes Body (English)"
+    },
     "summary_ar": {
       "type": "string",
       "title": "\u0645\u0644\u062e\u0635 \u0627\u0644\u0645\u062d\u0636\u0631"
     },
+    "summary_en": {
+      "type": "string",
+      "title": "Minutes Summary (English)"
+    },
     "generated_by_ai": {
       "type": "boolean",
-      "title": "AI Generated Draft",
-      "default": false
+      "title": "AI Generated Draft"
     },
     "drafted_by_name": {
       "type": "string",
       "title": "Drafted By"
     },
+    "drafted_by_name_en": {
+      "type": "string",
+      "title": "Drafted By (English)"
+    },
     "reviewed_by_name": {
       "type": "string",
       "title": "Reviewed By"
+    },
+    "reviewed_by_name_en": {
+      "type": "string",
+      "title": "Reviewed By (English)"
     },
     "approved_by_name": {
       "type": "string",
       "title": "Approved By (Chair)"
     },
+    "approved_by_name_en": {
+      "type": "string",
+      "title": "Approved By (Chair, English)"
+    },
     "approved_date": {
       "type": "string",
-      "title": "Approval Date",
-      "format": "date"
+      "title": "Approval Date"
     },
     "issued_date": {
       "type": "string",
-      "title": "Issued Date",
-      "format": "date"
+      "title": "Issued Date"
     },
     "next_meeting_date": {
       "type": "string",
-      "title": "Next Meeting Date",
-      "format": "date-time"
+      "title": "Next Meeting Date"
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "draft",
-        "in_review",
-        "approved",
-        "issued",
-        "amended"
-      ],
-      "default": "draft"
+      "title": "Status"
     }
   },
   "required": [

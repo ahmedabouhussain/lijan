@@ -21,7 +21,7 @@
     },
     "full_name": {
       "type": "string",
-      "title": "Full Name"
+      "title": "Full Name (English)"
     },
     "full_name_ar": {
       "type": "string",
@@ -139,6 +139,10 @@
     "institution_name": {
       "type": "string",
       "title": "Representing Institution"
+    },
+    "institution_name_en": {
+      "type": "string",
+      "title": "Representing Institution (English)"
     },
     "protocol_order": {
       "type": "number",

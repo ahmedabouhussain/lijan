@@ -14,13 +14,25 @@
       "type": "string",
       "title": "Establishing Instrument"
     },
+    "establishing_instrument_en": {
+      "type": "string",
+      "title": "Establishing Instrument (English)"
+    },
     "official_reference": {
       "type": "string",
       "title": "Official Reference"
     },
+    "official_reference_en": {
+      "type": "string",
+      "title": "Official Reference (English)"
+    },
     "issuing_authority": {
       "type": "string",
       "title": "Issuing Authority"
+    },
+    "issuing_authority_en": {
+      "type": "string",
+      "title": "Issuing Authority (English)"
     },
     "mandate_text": {
       "type": "string",
@@ -42,42 +54,49 @@
       "type": "string",
       "title": "Powers"
     },
+    "powers_en": {
+      "type": "string",
+      "title": "Powers (English)"
+    },
     "prohibited_matters": {
       "type": "string",
       "title": "Prohibited / Out-of-Scope Matters"
+    },
+    "prohibited_matters_en": {
+      "type": "string",
+      "title": "Prohibited / Out-of-Scope Matters (English)"
     },
     "deliverables": {
       "type": "string",
       "title": "Deliverables"
     },
+    "deliverables_en": {
+      "type": "string",
+      "title": "Deliverables (English)"
+    },
     "reporting_lines": {
       "type": "string",
       "title": "Reporting Lines"
     },
+    "reporting_lines_en": {
+      "type": "string",
+      "title": "Reporting Lines (English)"
+    },
     "effective_start": {
       "type": "string",
-      "title": "Effective Start",
-      "format": "date"
+      "title": "Effective Start"
     },
     "effective_end": {
       "type": "string",
-      "title": "Effective End",
-      "format": "date"
+      "title": "Effective End"
     },
     "version": {
       "type": "number",
-      "title": "Version",
-      "default": 1
+      "title": "Version"
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "active",
-        "superseded",
-        "expired"
-      ],
-      "default": "active"
+      "title": "Status"
     }
   },
   "required": [

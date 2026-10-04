@@ -12,39 +12,7 @@
     },
     "amendment_type": {
       "type": "string",
-      "title": "Amendment Type",
-      "enum": [
-        "add_member",
-        "end_member",
-        "replace_member",
-        "change_role",
-        "appoint_chair",
-        "appoint_vice_chair",
-        "appoint_secretary",
-        "activate_alternate",
-        "change_organization",
-        "reconstitute",
-        "rename",
-        "change_arabic_name",
-        "change_english_name",
-        "add_mandate",
-        "remove_mandate",
-        "amend_mandate",
-        "change_authority_level",
-        "change_reporting_authority",
-        "change_quorum",
-        "change_voting_rule",
-        "change_term",
-        "extend_committee",
-        "renew_committee",
-        "suspend_committee",
-        "reactivate_committee",
-        "change_classification",
-        "initiate_closure",
-        "dissolve_committee",
-        "other"
-      ],
-      "default": "add_member"
+      "title": "Amendment Type"
     },
     "source_instrument_id": {
       "type": "string",
@@ -54,9 +22,17 @@
       "type": "string",
       "title": "Source Instrument Reference (display)"
     },
+    "source_instrument_ref_en": {
+      "type": "string",
+      "title": "Source Instrument Reference (English)"
+    },
     "description": {
       "type": "string",
       "title": "Description"
+    },
+    "description_en": {
+      "type": "string",
+      "title": "Description (English)"
     },
     "before_state": {
       "type": "string",
@@ -74,30 +50,17 @@
       "type": "string",
       "title": "Impact Summary (human-readable)"
     },
+    "impact_summary_en": {
+      "type": "string",
+      "title": "Impact Summary (English)"
+    },
     "effective_date": {
       "type": "string",
-      "title": "Effective Date",
-      "format": "date"
+      "title": "Effective Date"
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "draft",
-        "ai_processing",
-        "secretary_review",
-        "governance_review",
-        "legal_review",
-        "returned",
-        "pending_approval",
-        "approved",
-        "scheduled",
-        "effective",
-        "rejected",
-        "cancelled",
-        "superseded"
-      ],
-      "default": "draft"
+      "title": "Status"
     },
     "proposed_by_user_id": {
       "type": "string",
@@ -107,23 +70,33 @@
       "type": "string",
       "title": "Proposed By Name"
     },
+    "proposed_by_name_en": {
+      "type": "string",
+      "title": "Proposed By Name (English)"
+    },
     "reviewed_by_name": {
       "type": "string",
       "title": "Reviewed By Name"
+    },
+    "reviewed_by_name_en": {
+      "type": "string",
+      "title": "Reviewed By Name (English)"
     },
     "approved_by_name": {
       "type": "string",
       "title": "Approved By Name"
     },
+    "approved_by_name_en": {
+      "type": "string",
+      "title": "Approved By Name (English)"
+    },
     "approved_at": {
       "type": "string",
-      "title": "Approved At",
-      "format": "date-time"
+      "title": "Approved At"
     },
     "applied_at": {
       "type": "string",
-      "title": "Applied At",
-      "format": "date-time"
+      "title": "Applied At"
     },
     "formation_version_id": {
       "type": "string",
@@ -132,6 +105,10 @@
     "notes": {
       "type": "string",
       "title": "Notes"
+    },
+    "notes_en": {
+      "type": "string",
+      "title": "Notes (English)"
     }
   },
   "required": [

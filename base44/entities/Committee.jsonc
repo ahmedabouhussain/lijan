@@ -123,9 +123,17 @@
       "type": "string",
       "title": "Chair Name"
     },
+    "chair_name_en": {
+      "type": "string",
+      "title": "Chair Name (English)"
+    },
     "secretary_name": {
       "type": "string",
       "title": "Secretary Name"
+    },
+    "secretary_name_en": {
+      "type": "string",
+      "title": "Secretary Name (English)"
     },
     "logo_url": {
       "type": "string",

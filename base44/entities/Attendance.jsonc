@@ -22,30 +22,17 @@
       "type": "string",
       "title": "Member Name"
     },
+    "member_name_en": {
+      "type": "string",
+      "title": "Member Name (English)"
+    },
     "member_role": {
       "type": "string",
-      "title": "Member Role",
-      "enum": [
-        "chair",
-        "vice_chair",
-        "secretary",
-        "member",
-        "observer",
-        "advisor"
-      ],
-      "default": "member"
+      "title": "Member Role"
     },
     "attendance_status": {
       "type": "string",
-      "title": "Attendance Status",
-      "enum": [
-        "present",
-        "absent",
-        "apologies",
-        "proxy",
-        "late"
-      ],
-      "default": "present"
+      "title": "Attendance Status"
     },
     "arrival_time": {
       "type": "string",
@@ -55,9 +42,17 @@
       "type": "string",
       "title": "Proxy For (Member Name)"
     },
+    "proxy_for_en": {
+      "type": "string",
+      "title": "Proxy For (Member Name, English)"
+    },
     "notes": {
       "type": "string",
       "title": "Notes"
+    },
+    "notes_en": {
+      "type": "string",
+      "title": "Notes (English)"
     }
   },
   "required": [

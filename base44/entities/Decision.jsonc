@@ -20,19 +20,31 @@
     },
     "title": {
       "type": "string",
-      "title": "Decision Title"
+      "title": "Decision Title (English)"
     },
     "title_ar": {
       "type": "string",
       "title": "\u0646\u0635 \u0627\u0644\u0642\u0631\u0627\u0631"
     },
+    "title_en": {
+      "type": "string",
+      "title": "Decision Title (English edition)"
+    },
     "proposal": {
       "type": "string",
       "title": "Proposal / Draft"
     },
+    "proposal_en": {
+      "type": "string",
+      "title": "Proposal / Draft (English)"
+    },
     "legal_basis": {
       "type": "string",
       "title": "Legal Basis"
+    },
+    "legal_basis_en": {
+      "type": "string",
+      "title": "Legal Basis (English)"
     },
     "alternatives": {
       "type": "string",
@@ -44,18 +56,15 @@
     },
     "vote_for": {
       "type": "number",
-      "title": "Votes For",
-      "default": 0
+      "title": "Votes For"
     },
     "vote_against": {
       "type": "number",
-      "title": "Votes Against",
-      "default": 0
+      "title": "Votes Against"
     },
     "vote_abstain": {
       "type": "number",
-      "title": "Abstentions",
-      "default": 0
+      "title": "Abstentions"
     },
     "dissent": {
       "type": "string",
@@ -65,22 +74,37 @@
       "type": "string",
       "title": "Execution Owner"
     },
+    "owner_name_en": {
+      "type": "string",
+      "title": "Execution Owner (English)"
+    },
     "deadline": {
       "type": "string",
-      "title": "Execution Deadline",
-      "format": "date"
+      "title": "Execution Deadline"
     },
     "dependencies": {
       "type": "string",
       "title": "Dependencies"
     },
+    "dependencies_en": {
+      "type": "string",
+      "title": "Dependencies (English)"
+    },
     "outcome": {
       "type": "string",
       "title": "Outcome"
     },
+    "outcome_en": {
+      "type": "string",
+      "title": "Outcome (English)"
+    },
     "impact": {
       "type": "string",
       "title": "Impact Assessment"
+    },
+    "impact_en": {
+      "type": "string",
+      "title": "Impact Assessment (English)"
     },
     "superseded_by": {
       "type": "string",
@@ -88,22 +112,7 @@
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "draft",
-        "in_review",
-        "proposed",
-        "voting",
-        "approved",
-        "rejected",
-        "deferred",
-        "issued",
-        "executing",
-        "completed",
-        "superseded",
-        "closed"
-      ],
-      "default": "draft"
+      "title": "Status"
     }
   },
   "required": [

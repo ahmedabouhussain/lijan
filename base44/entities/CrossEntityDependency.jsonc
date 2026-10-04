@@ -8,13 +8,7 @@
     },
     "source_entity_type": {
       "type": "string",
-      "title": "Source Entity Type",
-      "enum": [
-        "Decision",
-        "Action",
-        "Committee"
-      ],
-      "default": "Decision"
+      "title": "Source Entity Type"
     },
     "source_id": {
       "type": "string",
@@ -24,19 +18,17 @@
       "type": "string",
       "title": "Source Title"
     },
+    "source_title_en": {
+      "type": "string",
+      "title": "Source Title (English)"
+    },
     "source_committee_id": {
       "type": "string",
       "title": "Source Committee ID"
     },
     "target_entity_type": {
       "type": "string",
-      "title": "Target Entity Type",
-      "enum": [
-        "Decision",
-        "Action",
-        "Committee"
-      ],
-      "default": "Decision"
+      "title": "Target Entity Type"
     },
     "target_id": {
       "type": "string",
@@ -45,6 +37,10 @@
     "target_title": {
       "type": "string",
       "title": "Target Title"
+    },
+    "target_title_en": {
+      "type": "string",
+      "title": "Target Title (English)"
     },
     "target_committee_id": {
       "type": "string",
@@ -56,30 +52,19 @@
     },
     "dependency_type": {
       "type": "string",
-      "title": "Dependency Type",
-      "enum": [
-        "requires",
-        "blocks",
-        "informs",
-        "supersedes",
-        "aligns_with"
-      ],
-      "default": "requires"
+      "title": "Dependency Type"
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "pending",
-        "active",
-        "resolved",
-        "broken"
-      ],
-      "default": "pending"
+      "title": "Status"
     },
     "notes": {
       "type": "string",
       "title": "Notes"
+    },
+    "notes_en": {
+      "type": "string",
+      "title": "Notes (English)"
     }
   },
   "required": [

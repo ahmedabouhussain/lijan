@@ -16,62 +16,23 @@
     },
     "recipient_email": {
       "type": "string",
-      "title": "Recipient Email",
-      "format": "email"
+      "title": "Recipient Email"
     },
     "recipient_name": {
       "type": "string",
       "title": "Recipient Name"
     },
+    "recipient_name_en": {
+      "type": "string",
+      "title": "Recipient Name (English)"
+    },
     "event_type": {
       "type": "string",
-      "title": "Event Type",
-      "enum": [
-        "meeting_scheduled",
-        "meeting_reminder",
-        "meeting_started",
-        "meeting_adjourned",
-        "meeting_cancelled",
-        "agenda_published",
-        "pack_published",
-        "decision_issued",
-        "decision_voting_open",
-        "action_assigned",
-        "action_reminder",
-        "action_overdue",
-        "action_extension_requested",
-        "action_extension_reviewed",
-        "amendment_proposed",
-        "amendment_approved",
-        "amendment_rejected",
-        "minutes_published",
-        "minutes_approval_requested",
-        "invitation_sent",
-        "escalation_triggered",
-        "review_requested",
-        "review_responded",
-        "recusal_recorded",
-        "delegation_granted",
-        "conflict_declared",
-        "committee_activated",
-        "committee_suspended",
-        "committee_closed",
-        "calendar_synced",
-        "calendar_sync_failed",
-        "custom"
-      ],
-      "default": "custom"
+      "title": "Event Type"
     },
     "channel": {
       "type": "string",
-      "title": "Channel",
-      "enum": [
-        "email",
-        "in_app",
-        "teams",
-        "push"
-      ],
-      "default": "in_app"
+      "title": "Channel"
     },
     "subject_ar": {
       "type": "string",
@@ -105,44 +66,29 @@
       "type": "string",
       "title": "Source Title"
     },
+    "source_title_en": {
+      "type": "string",
+      "title": "Source Title (English)"
+    },
     "priority": {
       "type": "string",
-      "title": "Priority",
-      "enum": [
-        "low",
-        "normal",
-        "high",
-        "urgent"
-      ],
-      "default": "normal"
+      "title": "Priority"
     },
     "status": {
       "type": "string",
-      "title": "Status",
-      "enum": [
-        "queued",
-        "sent",
-        "delivered",
-        "read",
-        "failed",
-        "suppressed"
-      ],
-      "default": "queued"
+      "title": "Status"
     },
     "scheduled_for": {
       "type": "string",
-      "title": "Scheduled For",
-      "format": "date-time"
+      "title": "Scheduled For"
     },
     "sent_at": {
       "type": "string",
-      "title": "Sent At",
-      "format": "date-time"
+      "title": "Sent At"
     },
     "read_at": {
       "type": "string",
-      "title": "Read At",
-      "format": "date-time"
+      "title": "Read At"
     },
     "failure_reason": {
       "type": "string",
@@ -155,6 +101,10 @@
     "actor_name": {
       "type": "string",
       "title": "Actor Name (who triggered)"
+    },
+    "actor_name_en": {
+      "type": "string",
+      "title": "Actor Name (English)"
     }
   },
   "required": [
