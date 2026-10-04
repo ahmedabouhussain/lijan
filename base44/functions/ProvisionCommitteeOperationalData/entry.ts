@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import {
   planAttendance,
   planAgenda,
@@ -53,6 +53,7 @@ export default async function (req: any) {
     }
 
     const body = await req.json().catch(() => ({}));
+    const committeeIds: string[] = Array.isArray(body.committee_ids) ? body.committee_ids.filter(Boolean) : [];
     const publicIds: string[] = Array.isArray(body.public_ids) && body.public_ids.length
       ? body.public_ids
       : [
@@ -66,16 +67,25 @@ export default async function (req: any) {
 
     const report: Array<Record<string, any>> = [];
 
-    for (const publicId of publicIds) {
-      const committee = arr(await sr.entities.Committee.filter({ public_id: publicId }).catch(() => []))[0];
+    // A caller names committees either by public id (the demonstration set) or by record
+    // id — a production register has no public id, and its listed records must be just as
+    // openable as a demonstration's. Named ids take precedence over the default list.
+    const targets: Array<{ key: string; query: Record<string, any> }> = committeeIds.length
+      ? committeeIds.map((id: string) => ({ key: id, query: { id } }))
+      : publicIds.map((publicId) => ({ key: publicId, query: { public_id: publicId } }));
+
+    for (const target of targets) {
+      const committee = arr(await sr.entities.Committee.filter(target.query).catch(() => []))[0];
       if (!committee) {
-        report.push({ committee: publicId, error: 'not_found' });
+        report.push({ committee: target.key, error: 'not_found' });
         continue;
       }
+      // Provisioned records inherit the committee's own data class: a production
+      // register's records are never stamped as demonstration data.
       const base = {
         organization_id: committee.organization_id,
         committee_id: committee.id,
-        is_demo_data: true,
+        is_demo_data: !!committee.is_demo_data,
         ...(committee.demo_dataset ? { demo_dataset: committee.demo_dataset } : {}),
       };
 
