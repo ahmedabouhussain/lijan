@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // RequestReview — secretary sends a document/version for review by designated reviewers.
 export default async function(req) {
@@ -12,8 +12,17 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, document_id, and reviewer_name are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'minutes.draft' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the review request is anchored to the DOCUMENT it reviews, and
+    // the version it names must belong to the same committee (the guard enforces both).
+    const auth = await authorizeCommand(base44, {
+      capability: 'minutes.draft',
+      target_type: 'Document',
+      target_id: document_id,
+      mode: 'create',
+      related: document_version_id ? [{ type: 'DocumentVersion', ids: [document_version_id] }] : [],
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const reviewRequest = await base44.asServiceRole.entities.ReviewRequest.create({
       organization_id: auth.organization_id,

@@ -1,0 +1,84 @@
+{
+  "name": "TransitionClaim",
+  "type": "object",
+  "properties": {
+    "transition_key": {
+      "type": "string",
+      "title": "Transition Key (the one key that must exist only once for a material transition)"
+    },
+    "token": {
+      "type": "string",
+      "title": "Claim Token (identifies the writer that holds the claim)"
+    },
+    "command": {
+      "type": "string",
+      "title": "Command that raised the claim"
+    },
+    "entity_type": {
+      "type": "string",
+      "title": "Target Entity Type"
+    },
+    "entity_id": {
+      "type": "string",
+      "title": "Target Entity ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (derived from the trusted target)"
+    },
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "actor_user_id": {
+      "type": "string",
+      "title": "Actor User ID"
+    },
+    "status": {
+      "type": "string",
+      "title": "Claim Status",
+      "enum": [
+        "claimed",
+        "completed",
+        "abandoned"
+      ],
+      "default": "claimed"
+    },
+    "result_ref": {
+      "type": "string",
+      "title": "Result Reference (id of the record the winning transition produced)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    }
+  },
+  "required": [
+    "transition_key",
+    "token",
+    "command",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

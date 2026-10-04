@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // PublishMeetingPack — publishes a frozen, versioned meeting pack.
@@ -13,8 +13,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, meeting_id, title are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'agenda.edit' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: each published pack version is anchored to the committee record.
+    const auth = await authorizeCommand(base44, {
+      capability: 'agenda.edit',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Get current max version
     const packs = await base44.asServiceRole.entities.MeetingPack

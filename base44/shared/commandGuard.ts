@@ -45,7 +45,7 @@ const PERMITTED_STATES = {
   "vote.call": { field: "status", states: ["draft", "under_review", "proposed", "pending"] },
   "vote.certify": { field: "status", states: ["voting"] },
   "minutes.approve": { field: "status", states: ["draft", "in_review"] },
-  "decision.issue": { field: "status", states: ["approved", "draft", "proposed"] },
+  "decision.issue": { field: "status", states: ["approved", "draft", "proposed", "issued", "executing"] },
   "action.close": { field: "status", states: ["in_progress", "evidence_pending", "under_review"] },
   "committee.close": { field: "status", states: ["active", "closing", "temporarily_suspended", "expiring_soon"] },
   "committee.activate": { field: "status", states: ["draft", "pending_activation"] },

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // SubmitAgendaItem — governed agenda item submission.
 export default async function(req) {
@@ -14,8 +14,16 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, meeting_id, title are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'agenda.propose' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the item is anchored to the meeting it belongs to, else to the
+    // committee record itself — the caller's committee_id is only compared against the derived truth.
+    const auth = await authorizeCommand(base44, {
+      capability: 'agenda.propose',
+      target_type: meeting_id ? 'Meeting' : 'Committee',
+      target_id: meeting_id || committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Get current max sequence
     const items = await base44.asServiceRole.entities.AgendaItem

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // GenerateProduct — generates a structured governance product from a template.
 // Uses InvokeLLM to produce structured JSON sections (no HTML/Markdown).
@@ -30,10 +30,14 @@ export default async function(req) {
     const authCommittee = committee_id
       ? await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null)
       : null;
-    const auth = await resolveAuthority(base44, {
+    // Authority on a TRUSTED target: the produced record is anchored to the committee RECORD, which
+    // the guard loads itself — no scope arrives from the request.
+    const auth = await authorizeCommand(base44, {
       capability: 'committee.manage',
-      record: authCommittee,
-      committee_id,
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
     });
     if (!auth.allowed) {
       return Response.json({ error: auth.reason || 'Forbidden', code: auth.code || null }, { status: auth.status || 403 });

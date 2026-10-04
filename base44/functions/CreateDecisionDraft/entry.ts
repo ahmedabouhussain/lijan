@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // CreateDecisionDraft — creates a draft decision inside a committee.
 export default async function(req) {
@@ -12,8 +12,17 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, title are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'agenda.propose' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: a new draft belongs to the meeting it names, else to the
+    // committee record itself. The committee_id the caller sent is only COMPARED against the
+    // derived truth — it is never used as a scope.
+    const auth = await authorizeCommand(base44, {
+      capability: 'agenda.propose',
+      target_type: meeting_id ? 'Meeting' : 'Committee',
+      target_id: meeting_id || committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const decisionNumber = `DEC-${Date.now().toString(36)}`;
 

@@ -16,6 +16,7 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const ROOT = process.cwd();
+const STRICT = process.argv.includes("--strict");
 const SCAN_DIRS = ["base44/functions", "base44/shared"];
 const FIXTURE_ALLOWLIST = /(Provision|Seed|Repair|demoDataset|drHamadDataset|demoPersonas|operationalPack)/;
 // The policy modules ARE the authority implementation: they name capabilities by value and write
@@ -33,8 +34,8 @@ const ERRORS = [
 
 const WRITE_CALL = /entities\.[A-Za-z]+\.(create|update|updateMany|bulkUpdate|delete|deleteMany)\s*\(/;
 const GUARDED_CALL = /authorizeCommand\s*\(/;
+const TRUSTED_TARGET = /target_type\s*:/;
 const HINT_ONLY_CALL = /resolveAuthority\s*\(/;
-const WITH_TRUSTED_RECORD = /record\s*:/;
 const CAPABILITY = /capability:\s*['"]([a-z_.]+)['"]/;
 
 // Risk order for the migration backlog: decisions before administration.
@@ -70,7 +71,10 @@ for (const file of files) {
   const policyModule = POLICY_MODULES.test(rel);
   const writes = WRITE_CALL.test(src);
   const guarded = GUARDED_CALL.test(src);
-  const hintOnly = HINT_ONLY_CALL.test(src) && !WITH_TRUSTED_RECORD.test(src);
+  // A command site is on the guarded path only when it names a TRUSTED TARGET through the guard.
+  // Asking the kernel directly — or calling the guard without a target — is the migration backlog.
+  const trustedTarget = guarded && TRUSTED_TARGET.test(src);
+  const hintOnly = HINT_ONLY_CALL.test(src) || !trustedTarget;
   const nameMatch = /(filter|find|some)\([^)]*\bmember_name\s*[:=]/.test(src);
   const readGate = /(^|[\s({,;])capability:\s*['"](read|view|list|access)['"]/m.test(src);
   const capability = (src.match(CAPABILITY) || [])[1] || null;
@@ -81,11 +85,16 @@ for (const file of files) {
     if (rule.re.test(src) && !fixture) errors.push({ rel, id: rule.id, why: rule.why });
   }
   if (hintOnly) warnings.push({ rel, id: "scope-hint-only", why: "authority asked with a committee lookup hint and no trusted target — migrate to authorizeCommand" });
+  // The completion gate: with --strict, a WRITE still authorized on a lookup hint is a blocking error.
+  if (STRICT && writes && hintOnly && !fixture && !policyModule) {
+    errors.push({ rel, id: "untrusted-target-write", why: "a write is authorized on a committee lookup hint instead of a trusted target" });
+  }
   if (readGate && writes && !fixture && !policyModule) {
     warnings.push({ rel, id: "read-authorized-write", why: "a write command is gated by a read capability (ERROR above)" });
   }
 
-  if (!hintOnly && !guarded) continue;
+  if (policyModule) continue;
+  if (!writes && !guarded && !hintOnly) continue;
   const needs = [];
   if (hintOnly) needs.push("مرِّر السجل المستهدف عبر authorizeCommand");
   if (readGate && writes) needs.push("استبدل حق القراءة بفعل دقيق");
@@ -93,10 +102,10 @@ for (const file of files) {
   rows.push({
     rel, risk: riskOf(rel),
     capability: guarded ? (capability || "—") : `${capability || "read"} (تلميح فقط)`,
-    writes, trusted: WITH_TRUSTED_RECORD.test(src) && guarded ? "سجل مستهدف" : "تلميح لجنة",
+    writes, trusted: trustedTarget && !hintOnly ? "سجل مستهدف" : "تلميح لجنة",
     needs: needs.length ? needs.join(" · ") : "—",
-    guarded, nameMatch, readGate,
-    status: guarded && !hintOnly && !(readGate && writes) && !nameMatch ? "مهاجر" : "قيد الترحيل",
+    guarded, trustedTarget, hintOnly, nameMatch, readGate,
+    status: trustedTarget && !hintOnly && !(readGate && writes) && !nameMatch ? "مهاجر" : "قيد الترحيل",
   });
 }
 
@@ -104,8 +113,8 @@ rows.sort((a, b) => a.risk - b.risk || shortName(a.rel).localeCompare(shortName(
 
 // Coverage is reported as sets. Overlaps are shown explicitly, never summed as if unique.
 const setOf = (pred) => new Set(rows.filter(pred).map((r) => r.rel));
-const migrated = setOf((r) => r.guarded && !r.needs.includes("مرِّر"));
-const pending = setOf((r) => r.needs.includes("مرِّر"));
+const migrated = setOf((r) => r.status === "مهاجر");
+const pending = setOf((r) => r.status !== "مهاجر");
 const readGated = setOf((r) => r.readGate && r.writes);
 const nameBased = setOf((r) => r.nameMatch);
 const unionNeedingWork = new Set([...pending, ...readGated, ...nameBased]);

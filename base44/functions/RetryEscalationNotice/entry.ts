@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { attemptOutboxDelivery, aggregateNoticeState } from '../../shared/notificationEngine.ts';
 
 // RetryEscalationNotice — re-attempt the delivery of a notice that belongs to an escalation
@@ -25,8 +25,14 @@ export default async function (req: Request): Promise<Response> {
     const action = await base44.asServiceRole.entities.Action.get(actionId).catch(() => null);
     if (!action) return Response.json({ error: 'Action not found' }, { status: 404 });
 
-    const auth = await resolveAuthority(base44, { committee_id: action.committee_id, capability: 'action.admin' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the committee is derived from the action record itself.
+    const auth = await authorizeCommand(base44, {
+      capability: 'action.admin',
+      target_type: 'Action',
+      target_id: action.id,
+      claimed_committee_id: action.committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const transitionId = action.escalation_transition_id;
     if (!transitionId) {

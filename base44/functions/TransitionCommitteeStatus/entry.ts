@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // TransitionCommitteeStatus — the first governed backend command.
 // Verifies: auth, org membership, effective role, committee scope, current state,
@@ -17,10 +17,15 @@ export default async function(req) {
     }
 
     // Resolve authority server-side
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.activate' });
-    if (!auth.allowed) {
-      return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-    }
+    // Authority on a TRUSTED target: a lifecycle transition is a MANAGEMENT act on the committee
+    // record — never the activation right, which is bound to the pre-activation states.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'Committee',
+      target_id: committee_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Fetch committee
     const committee = await base44.asServiceRole.entities.Committee.get(committee_id);

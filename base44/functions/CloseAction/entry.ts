@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { dispatchNotification } from '../../shared/notificationEngine.ts';
 
 // CloseAction — closes an action after evidence verification.
@@ -35,6 +36,18 @@ export default async function(req) {
       return Response.json({ error: 'Action progress must be 100% before closure' }, { status: 400 });
     }
 
+    // Exclusivity on CLOSURE: a second simultaneous closure would write twice and notify twice.
+    const claim = await claimTransition(base44, {
+      key: `action.close:${action_id}`,
+      command: 'CloseAction',
+      entity_type: 'Action',
+      entity_id: action_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'This action is already closed or its closure is in progress');
+
     await base44.asServiceRole.entities.Action.update(action_id, {
       status: 'verified',
       evidence_url: evidence_url || action.evidence_url,
@@ -50,6 +63,8 @@ export default async function(req) {
       description: `Action closed with verified evidence`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: action_id });
 
     // Notify the action owner that their action has been closed/verified
     if (action.owner_user_id && action.owner_user_id !== auth.user.id) {

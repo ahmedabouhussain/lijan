@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.1.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.1";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,14 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.1.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.1.0",
-  supersedes: "authz-1.0.0",
+  version: "authz-1.2.0-rc.1",
+  supersedes: "authz-1.1.0",
   change_class: "security",
   changes: [
+    "trusted-target coverage extended to every writing command (no committee lookup hint)",
+    "capabilities named for the acts that had no operational right: meeting.adjourn, meeting.cancel, agenda.propose, memory.compile",
+    "compare-and-swap transition claim on the critical writes (one material effect per transition)",
+    "decision.issue gate accepts issued/executing so a repeated issue stays an idempotent result",
     "fail-closed when the recusal set cannot be read",
     "fail-closed when the authority grant cannot be read",
     "scope provenance reported on every decision",
@@ -51,7 +55,8 @@ export const ADMIN_READ_CEILING = ["read", "audit.read", "report.export", "commi
 export const OPERATIONAL_CAPABILITIES = [
   "conflict.declare", "recusal.record",
   "committee.activate", "committee.manage", "committee.close",
-  "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
+  "meeting.schedule", "meeting.start", "meeting.adjourn", "meeting.cancel",
+  "agenda.edit", "agenda.approve", "agenda.propose", "memory.compile",
   "vote.call", "vote.certify", "vote.cast",
   "minutes.draft", "minutes.review", "minutes.approve",
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
@@ -69,7 +74,8 @@ const RECUSAL_BLOCKED = [
 
 /** What a delegation of chair authority may transfer — never a blanket role swap. */
 export const DELEGABLE_CAPABILITIES = [
-  "agenda.approve", "meeting.start", "vote.call", "vote.certify",
+  "agenda.approve", "meeting.start", "meeting.adjourn", "meeting.cancel",
+  "vote.call", "vote.certify",
   "minutes.approve", "decision.approve", "decision.issue",
   "escalation.approve", "action.admin", "action.close", "committee.activate",
 ];
@@ -83,7 +89,8 @@ export const DELEGABLE_CAPABILITIES = [
 const ROLE_BASELINE = {
   chair: [
     "committee.activate", "committee.manage", "committee.close",
-    "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
+    "meeting.schedule", "meeting.start", "meeting.adjourn", "meeting.cancel",
+    "memory.compile", "agenda.edit", "agenda.approve",
     "vote.call", "vote.certify", "vote.cast",
     "minutes.draft", "minutes.review", "minutes.approve",
     "attendance.certify", "attendance.respond", "action.admin", "action.progress",
@@ -101,7 +108,8 @@ const ROLE_BASELINE = {
     "read", "audit.read", "report.export",
   ],
   secretary: [
-    "meeting.schedule", "agenda.edit", "agenda.propose", "agenda.evaluate",
+    "meeting.schedule", "meeting.cancel", "memory.compile",
+    "agenda.edit", "agenda.propose", "agenda.evaluate",
     "minutes.draft", "minutes.review", "attendance.certify", "attendance.respond",
     "action.admin", "action.progress", "amendment.notify", "instrument.extract",
     "review.respond",
@@ -109,7 +117,7 @@ const ROLE_BASELINE = {
     "read", "audit.read", "report.export",
   ],
   committee_administrator: [
-    "agenda.edit", "agenda.evaluate", "action.admin", "action.progress",
+    "agenda.edit", "agenda.evaluate", "memory.compile", "action.admin", "action.progress",
     "attendance.certify", "attendance.respond", "amendment.notify", "instrument.extract",
     "decision.view", "decision.comment", "read", "audit.read",
   ],

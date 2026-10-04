@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // CreateMeeting — governed meeting creation inside a committee.
@@ -19,8 +19,16 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, title, date are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'meeting.schedule' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the new meeting is anchored to the committee RECORD, which is
+    // loaded server-side — the committee_id the caller sent is only compared against it.
+    const auth = await authorizeCommand(base44, {
+      capability: 'meeting.schedule',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Build RRULE if recurrence requested
     const { buildRRuleFromConfig, generateOccurrences } = await import('../../shared/rruleGenerator.ts');

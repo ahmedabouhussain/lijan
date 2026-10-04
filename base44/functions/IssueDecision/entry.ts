@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // IssueDecision — issues a decision with ProofChainSnapshot.
@@ -11,11 +12,17 @@ export default async function(req) {
 
     if (!decision_id) return Response.json({ error: 'decision_id is required' }, { status: 400 });
 
-    const decision = await base44.asServiceRole.entities.Decision.get(decision_id);
-    if (!decision) return Response.json({ error: 'Decision not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the guard loads the decision itself and derives the committee
+    // from it, so no scope arrives from the request at all.
+    const auth = await authorizeCommand(base44, {
+      capability: 'decision.issue',
+      target_type: 'Decision',
+      target_id: decision_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: decision.committee_id, capability: 'decision.issue' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    const decision = auth.target;
 
     // Verify mandate authority
     const committee = await base44.asServiceRole.entities.Committee.get(decision.committee_id);
@@ -72,6 +79,20 @@ export default async function(req) {
       return Response.json({ status: 'ok', decision_id, proof_chain: proofChain, already_issued: true, correlation_id: auth.correlation_id });
     }
 
+    // Exclusivity on ISSUANCE: two simultaneous issues both see a non-issued status, so the right to
+    // issue is claimed first. Exactly one transition writes the material effect and one audit event;
+    // the loser performs NO write and is told the issuance is already claimed.
+    const claim = await claimTransition(base44, {
+      key: `decision.issue:${decision_id}`,
+      command: 'IssueDecision',
+      entity_type: 'Decision',
+      entity_id: decision_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'This decision issuance is already in progress or complete');
+
     await base44.asServiceRole.entities.Decision.update(decision_id, {
       status: 'issued',
       outcome: decision.outcome || 'Issued with proof chain',
@@ -86,6 +107,8 @@ export default async function(req) {
       new_value: 'issued',
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: decision_id });
 
     // Dispatch decision_issued notifications to all active committee members
     try {

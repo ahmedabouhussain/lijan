@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // DelegateAuthority — governed authority delegation.
 export default async function(req) {
@@ -12,8 +12,16 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, from_member_name, to_member_name are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.manage' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: a delegation is created inside the committee RECORD, which is
+    // loaded server-side.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const delegation = await base44.asServiceRole.entities.Delegation.create({
       organization_id: auth.organization_id,

@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 
 // SignRecord — records an electronic signature on a governed document.
 export default async function(req) {
@@ -23,8 +24,29 @@ export default async function(req) {
       return Response.json({ error: 'The target record of this signature could not be resolved', code: 'scope_unresolvable' }, { status: 403 });
     }
 
-    const auth = await resolveAuthority(base44, { capability: 'decision.sign_image', record: target, committee_id });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden', code: auth.code || null }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the guard loads the signed record itself and derives the
+    // committee from it. A signature IMAGE is not a digital signature — `decision.digital_sign` is
+    // held by nobody until an approved policy names the identity provider and the legal instrument.
+    const auth = await authorizeCommand(base44, {
+      capability: 'decision.sign_image',
+      target_type: targetEntity,
+      target_id: document_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+
+    // Exclusivity: one active signature per signer, per document, per intent. A second simultaneous
+    // request loses the claim instead of writing a second material signature.
+    const claim = await claimTransition(base44, {
+      key: `decision.sign_image:${document_id}:${auth.user.id}:${intent}`,
+      command: 'SignRecord',
+      entity_type: targetEntity,
+      entity_id: document_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'A signature for this record and intent is already recorded');
 
     const signature = await base44.asServiceRole.entities.Signature.create({
       organization_id: auth.organization_id,

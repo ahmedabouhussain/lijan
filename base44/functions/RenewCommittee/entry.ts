@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // RenewCommittee — renews a closing/closed committee with a new term.
 export default async function(req) {
@@ -12,8 +12,14 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, new_term_start, new_term_end, and reason are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.manage' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the committee record is the target itself.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'Committee',
+      target_id: committee_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const committee = await base44.asServiceRole.entities.Committee.get(committee_id);
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // ConfirmExtractedInstrumentFields — human confirmation of AI-extracted data.
 // Marks extraction as confirmed. Does NOT create or modify official committee records.
@@ -16,11 +16,14 @@ export default async function(req) {
     const instrument = await base44.asServiceRole.entities.FoundingInstrument.get(instrument_id);
     if (!instrument) return Response.json({ error: 'Instrument not found' }, { status: 404 });
 
-    const auth = await resolveAuthority(base44, {
-      committee_id: instrument.committee_id,
+    // Authority on a TRUSTED target: the committee is derived from the INSTRUMENT record itself.
+    const auth = await authorizeCommand(base44, {
       capability: 'committee.manage',
+      target_type: 'FoundingInstrument',
+      target_id: instrument.id,
+      claimed_committee_id: instrument.committee_id,
     });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Merge confirmed fields (human-corrected) with extracted data
     const existingExtracted = instrument.extracted_data ? JSON.parse(instrument.extracted_data) : {};

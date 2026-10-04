@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // ActivateAlternate — activates an alternate member to replace a principal.
 export default async function(req) {
@@ -12,8 +12,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, alternate_membership_id are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.manage' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the SEAT being activated is the target, so its own committee is
+    // what the decision is made against.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'CommitteeMembership',
+      target_id: alternate_membership_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     // Activate the alternate
     await base44.asServiceRole.entities.CommitteeMembership.update(alternate_membership_id, {

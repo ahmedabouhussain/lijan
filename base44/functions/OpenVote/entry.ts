@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // OpenVote — opens a voting session for a decision.
@@ -13,8 +13,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, decision_id are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'vote.call' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the committee is derived from the decision record itself, and
+    // the permitted-state gate makes a second open of an already-open vote impossible.
+    const auth = await authorizeCommand(base44, {
+      capability: 'vote.call',
+      target_type: 'Decision',
+      target_id: decision_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const decision = await base44.asServiceRole.entities.Decision.get(decision_id);
     if (!decision || decision.committee_id !== committee_id) {

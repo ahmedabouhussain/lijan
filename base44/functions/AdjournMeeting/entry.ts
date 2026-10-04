@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // AdjournMeeting — transitions an in_progress meeting to adjourned.
 export default async function(req) {
@@ -10,11 +10,17 @@ export default async function(req) {
 
     if (!meeting_id) return Response.json({ error: 'meeting_id is required' }, { status: 400 });
 
-    const meeting = await base44.asServiceRole.entities.Meeting.get(meeting_id);
-    if (!meeting) return Response.json({ error: 'Meeting not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the committee is derived from the meeting record, and
+    // adjourning carries its own right plus the state gate (only an in-progress meeting).
+    const auth = await authorizeCommand(base44, {
+      capability: 'meeting.adjourn',
+      target_type: 'Meeting',
+      target_id: meeting_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: meeting.committee_id, capability: 'meeting.start' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    const meeting = auth.target;
 
     if (meeting.status !== 'in_progress') {
       return Response.json({ error: `Cannot adjourn a meeting in '${meeting.status}' status` }, { status: 400 });

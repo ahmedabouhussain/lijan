@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // InviteCommitteeMember — governed member invitation.
 // Verifies: auth, org membership, committee management capability, committee scope.
@@ -13,8 +13,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, full_name, role are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.manage' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the new seat is anchored to the committee RECORD.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const membership = await base44.asServiceRole.entities.CommitteeMembership.create({
       organization_id: auth.organization_id,

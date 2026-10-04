@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // ApproveMinutes — chair/vice_chair approves draft meeting minutes.
@@ -23,6 +24,20 @@ export default async function(req) {
 
     const minutes = auth.target;
 
+    // Exclusivity on APPROVAL: the state gate stops a later approval, but not two simultaneous ones.
+    // The right to approve is claimed first, so one transition produces the approval, one audit
+    // event, and one notification batch.
+    const claim = await claimTransition(base44, {
+      key: `minutes.approve:${minutes_id}`,
+      command: 'ApproveMinutes',
+      entity_type: 'MeetingMinutes',
+      entity_id: minutes_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'These minutes are already approved');
+
     await base44.asServiceRole.entities.MeetingMinutes.update(minutes_id, {
       status: 'approved',
       approved_by_name: auth.user.full_name || auth.user.email,
@@ -38,6 +53,8 @@ export default async function(req) {
       old_value: minutes.status, new_value: 'approved',
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: minutes_id });
 
     // Notify all committee members that minutes have been approved/published
     try {

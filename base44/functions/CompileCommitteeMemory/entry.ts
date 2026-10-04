@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { gatherCommitteeSources, compileMemorySections, buildPlainTextSummary } from '../../shared/memoryCompiler.ts';
 
 // CompileCommitteeMemory — compiles structured institutional memory from all
@@ -14,10 +14,16 @@ export default async function(req) {
     const { committee_id, mode } = body; // mode: 'full' | 'incremental'
     if (!committee_id) return Response.json({ error: 'committee_id is required' }, { status: 400 });
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.view' });
-    if (!auth.allowed) {
-      return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-    }
+    // Authority on a TRUSTED target: compiling memory WRITES institutional records, so it carries a
+    // real right (`memory.compile`) instead of borrowing a read capability.
+    const auth = await authorizeCommand(base44, {
+      capability: 'memory.compile',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const committee = await base44.asServiceRole.entities.Committee.get(committee_id);
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });

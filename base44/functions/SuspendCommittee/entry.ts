@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // SuspendCommittee — temporarily suspends an active committee with documented reason.
@@ -13,8 +13,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id and reason are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.activate' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: suspension is a MANAGEMENT act on the committee record — it is
+    // not activation, and it must not borrow the activation right.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'Committee',
+      target_id: committee_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const committee = await base44.asServiceRole.entities.Committee.get(committee_id);
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { createFormationVersion } from '../../shared/formationVersioner.ts';
 
 // ApproveCommitteeAmendment — approves a governed amendment and applies it.
@@ -17,11 +17,14 @@ export default async function(req) {
     const amendment = await base44.asServiceRole.entities.CommitteeAmendment.get(amendment_id);
     if (!amendment) return Response.json({ error: 'Amendment not found' }, { status: 404 });
 
-    const auth = await resolveAuthority(base44, {
-      committee_id: amendment.committee_id,
+    // Authority on a TRUSTED target: the committee is derived from the AMENDMENT record itself.
+    const auth = await authorizeCommand(base44, {
       capability: 'committee.manage',
+      target_type: 'CommitteeAmendment',
+      target_id: amendment.id,
+      claimed_committee_id: amendment.committee_id,
     });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    if (!auth.allowed) return refusalResponse(auth);
 
     if (!['draft', 'returned', 'pending_approval'].includes(amendment.status)) {
       return Response.json({ error: `Amendment status '${amendment.status}' cannot be approved` }, { status: 400 });

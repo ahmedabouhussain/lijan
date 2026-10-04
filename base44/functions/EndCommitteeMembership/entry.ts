@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { createFormationVersion } from '../../shared/formationVersioner.ts';
 
 // EndCommitteeMembership — non-destructive membership termination.
@@ -22,8 +22,15 @@ export default async function(req) {
       return Response.json({ error: 'committee_id and membership_id are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'committee.manage' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the SEAT being ended is the target, so a seat from another
+    // committee can never be reached through a mismatched scope claim.
+    const auth = await authorizeCommand(base44, {
+      capability: 'committee.manage',
+      target_type: 'CommitteeMembership',
+      target_id: membership_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const membership = await base44.asServiceRole.entities.CommitteeMembership.get(membership_id);
     if (!membership || membership.committee_id !== committee_id) {
