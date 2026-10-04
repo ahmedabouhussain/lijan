@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { Upload, FileText, Plus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/LanguageContext";
+import SecureFileLink from "@/components/raqeem/SecureFileLink";
+import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
 
 const DOC_TYPES = [
   { value: "memo", label: "مذكرة" },
@@ -34,8 +35,10 @@ export default function SupportingDocumentsSection({ value, onChange }) {
     if (!file) return;
     setUploadingIdx(i);
     try {
-      const res = await base44.integrations.Core.UploadFile({ file });
-      const file_url = res.file_url || res;
+      // Supporting documents are sensitive: stored privately, opened only through a
+      // short-lived signed link that is recorded in the audit trail.
+      const file_url = await uploadPrivateFile(file);
+      await logFileAccess({ action: "upload", fileRef: file_url, entityType: "SupportingDocument", title: file.name });
       onChange(
         value.map((d, idx) =>
           idx === i ? { ...d, file_url, file_name: file.name } : d
@@ -73,7 +76,23 @@ export default function SupportingDocumentsSection({ value, onChange }) {
               {doc.file_url ? (
                 <div className="flex items-center gap-2 py-1.5 px-2 rounded-md bg-secondary/30 text-xs">
                   <FileText className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span className="truncate">{doc.file_name}</span>
+                  <span className="truncate flex-1">{doc.file_name}</span>
+                  <SecureFileLink
+                    fileRef={doc.file_url}
+                    action="preview"
+                    entityType="SupportingDocument"
+                    title={doc.title}
+                    label={t("معاينة", "Preview")}
+                    className="text-primary inline-flex items-center gap-1 hover:underline shrink-0"
+                  />
+                  <SecureFileLink
+                    fileRef={doc.file_url}
+                    action="download"
+                    entityType="SupportingDocument"
+                    title={doc.title}
+                    label={t("تنزيل", "Download")}
+                    className="text-primary inline-flex items-center gap-1 hover:underline shrink-0"
+                  />
                 </div>
               ) : (
                 <label className="flex items-center justify-center gap-2 h-9 rounded-md border border-dashed border-input cursor-pointer hover:bg-secondary/30 text-xs text-muted-foreground">

@@ -10,6 +10,7 @@ import React, { useState, useEffect } from "react";
 import { FileText, Download, Eye, Archive, Loader2, Sparkles, History, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
+import { signedFileUrl, uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
 import { useAmeenSafe } from "@/lib/AmeenContext";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -54,7 +55,10 @@ export default function WorkGroupDocumentCenter({
     setBusy(version.id);
     setError("");
     try {
-      const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: version.file_url });
+      // Legacy versions may still point at the old public storage; the helper returns a
+      // public link as-is and mints a short-lived signed link for private storage.
+      const signed_url = await signedFileUrl(version.file_url);
+      await logFileAccess({ action: "preview", fileRef: version.file_url, entityType: "DocumentVersion", entityId: version.id, title: version.file_name || version.version_label });
       if (mode === "download") {
         const a = document.createElement("a");
         a.href = signed_url;
@@ -75,7 +79,8 @@ export default function WorkGroupDocumentCenter({
     setError("");
     setBusy("upload");
     try {
-      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      const file_uri = await uploadPrivateFile(file);
+      await logFileAccess({ action: "upload", fileRef: file_uri, entityType: "DocumentVersion", title: file.name });
       const doc = await base44.entities.Document.create({
         organization_id: organizationId,
         committee_id: committeeId,

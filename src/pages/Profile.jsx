@@ -12,8 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
-import { Image } from "@/components/ui/image";
 import SignaturePad from "@/components/raqeem/SignaturePad";
+import SecureFileImage from "@/components/raqeem/SecureFileImage";
+import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
 import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
@@ -80,9 +81,13 @@ export default function Profile() {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setAvatarUrl(file_url);
-    } catch {
+      // A personal photo is private by default: it is stored privately and rendered
+      // through a short-lived signed link inside the authorised surfaces only.
+      const file_uri = await uploadPrivateFile(file);
+      await logFileAccess({ action: "upload", fileRef: file_uri, entityType: "UserProfile", entityId: effectiveActor?.id, title: file.name });
+      setAvatarUrl(file_uri);
+    } catch (error) {
+      console.warn("The personal photo could not be stored:", error?.message || error);
     }
     setUploading(false);
   };
@@ -153,7 +158,7 @@ export default function Profile() {
             <div className="relative shrink-0">
               <div className="w-24 h-24 rounded-full border-4 border-card bg-primary/10 overflow-hidden flex items-center justify-center">
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                  <SecureFileImage fileRef={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-2xl font-bold text-primary">{initials}</span>
                 )}

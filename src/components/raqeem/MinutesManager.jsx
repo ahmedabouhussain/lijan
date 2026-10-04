@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { FileText, Sparkles, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import SecureFileImage from "@/components/raqeem/SecureFileImage";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
@@ -281,7 +282,7 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
                         <StatusBadge label={t("موقّع", "Signed")} colorClass="bg-emerald-50 text-emerald-700" />
                       </div>
                       {sig.signature_image_url ? (
-                        <img src={sig.signature_image_url} alt="signature" className="h-10 object-contain mb-1" />
+                        <SecureFileImage fileRef={sig.signature_image_url} alt="signature" className="h-10 object-contain mb-1" />
                       ) : (
                         <div className="text-xl text-foreground mb-1" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}>
                           {sig.signature_text}

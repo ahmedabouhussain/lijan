@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/LanguageContext";
+import SecureFileLink from "@/components/raqeem/SecureFileLink";
+import { uploadPrivateFile, signedFileUrl, logFileAccess } from "@/lib/secureFiles";
 
 const DOC_TYPES = [
   { value: "decision", label: "قرار" },
@@ -29,11 +31,12 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
     setUploading(true);
     setError("");
     try {
-      const res = await base44.integrations.Core.UploadFile({ file });
-      const file_url = res.file_url || res;
-      onChange({ ...value, file_url, file_name: file.name });
+      // Stored privately: the form keeps the private reference, never a public link.
+      const file_url = await uploadPrivateFile(file);
+      await logFileAccess({ action: "upload", fileRef: file_url, entityType: "EstablishingDocument", title: file.name });
+      onChange({ ...value, file_url, file_name: file.name, file_size: file.size, mime_type: file.type });
     } catch {
-      setError("تعذّر رفع الملف");
+      setError(t("تعذّر رفع الملف", "The file could not be uploaded"));
     }
     setUploading(false);
   };
@@ -46,7 +49,10 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
     setExtracting(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("ExtractCommitteeCharter", { file_url: value.file_url });
+      // The extractor needs a readable link for this one call — a short-lived signed one.
+      const readableUrl = await signedFileUrl(value.file_url);
+      if (!readableUrl) throw new Error(t("الملف غير متاح", "File unavailable"));
+      const res = await base44.functions.invoke("ExtractCommitteeCharter", { file_url: readableUrl });
       const data = res.data || res;
       if (data.error) {
         setError(data.error);
@@ -107,6 +113,14 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
               <FileText className="w-4 h-4 shrink-0 text-primary" />
               {value.file_name || "ملف مرفوع"}
             </span>
+            <SecureFileLink
+              fileRef={value.file_url}
+              action="preview"
+              entityType="EstablishingDocument"
+              title={value.file_name}
+              label={t("معاينة", "Preview")}
+              className="text-xs text-primary inline-flex items-center gap-1 hover:underline shrink-0"
+            />
             <button
               onClick={() => {
                 onChange({ ...value, file_url: "", file_name: "" });

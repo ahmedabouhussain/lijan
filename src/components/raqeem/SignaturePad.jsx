@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { PenLine, Eraser, Type, Check } from "lucide-react";
+import SecureFileImage from "@/components/raqeem/SecureFileImage";
+import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
 
 export default function SignaturePad({ value, onChange }) {
   const canvasRef = useRef(null);
@@ -70,10 +71,14 @@ export default function SignaturePad({ value, onChange }) {
       const dataUrl = canvasRef.current.toDataURL("image/png");
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], "signature.png", { type: "image/png" });
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onChange({ ...value, image_url: file_url, text: undefined });
+      // The signature is stored privately — no permanent public link is ever created.
+      const file_uri = await uploadPrivateFile(file);
+      await logFileAccess({ action: "upload", fileRef: file_uri, entityType: "Signature", title: file.name });
+      onChange({ ...value, image_url: file_uri, text: undefined });
       setMode("drawn");
-    } catch {}
+    } catch (error) {
+      console.warn("The signature could not be stored:", error?.message || error);
+    }
     setUploading(false);
   };
 
@@ -148,7 +153,7 @@ export default function SignaturePad({ value, onChange }) {
         <div className="flex items-center justify-between gap-3 p-3 bg-secondary/40 rounded-md border border-border">
           <div className="text-xs text-muted-foreground">التوقيع الحالي:</div>
           {value?.image_url ? (
-            <img src={value.image_url} alt="signature" className="h-12 object-contain" />
+            <SecureFileImage fileRef={value.image_url} alt="signature" className="h-12 object-contain" />
           ) : (
             <span className="text-2xl text-foreground" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}>
               {value.text}

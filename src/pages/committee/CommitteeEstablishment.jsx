@@ -4,7 +4,7 @@ import { useCommittee } from "@/lib/CommitteeContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { base44 } from "@/api/base44Client";
-import { ScrollText, Loader2, Upload, Sparkles, FileText, AlertTriangle, Check, FilePlus2 } from "lucide-react";
+import { ScrollText, Loader2, Upload, Sparkles, AlertTriangle, Check, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,18 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import LocalizedFileUpload from "@/components/raqeem/LocalizedFileUpload";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import SecureFileLink from "@/components/raqeem/SecureFileLink";
+import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
+
+const MAX_OFFICIAL_FILE_BYTES = 25 * 1024 * 1024;
+const ALLOWED_OFFICIAL_FILE_TYPES = [
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
 
 const INSTRUMENT_TYPES = [
   { value: "law", ar: "قانون / لائحة", en: "Law / Regulation" },
@@ -100,12 +112,30 @@ export default function CommitteeEstablishment() {
 
   useEffect(() => { loadInstruments(); }, [data?.committee?.id]);
 
-  const handleFile = async (e) => {
-    const file = e.target.files?.[0];
+  // The single upload path for the committee's official founding file. The file goes to
+  // private storage and the record keeps only its private reference; the readable link is
+  // minted on demand, for one view at a time.
+  const handleFile = async (file) => {
     if (!file) return;
+    if (file.size > MAX_OFFICIAL_FILE_BYTES) {
+      setMsg(t("حجم الملف يتجاوز ٢٥ ميجابايت", "The file is larger than 25 MB"));
+      return;
+    }
+    if (file.type && !ALLOWED_OFFICIAL_FILE_TYPES.includes(file.type)) {
+      setMsg(t("نوع الملف غير مدعوم", "This file type is not supported"));
+      return;
+    }
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const file_url = await uploadPrivateFile(file);
+      await logFileAccess({
+        action: "upload",
+        fileRef: file_url,
+        entityType: "FoundingInstrument",
+        entityId: data?.committee?.id,
+        committeeId: data?.committee?.id,
+        title: file.name,
+      });
       setForm((f) => ({
         ...f,
         file_url,
@@ -113,8 +143,9 @@ export default function CommitteeEstablishment() {
         mime_type: file.type,
         file_size: file.size,
       }));
-    } catch {
-      setMsg(t("تعذّر رفع الملف", "The file could not be uploaded"));
+      setMsg("");
+    } catch (error) {
+      setMsg(error?.message || t("تعذّر رفع الملف", "The file could not be uploaded"));
     }
     setUploading(false);
   };
@@ -264,14 +295,7 @@ export default function CommitteeEstablishment() {
             <LocalizedFileUpload
               label={t("رفع الملف الرسمي", "Upload the official file")}
               value={{ file_url: form.file_url, file_name: form.original_filename, file_size: form.file_size }}
-              onUpload={async (file) => {
-                setUploading(true);
-                try {
-                  const { file_url } = await base44.integrations.Core.UploadFile({ file });
-                  setForm((f) => ({ ...f, file_url, original_filename: file.name, mime_type: file.type, file_size: file.size }));
-                } catch { setMsg(t("تعذّر رفع الملف", "The file could not be uploaded")); }
-                setUploading(false);
-              }}
+              onUpload={handleFile}
             />
           </div>
           <Button size="sm" disabled={uploading || !form.file_url} onClick={submit} className="inline-flex items-center gap-2">
@@ -311,9 +335,16 @@ export default function CommitteeEstablishment() {
               </div>
               {inst.file_url && (
                 <div className="flex items-center gap-2">
-                  <a href={inst.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
-                    <FileText className="w-3.5 h-3.5" aria-hidden="true" /> {inst.original_filename || t("الملف", "File")}
-                  </a>
+                  <SecureFileLink
+                    fileRef={inst.file_url}
+                    action="download"
+                    entityType="FoundingInstrument"
+                    entityId={inst.id}
+                    committeeId={data?.committee?.id}
+                    title={inst.original_filename || inst.title_ar}
+                    label={inst.original_filename || t("الملف", "File")}
+                    className="text-xs text-primary inline-flex items-center gap-1 hover:underline"
+                  />
                   {inst.signature_detected && (
                     <span className="text-xs text-amber-600 inline-flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" /> {t("توقيع مرصود — غير موثَّق", "Signature detected — not authenticated")}
