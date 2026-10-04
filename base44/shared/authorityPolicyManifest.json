@@ -2,17 +2,17 @@
   "version": "authz-1.1.0",
   "supersedes": "authz-1.0.0",
   "change_class": "security",
-  "built_at": "2026-10-04T12:19:52.096Z",
+  "built_at": "2026-10-04T12:21:59.929Z",
   "source": {
     "kernel": {
       "path": "base44/shared/authorityKernel.ts",
-      "sha256": "6488dd9d33d2e30bb0d69117f1c3c0353c38a9d9c99033b55974d36d8ee66d69"
+      "sha256": "6f55d0f0889c9af2fcd4d0e6e16ce9daf1a3ab76636d4a4f91f29a6234681ebf"
     },
     "guard": {
       "path": "base44/shared/commandGuard.ts",
       "sha256": "d093611ed29bc261c912ae4d8b2c098938b2fd2414638b145f523e5fe9cc4d53"
     },
-    "combined_sha256": "9fdf364579f00fcc8bccf770a3d2967fc0f899bee40a1a5178a252154c968988"
+    "combined_sha256": "69256cf18accaa98e94679c6f7d404804ddff92b494a3e8408a57ffc4cee144b"
   },
   "policy": {
     "delegable_capabilities": [
@@ -25,6 +25,7 @@
       "decision.issue",
       "escalation.approve",
       "action.admin",
+      "action.close",
       "committee.activate"
     ],
     "operational_capabilities": [
@@ -47,6 +48,7 @@
       "attendance.respond",
       "action.admin",
       "action.progress",
+      "action.close",
       "escalation.approve",
       "review.respond",
       "amendment.notify",
@@ -113,6 +115,7 @@
     "attendance.respond",
     "action.admin",
     "action.progress",
+    "action.close",
     "escalation.approve",
     "review.respond",
     "amendment.notify",
@@ -139,6 +142,7 @@
     "decision.issue",
     "escalation.approve",
     "action.admin",
+    "action.close",
     "committee.activate",
     "committee.activate",
     "committee.manage",
@@ -154,6 +158,7 @@
     "attendance.respond",
     "action.admin",
     "action.progress",
+    "action.close",
     "escalation.approve",
     "amendment.notify",
     "agenda.evaluate",
@@ -358,10 +363,10 @@
     "suites": {
       "role_tests": 30,
       "positive_tests": 12,
-      "fail_closed_tests": 14
+      "fail_closed_tests": 15
     },
     "last_run": {
-      "at": "2026-10-04T12:19:52.097Z",
+      "at": "2026-10-04T12:21:59.930Z",
       "authority_role_tests": {
         "total": 30,
         "passed": 30,
@@ -370,13 +375,13 @@
       },
       "authority_positive_tests": {
         "total": 12,
-        "passed": 10,
-        "failed": 2,
-        "verdict": "FAIL"
+        "passed": 12,
+        "failed": 0,
+        "verdict": "PASS"
       },
       "fail_closed_tests": {
-        "total": 14,
-        "passed": 14,
+        "total": 15,
+        "passed": 15,
         "failed": 0,
         "verdict": "PASS"
       }

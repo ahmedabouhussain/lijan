@@ -55,8 +55,8 @@ export const OPERATIONAL_CAPABILITIES = [
   "vote.call", "vote.certify", "vote.cast",
   "minutes.draft", "minutes.review", "minutes.approve",
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
-  "escalation.approve", "review.respond", "amendment.notify", "agenda.evaluate",
-  "instrument.extract",
+  "action.close", "escalation.approve", "review.respond", "amendment.notify",
+  "agenda.evaluate", "instrument.extract",
   "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute",
 ];
@@ -71,7 +71,7 @@ const RECUSAL_BLOCKED = [
 export const DELEGABLE_CAPABILITIES = [
   "agenda.approve", "meeting.start", "vote.call", "vote.certify",
   "minutes.approve", "decision.approve", "decision.issue",
-  "escalation.approve", "action.admin", "committee.activate",
+  "escalation.approve", "action.admin", "action.close", "committee.activate",
 ];
 
 /**
@@ -87,6 +87,7 @@ const ROLE_BASELINE = {
     "vote.call", "vote.certify", "vote.cast",
     "minutes.draft", "minutes.review", "minutes.approve",
     "attendance.certify", "attendance.respond", "action.admin", "action.progress",
+    "action.close",
     "escalation.approve", "amendment.notify", "agenda.evaluate", "instrument.extract",
     "decision.view", "decision.comment", "decision.propose", "decision.review",
     "decision.approve", "decision.issue", "decision.vote", "decision.acknowledge",

@@ -2,9 +2,9 @@
 
 > ملف مُولَّد — لا يُحرَّر يدويًا. المصدر: `scripts/authority-guardrails.mjs` · الإصدار `authz-1.1.0`
 
-- مواضع الأوامر: **51**
+- مواضع الأوامر المكتشفة: **51**
 - على المسار المحروس: **16**
-- تلميح لجنة فقط: **35**
+- تلميح لجنة فقط (بدون سجل مستهدف): **35**
 - كتابة محكومة بحق قراءة: **0**
 - مطابقة بالاسم: **0**
 
@@ -43,7 +43,7 @@
 | CMD-22 | `UploadFoundingInstrument` | committee.manage (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
 | CMD-23 | `ActivateAlternate` | committee.manage (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
 | CMD-24 | `AuthorizeCommitteeAction` | read (تلميح فقط) | لا | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-25 | `CloseAction` | action.admin | نعم | تلميح لجنة | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-25 | `CloseAction` | action.close | نعم | تلميح لجنة | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-26 | `DeclareConflict` | conflict.declare | نعم | تلميح لجنة | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-27 | `DelegateAuthority` | committee.manage (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
 | CMD-28 | `ExtendTerm` | committee.manage (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |

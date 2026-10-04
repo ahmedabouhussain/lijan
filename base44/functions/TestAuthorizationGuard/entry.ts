@@ -87,6 +87,7 @@ const MEETING_RUNNING = { ...MEETING, status: 'in_progress' };
 const MINUTES = { id: 'MNT-T1', committee_id: COM, organization_id: ORG, meeting_id: 'MTG-T1', status: 'draft' };
 const ACTION_OWNED = { id: 'ACT-T1', committee_id: COM, organization_id: ORG, status: 'in_progress', owner_user_id: USER.id, title: 'Action' };
 const ACTION_ACCEPT = { ...ACTION_OWNED, id: 'ACT-T2', status: 'evidence_pending', owner_user_id: 'USR-OTHER' };
+const ACTION_CLOSED = { ...ACTION_ACCEPT, id: 'ACT-T3', status: 'verified' };
 const REVIEW = { id: 'RRV-T1', committee_id: COM, organization_id: ORG, document_id: 'DOC-T1', reviewer_user_id: USER.id, status: 'pending' };
 const DECISION = { id: 'DEC-T1', committee_id: COM, organization_id: ORG, status: 'approved' };
 const DOCUMENT = { id: 'DOC-T1', committee_id: COM, organization_id: ORG };
@@ -111,7 +112,7 @@ const POSITIVE_CASES = [
     opts: { capability: 'attendance.certify', target_type: 'Meeting', target_id: 'MTG-T1' },
     records: () => baseRecords('secretary', { Meeting: { 'MTG-T1': MEETING_RUNNING } }) },
   { id: 'POS-003', label: 'member casts one vote inside the committee scope', role: 'member', expect: true,
-    opts: { capability: 'vote.cast', target_type: 'Meeting', target_id: 'MTG-T1', related: [{ type: 'Vote', ids: ['VOT-T1'] }] },
+    opts: { capability: 'decision.vote', target_type: 'Meeting', target_id: 'MTG-T1', related: [{ type: 'Vote', ids: ['VOT-T1'] }] },
     records: () => baseRecords('member', { Meeting: { 'MTG-T1': MEETING_RUNNING }, [`Vote!filter`]: [{ id: 'VOT-T1', committee_id: COM }] }) },
   { id: 'POS-004', label: 'member answers their OWN invitation (seat resolved server-side)', role: 'member', expect: true,
     opts: { capability: 'attendance.respond', target_type: 'Meeting', target_id: 'MTG-T1' },
@@ -186,6 +187,9 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-014', label: 'a state that does not permit the act is refused before it is written', expectCode: 'state_not_permitted',
     opts: { capability: 'minutes.approve', target_type: 'MeetingMinutes', target_id: 'MNT-T1' },
     stub: () => stubClient({ records: baseRecords('chair', { MeetingMinutes: { 'MNT-T1': { ...MINUTES, status: 'approved' } }, Meeting: { 'MTG-T1': MEETING } }) }) },
+  { id: 'FCL-015', label: 'an action already verified cannot be closed a second time (no duplicate closure)', expectCode: 'state_not_permitted',
+    opts: { capability: 'action.close', target_type: 'Action', target_id: 'ACT-T3' },
+    stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T3': ACTION_CLOSED } }) }) },
 ];
 
 function verdictOf(rows) {

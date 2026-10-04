@@ -13,8 +13,11 @@ export default async function(req) {
 
     // Authority on a TRUSTED target: the committee is derived from the action record itself, and
     // the parent chain (action → decision / meeting → committee) must agree before it is used.
+    // Closing is an ACCEPTANCE act, not general administration: `action.close` is held by the chair
+    // (and by a delegate under an active delegation). It also carries the permitted-state gate, so an
+    // action already verified or closed can never be closed a second time.
     const auth = await authorizeCommand(base44, {
-      capability: 'action.admin',
+      capability: 'action.close',
       target_type: 'Action',
       target_id: action_id,
       claimed_committee_id: body.committee_id || null,
