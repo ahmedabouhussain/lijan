@@ -47,7 +47,15 @@ export const EffectiveActorProvider = ({ children }) => {
       const raw = localStorage.getItem(DEMO_SESSION_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && parsed.actor_id && parsed.email && parsed.persona_key) return parsed;
+        // A session without a live server-issued token is not a session.
+        if (
+          parsed
+          && parsed.actor_id
+          && parsed.persona_key
+          && parsed.showcase_token
+          && parsed.showcase_expires_at
+          && new Date(parsed.showcase_expires_at).getTime() > Date.now()
+        ) return parsed;
         localStorage.removeItem(DEMO_SESSION_KEY);
       }
     } catch {
@@ -57,14 +65,29 @@ export const EffectiveActorProvider = ({ children }) => {
   });
 
   // Enter the governed exploration experience as a chosen persona.
-  const enterDemo = useCallback((personaKey = DEFAULT_DEMO_PERSONA_KEY) => {
+  // The session is ISSUED BY THE SERVER: this client holds a short-lived, revocable showcase
+  // token — never a role, an organization or a user session.
+  const enterDemo = useCallback(async (personaKey = DEFAULT_DEMO_PERSONA_KEY) => {
     const persona = resolveDemoPersona(personaKey) || resolveDemoPersona(DEFAULT_PERSONA);
+    if (!persona) return null;
     // A new persona must never inherit the previous one's cached context.
     if (!demoSession || demoSession.persona_key !== persona.key) clearDemoCaches();
 
+    let issued = null;
+    try {
+      const res = await base44.functions.invoke('IssueShowcaseSession', {
+        persona_key: persona.key,
+        entry_point: window.location.pathname,
+      });
+      issued = res?.data || res;
+    } catch {
+      issued = null;
+    }
+    if (!issued?.showcase_token) return null;
+
     const session = {
-      persona_key: persona.key,
-      persona_id: persona.persona_id,
+      persona_key: issued.persona_key || persona.key,
+      persona_id: issued.persona_id || persona.persona_id,
       actor_id: persona.user_id,
       display_name_ar: persona.name_ar,
       display_name_en: persona.name_en,
@@ -77,9 +100,14 @@ export const EffectiveActorProvider = ({ children }) => {
       primary_org_public_id: persona.primary_org_public_id,
       account_classification_ar: persona.account_classification_ar,
       account_classification_en: persona.account_classification_en,
-      dataset: persona.dataset,
+      dataset: issued.dataset || persona.dataset,
       is_demo: true,
-      demo_session_id: `demo-${Date.now()}`,
+      demo_session_id: issued.session_id,
+      showcase_token: issued.showcase_token,
+      showcase_expires_at: issued.expires_at,
+      allowed_committee_public_ids: issued.allowed_committee_public_ids || [],
+      data_class: issued.data_class,
+      write_scope: issued.write_scope || 'none',
       started_at: new Date().toISOString(),
     };
     localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
@@ -116,10 +144,17 @@ export const EffectiveActorProvider = ({ children }) => {
   // End the exploration: clear the persona, its organization, its committee, its role and
   // every cached context, then return to the entry screen.
   const exitDemo = useCallback(() => {
+    // End it on the server too: a revoked token stops working immediately.
+    const token = demoSession?.showcase_token;
+    if (token) {
+      base44.functions
+        .invoke('RevokeShowcaseSession', { showcase_token: token, reason: 'exit' })
+        .catch(() => {});
+    }
     localStorage.removeItem(DEMO_SESSION_KEY);
     clearDemoCaches();
     setDemoSession(null);
-  }, []);
+  }, [demoSession]);
 
   const isDemoMode = !!demoSession;
 
@@ -155,6 +190,7 @@ export const EffectiveActorProvider = ({ children }) => {
         isDemoMode,
         demoSession,
         demoPersonaKey: demoSession?.persona_key || null,
+        showcaseToken: demoSession?.showcase_token || null,
         isDrHamadExperience: demoSession?.persona_key === DEFAULT_PERSONA,
         enterDemo,
         exitDemo,

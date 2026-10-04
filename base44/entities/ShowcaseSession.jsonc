@@ -1,0 +1,135 @@
+{
+  "name": "ShowcaseSession",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string",
+      "title": "Session Token (the only capability a showcase client holds \u2014 never a user session)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "revoked",
+        "expired"
+      ],
+      "default": "active"
+    },
+    "persona_key": {
+      "type": "string",
+      "title": "Persona Key (server roster key)"
+    },
+    "persona_id": {
+      "type": "string",
+      "title": "Persona ID"
+    },
+    "principal_id": {
+      "type": "string",
+      "title": "Virtual Principal ID (DEMO-USER-*, never a real account)"
+    },
+    "dataset": {
+      "type": "string",
+      "title": "Showcase Dataset (the only dataset this session may read)"
+    },
+    "data_class": {
+      "type": "string",
+      "title": "Data Class of everything this session may touch",
+      "default": "synthetic_showcase"
+    },
+    "allowed_committee_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Committee IDs (server-resolved scope, never client-supplied)"
+    },
+    "allowed_committee_public_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Committee Public IDs (presentation scope)"
+    },
+    "issued_to_user_id": {
+      "type": "string",
+      "title": "Issued To (real user id when the visitor is signed in \u2014 audit only, never authority)"
+    },
+    "issued_to_email": {
+      "type": "string",
+      "title": "Issued To (email, audit only)"
+    },
+    "issued_at": {
+      "type": "string",
+      "title": "Issued At",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At (short-lived)",
+      "format": "date-time"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "title": "Last Seen At",
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": "string",
+      "title": "Revoked At",
+      "format": "date-time"
+    },
+    "revoke_reason": {
+      "type": "string",
+      "title": "Revoke Reason"
+    },
+    "write_scope": {
+      "type": "string",
+      "title": "Write Scope (sandbox writes land only after the isolated sandbox contract is in force)",
+      "enum": [
+        "none",
+        "sandbox"
+      ],
+      "default": "none"
+    },
+    "entry_point": {
+      "type": "string",
+      "title": "Entry Point (where the showcase was entered from)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    }
+  },
+  "required": [
+    "token",
+    "status",
+    "persona_key",
+    "dataset",
+    "data_class",
+    "allowed_committee_ids",
+    "expires_at"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@ import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 // The scope flag travels with the request, so an exploration surface reads its own governed
 // dataset and a real surface reads the caller's — never a client-side query of its own.
 export default function useCommitteeRecord(entityType, recordId) {
-  const { isDemoMode, demoPersonaKey } = useEffectiveActor();
+  const { isDemoMode, showcaseToken } = useEffectiveActor();
   const [bundle, setBundle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,12 +15,19 @@ export default function useCommitteeRecord(entityType, recordId) {
     if (!entityType || !recordId) return;
     setLoading(true);
     setError("");
+    if (isDemoMode && !showcaseToken) {
+      setError("جلسة الاستكشاف غير صالحة — أعد الدخول إلى الاستكشاف");
+      setBundle(null);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await base44.functions.invoke("GetCommitteeRecord", {
         entity_type: entityType,
         record_id: recordId,
-        demo_mode: isDemoMode,
-        demo_persona_key: demoPersonaKey,
+        // The showcase principal travels as a server-issued token — never as a mode flag,
+        // a persona key or a role. The server decides the scope from the token alone.
+        ...(isDemoMode ? { showcase_token: showcaseToken } : {}),
       });
       const d = res?.data || res;
       if (d?.error) {
@@ -34,7 +41,7 @@ export default function useCommitteeRecord(entityType, recordId) {
       setBundle(null);
     }
     setLoading(false);
-  }, [entityType, recordId, isDemoMode, demoPersonaKey]);
+  }, [entityType, recordId, isDemoMode, showcaseToken]);
 
   useEffect(() => { reload(); }, [reload]);
 
