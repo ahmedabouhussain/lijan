@@ -6,18 +6,20 @@ import pluginUnusedImports from "eslint-plugin-unused-imports";
 
 // LIJAN™ — lint scope.
 //
-// Scope is every source file the project owns: pages, components, internal library,
-// hooks, utilities, plus the shared UI primitives (vendored copies from the UI kit,
-// reported separately below). Generated output, third-party packages and build
+// Scope is every front-end source file the project owns: pages, components, internal
+// library, hooks, utilities, plus the shared UI primitives (vendored copies from the
+// UI kit, reported separately below). Generated output, third-party packages and build
 // artifacts are excluded.
 //
-//   Project code:      npx eslint src/pages src/components src/hooks src/lib src/utils src/App.jsx src/main.jsx
+//   Project code:      npx eslint src --ignore-pattern "src/components/ui/**"
 //   Shared UI kit:     npx eslint src/components/ui
 //
-// Backend functions run on the Deno runtime (TypeScript); they are not covered by
-// this JS/JSX configuration and are checked separately.
+// This configuration is JavaScript/JSX only — a TypeScript file parsed by it fails as a
+// syntax error, so .ts/.tsx are deliberately out of scope. Backend functions and shared
+// modules (.ts) run on the Deno runtime and are checked separately, by type-checking and
+// by executing them.
 const projectFiles = [
-  "src/**/*.{js,mjs,cjs,jsx,ts,tsx}",
+  "src/**/*.{js,mjs,cjs,jsx}",
 ];
 
 const sharedConfig = (files) => ({
