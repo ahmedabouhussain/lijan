@@ -31,6 +31,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [fullName, setFullName] = useState("");
   const [governanceRole, setGovernanceRole] = useState("member");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -99,13 +100,14 @@ export default function Profile() {
   };
 
   const save = async () => {
-    // In demo mode, changes are local only — never written to the real user record
+    // The exploration session is a live view of a governed persona: nothing here is written
+    // to any record, so the button must never confirm a save that did not happen.
     if (isDemoMode) {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setSaveError("");
       return;
     }
     setSaving(true);
+    setSaveError("");
     try {
       const selectedEntity = findEntity(institutionId);
       const affiliationData = {
@@ -126,7 +128,9 @@ export default function Profile() {
       await base44.auth.updateMe(affiliationData);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch {
+    } catch (error) {
+      // A failed save must be visible: swallowing it reads as "nothing was saved".
+      setSaveError(error?.message || t("تعذر حفظ التغييرات", "Could not save the changes"));
     }
     setSaving(false);
   };
@@ -391,6 +395,15 @@ export default function Profile() {
             <LogOut className="w-4 h-4 mr-1.5" /> {t("تسجيل الخروج", "Log Out")}
           </Button>
           <div className="flex items-center gap-3">
+            {isDemoMode && (
+              <span className="text-xs text-muted-foreground text-end max-w-[16rem]">
+                {t(
+                  "جلسة استكشاف — التغييرات لا تُحفظ على سجلك الحقيقي",
+                  "Exploration session — changes are not saved to your real record"
+                )}
+              </span>
+            )}
+            {saveError && <span className="text-xs text-destructive">{saveError}</span>}
             {saved && (
               <span className="text-xs text-emerald-600 inline-flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> {t("تم الحفظ", "Saved")}
