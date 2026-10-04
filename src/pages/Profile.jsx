@@ -47,17 +47,37 @@ export default function Profile() {
 
   useEffect(() => {
     if (isDemoMode) {
-      // Demo mode: use the active demo persona — never touch the real user record
+      // Demo mode: use the active demo persona — never touch the real user record. A saved
+      // exploration profile (governed demonstration data) overrides the registry defaults,
+      // so edits made here survive reloads and other devices.
       const persona = resolveDemoPersona(demoPersonaKey);
-      setUser(effectiveActor);
-      setFullName(persona.name_ar);
-      setTitle(persona.job_title_ar);
-      setInstitutionEmail(persona.email);
-      // A demonstration persona carries its own approved public photo — it is part of the
-      // governed demo identity, so it renders directly like a brand asset, never signed.
-      setAvatarUrl(persona.avatar_url || "");
-      setGovernanceRole("member"); // Demo users are never admin
-      setLoading(false);
+      (async () => {
+        let profile = null;
+        try {
+          const page = await base44.entities.DemoPersonaProfile.filter(
+            { persona_key: persona.key },
+            { limit: 1 }
+          );
+          profile = page.items?.[0] || null;
+        } catch {
+          // No saved exploration profile yet — the registry values stand on their own.
+        }
+        setUser({ ...effectiveActor, full_name: profile?.full_name || persona.name_ar });
+        setFullName(profile?.full_name || persona.name_ar);
+        setTitle(profile?.job_title || persona.job_title_ar);
+        setInstitutionEmail(profile?.institution_email || persona.email);
+        // A demonstration persona carries its own approved photo — part of the governed demo
+        // identity, so a public asset renders directly and a private reference stays signed.
+        setAvatarUrl(profile?.avatar_url || persona.avatar_url || "");
+        setGovernanceRole(profile?.governance_role || "member"); // Demo users are never admin
+        setPhone(profile?.phone || "");
+        setBio(profile?.bio || "");
+        setSigText(profile?.signature_text || "");
+        setSigImage(profile?.signature_image_url || "");
+        setInstitutionId(profile?.institution_id || "");
+        setDepartment(profile?.department || "");
+        setLoading(false);
+      })();
     } else {
       // Normal mode: load real user profile
       base44.auth
@@ -100,32 +120,56 @@ export default function Profile() {
   };
 
   const save = async () => {
-    // The exploration session is a live view of a governed persona: nothing here is written
-    // to any record, so the button must never confirm a save that did not happen.
-    if (isDemoMode) {
-      setSaveError("");
-      return;
-    }
+    const selectedEntity = findEntity(institutionId);
     setSaving(true);
     setSaveError("");
     try {
-      const selectedEntity = findEntity(institutionId);
-      const affiliationData = {
-        full_name: fullName,
-        governance_role: governanceRole,
-        avatar_url: avatarUrl,
-        title,
-        phone,
-        bio,
-        signature_text: sigText,
-        signature_image_url: sigImage,
-        institution_id: institutionId,
-        institution_name_ar: selectedEntity?.ar || "",
-        institution_name_en: selectedEntity?.en || "",
-        institution_email: institutionEmail,
-        department,
-      };
-      await base44.auth.updateMe(affiliationData);
+      if (isDemoMode) {
+        // The exploration session keeps its own governed demonstration record — never the
+        // real user account, never production data. This record is what makes the edits made
+        // inside the session permanent; the registry stays the default when none exists yet.
+        const persona = resolveDemoPersona(demoPersonaKey);
+        await base44.entities.DemoPersonaProfile.upsert(
+          [
+            {
+              persona_key: persona.key,
+              full_name: fullName,
+              job_title: title,
+              phone,
+              bio,
+              governance_role: governanceRole,
+              avatar_url: avatarUrl,
+              signature_text: sigText,
+              signature_image_url: sigImage,
+              institution_id: institutionId,
+              institution_name_ar: selectedEntity?.ar || "",
+              institution_name_en: selectedEntity?.en || "",
+              institution_email: institutionEmail,
+              department,
+              is_demo_data: true,
+              demo_dataset: persona.dataset || "",
+            },
+          ],
+          { key: "persona_key" }
+        );
+        setUser((prev) => ({ ...prev, full_name: fullName }));
+      } else {
+        await base44.auth.updateMe({
+          full_name: fullName,
+          governance_role: governanceRole,
+          avatar_url: avatarUrl,
+          title,
+          phone,
+          bio,
+          signature_text: sigText,
+          signature_image_url: sigImage,
+          institution_id: institutionId,
+          institution_name_ar: selectedEntity?.ar || "",
+          institution_name_en: selectedEntity?.en || "",
+          institution_email: institutionEmail,
+          department,
+        });
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
@@ -398,8 +442,8 @@ export default function Profile() {
             {isDemoMode && (
               <span className="text-xs text-muted-foreground text-end max-w-[16rem]">
                 {t(
-                  "جلسة استكشاف — التغييرات لا تُحفظ على سجلك الحقيقي",
-                  "Exploration session — changes are not saved to your real record"
+                  "جلسة استكشاف — تُحفظ التغييرات في بيانات العرض المعزولة، لا على سجلك الحقيقي",
+                  "Exploration session — changes are saved to the isolated demonstration data, not to your real record"
                 )}
               </span>
             )}

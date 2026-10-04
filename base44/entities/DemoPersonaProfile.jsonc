@@ -1,0 +1,100 @@
+{
+  "name": "DemoPersonaProfile",
+  "type": "object",
+  "properties": {
+    "persona_key": {
+      "type": "string",
+      "title": "Persona Key (the governed demonstration identity this profile belongs to)"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "job_title": {
+      "type": "string",
+      "title": "Job Title"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "bio": {
+      "type": "string",
+      "title": "Bio"
+    },
+    "governance_role": {
+      "type": "string",
+      "title": "Governance Role",
+      "enum": [
+        "executive",
+        "chair",
+        "secretary",
+        "member",
+        "auditor"
+      ],
+      "default": "member"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "Profile Photo (approved public demonstration asset, or a private reference)"
+    },
+    "signature_text": {
+      "type": "string",
+      "title": "Signature Text"
+    },
+    "signature_image_url": {
+      "type": "string",
+      "title": "Signature Image"
+    },
+    "institution_id": {
+      "type": "string",
+      "title": "Institution ID"
+    },
+    "institution_name_ar": {
+      "type": "string",
+      "title": "Institution Name (Arabic)"
+    },
+    "institution_name_en": {
+      "type": "string",
+      "title": "Institution Name (English)"
+    },
+    "institution_email": {
+      "type": "string",
+      "title": "Official Email"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": true
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "persona_key"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
