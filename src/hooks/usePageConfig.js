@@ -25,7 +25,7 @@ export function usePageConfig(pageKey) {
       const d = res.data || res;
       setConfig(d.config || null);
       setIsDefault(d.is_default);
-    } catch (e) {
+    } catch {
       setConfig(null);
       setIsDefault(true);
     }

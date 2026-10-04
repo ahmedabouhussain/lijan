@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
-import { dispatchNotification } from '../../shared/notificationEngine.ts';
+import { dispatchNotification, aggregateNoticeState } from '../../shared/notificationEngine.ts';
 
 // ProcessEscalation — moves an overdue action to the next authority level.
 //
@@ -208,8 +208,8 @@ export default async function (req) {
         previous_escalation_level: action.escalation_level || 'none',
         new_escalation_level: action.escalation_level || 'none',
         recipients: publicRecipients,
-        notified: 0,
-        notice_state: action.escalation_notice_state || 'none',
+        notice_state: action.escalation_notice_state || 'not_required',
+        retry_available: ['failed', 'partially_delivered'].includes(action.escalation_notice_state),
         correlation_id: auth.correlation_id,
       });
     }
@@ -232,7 +232,8 @@ export default async function (req) {
           last_escalation_correlation: auth.correlation_id,
           last_reminder_at: now,
           reminder_count: (action.reminder_count || 0) + 1,
-          escalation_notice_state: 'none',
+          // Queued with the transition. It becomes delivered only when a channel confirms.
+          escalation_notice_state: 'queued',
           status: action.status === 'overdue' ? 'overdue' : (nextEscalation === 'escalation_authority' ? 'blocked' : action.status),
         },
       },
@@ -251,8 +252,8 @@ export default async function (req) {
           previous_escalation_level: action.escalation_level || 'none',
           new_escalation_level: after.escalation_level,
           recipients: publicRecipients,
-          notified: 0,
-          notice_state: after.escalation_notice_state || 'none',
+          notice_state: after.escalation_notice_state || 'not_required',
+          retry_available: ['failed', 'partially_delivered'].includes(after.escalation_notice_state),
           correlation_id: auth.correlation_id,
         });
       }
@@ -280,9 +281,89 @@ export default async function (req) {
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
-    // Notify the resolved authority. A notice that cannot be queued never undoes a
-    // completed escalation; the outcome is reported instead.
-    let notified = 0;
+    // Notify the resolved authority. The transition is already committed, so a channel
+    // problem never rolls it back — it is reported instead. The action's notice state
+    // follows the CHANNEL's answer, never the fact that a record exists: a created record
+    // is `queued`, every recipient failing is `failed`, a partial success is
+    // `partially_delivered`.
+    const delivery = [];
+    try {
+      const deepLink = committeePath(org, committee);
+      for (const recipient of recipients) {
+        if (recipient.user_id === auth.user.id) continue;
+        const res = await dispatchNotification(base44, {
+          organization_id: auth.organization_id,
+          committee_id: action.committee_id,
+          recipient_user_id: recipient.user_id,
+          recipient_email: recipient.email,
+          recipient_name: recipient.name,
+          event_type: 'escalation_triggered',
+          subject_ar: `تصعيد إجراء إلى ${label.ar}`,
+          subject_en: `Action escalated to ${label.en}`,
+          body_ar: `صُعِّد الإجراء «${action.title_ar || action.title}» إلى ${label.ar}.${escalation_note ? ` السبب: ${escalation_note}` : ''}`,
+          body_en: `The action "${action.title}" was escalated to ${label.en}.${escalation_note ? ` Reason: ${escalation_note}` : ''}`,
+          source_entity_type: 'Action',
+          source_entity_id: action_id,
+          source_title: action.title,
+          priority: nextEscalation === 'escalation_authority' ? 'high' : 'normal',
+          actor_name: auth.user.full_name || auth.user.email,
+          deep_link: deepLink || undefined,
+          correlation_id: auth.correlation_id,
+          // One notice per transition and recipient — a repeat cannot create a second one.
+          transition_id: transitionId,
+          idempotency_key: `${transitionId}:${recipient.user_id}`,
+        });
+        delivery.push({
+          name: recipient.name,
+          role: recipient.role,
+          entity: recipient.entity,
+          status: res?.status || 'failed',
+          failure_reason: res?.failure_reason || null,
+          attempt_count: res?.attempt_count ?? 0,
+          next_retry_at: res?.next_retry_at || null,
+          outbox_id: res?.outbox_id || null,
+        });
+      }
+    } catch (error) {
+      delivery.push({
+        name: null,
+        role: nextEscalation,
+        entity: null,
+        status: 'failed',
+        failure_reason: error?.message || 'dispatch_failed',
+        attempt_count: 0,
+        next_retry_at: null,
+        outbox_id: null,
+      });
+    }
+
+    const noticeState = aggregateNoticeState(delivery.map((d) => d.status));
+    await base44.asServiceRole.entities.Action.updateMany(
+      { id: action_id, escalation_transition_id: transitionId },
+      { $set: { escalation_notice_state: noticeState } },
+    );
+
+    const deliveredCount = delivery.filter((d) => d.status === 'delivered').length;
+    const failedDeliveries = delivery.filter((d) => d.status === 'failed');
+
+    return Response.json({
+      status: 'ok',
+      action_id,
+      previous_escalation_level: action.escalation_level || 'none',
+      new_escalation_level: nextEscalation,
+      recipients: publicRecipients,
+      // Two separate facts, reported separately: the escalation moved, and the notice did
+      // (or did not) reach its recipients.
+      notice_state: noticeState,
+      notice_transition_id: transitionId,
+      delivered_count: deliveredCount,
+      failed_count: failedDeliveries.length,
+      delivery,
+      failure_reason: failedDeliveries.find((d) => d.failure_reason)?.failure_reason || null,
+      next_retry_at: failedDeliveries.find((d) => d.next_retry_at)?.next_retry_at || null,
+      retry_available: failedDeliveries.length > 0,
+      correlation_id: auth.correlation_id,
+    });
     const notifiedNames = [];
     try {
       const deepLink = committeePath(org, committee);

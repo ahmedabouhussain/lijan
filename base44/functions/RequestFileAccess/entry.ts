@@ -108,6 +108,12 @@ export default async function (req: Request): Promise<Response> {
   const action = ACTIONS.includes(body.action) ? body.action : 'preview';
   const purpose = typeof body.purpose === 'string' ? body.purpose.slice(0, 240) : '';
   const correlationId = `corr_${Math.random().toString(36).slice(2, 12)}`;
+  // The link lifetime can only ever be SHORTENED by the caller (never extended), so an
+  // isolation test can verify real expiry without weakening the governed default.
+  const requestedTtl = Number.parseInt(body.expires_in, 10);
+  const linkTtl = Number.isFinite(requestedTtl) && requestedTtl > 0
+    ? Math.min(requestedTtl, LINK_TTL_SECONDS)
+    : LINK_TTL_SECONDS;
 
   // entity_id is optional: a just-uploaded photo or attachment has no record yet.
   if (!entityType) {
@@ -213,7 +219,7 @@ export default async function (req: Request): Promise<Response> {
   try {
     const signed = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({
       file_uri: refValue,
-      expires_in: LINK_TTL_SECONDS,
+      expires_in: linkTtl,
     });
     signedUrl = signed?.signed_url || '';
   } catch (error) {
@@ -233,12 +239,12 @@ export default async function (req: Request): Promise<Response> {
     action: 'file_access',
     old_value: verdict.reason,
     new_value: 'allowed',
-    description: `File ${action} allowed (${verdict.reason}) ref:${refFingerprint} ttl:${LINK_TTL_SECONDS}s`,
+    description: `File ${action} allowed (${verdict.reason}) ref:${refFingerprint} ttl:${linkTtl}s`,
   });
 
   return Response.json({
     url: signedUrl,
-    expires_in: LINK_TTL_SECONDS,
+    expires_in: linkTtl,
     correlation_id: correlationId,
   });
 }

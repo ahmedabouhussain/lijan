@@ -106,7 +106,7 @@ export const EffectiveActorProvider = ({ children }) => {
         description: `Demo experience exploration started as ${persona.key}`,
         authority_context: `persona:${persona.key}`,
       });
-    } catch (e) {
+    } catch {
       // Silent fail — don't block demo entry
     }
 

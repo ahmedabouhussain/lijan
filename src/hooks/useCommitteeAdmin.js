@@ -23,7 +23,7 @@ export function useCommitteeAdmin() {
       const res = await base44.functions.invoke("GetCommitteeCapabilities", { committee_id: committeeId });
       const caps = res.data?.capabilities || res.capabilities;
       setCapabilities(caps);
-    } catch (e) {
+    } catch {
       setCapabilities(null);
     }
     setLoading(false);

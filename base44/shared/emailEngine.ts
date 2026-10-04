@@ -19,6 +19,8 @@
  * Status: Base44 SendEmail is LIVE. Outlook is ENGINEERING COMPLETE — awaiting authorization.
  */
 
+import { nextRetryAt } from './notificationEngine.ts';
+
 export interface EmailParams {
   to: string;
   subject_ar?: string;
@@ -85,8 +87,12 @@ export async function sendEmail(base44: any, params: EmailParams): Promise<Email
       // Update outbox
       if (outboxRecord) {
         await base44.asServiceRole.entities.NotificationOutbox.update(outboxRecord.id, {
-          status: 'sent',
+          // The provider accepted the message: that is the delivered state, not "sent".
+          status: 'delivered',
           sent_at: new Date().toISOString(),
+          attempt_count: 1,
+          last_attempt_at: new Date().toISOString(),
+          failure_reason: null,
         }).catch(() => {});
       }
       return { provider: 'outlook', status: 'accepted_pending_delivery', outbox_id: outboxRecord?.id, attempts: 1 };
@@ -145,16 +151,24 @@ export async function retryFailedOutbox(base44: any, maxRetries = 3): Promise<{ 
       });
 
       await base44.asServiceRole.entities.NotificationOutbox.update(record.id, {
-        status: 'sent',
+        status: 'delivered',
         sent_at: new Date().toISOString(),
         failure_reason: null,
+        attempt_count: (record.attempt_count || 0) + 1,
+        last_attempt_at: new Date().toISOString(),
+        next_retry_at: null,
       });
       succeeded++;
     } catch (error) {
       failedCount++;
       // Suppress after max retries
+      const attempts = (record.attempt_count || 0) + 1;
       await base44.asServiceRole.entities.NotificationOutbox.update(record.id, {
-        failure_reason: `Retry: ${error.message}`,
+        status: 'failed',
+        failure_reason: error.message || 'delivery_failed',
+        attempt_count: attempts,
+        last_attempt_at: new Date().toISOString(),
+        next_retry_at: nextRetryAt(attempts),
       }).catch(() => {});
     }
   }

@@ -173,14 +173,18 @@
     },
     "escalation_notice_state": {
       "type": "string",
-      "title": "Escalation Notice State",
+      "title": "Escalation Notice State (delivery truth: queued until a channel confirms, never notified on a record alone)",
       "enum": [
-        "none",
-        "notified",
+        "not_required",
         "no_recipient",
-        "failed"
+        "queued",
+        "dispatching",
+        "delivered",
+        "partially_delivered",
+        "failed",
+        "retry_scheduled"
       ],
-      "default": "none"
+      "default": "not_required"
     },
     "compliance_verified": {
       "type": "boolean",

@@ -4,6 +4,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpRight, Loader2, CheckCircle2, AlertTriangle, Users } from "lucide-react";
+import NoticeDeliveryStatus from "@/components/raqeem/NoticeDeliveryStatus";
 
 // The escalation chain and the receiving authority are decided on the server; this
 // component asks the server who will receive the action, shows that answer before the
@@ -26,7 +27,7 @@ const ROLE_LABEL = {
   escalation_authority: { ar: "جهة التصعيد", en: "Escalation authority" },
 };
 
-export default function EscalationAction({ action, busy, onEscalate }) {
+export default function EscalationAction({ action, busy, onEscalate, onRefresh }) {
   const { t, lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState("");
@@ -107,14 +108,9 @@ export default function EscalationAction({ action, busy, onEscalate }) {
             {t("تصعيد مرة أخرى", "Escalate again")}
           </button>
         </div>
-        <p className="text-muted-foreground">
-          {result.notified > 0
-            ? t(`أُشعر: ${(result.notified_names || []).join("، ")}`, `Notified: ${(result.notified_names || []).join(", ")}`)
-            : t(
-                "لم يُرسل إشعار: لا يوجد مستلم صالح لهذا المستوى",
-                "No notice was sent: no valid recipient exists for this level"
-              )}
-        </p>
+        {/* The escalation and its notice are two separate facts, reported separately:
+            a confirmed transition is never turned into a claim of successful delivery. */}
+        <NoticeDeliveryStatus outcome={result} actionId={action.id} onRetried={onRefresh} />
       </div>
     );
   }

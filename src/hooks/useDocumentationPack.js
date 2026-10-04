@@ -54,7 +54,7 @@ export default function useDocumentationPack() {
         );
         if (!active) return;
         setAssets(documents?.items || []);
-      } catch (e) {
+      } catch {
         if (active) setNotice({ type: "error", message: t("تعذر تحميل بيانات الحزمة. حاول تحديث الصفحة.", "The pack data could not be loaded. Please refresh the page.") });
       } finally {
         if (active) setLoading(false);
@@ -162,7 +162,7 @@ export default function useDocumentationPack() {
         startBrowserDownload(signed.signed_url, asset.filename);
         setBusy((prev) => ({ ...prev, [key]: "success" }));
         window.setTimeout(() => setBusy((prev) => ({ ...prev, [key]: null })), DOWNLOAD_SUCCESS_RESET_MS);
-      } catch (e) {
+      } catch {
         setBusy((prev) => ({ ...prev, [key]: "error" }));
         setNotice({
           type: "error",
@@ -202,7 +202,7 @@ export default function useDocumentationPack() {
       startBrowserDownload(signed.signed_url, release.zip_filename);
       setBusy((prev) => ({ ...prev, pack: "success" }));
       window.setTimeout(() => setBusy((prev) => ({ ...prev, pack: null })), DOWNLOAD_SUCCESS_RESET_MS);
-    } catch (e) {
+    } catch {
       setBusy((prev) => ({ ...prev, pack: "error" }));
       setNotice({
         type: "error",

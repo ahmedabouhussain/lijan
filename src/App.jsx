@@ -62,7 +62,6 @@ const CommitteeRoles = lazy(() => import('@/pages/committee/CommitteeRoles'));
 const CommitteeDelegations = lazy(() => import('@/pages/committee/CommitteeDelegations'));
 const CommitteeAlternates = lazy(() => import('@/pages/committee/CommitteeAlternates'));
 const CommitteeRecusals = lazy(() => import('@/pages/committee/CommitteeRecusals'));
-const CommitteeMeetings = lazy(() => import('@/pages/committee/CommitteeMeetings'));
 const CommitteeCalendar = lazy(() => import('@/pages/committee/CommitteeCalendar'));
 const CommitteeAgenda = lazy(() => import('@/pages/committee/CommitteeAgenda'));
 const CommitteePacks = lazy(() => import('@/pages/committee/CommitteePacks'));

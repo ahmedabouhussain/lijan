@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
             description: 'User logged in',
             user_agent: navigator.userAgent,
           });
-        } catch (e) {
+        } catch {
           // Silent fail — don't block auth
         }
       }

@@ -56,7 +56,8 @@ export default function NotificationCenter() {
       ).catch(() => base44.entities.NotificationOutbox.list("-created_date", 20));
       const list = res || [];
       setNotifications(list);
-      setUnreadCount(list.filter((n) => n.status !== "read").length);
+      // Unread is read_at, never the delivery status: the delivery truth must survive.
+      setUnreadCount(list.filter((n) => !n.read_at).length);
     } catch {
       setNotifications([]);
     }
@@ -80,20 +81,20 @@ export default function NotificationCenter() {
 
   const markAsRead = async (id) => {
     try {
-      await base44.entities.NotificationOutbox.update(id, { status: "read", read_at: new Date().toISOString() });
-      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, status: "read" } : n)));
+      await base44.entities.NotificationOutbox.update(id, { read_at: new Date().toISOString() });
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch {}
   };
 
   const markAllRead = async () => {
-    const unread = notifications.filter((n) => n.status !== "read");
+    const unread = notifications.filter((n) => !n.read_at);
     for (const n of unread) {
       try {
-        await base44.entities.NotificationOutbox.update(n.id, { status: "read", read_at: new Date().toISOString() });
+        await base44.entities.NotificationOutbox.update(n.id, { read_at: new Date().toISOString() });
       } catch {}
     }
-    setNotifications((prev) => prev.map((n) => ({ ...n, status: "read" })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
     setUnreadCount(0);
   };
 
@@ -146,7 +147,7 @@ export default function NotificationCenter() {
             ) : (
               notifications.map((n) => {
                 const Icon = EVENT_ICONS[n.event_type] || EVENT_ICONS.default;
-                const isUnread = n.status !== "read";
+                const isUnread = !n.read_at;
                 return (
                   <div
                     key={n.id}

@@ -54,27 +54,27 @@ export default function OrgNotifications() {
 
   const markAsRead = async (id) => {
     try {
-      await base44.entities.NotificationOutbox.update(id, { status: "read", read_at: new Date().toISOString() });
-      setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, status: "read" } : r)));
+      await base44.entities.NotificationOutbox.update(id, { read_at: new Date().toISOString() });
+      setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, read_at: new Date().toISOString() } : r)));
     } catch {}
   };
 
   const markAllRead = async () => {
-    const unread = records.filter((r) => r.status !== "read");
+    const unread = records.filter((r) => !r.read_at);
     for (const r of unread) {
-      try { await base44.entities.NotificationOutbox.update(r.id, { status: "read", read_at: new Date().toISOString() }); } catch {}
+      try { await base44.entities.NotificationOutbox.update(r.id, { read_at: new Date().toISOString() }); } catch {}
     }
-    setRecords((prev) => prev.map((r) => ({ ...r, status: "read" })));
+    setRecords((prev) => prev.map((r) => ({ ...r, read_at: new Date().toISOString() })));
   };
 
   const filtered = records.filter((r) => {
-    if (filter === "unread") return r.status !== "read";
+    if (filter === "unread") return !r.read_at;
     if (filter === "email") return r.channel === "email";
     if (filter === "in_app") return r.channel === "in_app";
     return true;
   });
 
-  const unreadCount = records.filter((r) => r.status !== "read").length;
+  const unreadCount = records.filter((r) => !r.read_at).length;
 
   return (
     <div className="space-y-4">
@@ -123,7 +123,7 @@ export default function OrgNotifications() {
         <div className="space-y-2">
           {filtered.map((r) => {
             const ChannelIcon = CHANNEL_ICONS[r.channel] || Bell;
-            const isUnread = r.status !== "read";
+            const isUnread = !r.read_at;
             const eventLabel = EVENT_LABELS[r.event_type] || EVENT_LABELS.custom;
             return (
               <div

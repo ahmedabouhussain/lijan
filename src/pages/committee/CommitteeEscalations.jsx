@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { L } from "@/lib/l10n";
+import { noticeStateLabel, noticeStateBadgeClass } from "@/lib/noticeStates";
 
 const ESCALATION = {
   none: { ar: "لا يوجد", en: "None", color: "bg-secondary text-muted-foreground" },
@@ -56,9 +57,19 @@ export default function CommitteeEscalations() {
         action_id: actionId,
         escalation_note: note,
       });
-      const level = res?.data?.new_escalation_level || res?.new_escalation_level;
+      const data = res?.data || res || {};
       reload();
-      return level;
+      // The transition and the notice outcome are reported separately, exactly as the
+      // server measured them — a failed delivery is never shown as a success.
+      return {
+        level: data.new_escalation_level,
+        recipients: data.recipients || [],
+        notice_state: data.notice_state,
+        delivery: data.delivery || [],
+        failure_reason: data.failure_reason || null,
+        next_retry_at: data.next_retry_at || null,
+        retry_available: !!data.retry_available,
+      };
     } finally {
       setEscalatingId(null);
     }
@@ -113,8 +124,16 @@ export default function CommitteeEscalations() {
             return (
               <div key={a.id} className="raqeem-card p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{L.title(a)}</span>
-                  <StatusBadge label={t(ei.ar, ei.en)} colorClass={ei.color} />
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-medium">{L.title(a)}</span>
+                    <StatusBadge label={t(ei.ar, ei.en)} colorClass={ei.color} />
+                    {a.escalation_notice_state && (
+                      <StatusBadge
+                        label={noticeStateLabel(a.escalation_notice_state, t)}
+                        colorClass={noticeStateBadgeClass(a.escalation_notice_state)}
+                      />
+                    )}
+                  </div>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">
                   <div>{t("المسؤول", "Owner")}: {a.owner_name}</div>
@@ -128,6 +147,7 @@ export default function CommitteeEscalations() {
                       action={a}
                       busy={submitting && escalatingId === a.id}
                       onEscalate={handleEscalate}
+                      onRefresh={reload}
                     />
                   </div>
                 )}

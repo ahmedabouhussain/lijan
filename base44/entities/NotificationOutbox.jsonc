@@ -76,7 +76,7 @@
     },
     "status": {
       "type": "string",
-      "title": "Status"
+      "title": "Delivery Status (queued \u2192 dispatching \u2192 delivered | failed | retry_scheduled; not_required when suppressed. Read state lives in read_at, never here.)"
     },
     "scheduled_for": {
       "type": "string",
@@ -93,6 +93,33 @@
     "failure_reason": {
       "type": "string",
       "title": "Failure Reason"
+    },
+    "attempt_count": {
+      "type": "number",
+      "title": "Delivery Attempt Count",
+      "default": 0
+    },
+    "last_attempt_at": {
+      "type": "string",
+      "title": "Last Delivery Attempt At",
+      "format": "date-time"
+    },
+    "next_retry_at": {
+      "type": "string",
+      "title": "Next Scheduled Retry",
+      "format": "date-time"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "title": "Idempotency Key (one notice per transition and recipient)"
+    },
+    "transition_id": {
+      "type": "string",
+      "title": "Transition ID (the state transition this notice belongs to)"
+    },
+    "last_retry_key": {
+      "type": "string",
+      "title": "Last Retry Request Key"
     },
     "correlation_id": {
       "type": "string",
