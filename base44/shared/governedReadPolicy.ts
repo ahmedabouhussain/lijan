@@ -259,16 +259,20 @@ export async function authorizeRead({ base44, sr, principal, record, writeIntent
 const CONTACT_FIELDS = [
   'user_email', 'user_id', 'owner_user_id', 'uploaded_by_user_id', 'generated_by_user_id',
   'reviewer_user_id', 'requested_by_user_id', 'recipient_email', 'recipient_user_id',
+  'actor_email', 'ip_address', 'user_agent',
 ];
 const FILE_FIELDS = [
   'file_url', 'file_uri', 'storage_key', 'avatar_url', 'signature_image_url',
   'evidence_url', 'output_url', 'instrument_file_url', 'document_file_url',
 ];
 const SECRET_FIELDS = ['token', 'showcase_token'];
+// Personal handles that never travel into a showcase session, whatever the persona's rank: the
+// demonstration is public, and the people who provisioned it are real.
+const SHOWCASE_WITHHELD_FIELDS = ['actor_email', 'user_email', 'recipient_email', 'issued_to_email', 'ip_address', 'user_agent'];
 const OFFICER_RANK = 4;
 const CLASS_MIN_RANK: Record<string, number> = { restricted: 3, highly_restricted: 4 };
 
-export function projectRecord(record: any, ctx: { rank: number; actorId?: string }) {
+export function projectRecord(record: any, ctx: { rank: number; actorId?: string; showcase?: boolean }) {
   const withheld = { contact: 0, file_refs: 0, secret: 0 };
   if (!record || typeof record !== 'object') return { values: record, withheld };
 
@@ -277,6 +281,14 @@ export function projectRecord(record: any, ctx: { rank: number; actorId?: string
     if (field in values) {
       delete values[field];
       withheld.secret += 1;
+    }
+  }
+  if (ctx.showcase) {
+    for (const field of SHOWCASE_WITHHELD_FIELDS) {
+      if (field in values && values[field] != null) {
+        delete values[field];
+        withheld.contact += 1;
+      }
     }
   }
 
@@ -307,7 +319,7 @@ const RELATED_MIN_RANK: Record<string, number> = {
   review_responses: 3,
 };
 
-export function gateRelated(bundle: any, ctx: { rank: number; actorId?: string }) {
+export function gateRelated(bundle: any, ctx: { rank: number; actorId?: string; showcase?: boolean }) {
   const values: Record<string, any> = {};
   const withheldKeys: string[] = [];
   const rank = ctx.rank || 0;
@@ -334,7 +346,7 @@ export function gateRelated(bundle: any, ctx: { rank: number; actorId?: string }
 }
 
 /** Project every record inside the returned bundle with the same rules. */
-export function projectBundle(bundle: any, ctx: { rank: number; actorId?: string }) {
+export function projectBundle(bundle: any, ctx: { rank: number; actorId?: string; showcase?: boolean }) {
   const values: Record<string, any> = {};
   const totals = { contact: 0, file_refs: 0, secret: 0 };
 

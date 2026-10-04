@@ -146,7 +146,7 @@ export default async function (req) {
     }
 
     const related = await loadRelated(sr, entity_type, record, decision.committee);
-    const ctx = { rank: decision.read_rank, actorId: decision.actor?.id };
+    const ctx = { rank: decision.read_rank, actorId: decision.actor?.id, showcase: decision.is_demo_mode === true };
     const gated = gateRelated(related, ctx);
     const projectedRelated = projectBundle(gated.values, ctx);
     const projectedRecord = projectRecord(record, ctx);
