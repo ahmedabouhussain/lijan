@@ -8,6 +8,7 @@ import { useCrudAction } from "@/hooks/useCrudAction";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
+import EscalationAction from "@/components/raqeem/EscalationAction";
 import { TrendingUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
@@ -45,15 +46,22 @@ export default function CommitteeEscalations() {
   const openActions = (data.registers?.actions || []).filter((a) => !["closed", "verified"].includes(a.status));
   const committeeId = data.committee.id;
 
-  const handleEscalate = async (actionId, level) => {
-    await execute("ProcessEscalation", {
-      committee_id: committeeId,
-      action_id: actionId,
-      escalation_level: level,
-    }, () => {
-      setEscalatingId(null);
+  // The receiving authority and the permission are enforced by the server; this only
+  // carries the required reason and reports the confirmed level the server returned.
+  const handleEscalate = async (actionId, note) => {
+    setEscalatingId(actionId);
+    try {
+      const res = await execute("ProcessEscalation", {
+        committee_id: committeeId,
+        action_id: actionId,
+        escalation_note: note,
+      });
+      const level = res?.data?.new_escalation_level || res?.new_escalation_level;
       reload();
-    });
+      return level;
+    } finally {
+      setEscalatingId(null);
+    }
   };
 
   return (
@@ -88,7 +96,7 @@ export default function CommitteeEscalations() {
               options: openActions.map((a) => ({ value: a.id, label_ar: a.title_ar || a.title, label_en: a.title })),
             },
             { name: "escalation_level", label: t("مستوى التصعيد", "Level"), type: "select", required: true, options: LEVEL_OPTIONS },
-            { name: "reason", label: t("السبب", "Reason"), type: "textarea", fullWidth: true, rows: 2 },
+            { name: "escalation_note", label: t("سبب التصعيد", "Escalation Reason"), type: "textarea", fullWidth: true, rows: 2 },
           ]}
         />
       )}
@@ -114,6 +122,15 @@ export default function CommitteeEscalations() {
                   {a.blocker && <div className="text-red-600">{t("العائق", "Blocker")}: {a.blocker}</div>}
                   {a.reminder_count > 0 && <div>{t("عدد التذكيرات", "Reminders")}: {a.reminder_count}</div>}
                 </div>
+                {canManageExecution && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <EscalationAction
+                      action={a}
+                      busy={submitting && escalatingId === a.id}
+                      onEscalate={handleEscalate}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}

@@ -28,12 +28,13 @@ export default function CrudFormDialog({
   fields,
   functionName,
   payload = {},
+  initialValues = {},
   onSuccess,
   submitLabel,
 }) {
   const { t } = useLanguage();
   const { submitting, error, execute } = useCrudAction();
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState(initialValues);
 
   if (!open) return null;
 
@@ -53,7 +54,7 @@ export default function CrudFormDialog({
         ? { ...payload, fields: { ...form } }
         : { ...payload, ...form };
       await execute(functionName, body, (res) => {
-        setForm({});
+        setForm({ ...initialValues });
         onClose();
         if (onSuccess) onSuccess(res);
       });

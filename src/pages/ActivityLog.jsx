@@ -63,6 +63,8 @@ export default function ActivityLog() {
 
   const uniqueLoginUsers = new Set(loginEvents.map((e) => e.actor_email).filter((e) => e && e !== "anonymous@visitor")).size;
   const anonymousDemos = demoEvents.filter((e) => !e.actor_user_id || e.actor_user_id === "anonymous").length;
+  // Explorations performed by an identified user, as distinct from anonymous visitors.
+  const authenticatedDemos = demoEvents.length - anonymousDemos;
 
   const activeEvents = tab === "logins" ? loginEvents : demoEvents;
   const filtered = activeEvents.filter((e) => {
@@ -151,6 +153,12 @@ export default function ActivityLog() {
               value={anonymousDemos}
               label={isAr ? "زوار مجهولون" : "Anonymous Visitors"}
               color="muted"
+            />
+            <StatCard
+              icon={<Sparkles className="w-4 h-4" />}
+              value={authenticatedDemos}
+              label={isAr ? "مستكشفون موثّقون" : "Authenticated Explorers"}
+              color="emerald"
             />
           </div>
 

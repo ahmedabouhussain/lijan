@@ -80,6 +80,7 @@ export default function NotificationPreferences() {
           in_app_enabled: prefs.in_app_enabled,
           teams_enabled: prefs.teams_enabled,
           push_enabled: prefs.push_enabled,
+          event_type: prefs.event_type || null,
           digest_frequency: prefs.digest_frequency,
           quiet_hours_start: prefs.quiet_hours_start,
           quiet_hours_end: prefs.quiet_hours_end,
@@ -87,6 +88,7 @@ export default function NotificationPreferences() {
       } else {
         const created = await base44.entities.NotificationPreference.create({
           ...prefs,
+          event_type: prefs.event_type || null,
           user_id: me.id,
         });
         setPrefs(created);
@@ -138,6 +140,25 @@ export default function NotificationPreferences() {
             );
           })}
         </div>
+      </div>
+
+      <div className="raqeem-card p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">{t("نطاق الأحداث", "Event Scope")}</h3>
+        <p className="text-xs text-muted-foreground">
+          {t("اختر الأحداث التي تُطبَّق عليها هذه التفضيلات", "Choose which events these preferences apply to")}
+        </p>
+        <select
+          className="w-full h-9 rounded-md border border-input px-3 text-sm"
+          value={prefs.event_type || ""}
+          onChange={(e) => setPrefs((p) => ({ ...p, event_type: e.target.value || null }))}
+        >
+          <option value="">{t("كل الأحداث", "All Events")}</option>
+          {EVENT_TYPES.map((ev) => (
+            <option key={ev.key} value={ev.key}>
+              {t(ev.ar, ev.en)}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="raqeem-card p-5 space-y-4">

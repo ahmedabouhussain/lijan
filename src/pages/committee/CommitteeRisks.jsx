@@ -81,14 +81,14 @@ export default function CommitteeRisks() {
             committee_id: committeeId,
             organization_id: orgId,
             status: "assigned",
-            priority: "critical",
-            tags: "risk",
           }}
+          initialValues={{ tags: "risk" }}
           onSuccess={fetchRisks}
           submitLabel={t("تسجيل", "Register")}
           fields={[
             { name: "title", label: t("عنوان المخاطرة", "Risk Title"), required: true, fullWidth: true, placeholder: "Budget overrun risk" },
             { name: "title_ar", label: t("العنوان بالعربية", "Title (Arabic)"), fullWidth: true },
+            { name: "priority", label: t("مستوى المخاطرة", "Risk Level"), type: "select", required: true, options: LEVEL_OPTIONS },
             { name: "owner_name", label: t("المسؤول", "Owner"), required: true, placeholder: "Risk Owner" },
             { name: "deadline", label: t("موعد المعالجة", "Resolution Deadline"), type: "date" },
             { name: "blocker", label: t("الوصف", "Description"), type: "textarea", fullWidth: true, rows: 2 },
