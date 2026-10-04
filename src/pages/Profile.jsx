@@ -14,7 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { GOVERNANCE_ROLES } from "@/components/raqeem/home/shared";
 import SignaturePad from "@/components/raqeem/SignaturePad";
 import SecureFileImage from "@/components/raqeem/SecureFileImage";
-import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
+import { Image as ContentImage } from "@/components/ui/image";
+import { uploadPrivateFile, logFileAccess, isPublicFileUrl } from "@/lib/secureFiles";
 import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
@@ -51,6 +52,9 @@ export default function Profile() {
       setFullName(persona.name_ar);
       setTitle(persona.job_title_ar);
       setInstitutionEmail(persona.email);
+      // A demonstration persona carries its own approved public photo — it is part of the
+      // governed demo identity, so it renders directly like a brand asset, never signed.
+      setAvatarUrl(persona.avatar_url || "");
       setGovernanceRole("member"); // Demo users are never admin
       setLoading(false);
     } else {
@@ -159,7 +163,14 @@ export default function Profile() {
           <div className="flex items-end gap-4">
             <div className="relative shrink-0">
               <div className="w-24 h-24 rounded-full border-4 border-card bg-primary/10 overflow-hidden flex items-center justify-center">
-                {avatarUrl ? (
+                {avatarUrl && isPublicFileUrl(avatarUrl) ? (
+                  <ContentImage
+                    src={avatarUrl}
+                    alt={t("الصورة الشخصية", "Profile photo")}
+                    fittingType="fill"
+                    className="w-full h-full object-cover"
+                  />
+                ) : avatarUrl ? (
                   <SecureFileImage fileRef={avatarUrl} entityType="UserProfile" alt="avatar" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-2xl font-bold text-primary">{initials}</span>

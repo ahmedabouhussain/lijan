@@ -16,6 +16,7 @@ export const LINK_TTL_SECONDS = 300;
 /** Fields that hold a governed (non-public) file reference. */
 export const PRIVATE_FILE_FIELDS = new Set([
   'signature_image_url',
+  'avatar_url',
   'file_url',
   'file_uri',
   'storage_key',
@@ -107,8 +108,8 @@ export async function fingerprintRef(value?: string): Promise<string> {
 
 /**
  * The decision itself. Order is deliberate and each step is a documented refusal:
- * identity → field → file → legacy → organization scope → committee membership →
- * role against classification → purpose.
+ * identity → field → file → legacy → uploader ownership → organization scope →
+ * committee membership → role against classification → purpose.
  */
 export function evaluateAccess(input: {
   actor: ActorDescriptor;
@@ -118,6 +119,11 @@ export function evaluateAccess(input: {
   classification?: string;
   action?: string;
   purpose?: string;
+  /**
+   * True when the audit trail proves THIS actor uploaded the file and there is no saved
+   * record to scope against yet (a photo or attachment the user has just added).
+   */
+  uploaderOwned?: boolean;
 }): AccessVerdict {
   const { actor, refField, refValue, record, action } = input;
   const classification = input.classification || record?.classification || 'internal';
@@ -146,9 +152,16 @@ export function evaluateAccess(input: {
     return { decision: 'not_governed', reason: 'legacy_public_link', state: 'legacy_pending_migration' };
   }
 
+  // 5. Uploader ownership — a file this same actor uploaded, proven by the audit trail,
+  //    is served back to that uploader alone. There is no saved record to scope against,
+  //    so organization and committee role are not re-evaluated: the proof IS the authority.
+  if (input.uploaderOwned) {
+    return { decision: 'allow', reason: 'uploader_draft', classification: 'private' };
+  }
+
   const isPlatformAdmin = actor.platform_role === 'admin';
 
-  // 5. Organization scope.
+  // 6. Organization scope.
   if (!isPlatformAdmin) {
     const recordOrg = record.organization_id;
     if (recordOrg && actor.active_org_id && recordOrg !== actor.active_org_id) {
@@ -159,7 +172,7 @@ export function evaluateAccess(input: {
     }
   }
 
-  // 6. Committee membership — an active seat in THIS committee.
+  // 7. Committee membership — an active seat in THIS committee.
   const committeeId = record.committee_id;
   let membershipRole = '';
   if (!isPlatformAdmin && committeeId) {
@@ -178,7 +191,7 @@ export function evaluateAccess(input: {
     }
   }
 
-  // 7. Role against classification.
+  // 8. Role against classification.
   const held = isPlatformAdmin ? 5 : ROLE_RANK[membershipRole] ?? 0;
   const needed = MIN_ROLE_FOR_CLASSIFICATION[classification] ?? 1;
   if (held < needed) {
@@ -186,7 +199,7 @@ export function evaluateAccess(input: {
     return { decision: 'deny', reason: 'insufficient_role', required_role: requiredRole, classification };
   }
 
-  // 8. Sharing a confidential-or-above file requires a stated purpose.
+  // 9. Sharing a confidential-or-above file requires a stated purpose.
   if (action === 'share' && (CLASSIFICATION_RANK[classification] ?? 1) >= 2 && !input.purpose) {
     return { decision: 'deny', reason: 'purpose_required', classification };
   }

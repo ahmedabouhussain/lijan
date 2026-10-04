@@ -87,6 +87,12 @@ const SYNTHETIC: Array<{ key: string; expect: string; actor: ActorDescriptor }> 
     classification: 'confidential',
     action: 'share',
   } as any,
+  {
+    key: 'uploader_draft_owner',
+    expect: 'allow:uploader_draft',
+    actor: { kind: 'synthetic', user_id: 'test-uploader', email: 'test.uploader@example.invalid', platform_role: 'user', memberships: [] },
+    uploader_owned: true,
+  } as any,
 ];
 
 export default async function (req: Request): Promise<Response> {
@@ -117,6 +123,7 @@ export default async function (req: Request): Promise<Response> {
       classification,
       action: (item as any).action || 'preview',
       purpose: '',
+      uploaderOwned: (item as any).uploader_owned === true,
     });
     const observed = verdict.decision === 'allow' ? `allow:${verdict.reason}` : `deny:${verdict.reason}`;
     return { actor: item.key, expected: item.expect, observed, pass: observed === item.expect };

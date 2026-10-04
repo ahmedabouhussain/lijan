@@ -24,6 +24,10 @@ export const DEMO_PERSONAS = {
     primary_org_en: 'Qatar Development Bank',
     primary_org_abbr: 'QDB',
     primary_org_public_id: 'DEMO-ORG-QDB',
+    // Approved public photo of the governed demonstration identity — a synthetic persona
+    // photo, not a personal file of a real person, so it is rendered directly.
+    avatar_url:
+      'https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/80923d8de_20250424_1745527357-836.jpg',
     account_classification_ar: 'شخصية عرض تجريبية محكومة',
     account_classification_en: 'Governed Synthetic Demonstration Persona',
   },

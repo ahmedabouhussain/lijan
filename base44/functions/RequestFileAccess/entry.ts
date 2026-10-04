@@ -18,8 +18,10 @@ import {
  *   6. record the event and the decision
  *   7. on deny, record the refusal with safe information only
  *
- * The caller never names the file: the reference is read from the record itself,
- * so a client cannot ask the gate to sign an arbitrary path.
+ * A caller never names a saved file: the reference is read from the record itself, so a
+ * client cannot ask the gate to sign an arbitrary path. The one exception is a draft
+ * attachment with no record yet, and only when the audit trail proves that this same
+ * actor uploaded that very file (see "uploader draft" below).
  */
 
 const ACTIONS = ['preview', 'download', 'share', 'print'];
@@ -107,8 +109,9 @@ export default async function (req: Request): Promise<Response> {
   const purpose = typeof body.purpose === 'string' ? body.purpose.slice(0, 240) : '';
   const correlationId = `corr_${Math.random().toString(36).slice(2, 12)}`;
 
-  if (!entityType || !entityId) {
-    return Response.json({ error: 'entity_type and entity_id are required' }, { status: 400 });
+  // entity_id is optional: a just-uploaded photo or attachment has no record yet.
+  if (!entityType) {
+    return Response.json({ error: 'entity_type is required' }, { status: 400 });
   }
 
   // 1. Authentication.
@@ -117,7 +120,8 @@ export default async function (req: Request): Promise<Response> {
 
   // 2. Identify the record and its governed reference.
   const source = REF_SOURCES[entityType];
-  const record = source ? await base44.asServiceRole.entities[entityType]?.get(entityId).catch(() => null) : null;
+  const record =
+    source && entityId ? await base44.asServiceRole.entities[entityType]?.get(entityId).catch(() => null) : null;
   let refField = source?.field;
   let refValue = record && refField ? record[refField] : undefined;
 
@@ -145,20 +149,20 @@ export default async function (req: Request): Promise<Response> {
     refField,
     refValue,
     record: uploaderDraft
-      ? { organization_id: actor.active_org_id, committee_id: record?.committee_id, classification: 'internal' }
+      ? { organization_id: actor.active_org_id, committee_id: record?.committee_id ?? null }
       : record,
+    uploaderOwned: uploaderDraft,
     classification: source?.classificationField ? record?.[source.classificationField] : record?.classification,
     action,
     purpose,
   });
-  if (uploaderDraft && verdict.decision === 'allow') verdict.reason = 'uploader_draft';
 
   const refFingerprint = await fingerprintRef(refValue);
   const baseAudit = {
     organization_id: record?.organization_id || actor.active_org_id || null,
     committee_id: record?.committee_id || null,
     entity_type: entityType,
-    entity_id: entityId,
+    entity_id: entityId || `ref:${refFingerprint}`,
     entity_title: refField || 'file',
     actor_user_id: actor.user_id || null,
     actor_name: user?.full_name || null,
