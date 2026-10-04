@@ -17,6 +17,9 @@ export function CommitteeProvider({ children }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  // The refusal CODE travels with the error, so a surface can tell "no authority" from
+  // "demonstration record" from "unavailable" instead of rendering every one as a blank shell.
+  const [errorCode, setErrorCode] = useState("");
 
   const publicId = committeeRef?.split("--").pop() || committeeRef;
   // Cancellation token: a response for an abandoned committee load is discarded, so a slow
@@ -28,6 +31,7 @@ export function CommitteeProvider({ children }) {
     const tokenAtRequest = ++requestRef.current;
     setLoading(true);
     setError("");
+    setErrorCode("");
     try {
       const res = await governedInvoke(
         "GetCommitteeMiniPortal",
@@ -36,14 +40,18 @@ export function CommitteeProvider({ children }) {
       );
       if (tokenAtRequest !== requestRef.current) return;
       const d = res.data || res;
-      if (d.error) setError(d.error);
-      else {
+      if (d.error) {
+        setError(d.error);
+        setErrorCode(d.code || "");
+      } else {
         setData(d);
         setError("");
+        setErrorCode("");
       }
     } catch (e) {
       if (tokenAtRequest !== requestRef.current) return;
       setError(e?.response?.data?.error || e?.message || "");
+      setErrorCode(e?.response?.data?.code || "");
     }
     if (tokenAtRequest === requestRef.current) setLoading(false);
   }, [publicId, isDemoMode, demoPersonaKey, showcaseToken, renewDemo]);
@@ -51,7 +59,7 @@ export function CommitteeProvider({ children }) {
   useEffect(() => { reload(); }, [reload]);
 
   return (
-    <CommitteeContext.Provider value={{ data, loading, error, reload }}>
+    <CommitteeContext.Provider value={{ data, loading, error, errorCode, reload }}>
       {children}
     </CommitteeContext.Provider>
   );

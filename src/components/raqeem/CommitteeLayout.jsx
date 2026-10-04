@@ -18,6 +18,7 @@ import { getWorkGroupCapabilities } from "@/lib/workGroupPermissions";
 import PersonaContextPath from "@/components/demo/PersonaContextPath";
 import AppShell from "@/components/nav/AppShell";
 import ShellLoading from "@/components/nav/SidebarSkeleton";
+import ExplorationGate from "@/components/demo/ExplorationGate";
 
 // Role-Adaptive Navigation — admin roles see all; members/observers see only what serves
 // their role. Groups are the platform's own three areas, in a fixed order.
@@ -41,7 +42,7 @@ const GROUP_TITLES = {
 function CommitteeShell() {
   const { orgRef, committeeRef } = useParams();
   const location = useLocation();
-  const { data, loading, error } = useCommittee();
+  const { data, loading, error, errorCode } = useCommittee();
   const { t, dir } = useLanguage();
   const { user } = useAuth();
   const { isDemoMode, demoPersonaKey } = useEffectiveActor();
@@ -61,6 +62,10 @@ function CommitteeShell() {
   if (loading) return <ShellLoading dir={dir} />;
 
   if (error) {
+    // A demonstration record opened from a real account: the record is NOT read here. The gate
+    // offers the one transition into the isolated exploration session, which reopens this same
+    // record — the real session is never widened to reach it.
+    if (errorCode === "showcase_scope") return <ExplorationGate />;
     // ONE shell, four DISTINCT situations. Every one of them states what happened, why,
     // what the user can do now, and who can resolve it if they hold no authority.
     // A raw backend string is never shown.

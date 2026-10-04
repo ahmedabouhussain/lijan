@@ -101,10 +101,10 @@ export default async function(req) {
           if (byId && byId.is_demo_data === true && byId.demo_dataset === dataset) committee = byId;
         }
       }
-      if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
+      if (!committee) return Response.json({ error: 'Committee not found', code: 'out_of_scope' }, { status: 404 });
       // A session reads only the committees it was issued for — the scope comes from the server.
       if (showcaseSession && !(showcaseSession.allowed_committee_ids || []).includes(committee.id)) {
-        return Response.json({ error: 'Committee not found' }, { status: 404 });
+        return Response.json({ error: 'Committee not found', code: 'out_of_scope' }, { status: 404 });
       }
 
       // Demo committee membership
@@ -245,6 +245,18 @@ export default async function(req) {
       committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
     }
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
+
+    // A demonstration committee is NEVER read through a real account — not by a member, not by an
+    // organization administrator, and not by a platform administrator. The link is answered with the
+    // exploration transition instead: the server mints an isolated session and the same record opens
+    // inside it. (Founder decision, 2026-10-04: the real session stays blocked.)
+    if (committee.is_demo_data === true) {
+      return Response.json({
+        error: 'This record is available in the exploration experience',
+        code: 'showcase_scope',
+        exploration: { available: true },
+      }, { status: 403 });
+    }
 
     // Verify org membership
     const orgMemberships = await base44.asServiceRole.entities.OrganizationMembership

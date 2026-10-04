@@ -38,6 +38,14 @@ export const READ_REFUSAL = {
   OUT_OF_SCOPE: 'out_of_scope',
   UNKNOWN_PERSONA: 'unknown_persona',
   WRITE_NOT_PERMITTED: 'write_not_permitted',
+  /**
+   * A REAL account asked for a record that belongs to a demonstration committee. This is not a
+   * refusal in the "does not exist" family: the founder's decision is that the record IS reachable,
+   * but only inside the isolated exploration session. The code is returned so the surface can offer
+   * that one transition instead of an empty page. It is only ever returned for a committee that is
+   * itself tagged as demonstration data — a production record never gets this answer.
+   */
+  SHOWCASE_SCOPE: 'showcase_scope',
 };
 
 const READ_REFUSAL_STATUS: Record<string, number> = {
@@ -51,6 +59,7 @@ const READ_REFUSAL_STATUS: Record<string, number> = {
   not_a_member: 403,
   no_seat: 403,
   write_not_permitted: 403,
+  showcase_scope: 403,
   not_found: 404,
   out_of_scope: 404,
 };
@@ -201,10 +210,16 @@ export async function authorizeRead({ base44, sr, principal, record, writeIntent
   const user = principal.user;
   const isPlatformAdmin = user.role === 'admin';
 
-  // A real principal may never read a showcase-tagged record or a record of a showcase
-  // committee — not even an administrator. The demonstration is entered through its own
-  // session, or not at all.
-  if (isShowcaseCommittee(committee) || isShowcaseRecord(record)) {
+  // A real principal may never read a demonstration record — not even an administrator. The
+  // demonstration is entered through its own session, or not at all.
+  //   • a demonstration COMMITTEE answers showcase_scope, so the surface can offer the one
+  //     transition into the exploration session and reopen the same record inside it;
+  //   • a record that merely carries a tag its committee does not (a mis-tag) stays invisible:
+  //     there is nothing to offer, so the refusal is uniform.
+  if (isShowcaseCommittee(committee)) {
+    return deny(READ_REFUSAL.SHOWCASE_SCOPE);
+  }
+  if (isShowcaseRecord(record)) {
     return deny(READ_REFUSAL.NOT_FOUND);
   }
 

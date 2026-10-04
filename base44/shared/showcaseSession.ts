@@ -13,7 +13,7 @@
 // A showcase token is NEVER a user session: it cannot be exchanged for one, it is not
 // accepted where a user is required, and it does not read a real user's active organization.
 
-import { resolveDemoPersona } from './demoPersonas.ts';
+import { resolveDemoPersona, DEMO_PERSONAS } from './demoPersonas.ts';
 
 export const SHOWCASE_DATA_CLASS = 'synthetic_showcase';
 export const SHOWCASE_TTL_MINUTES = 120;
@@ -67,6 +67,25 @@ export async function resolvePersonaScope(sr: any, personaKey: string) {
     committee_ids: allowed.map((c: any) => c.id),
     committee_public_ids: allowed.map((c: any) => c.public_id),
   };
+}
+
+/**
+ * Resolve the ONE persona that owns a dataset, from the server roster — never from the request.
+ * The transition gate needs this: a real account opens a demonstration link, and the persona is
+ * decided by the committee's own dataset. Two personas sharing a dataset are disambiguated by the
+ * committee's published id; if still ambiguous the roster order decides, never the caller.
+ */
+export function resolvePersonaForDataset(dataset: string, committeePublicId?: string) {
+  if (!dataset) return null;
+  const candidates = Object.values(DEMO_PERSONAS as Record<string, any>)
+    .filter((p: any) => p?.dataset === dataset);
+  if (!candidates.length) return null;
+  if (candidates.length > 1 && committeePublicId) {
+    const exact = candidates.find((p: any) =>
+      Object.keys(p.presentation?.committees || {}).includes(committeePublicId));
+    if (exact) return exact;
+  }
+  return candidates[0];
 }
 
 export async function issueShowcaseSession(sr: any, options: {

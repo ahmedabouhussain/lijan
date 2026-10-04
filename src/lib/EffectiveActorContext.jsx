@@ -37,6 +37,38 @@ function clearDemoCaches() {
   }
 }
 
+// Build the stored exploration session from a SERVER-ISSUED payload. Every field that carries
+// authority — dataset, committee scope, expiry, token — is the server's, verbatim; the persona
+// contributes presentation labels only. An unknown persona is refused, never guessed.
+function sessionFrom(persona, issued) {
+  if (!persona || !issued?.showcase_token) return null;
+  return {
+    persona_key: issued.persona_key || persona.key,
+    persona_id: issued.persona_id || persona.persona_id,
+    actor_id: persona.user_id,
+    display_name_ar: persona.name_ar,
+    display_name_en: persona.name_en,
+    email: persona.email,
+    job_title_ar: persona.job_title_ar,
+    job_title_en: persona.job_title_en,
+    job_title_is_demo_wording: persona.job_title_is_demo_wording === true,
+    primary_org_ar: persona.primary_org_ar,
+    primary_org_en: persona.primary_org_en,
+    primary_org_public_id: persona.primary_org_public_id,
+    account_classification_ar: persona.account_classification_ar,
+    account_classification_en: persona.account_classification_en,
+    dataset: issued.dataset || persona.dataset,
+    is_demo: true,
+    demo_session_id: issued.session_id,
+    showcase_token: issued.showcase_token,
+    showcase_expires_at: issued.expires_at,
+    allowed_committee_public_ids: issued.allowed_committee_public_ids || [],
+    data_class: issued.data_class,
+    write_scope: issued.write_scope || 'none',
+    started_at: new Date().toISOString(),
+  };
+}
+
 const EffectiveActorContext = createContext();
 
 export const EffectiveActorProvider = ({ children }) => {
@@ -44,7 +76,12 @@ export const EffectiveActorProvider = ({ children }) => {
   // Initialize synchronously from localStorage so isDemoMode is correct on first render.
   const [demoSession, setDemoSession] = useState(() => {
     try {
-      const raw = localStorage.getItem(DEMO_SESSION_KEY);
+      // The session token lives in sessionStorage, not localStorage: it dies with the tab, is not
+      // shared with other tabs, and is never written into a URL, a query string, a log or an audit
+      // record. REMAINING PLATFORM CONSTRAINT: a static SPA cannot set an HttpOnly cookie, so the
+      // token is still readable by this app's own JavaScript — the server-side short expiry (120
+      // minutes) and the revoke-on-exit path are what bound that exposure.
+      const raw = sessionStorage.getItem(DEMO_SESSION_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         // A session without a live server-issued token is not a session.
@@ -56,10 +93,10 @@ export const EffectiveActorProvider = ({ children }) => {
           && parsed.showcase_expires_at
           && new Date(parsed.showcase_expires_at).getTime() > Date.now()
         ) return parsed;
-        localStorage.removeItem(DEMO_SESSION_KEY);
+        sessionStorage.removeItem(DEMO_SESSION_KEY);
       }
     } catch {
-      localStorage.removeItem(DEMO_SESSION_KEY);
+      sessionStorage.removeItem(DEMO_SESSION_KEY);
     }
     return null;
   });
@@ -85,32 +122,9 @@ export const EffectiveActorProvider = ({ children }) => {
     }
     if (!issued?.showcase_token) return null;
 
-    const session = {
-      persona_key: issued.persona_key || persona.key,
-      persona_id: issued.persona_id || persona.persona_id,
-      actor_id: persona.user_id,
-      display_name_ar: persona.name_ar,
-      display_name_en: persona.name_en,
-      email: persona.email,
-      job_title_ar: persona.job_title_ar,
-      job_title_en: persona.job_title_en,
-      job_title_is_demo_wording: persona.job_title_is_demo_wording === true,
-      primary_org_ar: persona.primary_org_ar,
-      primary_org_en: persona.primary_org_en,
-      primary_org_public_id: persona.primary_org_public_id,
-      account_classification_ar: persona.account_classification_ar,
-      account_classification_en: persona.account_classification_en,
-      dataset: issued.dataset || persona.dataset,
-      is_demo: true,
-      demo_session_id: issued.session_id,
-      showcase_token: issued.showcase_token,
-      showcase_expires_at: issued.expires_at,
-      allowed_committee_public_ids: issued.allowed_committee_public_ids || [],
-      data_class: issued.data_class,
-      write_scope: issued.write_scope || 'none',
-      started_at: new Date().toISOString(),
-    };
-    localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
+    const session = sessionFrom(persona, issued);
+    if (!session) return null;
+    sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
     setDemoSession(session);
 
     // Self-heal: the canonical persona's records are repaired idempotently on entry, so the
@@ -141,6 +155,19 @@ export const EffectiveActorProvider = ({ children }) => {
     return session;
   }, [user, demoSession]);
 
+  // Adopt a session the SERVER has already issued — the transition gate's path into exploration.
+  // The persona is read from the issued payload, so the surface that called this never chooses one.
+  const adoptDemoSession = useCallback((issued) => {
+    const persona = resolveDemoPersona(issued?.persona_key);
+    const session = sessionFrom(persona, issued);
+    if (!session) return null;
+    // A new persona must never inherit the previous one's cached context.
+    if (!demoSession || demoSession.persona_key !== session.persona_key) clearDemoCaches();
+    sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
+    setDemoSession(session);
+    return session;
+  }, [demoSession]);
+
   // Renew the exploration session in place.
   // The session token is short-lived by design, and a visitor who is still exploring must not be
   // thrown out when it lapses. A NEW server session is issued for the SAME persona — the persona
@@ -162,7 +189,7 @@ export const EffectiveActorProvider = ({ children }) => {
         .invoke('RevokeShowcaseSession', { showcase_token: token, reason: 'exit' })
         .catch(() => {});
     }
-    localStorage.removeItem(DEMO_SESSION_KEY);
+    sessionStorage.removeItem(DEMO_SESSION_KEY);
     clearDemoCaches();
     setDemoSession(null);
   }, [demoSession]);
@@ -204,6 +231,7 @@ export const EffectiveActorProvider = ({ children }) => {
         showcaseToken: demoSession?.showcase_token || null,
         isDrHamadExperience: demoSession?.persona_key === DEFAULT_PERSONA,
         enterDemo,
+        adoptDemoSession,
         renewDemo,
         exitDemo,
         // The real authenticated user (never replaced by a persona)
