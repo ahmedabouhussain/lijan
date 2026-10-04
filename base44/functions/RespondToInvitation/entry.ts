@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 
 // RespondToInvitation — RSVP to a meeting.
 export default async function(req) {
@@ -12,22 +12,39 @@ export default async function(req) {
       return Response.json({ error: 'meeting_id, attendance_status are required' }, { status: 400 });
     }
 
-    const meeting = await base44.asServiceRole.entities.Meeting.get(meeting_id);
-    if (!meeting) return Response.json({ error: 'Meeting not found' }, { status: 404 });
+    // The meeting is the trusted target, and `attendance.respond` is the person answering their OWN
+    // invitation: the seat is the one the SERVER resolved for this caller, never a name in the
+    // request, and the record is matched by identity so two people sharing a name never collide.
+    const auth = await authorizeCommand(base44, {
+      capability: 'attendance.respond',
+      target_type: 'Meeting',
+      target_id: meeting_id,
+      ...requestClaims(body),
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+    const meeting = auth.target;
 
-    const auth = await resolveAuthority(base44, { committee_id: meeting.committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    const seat = auth.membership || null;
+    if (!seat) {
+      return Response.json({
+        error: 'You hold no active seat in this committee',
+        code: 'no_seat',
+        policy_version: auth.policy_version,
+        correlation_id: auth.correlation_id,
+      }, { status: 403 });
+    }
 
-    // Check for existing attendance record
+    // Identity of record: this caller's seat and user id. A display name is never a key.
     const existing = await base44.asServiceRole.entities.Attendance
-      .filter({ meeting_id, member_name: auth.user.full_name || auth.user.email }).catch(() => []);
+      .filter({ meeting_id, committee_id: meeting.committee_id, member_user_id: auth.user.id }).catch(() => []);
 
     const attendanceData = {
       organization_id: auth.organization_id,
       meeting_id, committee_id: meeting.committee_id,
-      member_id: auth.membership?.id || null,
+      member_id: seat.id,
+      member_user_id: auth.user.id,
       member_name: auth.user.full_name || auth.user.email,
-      member_role: auth.effective_role,
+      member_role: seat.role || auth.effective_role,
       attendance_status,
       proxy_for: proxy_for || null,
       notes: notes || null,

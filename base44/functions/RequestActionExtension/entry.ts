@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 
 // RequestActionExtension — action owner requests a deadline extension.
 export default async function(req) {
@@ -12,11 +12,16 @@ export default async function(req) {
       return Response.json({ error: 'action_id, new_deadline, and reason are required' }, { status: 400 });
     }
 
-    const action = await base44.asServiceRole.entities.Action.get(action_id);
-    if (!action) return Response.json({ error: 'Action not found' }, { status: 404 });
-
-    const auth = await resolveAuthority(base44, { committee_id: action.committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // An extension is asked for on a real action by the seat bound to it — never through a scope
+    // named by the request.
+    const auth = await authorizeCommand(base44, {
+      capability: 'action.progress',
+      target_type: 'Action',
+      target_id: action_id,
+      ...requestClaims(body),
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+    const action = auth.target;
 
     if (action.extension_status === 'requested') {
       return Response.json({ error: 'An extension request is already pending' }, { status: 400 });

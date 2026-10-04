@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 
 // ExtractInstrumentData — AI-assisted extraction from a founding instrument document.
 // Supports Arabic, English, and bilingual documents via OCR + structured extraction.
@@ -7,6 +7,9 @@ import { resolveAuthority } from '../../shared/authorityKernel.ts';
 // confidence levels and source references for human review.
 
 export default async function(req) {
+  // The ONE record this request was authorized on. The failure path may reset the status of that
+  // record and nothing else — never an id taken from the request body.
+  let authorizedInstrumentId = null;
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
@@ -16,14 +19,18 @@ export default async function(req) {
       return Response.json({ error: 'instrument_id is required' }, { status: 400 });
     }
 
-    const instrument = await base44.asServiceRole.entities.FoundingInstrument.get(instrument_id);
-    if (!instrument) return Response.json({ error: 'Instrument not found' }, { status: 404 });
-
-    const auth = await resolveAuthority(base44, {
-      committee_id: instrument.committee_id,
-      capability: 'read',
+    // The instrument is the trusted target and the parent of everything this act writes. Extraction
+    // is an office right (`instrument.extract`), and the committee is derived from the record — the
+    // request names no scope at all.
+    const auth = await authorizeCommand(base44, {
+      capability: 'instrument.extract',
+      target_type: 'FoundingInstrument',
+      target_id: instrument_id,
+      ...requestClaims(body),
     });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    if (!auth.allowed) return refusalResponse(auth);
+    const instrument = auth.target;
+    authorizedInstrumentId = instrument.id;
 
     if (!instrument.file_url) {
       return Response.json({ error: 'No document file attached to this instrument' }, { status: 400 });
@@ -212,10 +219,9 @@ CRITICAL RULES:
   } catch (error) {
     // Mark extraction as failed
     try {
-      const body = await req.json().catch(() => ({}));
-      if (body.instrument_id) {
+      if (authorizedInstrumentId) {
         const base44 = createClientFromRequest(req);
-        await base44.asServiceRole.entities.FoundingInstrument.update(body.instrument_id, {
+        await base44.asServiceRole.entities.FoundingInstrument.update(authorizedInstrumentId, {
           extraction_status: 'not_started',
         }).catch(() => {});
       }

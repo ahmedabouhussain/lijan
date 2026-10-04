@@ -125,11 +125,16 @@ export default async function(req) {
         effectiveRole = sorted[0].role;
       }
 
-      // Check recusal (by demo user's name)
+      // Recusal is matched by IDENTIFIER — the persona's virtual user id or one of its own seats.
+      // `member_name` is display only and is never an identity key.
       const recusals = await sr.entities.Recusal
         .filter({ committee_id: committee.id, status: 'active' })
         .catch(() => []);
-      const isRecused = (recusals || []).some((r) => r.member_name === persona.name_ar);
+      const ownSeatIds = activeMemberships.map((m) => m.id).filter(Boolean);
+      const isRecused = (recusals || []).some((r) => {
+        const ids = [r.user_id, r.member_user_id, r.person_id, r.membership_id, r.committee_membership_id].filter(Boolean);
+        return ids.includes(persona.user_id) || ownSeatIds.some((id) => ids.includes(id));
+      });
 
       // All members
       const allMembers = await sr.entities.CommitteeMembership

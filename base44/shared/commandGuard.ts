@@ -36,6 +36,10 @@ export const TRUSTED_TARGET_TYPES = Object.keys(SCOPE_CHAIN);
 /** Acts permitted only while the record is in one of these states. */
 const PERMITTED_STATES = {
   "meeting.start": { field: "status", states: ["scheduled"] },
+  "attendance.respond": { field: "status", states: ["scheduled", "in_progress"] },
+  "action.progress": { field: "status", states: ["assigned", "in_progress", "blocked", "evidence_pending", "under_review", "overdue"] },
+  "review.respond": { field: "status", states: ["pending", "accepted", "in_review", "overdue"] },
+  "agenda.evaluate": { field: "status", states: ["pending", "deferred"] },
   "meeting.adjourn": { field: "status", states: ["in_progress"] },
   "meeting.cancel": { field: "status", states: ["scheduled", "in_progress"] },
   "vote.call": { field: "status", states: ["draft", "under_review", "proposed", "pending"] },
@@ -49,8 +53,10 @@ const PERMITTED_STATES = {
 
 /** Seats that may act only on a record bound to themselves. */
 const ACTOR_BOUND = {
+  "action.progress": "owner_user_id",
   "action.update_progress": "owner_user_id",
   "action.request_extension": "owner_user_id",
+  "review.respond": "reviewer_user_id",
 };
 
 /** Request fields a command may only ever COMPARE against the derived truth. */

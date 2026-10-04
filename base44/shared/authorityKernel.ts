@@ -21,7 +21,28 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.0.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.1.0";
+
+/**
+ * The build record of the policy in force. A security-material change never keeps the previous
+ * version name, and evidence produced under an older version is never carried forward — the
+ * previous version's results are INVALIDATED and must be re-run against this one.
+ * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
+ */
+export const AUTHORITY_POLICY_BUILD = {
+  version: "authz-1.1.0",
+  supersedes: "authz-1.0.0",
+  change_class: "security",
+  changes: [
+    "fail-closed when the recusal set cannot be read",
+    "fail-closed when the authority grant cannot be read",
+    "scope provenance reported on every decision",
+    "command guard: trusted target, parent-chain agreement, related-scope containment",
+    "scope derived from the target record, never from the request",
+    "seat-borne self-service rights separated from office capabilities",
+  ],
+  invalidates_prior_evidence: true,
+};
 
 /** Read-only ceiling for platform admins: administration is not operational authority. */
 export const ADMIN_READ_CEILING = ["read", "audit.read", "report.export", "committee.view", "decision.view"];
@@ -33,7 +54,9 @@ export const OPERATIONAL_CAPABILITIES = [
   "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
   "vote.call", "vote.certify", "vote.cast",
   "minutes.draft", "minutes.review", "minutes.approve",
-  "attendance.certify", "action.admin", "escalation.approve",
+  "attendance.certify", "attendance.respond", "action.admin", "action.progress",
+  "escalation.approve", "review.respond", "amendment.notify", "agenda.evaluate",
+  "instrument.extract",
   "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute",
 ];
@@ -63,32 +86,38 @@ const ROLE_BASELINE = {
     "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
     "vote.call", "vote.certify", "vote.cast",
     "minutes.draft", "minutes.review", "minutes.approve",
-    "attendance.certify", "action.admin", "escalation.approve",
+    "attendance.certify", "attendance.respond", "action.admin", "action.progress",
+    "escalation.approve", "amendment.notify", "agenda.evaluate", "instrument.extract",
     "decision.view", "decision.comment", "decision.propose", "decision.review",
     "decision.approve", "decision.issue", "decision.vote", "decision.acknowledge",
-    "decision.sign_image", "decision.execute",
+    "decision.sign_image", "decision.execute", "review.respond",
     "comment.shared", "read", "audit.read", "report.export",
   ],
   vice_chair: [
-    "agenda.propose", "decision.view", "decision.comment", "decision.propose",
+    "agenda.propose", "attendance.respond", "action.progress", "review.respond",
+    "decision.view", "decision.comment", "decision.propose",
     "decision.review", "decision.vote", "decision.acknowledge", "comment.shared",
     "read", "audit.read", "report.export",
   ],
   secretary: [
-    "meeting.schedule", "agenda.edit", "agenda.propose",
-    "minutes.draft", "minutes.review", "attendance.certify", "action.admin",
+    "meeting.schedule", "agenda.edit", "agenda.propose", "agenda.evaluate",
+    "minutes.draft", "minutes.review", "attendance.certify", "attendance.respond",
+    "action.admin", "action.progress", "amendment.notify", "instrument.extract",
+    "review.respond",
     "decision.view", "decision.comment", "decision.review", "decision.acknowledge",
     "read", "audit.read", "report.export",
   ],
   committee_administrator: [
-    "agenda.edit", "action.admin", "attendance.certify",
+    "agenda.edit", "agenda.evaluate", "action.admin", "action.progress",
+    "attendance.certify", "attendance.respond", "amendment.notify", "instrument.extract",
     "decision.view", "decision.comment", "read", "audit.read",
   ],
   member: [
-    "agenda.propose", "decision.view", "decision.comment", "decision.propose",
+    "agenda.propose", "attendance.respond", "action.progress",
+    "decision.view", "decision.comment", "decision.propose",
     "decision.vote", "decision.acknowledge", "comment.shared", "read",
   ],
-  alternate: ["read"],
+  alternate: ["read", "attendance.respond"],
   observer: ["read"],
   advisor: ["read", "comment.shared", "decision.view", "decision.comment"],
   auditor: ["read", "audit.read", "report.export"],
@@ -98,12 +127,15 @@ const ROLE_BASELINE = {
  * A declaration is personal, never an office: whoever holds a seat may declare their OWN conflict or
  * record their OWN recusal, and the command writes the acting seat's identity — never a named person.
  * These two are derived from the seat's read right rather than repeated across every role list.
+ *
+ * Self-service rights are listed here so the set stays ONE list: each is a personal act bound to the
+ * actor's own record, never a right over another person's record.
  */
-const SELF_DECLARATION_CAPABILITIES = ["conflict.declare", "recusal.record"];
+const SELF_SERVICE_CAPABILITIES = ["conflict.declare", "recusal.record"];
 
 export function capabilitiesForRole(role, { delegationActive = false } = {}) {
   const base = ROLE_BASELINE[role] ? [...ROLE_BASELINE[role]] : [];
-  if (base.includes("read")) for (const cap of SELF_DECLARATION_CAPABILITIES) base.push(cap);
+  if (base.includes("read")) for (const cap of SELF_SERVICE_CAPABILITIES) base.push(cap);
   if (!delegationActive) return base;
   for (const cap of DELEGABLE_CAPABILITIES) if (!base.includes(cap)) base.push(cap);
   return base;

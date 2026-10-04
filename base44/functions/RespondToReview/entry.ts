@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 
 // RespondToReview — reviewer submits their verdict on a review request.
 export default async function(req) {
@@ -12,11 +12,28 @@ export default async function(req) {
       return Response.json({ error: 'review_request_id and a valid verdict are required' }, { status: 400 });
     }
 
-    const reviewRequest = await base44.asServiceRole.entities.ReviewRequest.get(review_request_id);
-    if (!reviewRequest) return Response.json({ error: 'Review request not found' }, { status: 404 });
+    // The review request is the trusted target: it carries the committee, the document version and
+    // the reviewer it is addressed to. `review.respond` is a real right, and the verdict must come
+    // from the reviewer the request names (the chair may act for the committee).
+    const auth = await authorizeCommand(base44, {
+      capability: 'review.respond',
+      target_type: 'ReviewRequest',
+      target_id: review_request_id,
+      ...requestClaims(body),
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+    const reviewRequest = auth.target;
 
-    const auth = await resolveAuthority(base44, { committee_id: reviewRequest.committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    if (reviewRequest.reviewer_user_id
+      && reviewRequest.reviewer_user_id !== auth.user.id
+      && auth.effective_role !== 'chair') {
+      return Response.json({
+        error: 'This review is addressed to another reviewer',
+        code: 'not_named_reviewer',
+        policy_version: auth.policy_version,
+        correlation_id: auth.correlation_id,
+      }, { status: 403 });
+    }
 
     const response = await base44.asServiceRole.entities.ReviewResponse.create({
       organization_id: auth.organization_id,

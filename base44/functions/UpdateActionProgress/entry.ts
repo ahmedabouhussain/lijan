@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // UpdateActionProgress — updates execution progress on an action.
@@ -11,11 +11,17 @@ export default async function(req) {
 
     if (!action_id) return Response.json({ error: 'action_id is required' }, { status: 400 });
 
-    const action = await base44.asServiceRole.entities.Action.get(action_id);
-    if (!action) return Response.json({ error: 'Action not found' }, { status: 404 });
-
-    const auth = await resolveAuthority(base44, { committee_id: action.committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // The record the act lands on is the trusted target: committee, seat and state all derive from
+    // it. `action.progress` is a real right, and a seat holding no office may move only an action
+    // assigned to it (bound in commandGuard by owner_user_id).
+    const auth = await authorizeCommand(base44, {
+      capability: 'action.progress',
+      target_type: 'Action',
+      target_id: action_id,
+      ...requestClaims(body),
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+    const action = auth.target;
 
     const updateData = {};
     if (progress_percent !== undefined) updateData.progress_percent = Math.min(100, Math.max(0, progress_percent));

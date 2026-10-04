@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 
 // EvaluateAgendaReadiness — evaluates evidence readiness for an agenda item.
 export default async function(req) {
@@ -10,11 +10,16 @@ export default async function(req) {
 
     if (!agenda_item_id) return Response.json({ error: 'agenda_item_id is required' }, { status: 400 });
 
-    const item = await base44.asServiceRole.entities.AgendaItem.get(agenda_item_id);
-    if (!item) return Response.json({ error: 'Agenda item not found' }, { status: 404 });
-
-    const auth = await resolveAuthority(base44, { committee_id: item.committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Readiness is written on a real agenda item, in the item's own committee, by a seat that holds
+    // `agenda.evaluate` — a preparation right, not a generic read.
+    const auth = await authorizeCommand(base44, {
+      capability: 'agenda.evaluate',
+      target_type: 'AgendaItem',
+      target_id: agenda_item_id,
+      ...requestClaims(body),
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+    const item = auth.target;
 
     // Get evidence requirements
     const requirements = await base44.asServiceRole.entities.AgendaItemEvidenceRequirement
