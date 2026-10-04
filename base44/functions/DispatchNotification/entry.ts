@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { dispatchNotification, dispatchBatch, type NotificationParams } from '../../shared/notificationEngine.ts';
 
 // DispatchNotification — HTTP entry point for the notification engine.

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { dispatchNotification } from '../../shared/notificationEngine.ts';
 import {
   OPEN_ACTION_STATUSES,

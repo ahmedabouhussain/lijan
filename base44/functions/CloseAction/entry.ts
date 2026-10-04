@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { resolveAuthority } from '../../shared/authorityKernel.ts';
 import { dispatchNotification } from '../../shared/notificationEngine.ts';
 

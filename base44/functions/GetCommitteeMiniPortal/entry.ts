@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 import { buildOrgAssetIndex } from '../../shared/orgAssets.ts';
 import { resolveMyReviewTasks } from '../../shared/reviewTasks.ts';
