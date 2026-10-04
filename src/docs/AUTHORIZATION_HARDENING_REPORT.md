@@ -6,28 +6,47 @@
 
 | الحقل | القيمة |
 |---|---|
-| Authority Kernel Version | **`authz-1.1.0`** — يحل محل `authz-1.0.0` (تغيير أمني مادي ⇒ الاسم لا يستمر) |
-| Source Hash | combined **`69256cf18accaa98e94679c6f7d404804ddff92b494a3e8408a57ffc4cee144b`** — التفصيل والحِزم في `base44/shared/authorityPolicyManifest.json` |
-| Built At | `2026-10-04T12:21:59Z` (توقيت البناء مسجل في السجل نفسه) |
+| Authority Kernel Version | **`authz-1.2.0-rc.1`** — مرشّح مجمّد يحل محل `authz-1.1.0` (تغيير أمني مادي ⇒ الاسم لا يستمر) |
+| Source Hash | combined **`b6e3deb7f495ef8db06266400a2389a4fe69104be96a79aa2ae461abef49d0c2`** — التفصيل والتاريخ في `base44/shared/authorityPolicyManifest.json` |
+| Built At | `2026-10-04T12:32:13Z` (توقيت البناء مسجل في السجل نفسه) |
 | Change From `authz-1.0.0` | منع مغلق عند فشل قراءة التنحّي · منع مغلق عند فشل قراءة المنحة · أثر مصدر النطاق · حارس الأوامر · اشتقاق النطاق من السجل · فصل الحقوق الشخصية عن صلاحيات المكتب · `action.close` كحق قبول |
 | Policy | `DELEGABLE_CAPABILITIES` 11 · `OPERATIONAL_CAPABILITIES` 31 · الحقوق الشخصية: `conflict.declare` · `recusal.record` |
 | Functions Linked | **54** وظيفة مرتبطة بهذا الإصدار (تُحدَّد آليًا من الاستيراد) |
+| Capabilities Added | `meeting.adjourn` · `meeting.cancel` · `agenda.propose` · `memory.compile` — أفعال كتابة كانت تُحكم بحق قراءة أو بحق غير دقيق |
 | Tests | `TestAuthorizationGuard` — **Authority Role Tests 30** · **Authority Positive Tests 12** · **Fail-Closed Tests 15** |
 | Prior Evidence | **مُبطَلة** — لا تُحمل نتائج `authz-1.0.0` إلى هذا الإصدار، وقد أُعيد تشغيل كل اختبارات السلطة على النسخة المجمّدة |
-| Command Coverage | **16/51 موضعًا على المسار المحروس** — الجرد الكامل والتداخل: `docs/AUTHORITY_COMMAND_LEDGER.md` |
+| Command Coverage | **54/54 موضعًا على المسار المحروس** (سجل مستهدف + فعل دقيق + بوابة حالة) · **0** على تلميح لجنة · **24** ملفًا يكتب خارج نطاق اللجنة ببوابته الخاصة — الجرد الكامل: `docs/AUTHORITY_COMMAND_LEDGER.md` |
 | Fail-Open Findings | **0** |
 | Read-Authorized Writes | **0** (قاعدة `write-gated-by-read` صارت خطأً يمنع الدمج) |
 | Name-Based Identity | **0** (قاعدة `name-identity-match` صارت خطأً يمنع الدمج) |
 | Positive Tests | **PASS 12/12** (مسار كامل: طلب ← قرار سلطة ← كتابة ← تدقيق) |
 | Negative Tests | **PASS 30/30** (Authority Role Tests على المنطق النقي) |
 | Fail-Closed Tests | **PASS 15/15** (عزل متعمّد لكل واقعة على حدة، بلا أي كتابة) |
-| Concurrency Tests | **NOT ESTABLISHED** — يوجد سباق حقيقي في منع التصويت المكرر (قراءة ثم كتابة). لا تُصنَّف ناجحة حتى تُقاس |
+| Concurrency Tests | **NOT ESTABLISHED** — الآلية مُنفَّذة (مطالبة قبل الكتابة في 10 مواضع + قارن-وبدّل على `escalation_revision` في التصعيد)، لكن قياس طلبات متزامنة فعلية غير ممكن من بيئة البناء. لا تُصنَّف ناجحة حتى تُقاس |
 | Browser Acceptance | **NOT TESTED** |
 | Showcase Write Eligibility | **BLOCKED** |
 
 > **لا تصنيف عام بـ PASS:** تغطية ترحيل الأوامر (35 موضعًا متبقيًا) والسباق في التصويت المكرر و«الكتابة التجريبية» ليست مغلقة، فالإصدار يبقى `IN PROGRESS` على مستوى المنصة.
 
 **تصحيح تسمية:** ما كُتب سابقًا «اختبارات الأداء الخمسة PASS 30/30» هو في الحقيقة **`Authority Role Tests`** — اختبارات أدوار وصلاحيات (سماح/منع) على المنطق النقي، وليست اختبارات أداء: لا زمن ولا حمل ولا `p50/p95/p99` ولا معدل أخطاء مدّعى في أي موضع.
+
+---
+
+## التقرير الواحد — نهاية جولة الإكمال
+
+| البند | قبل | بعد | الاختبار | الحالة | المتبقي |
+|---|---:|---:|---|---|---|
+| الأوامر المحروسة | 16/51 | **54/54** | تعداد ثابت + استدعاء مباشر للنواة = 0 | PASS | 24 ملفًا يكتب خارج نطاق اللجنة (بوابات مستقلة) |
+| Fail-Open | 0 | **0** | `fail_closed_tests` 15/15 | PASS | — |
+| كتابة بحق قراءة | 0 | **0** | كل فعل كتابة يحمل حقًّا عملياتيًّا دقيقًا | PASS | — |
+| تطابق بالاسم | 0 | **0** | لا مطابقة هوية بالاسم في أي مسار سلطة | PASS | — |
+| التزامن | غير مكتمل | **الآلية مُنفَّذة في 10 مواضع** | قارن-وبدّل (`escalation_revision`) + مطالبة قبل الكتابة | **NOT ESTABLISHED** (لا قياس متزامن من بيئة البناء) | حِزام تزامن حقيقي |
+| الكتابة التجريبية | مغلقة | **مغلقة** | بوابة المرحلة D تشترط نجاح التزامن | BLOCKED | اجتياز بوابة التزامن |
+| رحلة الدكتور حمد | غير مكتملة | **لم تبدأ** | تتطلب الكتابة التجريبية | BLOCKED (تبعية) | فتح الكتابة أولًا |
+| (P0) | جزئي | **الخادم مغلق؛ القبول البصري غير مُختبر** | اختبارات النواة الثلاث PASS | PARTIAL | وكيل الاختبار |
+| المتصفح | غير مُختبر | **غير مُختبر من بيئة البناء** | — | NOT TESTED | تسليم إلى وكيل الاختبار |
+
+**نتائج النواة على المرشّح المجمّد `authz-1.2.0-rc.1`:** `authority_role_tests` 30/30 · `authority_positive_tests` 12/12 · `fail_closed_tests` 15/15 — ولا تُحمل نتائج `authz-1.1.0` إلى هذا المرشّح.
 
 ---
 
@@ -41,7 +60,7 @@
 | Delegation Enforcement | **PARTIAL** |
 | Recusal Identity Safety | **PARTIAL** |
 | Decision Rights Separation | **PARTIAL** |
-| Command Migration Coverage | **PARTIAL — 16/51 sites on the guarded path, 35 need a trusted target (union of overlaps: 35 unique)** |
+| Command Migration Coverage | **COMPLETE ON THE GUARDED PATH — 54/54 committee-scope sites, 0 on a committee lookup hint; 24 writers outside committee scope documented with their own boundary** |
 | Read-Authorized Writes | **0** |
 | Name-Based Identity / Recusal | **0** |
 | Register Surface Coverage | **NOT ESTABLISHED — no ratio until the atomic inventory is closed** |

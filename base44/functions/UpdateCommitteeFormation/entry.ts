@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
 
 // UpdateCommitteeFormation — DISABLED (Legacy Remediation).
 //

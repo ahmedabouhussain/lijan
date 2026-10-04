@@ -60,7 +60,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "vote.call", "vote.certify", "vote.cast",
   "minutes.draft", "minutes.review", "minutes.approve",
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
-  "action.close", "escalation.approve", "review.respond", "amendment.notify",
+  "action.close", "escalation.approve", "review.respond", "amendment.notify", "amendment.acknowledge",
   "agenda.evaluate", "instrument.extract",
   "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute",
@@ -140,7 +140,7 @@ const ROLE_BASELINE = {
  * Self-service rights are listed here so the set stays ONE list: each is a personal act bound to the
  * actor's own record, never a right over another person's record.
  */
-const SELF_SERVICE_CAPABILITIES = ["conflict.declare", "recusal.record"];
+const SELF_SERVICE_CAPABILITIES = ["conflict.declare", "recusal.record", "amendment.acknowledge"];
 
 export function capabilitiesForRole(role, { delegationActive = false } = {}) {
   const base = ROLE_BASELINE[role] ? [...ROLE_BASELINE[role]] : [];

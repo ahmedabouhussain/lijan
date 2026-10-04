@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // AcknowledgeCommitteeChange — allows a member to acknowledge (or dispute) a change
 // that affects them. Creates/updates a MemberAcknowledgement record.
@@ -19,11 +19,19 @@ export default async function(req) {
       return Response.json({ error: `status must be one of: ${validStatuses.join(', ')}` }, { status: 400 });
     }
 
-    const amendment = await base44.asServiceRole.entities.CommitteeAmendment.get(amendment_id);
-    if (!amendment) return Response.json({ error: 'Amendment not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the amendment record is the target, its committee is derived
+    // from it, and acknowledging is a SEAT-BORNE self-service right — a person receives their own
+    // receipt for a change that affects them. It was previously a write with no authority check at all.
+    const auth = await authorizeCommand(base44, {
+      capability: 'amendment.acknowledge',
+      target_type: 'CommitteeAmendment',
+      target_id: amendment_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const amendment = auth.target;
+    const user = auth.user;
 
     // Find existing acknowledgement for this member
     const existing = await base44.asServiceRole.entities.MemberAcknowledgement
@@ -55,7 +63,16 @@ export default async function(req) {
       });
     }
 
-    return Response.json({ status: 'ok', amendment_id, acknowledgement: status });
+    await base44.asServiceRole.entities.AuditEvent.create({
+      organization_id: amendment.organization_id, committee_id: amendment.committee_id,
+      actor_user_id: user.id, actor_name: user.full_name || user.email, actor_email: user.email,
+      action: `amendment.${status}`, entity_type: 'CommitteeAmendment', entity_id: amendment_id,
+      entity_title: amendment.title_ar || amendment.title || 'Committee Amendment',
+      description: `A seat recorded '${status}' on the change that affects it`,
+      correlation_id: auth.correlation_id, authority_context: auth.authority_context,
+    });
+
+    return Response.json({ status: 'ok', amendment_id, acknowledgement: status, correlation_id: auth.correlation_id });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

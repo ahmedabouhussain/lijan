@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // GeneratePolicyScenarioAI — server-side AI for policy scenario impact assessment.
 // Replaces the unsafe client-side InvokeLLM call in PolicyScenarios.jsx.
@@ -13,6 +14,18 @@ export default async function(req) {
     const body = await req.json().catch(() => ({}));
     const { scenario_id, committee_id } = body;
     if (!scenario_id) return Response.json({ error: 'scenario_id is required' }, { status: 400 });
+
+    // Authority on a TRUSTED target: the scenario is assessed inside a real committee, and the
+    // committee RECORD is the target — a body carrying a committee_id with no committee to derive
+    // scope from is refused rather than written.
+    const auth = await authorizeCommand(base44, {
+      capability: 'agenda.propose',
+      target_type: 'Committee',
+      target_id: committee_id,
+      mode: 'create',
+      claimed_committee_id: committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const scenario = await base44.asServiceRole.entities.PolicyScenario.get(scenario_id);
     if (!scenario) return Response.json({ error: 'Scenario not found' }, { status: 404 });

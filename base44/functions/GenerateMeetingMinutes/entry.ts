@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { brandedMarkdownHeader } from '../../shared/brandHeader.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -11,9 +12,18 @@ export default async function(req: Request): Promise<Response> {
     const meetingId = body.meeting_id;
     if (!meetingId) return Response.json({ error: 'meeting_id is required' }, { status: 400 });
 
+    // Authority on a TRUSTED target: minutes are drafted in the MEETING's own committee. This
+    // function previously wrote minutes on an authenticated-only check, with no authority at all.
+    const auth = await authorizeCommand(base44, {
+      capability: 'minutes.draft',
+      target_type: 'Meeting',
+      target_id: meetingId,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
+
     // Fetch meeting + related data
-    const meeting = await base44.asServiceRole.entities.Meeting.get(meetingId);
-    if (!meeting) return Response.json({ error: 'Meeting not found' }, { status: 404 });
+    const meeting = auth.target;
 
     const committeeId = meeting.committee_id;
     const [committee, members, agendaItems, decisions, attendance, existing] = await Promise.all([
