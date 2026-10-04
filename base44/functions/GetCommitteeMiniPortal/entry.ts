@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 import { buildOrgAssetIndex } from '../../shared/orgAssets.ts';
+import { resolveMyReviewTasks } from '../../shared/reviewTasks.ts';
 
 // GetCommitteeMiniPortal — verified read for the Committee Mini-Portal Home.
 // Verifies committee membership server-side, returns committee + members + meetings + registers.
@@ -187,6 +188,9 @@ export default async function(req) {
         },
         // The caller's OWN work-group seats, resolved by stored identity link — never by name.
         my_workgroup_memberships: (workstreamMemberships || []).filter((m) => m.user_id === persona.user_id),
+        // Review work shown to this seat — resolved on the server, and only for requests whose
+        // document, version and stored file all still exist.
+        my_review_tasks: await resolveMyReviewTasks(sr, { committee_id: committee.id, user_id: persona.user_id, role: effectiveRole }),
         counters: {
           members: orderedMembers.length,
           meetings: (meetings || []).length,
@@ -342,6 +346,9 @@ export default async function(req) {
       },
       // The caller's OWN work-group seats, resolved by stored identity link — never by name.
       my_workgroup_memberships: (workstreamMemberships || []).filter((m) => m.user_id === user.id),
+      // Review work shown to this seat — resolved on the server, and only for requests whose
+      // document, version and stored file all still exist.
+      my_review_tasks: await resolveMyReviewTasks(base44.asServiceRole, { committee_id: committee.id, user_id: user.id, role: effectiveRole }),
       counters: {
         members: orderedMembers.length,
         meetings: (meetings || []).length,

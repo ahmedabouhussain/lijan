@@ -67,6 +67,7 @@ const CommitteeAgenda = lazy(() => import('@/pages/committee/CommitteeAgenda'));
 const CommitteePacks = lazy(() => import('@/pages/committee/CommitteePacks'));
 const CommitteeAttendance = lazy(() => import('@/pages/committee/CommitteeAttendance'));
 const CommitteeDocuments = lazy(() => import('@/pages/committee/CommitteeDocuments'));
+const DocumentDetail = lazy(() => import('@/pages/committee/DocumentDetail'));
 const CommitteeMinutes = lazy(() => import('@/pages/committee/CommitteeMinutes'));
 const CommitteeSignatures = lazy(() => import('@/pages/committee/CommitteeSignatures'));
 const CommitteeDecisions = lazy(() => import('@/pages/committee/CommitteeDecisions'));
@@ -188,6 +189,7 @@ const AuthenticatedApp = () => {
           <Route path="/o/:orgRef/c/:committeeRef/attendance" element={<CommitteeAttendance />} />
           {/* Official Records */}
           <Route path="/o/:orgRef/c/:committeeRef/documents" element={<CommitteeDocuments />} />
+          <Route path="/o/:orgRef/c/:committeeRef/documents/:documentId" element={<DocumentDetail />} />
           <Route path="/o/:orgRef/c/:committeeRef/minutes" element={<CommitteeMinutes />} />
           <Route path="/o/:orgRef/c/:committeeRef/voting" element={<CommitteeVoting />} />
           <Route path="/o/:orgRef/c/:committeeRef/decisions" element={<CommitteeDecisions />} />

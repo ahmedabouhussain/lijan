@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { ChevronRight, Gavel, CheckSquare, Link2 } from "lucide-react";
 import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -12,51 +11,22 @@ import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import LocalizedField from "@/components/raqeem/LocalizedField";
+import useCommitteeRecord from "@/hooks/useCommitteeRecord";
+import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
 
 export default function DecisionDetail() {
   const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [decision, setDecision] = useState(null);
-  const [committee, setCommittee] = useState(null);
-  const [meeting, setMeeting] = useState(null);
-  const [actions, setActions] = useState([]);
-  const [votes, setVotes] = useState([]);
-  const [supersedingDecision, setSupersedingDecision] = useState(null);
-
-  async function load() {
-    try {
-      // A stale or deleted decision link must not surface as an app error.
-      const d = await base44.entities.Decision.get(id).catch(() => null);
-      if (!d) {
-        setDecision(null);
-        return;
-      }
-      setDecision(d);
-      if (d.committee_id) {
-        const c = await base44.entities.Committee.get(d.committee_id).catch(() => null);
-        setCommittee(c);
-      }
-      if (d.meeting_id) {
-        const m = await base44.entities.Meeting.get(d.meeting_id).catch(() => null);
-        setMeeting(m);
-      }
-      if (d.superseded_by) {
-        const sd = await base44.entities.Decision.get(d.superseded_by).catch(() => null);
-        setSupersedingDecision(sd);
-      }
-      const [acts, voteList] = await Promise.all([
-        base44.entities.Action.filter({ decision_id: id }).catch(() => []),
-        base44.entities.Vote.filter({ decision_id: id }).catch(() => []),
-      ]);
-      setActions(acts || []);
-      setVotes(voteList || []);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => { load(); }, [id]);
+  // The same governed read as the register that listed this decision — so a decision that is
+  // listed always opens, with its committee, meeting, votes and resulting actions.
+  const { bundle, loading, error, reload: load } = useCommitteeRecord("Decision", id);
+  const decision = bundle?.record || null;
+  const committee = bundle?.committee || null;
+  const meeting = bundle?.meeting || null;
+  const actions = bundle?.actions || [];
+  const votes = bundle?.votes || [];
+  const supersedingDecision = bundle?.superseding_decision || null;
+  const isExploration = bundle?.is_demo_mode === true;
 
   if (loading) {
     return (
@@ -68,12 +38,15 @@ export default function DecisionDetail() {
 
   if (!decision) {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/decisions` : "/";
+    const reason = /member of this committee/i.test(error || "")
+      ? t("لا توجد عضوية مسندة إلى هذا الحساب في هذه اللجنة.", "No membership is assigned to this account in this committee.")
+      : error
+      ? t("تعذّر فتح هذا القرار في نطاقك الحالي.", "This decision could not be opened in your current scope.")
+      : t("قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.", "This decision may have been deleted, or the link you opened is out of date.");
     return (
       <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
         <h2 className="text-lg font-semibold text-foreground mb-1">{t("القرار غير متوفر", "Decision not available")}</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          {t("قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.", "This decision may have been deleted, or the link you opened is out of date.")}
-        </p>
+        <p className="text-sm text-muted-foreground mb-4">{reason}</p>
         <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
           {t("العودة إلى سجل القرارات", "Back to the decisions register")}
         </Link>
@@ -96,6 +69,8 @@ export default function DecisionDetail() {
         {meeting && <ChevronRight className="w-4 h-4 rtl:rotate-180" aria-hidden="true" />}
         <span className="text-foreground truncate"><LocalizedField entity="Decision" record={decision} base="title" /></span>
       </div>
+
+      {isExploration && <ExplorationNotice />}
 
       {/* Header */}
       <div>

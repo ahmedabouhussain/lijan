@@ -88,17 +88,22 @@ export default function WorkInbox({ data, base }) {
     });
   }
 
-  // Documents/reports needing review
-  const pendingReview = (registers?.documents || []).filter((d) => d.status === "in_review");
-  if (pendingReview.length > 0) {
+  // Document review — the task is the server-resolved assignment, so it exists only when the
+  // document, its version and its stored file are all real and the review is addressed to this
+  // seat. It opens that exact document, never a register the reader then has to search.
+  const reviewTask = (data.my_review_tasks || [])[0];
+  if (reviewTask) {
     nowItems.push({
       icon: FileText,
       title: t("مستند يحتاج مراجعتك", "Document Needs Your Review"),
-      reason: t("وثيقة بانتظار مراجعتك قبل الإصدار", "A document awaits your review before publication"),
+      reason: t(
+        `${reviewTask.document_title_ar || reviewTask.document_title} — الإصدار ${reviewTask.version_number}`,
+        `${reviewTask.document_title_en || reviewTask.document_title} — version ${reviewTask.version_number}`
+      ),
       committee: L.name(committee),
       priority: "normal",
       actionLabel: t("مراجعة", "Review"),
-      to: `${base}/documents`,
+      to: `${base}/documents/${reviewTask.document_id}?version=${reviewTask.document_version_id}`,
     });
   }
 

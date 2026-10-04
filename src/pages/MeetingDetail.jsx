@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ChevronRight, Calendar, Clock, Users, Gavel, Play, Pause, Square, Ban, Plus, X, MapPin, Video, Repeat, RefreshCw, Loader2 } from "lucide-react";
@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 import LocalizedDatePicker from "@/components/raqeem/LocalizedDatePicker";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
+import useCommitteeRecord from "@/hooks/useCommitteeRecord";
+import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
 
 const MEETING_MODES = {
   physical: { ar: "حضوري", en: "Physical" },
@@ -34,14 +36,6 @@ const RECURRENCE_TYPES = {
 export default function MeetingDetail() {
   const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [meeting, setMeeting] = useState(null);
-  const [committee, setCommittee] = useState(null);
-  const [agendaItems, setAgendaItems] = useState([]);
-  const [decisions, setDecisions] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [attendance, setAttendance] = useState([]);
-  const [minutes, setMinutes] = useState(null);
   const [showDecisionForm, setShowDecisionForm] = useState(false);
   const [savingDecision, setSavingDecision] = useState(false);
   const [decisionForm, setDecisionForm] = useState({
@@ -53,48 +47,42 @@ export default function MeetingDetail() {
   });
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [generatingInstances, setGeneratingInstances] = useState(false);
+  const [actionError, setActionError] = useState("");
+
+  // ONE governed read: the meeting, its committee, agenda, attendance, minutes, members and the
+  // authority of this very seat all arrive together — from the same scope as the register that
+  // listed the meeting. A meeting that can be listed can therefore always be opened.
+  const { bundle, loading, error, reload: load } = useCommitteeRecord("Meeting", id);
+  const meeting = bundle?.record || null;
+  const committee = bundle?.committee || null;
+  const agendaItems = bundle?.agenda || [];
+  const decisions = bundle?.decisions || [];
+  const attendance = bundle?.attendance || [];
+  const minutes = (bundle?.minutes || [])[0] || null;
+  const members = bundle?.members || [];
+  const isExploration = bundle?.is_demo_mode === true;
+  const authority = bundle?.authority || [];
+  // A control appears only when this seat's own authority permits the action — never merely
+  // because the record exists. Exploration executes nothing.
+  const canControlMeeting = !isExploration && authority.includes("meeting.start");
+  const canIssueDecision = !isExploration && authority.includes("decision.issue");
+  const canProposeDecision = !isExploration && authority.includes("agenda.propose");
+  const canAddDecision = canIssueDecision || canProposeDecision;
+  const decisionActionLabel = canIssueDecision
+    ? t("قرار جديد", "New decision")
+    : t("اقتراح مشروع قرار", "Propose a decision draft");
+
   const { data: cData } = useCommittee();
   const myRole = cData?.my_role;
   const isOversight = cData?.is_oversight;
   const isRecused = cData?.is_recused;
-  const canCertify = !isOversight && !isRecused && ["chair", "vice_chair", "secretary"].includes(myRole);
-  const canCallVote = !isOversight && !isRecused && ["chair", "vice_chair"].includes(myRole);
-  const canCastVote = !isOversight && !isRecused && ["chair", "vice_chair", "secretary", "member"].includes(myRole);
-
-  async function load() {
-    try {
-      // A stale or deleted meeting link must not surface as an app error.
-      const m = await base44.entities.Meeting.get(id).catch(() => null);
-      if (!m) {
-        setMeeting(null);
-        return;
-      }
-      setMeeting(m);
-      if (m.committee_id) {
-        const c = await base44.entities.Committee.get(m.committee_id).catch(() => null);
-        setCommittee(c);
-      }
-      const [agenda, decs, att, mins, mems] = await Promise.all([
-        base44.entities.AgendaItem.filter({ meeting_id: id }).catch(() => []),
-        base44.entities.Decision.filter({ meeting_id: id }).catch(() => []),
-        base44.entities.Attendance.filter({ meeting_id: id }).catch(() => []),
-        base44.entities.MeetingMinutes.filter({ meeting_id: id }).catch(() => []),
-        m.committee_id ? base44.entities.CommitteeMembership.filter({ committee_id: m.committee_id, status: 'active' }).catch(() => []) : Promise.resolve([]),
-      ]);
-      setAgendaItems(agenda || []);
-      setDecisions(decs || []);
-      setAttendance(att || []);
-      setMinutes(mins && mins.length > 0 ? mins[0] : null);
-      setMembers(mems || []);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => { load(); }, [id]);
+  const canCertify = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair", "secretary"].includes(myRole);
+  const canCallVote = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair"].includes(myRole);
+  const canCastVote = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair", "secretary", "member"].includes(myRole);
 
   const updateMeetingStatus = async (newStatus) => {
     setStatusUpdating(true);
+    setActionError("");
     try {
       const fnMap = {
         in_progress: "StartMeeting",
@@ -110,7 +98,8 @@ export default function MeetingDetail() {
       }
       load();
     } catch (e) {
-      console.error("Status update failed:", e);
+      // A refusal is reported as it is — never as a silent success.
+      setActionError(e?.response?.data?.error || t("تعذّر تنفيذ الأمر على هذا الاجتماع.", "The action could not be executed on this meeting."));
     }
     setStatusUpdating(false);
   };
@@ -130,24 +119,42 @@ export default function MeetingDetail() {
   const createDecision = async () => {
     if (!decisionForm.title.trim()) return;
     setSavingDecision(true);
+    setActionError("");
     try {
-      const dec = await base44.entities.Decision.create({
-        ...decisionForm,
-        committee_id: meeting.committee_id,
-        meeting_id: id,
-        status: "draft",
-      });
-      await base44.entities.AuditLog.create({
-        action: "create",
-        entity_type: "Decision",
-        entity_id: dec.id,
-        entity_title: decisionForm.title,
-        description: L.pair("إنشاء قرار من الاجتماع", "Decision created from the meeting"),
-      });
+      if (canProposeDecision) {
+        // A member PROPOSES a draft through the governed endpoint. It carries a proposal, not an
+        // issued decision: it becomes one only after review and voting.
+        await base44.functions.invoke("CreateDecisionDraft", {
+          committee_id: meeting.committee_id,
+          meeting_id: id,
+          title: decisionForm.title,
+          proposal: decisionForm.proposal,
+          legal_basis: decisionForm.legal_basis,
+          owner_name: decisionForm.owner_name,
+          deadline: decisionForm.deadline,
+        });
+      } else {
+        const dec = await base44.entities.Decision.create({
+          ...decisionForm,
+          committee_id: meeting.committee_id,
+          meeting_id: id,
+          status: "draft",
+        });
+        await base44.entities.AuditLog.create({
+          action: "create",
+          entity_type: "Decision",
+          entity_id: dec.id,
+          entity_title: decisionForm.title,
+          description: L.pair("إنشاء قرار من الاجتماع", "Decision created from the meeting"),
+        });
+      }
       setDecisionForm({ title: "", proposal: "", legal_basis: "", owner_name: "", deadline: "" });
       setShowDecisionForm(false);
       load();
-    } catch {}
+    } catch (e) {
+      // Nothing is recorded on failure, and the surface says so.
+      setActionError(e?.response?.data?.error || t("تعذّر حفظ مشروع القرار، ولم يُسجَّل أي أثر.", "The decision draft could not be saved and nothing was recorded."));
+    }
     setSavingDecision(false);
   };
 
@@ -161,14 +168,18 @@ export default function MeetingDetail() {
 
   if (!meeting) {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/meetings` : "/";
+    // The reason is stated according to what actually happened — never a raw server string.
+    const reason = /member of this committee/i.test(error || "")
+      ? t("لا توجد عضوية مسندة إلى هذا الحساب في هذه اللجنة.", "No membership is assigned to this account in this committee.")
+      : error
+      ? t("تعذّر فتح هذا الاجتماع في نطاقك الحالي.", "This meeting could not be opened in your current scope.")
+      : t("قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.", "This meeting may have been deleted, or the link you opened is out of date.");
     return (
       <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
         <h2 className="text-lg font-semibold text-foreground mb-1">
           {t("الاجتماع غير متوفر", "Meeting not available")}
         </h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          {t("قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.", "This meeting may have been deleted, or the link you opened is out of date.")}
-        </p>
+        <p className="text-sm text-muted-foreground mb-4">{reason}</p>
         <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
           {t("العودة إلى قائمة الاجتماعات", "Back to the meetings list")}
         </Link>
@@ -216,22 +227,22 @@ export default function MeetingDetail() {
           </div>
         </div>
 
-        {/* Meeting status controls */}
+        {/* Meeting status controls — each one only for a seat whose authority covers it */}
         <div className="flex items-center gap-2 flex-wrap">
-          <CalendarSyncButton meetingId={id} />
-          <OutlookSyncButton meetingId={id} />
-          {meeting.is_series_master && (
+          {canControlMeeting && <CalendarSyncButton meetingId={id} />}
+          {canControlMeeting && <OutlookSyncButton meetingId={id} />}
+          {canControlMeeting && meeting.is_series_master && (
             <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
               {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
               {t("إنشاء نسخ إضافية", "Generate more instances")}
             </Button>
           )}
-          {status === "scheduled" && (
+          {canControlMeeting && status === "scheduled" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
               {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("بدء الاجتماع", "Start Meeting")}
             </Button>
           )}
-          {status === "in_progress" && (
+          {canControlMeeting && status === "in_progress" && (
             <>
               <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")} disabled={statusUpdating}>
                 {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} {t("تأجيل", "Adjourn")}
@@ -241,18 +252,26 @@ export default function MeetingDetail() {
               </Button>
             </>
           )}
-          {status === "adjourned" && (
+          {canControlMeeting && status === "adjourned" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
               {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("استئناف", "Resume")}
             </Button>
           )}
-          {(status === "scheduled" || status === "in_progress" || status === "adjourned") && (
+          {canControlMeeting && (status === "scheduled" || status === "in_progress" || status === "adjourned") && (
             <Button size="sm" variant="destructive" onClick={() => updateMeetingStatus("cancelled")} disabled={statusUpdating}>
               {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Ban className="w-3.5 h-3.5" />} {t("إلغاء", "Cancel")}
             </Button>
           )}
         </div>
       </div>
+
+      {isExploration && <ExplorationNotice />}
+
+      {actionError && (
+        <div className="raqeem-card p-3 border-destructive/30 bg-state-danger-surface">
+          <p className="text-xs text-state-danger-ink">{actionError}</p>
+        </div>
+      )}
 
       {/* Meeting URL */}
       {meeting.meeting_url && (
@@ -276,9 +295,9 @@ export default function MeetingDetail() {
             <h2 className="text-sm font-semibold flex items-center gap-2">
               <Gavel className="w-4 h-4 text-primary" /> {t("القرارات", "Decisions")}
             </h2>
-            {!showDecisionForm && (
+            {canAddDecision && !showDecisionForm && (
               <button onClick={() => setShowDecisionForm(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-                <Plus className="w-3.5 h-3.5" /> {t("قرار جديد", "New decision")}
+                <Plus className="w-3.5 h-3.5" /> {decisionActionLabel}
               </button>
             )}
           </div>

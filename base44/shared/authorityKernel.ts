@@ -141,19 +141,25 @@ function isVotingCapability(cap) {
   return ["vote.cast", "vote.call", "vote.certify"].includes(cap);
 }
 
+const ROLE_CAPABILITIES = {
+  chair: ["committee.activate", "committee.manage", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "escalation.approve", "committee.close", "read", "audit.read", "report.export"],
+  vice_chair: ["committee.activate", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "read", "audit.read"],
+  secretary: ["meeting.schedule", "agenda.edit", "minutes.draft", "minutes.review", "attendance.certify", "action.admin", "read", "audit.read"],
+  member: ["agenda.propose", "vote.cast", "decision.sign", "comment.shared", "read"],
+  alternate: ["read"], // activated alternates get member capabilities via AlternateActivation
+  observer: ["read"],
+  advisor: ["read", "comment.shared"],
+  auditor: ["read", "audit.read", "report.export"],
+};
+
+// The authority of a committee role is a property of the ROLE, resolved in exactly one place.
+// Surfaces read it from here instead of hardcoding role lists of their own.
+export function capabilitiesForRole(role) {
+  return ROLE_CAPABILITIES[role] || [];
+}
+
 function hasCapability(role, capability) {
-  const roleCapabilities = {
-    chair: ["committee.activate", "committee.manage", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "escalation.approve", "committee.close", "read", "audit.read", "report.export"],
-    vice_chair: ["committee.activate", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "read", "audit.read"],
-    secretary: ["meeting.schedule", "agenda.edit", "minutes.draft", "minutes.review", "attendance.certify", "action.admin", "read", "audit.read"],
-    member: ["agenda.propose", "vote.cast", "decision.sign", "comment.shared", "read"],
-    alternate: ["read"], // activated alternates get member capabilities via AlternateActivation
-    observer: ["read"],
-    advisor: ["read", "comment.shared"],
-    auditor: ["read", "audit.read", "report.export"],
-  };
-  const caps = roleCapabilities[role] || [];
-  return caps.includes(capability);
+  return capabilitiesForRole(role).includes(capability);
 }
 
 function generateCorrelationId() {

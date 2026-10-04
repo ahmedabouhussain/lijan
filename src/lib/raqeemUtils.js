@@ -232,6 +232,16 @@ export const AI_OUTPUT_STATUS = {
   amended: { ar: "معدل", en: "Amended", color: S.warning },
 };
 
+// Document lifecycle — the one vocabulary every document surface reads its status from.
+export const DOCUMENT_STATUS = {
+  draft: { ar: "مسودة", en: "Draft", color: "bg-state-neutral-surface text-state-neutral-ink" },
+  in_review: { ar: "قيد المراجعة", en: "In review", color: "bg-state-warning-surface text-state-warning-ink" },
+  approved: { ar: "معتمد", en: "Approved", color: "bg-state-success-surface text-state-success-ink" },
+  published: { ar: "منشور", en: "Published", color: "bg-state-success-surface text-state-success-ink" },
+  superseded: { ar: "مُستبدل", en: "Superseded", color: "bg-state-neutral-surface text-state-neutral-ink" },
+  archived: { ar: "مؤرشف", en: "Archived", color: "bg-state-neutral-surface text-state-neutral-ink" },
+};
+
 export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {
