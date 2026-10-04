@@ -97,7 +97,7 @@ export default function MemberHome({ data, base, userName }) {
         ].map((item, i) => {
           const Icon = item.icon;
           return (
-            <Link key={i} to={`${base}${item.to}`} className="raqeem-card p-3.5 relative overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all group">
+            <Link key={i} to={item.to} className="raqeem-card p-3.5 relative overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all group">
               {item.accent && <div className="absolute top-0 left-0 w-1 h-full" style={{ background: item.accent }} />}
               <div className="flex items-center gap-2.5 pl-1">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary/5 group-hover:bg-primary/10 transition-colors shrink-0">

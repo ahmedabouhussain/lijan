@@ -141,6 +141,17 @@ export const EffectiveActorProvider = ({ children }) => {
     return session;
   }, [user, demoSession]);
 
+  // Renew the exploration session in place.
+  // The session token is short-lived by design, and a visitor who is still exploring must not be
+  // thrown out when it lapses. A NEW server session is issued for the SAME persona — the persona
+  // roster is never the authority, the new token is. If the server refuses, the caller is told.
+  const renewDemo = useCallback(async () => {
+    const personaKey = demoSession?.persona_key;
+    if (!personaKey) return null;
+    const session = await enterDemo(personaKey);
+    return session?.showcase_token || null;
+  }, [demoSession, enterDemo]);
+
   // End the exploration: clear the persona, its organization, its committee, its role and
   // every cached context, then return to the entry screen.
   const exitDemo = useCallback(() => {
@@ -193,6 +204,7 @@ export const EffectiveActorProvider = ({ children }) => {
         showcaseToken: demoSession?.showcase_token || null,
         isDrHamadExperience: demoSession?.persona_key === DEFAULT_PERSONA,
         enterDemo,
+        renewDemo,
         exitDemo,
         // The real authenticated user (never replaced by a persona)
         realUser: user,

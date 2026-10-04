@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { base44 } from "@/api/base44Client";
+import useCommitteeRegister from "@/hooks/useCommitteeRegister";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { CheckCircle2, Clock, FileText } from "lucide-react";
 
@@ -39,18 +39,13 @@ function hasEvidence(product) {
   return sections.some(s => s.source_references && s.source_references.length > 0);
 }
 
-export default function CompletionLedger({ committeeId }) {
+export default function CompletionLedger() {
   const { t, lang } = useLanguage();
-  const [products, setProducts] = useState(null);
+  // Governance products come from the server register, in the same scope as each product's page.
+  const { items, loading } = useCommitteeRegister("products");
+  const products = items("products");
 
-  useEffect(() => {
-    if (!committeeId) return;
-    base44.entities.ProductInstance.filter({ committee_id: committeeId })
-      .then(setProducts)
-      .catch(() => setProducts([]));
-  }, [committeeId]);
-
-  if (products === null) return <TableSkeleton rows={4} />;
+  if (loading) return <TableSkeleton rows={4} />;
   if (products.length === 0) {
     return (
       <div className="raqeem-card p-6 text-center">

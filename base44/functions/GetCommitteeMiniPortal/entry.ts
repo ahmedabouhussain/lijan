@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 import { buildOrgAssetIndex } from '../../shared/orgAssets.ts';
 import { resolveMyReviewTasks } from '../../shared/reviewTasks.ts';
+import { verifyShowcaseSession } from '../../shared/showcaseSession.ts';
 
 // GetCommitteeMiniPortal — verified read for the Committee Mini-Portal Home.
 // Verifies committee membership server-side, returns committee + members + meetings + registers.
@@ -54,25 +55,41 @@ export default async function(req) {
     const sr = base44.asServiceRole;
 
     const body = await req.json().catch(() => ({}));
-    const { committee_id, public_id, demo_mode, demo_persona } = body;
+    const { committee_id, public_id, demo_mode, demo_persona, showcase_token } = body;
     const demoMode = demo_mode === true;
 
-    // ── DEMO MODE: resolve the demo persona, then only that persona's demo data ──
-    // The resolved persona key — not only the caller's boolean flag — is the exploration signal,
-    // so a stale flag on the client can never push an exploration link into the real-data scope.
-    const persona = resolveDemoPersona(demo_persona);
-    if (demoMode || persona) {
+    // ── SHOWCASE: the principal is a server-issued session; a persona is resolved FROM it. ──
+    // The token is verified on the server, and the persona, dataset and committee scope it carries
+    // are the only scope this request has. It can never be widened by anything in the payload.
+    // LEGACY CONTRACT (the currently published client revision predates the token): a roster
+    // persona key with no token still resolves that persona's synthetic, read-only dataset, so the
+    // live app keeps working until the token-bearing revision is published. Remove this branch then.
+    let showcaseSession: any = null;
+    let persona: any = null;
+    if (typeof showcase_token === 'string' && showcase_token) {
+      const verdict: any = await verifyShowcaseSession(sr, showcase_token);
+      if (!verdict.ok) {
+        return Response.json({ error: 'Exploration session is not valid', code: verdict.reason }, { status: 401 });
+      }
+      showcaseSession = verdict.session;
+      persona = verdict.persona;
+    } else if (demoMode || demo_persona) {
+      persona = resolveDemoPersona(demo_persona);
+    }
+    if (demoMode || persona || showcaseSession) {
       // An unknown or missing persona is refused: there is no silent fallback persona.
       if (!persona) {
         return Response.json({ error: 'Unknown or missing demo persona', code: 'unknown_persona' }, { status: 400 });
       }
+      // The dataset is the SESSION's when a session exists — never the roster's opinion of it.
+      const dataset = showcaseSession?.dataset || persona.dataset;
 
       // The reference carried by the URL may be a public_id, a slug or a record id — all three are
       // accepted, and always inside this persona's governed dataset only.
       const ref = public_id || committee_id || null;
       let committee = null;
       if (ref) {
-        const scope = { is_demo_data: true, demo_dataset: persona.dataset };
+        const scope = { is_demo_data: true, demo_dataset: dataset };
         const byPublicId = await sr.entities.Committee.filter({ ...scope, public_id: ref }).catch(() => []);
         committee = (byPublicId || [])[0] || null;
         if (!committee) {
@@ -81,10 +98,14 @@ export default async function(req) {
         }
         if (!committee) {
           const byId = await sr.entities.Committee.get(ref).catch(() => null);
-          if (byId && byId.is_demo_data === true && byId.demo_dataset === persona.dataset) committee = byId;
+          if (byId && byId.is_demo_data === true && byId.demo_dataset === dataset) committee = byId;
         }
       }
       if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
+      // A session reads only the committees it was issued for — the scope comes from the server.
+      if (showcaseSession && !(showcaseSession.allowed_committee_ids || []).includes(committee.id)) {
+        return Response.json({ error: 'Committee not found' }, { status: 404 });
+      }
 
       // Demo committee membership
       const cmMemberships = await sr.entities.CommitteeMembership

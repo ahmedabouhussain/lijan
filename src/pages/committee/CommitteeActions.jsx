@@ -7,7 +7,8 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
-import { ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
+import { classifyAction } from "@/lib/actionState";
 import { CheckSquare, AlertTriangle, Clock, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,9 +26,13 @@ export default function CommitteeActions() {
   if (!data) return <TableSkeleton rows={4} />;
   const { my_role, is_oversight, is_recused, committee } = data;
   const actions = data.registers.actions || [];
-  const overdue = actions.filter((a) => isOverdue(a.deadline) && a.status !== "closed");
-  const open = actions.filter((a) => !["closed", "verified"].includes(a.status));
-  const completed = actions.filter((a) => ["closed", "verified"].includes(a.status));
+  // ONE rule decides the three totals (the server's): an action is completed, or open — and an
+  // open action may additionally be overdue. So an action can never be counted twice, and the
+  // totals always add up to the register.
+  const overdue = actions.filter((a) => classifyAction(a).overdue);
+  const open = actions.filter((a) => classifyAction(a).open);
+  const completed = actions.filter((a) => classifyAction(a).done);
+  const titleOf = (a) => (lang === "ar" ? a.title_ar || a.title : a.title_en || a.title);
 
   return (
     <div className="space-y-4">
@@ -76,9 +81,9 @@ export default function CommitteeActions() {
             {overdue.map((a) => (
               <div key={a.id} className="flex items-center justify-between p-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate">{titleOf(a)}</div>
                   <div className="text-xs text-muted-foreground flex items-center gap-2">
-                    <span>{a.owner_name}</span>
+                    <span>{lang === "ar" ? a.owner_name : a.owner_name_en || a.owner_name}</span>
                     <Clock className="w-3 h-3" />
                     <span className="text-amber-700">{formatDate(a.deadline)}</span>
                   </div>
@@ -99,9 +104,9 @@ export default function CommitteeActions() {
               <div key={a.id} className="p-3">
                 <div className="flex items-center justify-between mb-2">
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{a.title}</div>
+                    <div className="text-sm font-medium text-foreground truncate">{titleOf(a)}</div>
                     <div className="text-xs text-muted-foreground">
-                      {a.owner_name} · {formatDate(a.deadline)}
+                      {lang === "ar" ? a.owner_name : a.owner_name_en || a.owner_name} · {formatDate(a.deadline)}
                     </div>
                   </div>
                   <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />

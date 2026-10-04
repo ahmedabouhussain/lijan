@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCommittee } from "@/lib/CommitteeContext";
-import { base44 } from "@/api/base44Client";
+import useCommitteeRegister from "@/hooks/useCommitteeRegister";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { Link2, CheckCircle2, AlertCircle, ArrowLeft, ArrowRight, FileText, Gavel, Calendar, ListChecks, FileCheck } from "lucide-react";
 
@@ -16,26 +16,15 @@ const CHAIN_STAGES = [
 export default function TraceabilityMatrix() {
   const { t, lang } = useLanguage();
   const { data } = useCommittee();
-  const [products, setProducts] = useState(null);
-  const [decisions, setDecisions] = useState(null);
-  const [actions, setActions] = useState(null);
+  // Reports, decisions and actions all come from the server register — the same scope as each
+  // record's own page — so a stage count and the register behind it can never disagree.
+  const { items: registerItems, loading } = useCommitteeRegister(["products", "decisions", "actions"]);
 
-  const committeeId = data?.committee?.id;
+  if (loading) return <TableSkeleton rows={3} />;
 
-  useEffect(() => {
-    if (!committeeId) return;
-    Promise.all([
-      base44.entities.ProductInstance.filter({ committee_id: committeeId }).catch(() => []),
-      base44.entities.Decision.filter({ committee_id: committeeId }).catch(() => []),
-      base44.entities.Action.filter({ committee_id: committeeId }).catch(() => []),
-    ]).then(([p, d, a]) => {
-      setProducts(p);
-      setDecisions(d);
-      setActions(a);
-    });
-  }, [committeeId]);
-
-  if (products === null || decisions === null || actions === null) return <TableSkeleton rows={3} />;
+  const products = registerItems("products");
+  const decisions = registerItems("decisions");
+  const actions = registerItems("actions");
 
   const meetings = [...(data?.meetings?.upcoming || []), ...(data?.meetings?.previous || [])];
   const reports = products.filter(p => p.product_type?.includes("report"));

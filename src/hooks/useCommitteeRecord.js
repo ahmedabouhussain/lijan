@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
+import { governedInvoke } from "@/lib/governedInvoke";
 
 // useCommitteeRecord — one governed read of a record's detail bundle.
 // The scope flag travels with the request, so an exploration surface reads its own governed
 // dataset and a real surface reads the caller's — never a client-side query of its own.
 export default function useCommitteeRecord(entityType, recordId) {
-  const { isDemoMode, showcaseToken } = useEffectiveActor();
+  const { isDemoMode, showcaseToken, renewDemo } = useEffectiveActor();
   const [bundle, setBundle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,13 +22,13 @@ export default function useCommitteeRecord(entityType, recordId) {
       return;
     }
     try {
-      const res = await base44.functions.invoke("GetCommitteeRecord", {
-        entity_type: entityType,
-        record_id: recordId,
-        // The showcase principal travels as a server-issued token — never as a mode flag,
+      const res = await governedInvoke(
+        "GetCommitteeRecord",
+        // The exploration principal travels as a server-issued token — never as a mode flag,
         // a persona key or a role. The server decides the scope from the token alone.
-        ...(isDemoMode ? { showcase_token: showcaseToken } : {}),
-      });
+        { entity_type: entityType, record_id: recordId },
+        { isDemoMode, showcaseToken, renew: renewDemo }
+      );
       const d = res?.data || res;
       if (d?.error) {
         setError(d.error);
@@ -41,7 +41,7 @@ export default function useCommitteeRecord(entityType, recordId) {
       setBundle(null);
     }
     setLoading(false);
-  }, [entityType, recordId, isDemoMode, showcaseToken]);
+  }, [entityType, recordId, isDemoMode, showcaseToken, renewDemo]);
 
   useEffect(() => { reload(); }, [reload]);
 

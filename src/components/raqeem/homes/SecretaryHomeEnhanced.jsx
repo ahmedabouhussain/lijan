@@ -83,7 +83,7 @@ export default function SecretaryHome({ data, base }) {
         ].map((item, i) => {
           const Icon = item.icon;
           return (
-            <Link key={i} to={`${base}${item.to}`} className="raqeem-card p-3 hover:bg-secondary/30 transition-colors">
+            <Link key={i} to={item.to} className="raqeem-card p-3 hover:bg-secondary/30 transition-colors">
               <Icon className="w-4 h-4 text-muted-foreground mb-1.5" />
               <div className="text-lg font-bold text-foreground">{item.count}</div>
               <div className="text-[11px] text-muted-foreground leading-tight">{item.label}</div>

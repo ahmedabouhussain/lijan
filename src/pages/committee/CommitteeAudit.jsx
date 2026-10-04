@@ -3,7 +3,8 @@ import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
-import { base44 } from "@/api/base44Client";
+import useCommitteeRegister from "@/hooks/useCommitteeRegister";
+import { auditActionLabel } from "@/lib/auditLabels";
 import { formatDate } from "@/lib/raqeemUtils";
 import { ShieldCheck, Clock, History, Calendar, CheckCircle2 } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
@@ -14,16 +15,21 @@ export default function CommitteeAudit() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
   const { getTitle } = usePageConfig("audit");
-  const [events, setEvents] = useState([]);
   const [timeMachineDate, setTimeMachineDate] = useState("");
   const [reconstructedState, setReconstructedState] = useState(null);
 
-  useEffect(() => {
-    if (!data?.committee?.id) return;
-    base44.entities.AuditEvent.filter({ committee_id: data.committee.id })
-      .then(setEvents)
-      .catch(() => setEvents([]));
-  }, [data?.committee?.id]);
+  // The event log is a committee register, read on the server in the same scope as every other
+  // record. It names actors, so it is a member-rank register: when the seat does not hold that
+  // rank the server withholds it, and the page says so instead of showing an empty history.
+  const {
+    items: registerItems,
+    loading: eventsLoading,
+    withheld,
+    error: eventsError,
+    reload: reloadEvents,
+  } = useCommitteeRegister("audit_events");
+  const events = registerItems("audit_events");
+  const eventsWithheld = withheld.includes("audit_events");
 
   // Change Tracker — reconstruct state at a past date
   useEffect(() => {
@@ -122,7 +128,7 @@ export default function CommitteeAudit() {
               {t(
                 "الأعضاء في ذلك التاريخ",
                 "Members at that date"
-              )}: {reconstructedState.members.map((m) => m.full_name).join("، ")}
+              )}: {reconstructedState.members.map((m) => (lang === "ar" ? m.full_name_ar || m.full_name : m.full_name)).join("، ")}
             </div>
           </div>
         )}
@@ -134,7 +140,7 @@ export default function CommitteeAudit() {
           <CheckCircle2 className="w-3.5 h-3.5" />
           {t("سجل الاكتمال", "Completion Ledger")}
         </h3>
-        <CompletionLedger committeeId={data?.committee?.id} />
+        <CompletionLedger />
       </div>
 
       {/* Traceability Matrix */}
@@ -152,7 +158,25 @@ export default function CommitteeAudit() {
           <Clock className="w-3.5 h-3.5" />
           {t("سجل الأحداث", "Event Log")}
         </h3>
-        {events.length === 0 ? (
+        {eventsWithheld ? (
+          <div className="raqeem-card p-8 text-center">
+            <ShieldCheck className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" aria-hidden="true" />
+            <p className="text-sm text-muted-foreground">
+              {t("سجل الأحداث متاح لعضوية اللجنة.", "The event log is available to committee membership.")}
+            </p>
+          </div>
+        ) : eventsError ? (
+          <div className="raqeem-card p-6 text-center space-y-3">
+            <p className="text-sm text-state-danger-ink">
+              {t("تعذّر عرض سجل الأحداث في نطاقك الحالي.", "The event log could not be shown in your current scope.")}
+            </p>
+            <button onClick={reloadEvents} className="text-xs text-primary hover:underline">
+              {t("إعادة المحاولة", "Try again")}
+            </button>
+          </div>
+        ) : eventsLoading ? (
+          <TableSkeleton rows={3} />
+        ) : events.length === 0 ? (
           <div className="raqeem-card p-8 text-center">
             <ShieldCheck className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">{t("لا توجد أحداث تدقيق", "No audit events")}</p>
@@ -161,11 +185,16 @@ export default function CommitteeAudit() {
           <div className="raqeem-card divide-y divide-border">
             {events.slice(0, 50).map((e) => (
               <div key={e.id} className="p-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">{e.action || e.description}</span>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-foreground">{auditActionLabel(e.action, lang)}</span>
                   <span className="text-xs text-muted-foreground">{formatDate(e.created_date || e.timestamp)}</span>
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5">{e.actor_name || "—"} · {e.entity_type || ""}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {e.actor_name || "—"}
+                  {e.entity_type ? ` · ${e.entity_type}` : ""}
+                  {e.entity_title ? ` · ${e.entity_title}` : ""}
+                </div>
+                {e.description && <div className="text-xs text-muted-foreground mt-0.5">{e.description}</div>}
               </div>
             ))}
           </div>

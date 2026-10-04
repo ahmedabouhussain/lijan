@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
-import { base44 } from "@/api/base44Client";
+import useCommitteeRegister from "@/hooks/useCommitteeRegister";
+import { Link, useParams } from "react-router-dom";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
@@ -34,26 +35,22 @@ const CLASSIFICATIONS = [
 
 export default function CommitteeDocuments() {
   const { data } = useCommittee();
+  const { orgRef, committeeRef } = useParams();
   const { t, lang } = useLanguage();
   const { getTitle } = usePageConfig("documents");
   const { canManageDocuments } = useCommitteeAdmin();
   const [showCreate, setShowCreate] = useState(false);
-  const [docs, setDocs] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // The register is listed by the SERVER, in the same scope as a document's own page, so a listed
+  // document always opens. Listing it here would show only what this visitor's own row-level
+  // rules happened to allow — which is not the committee's register.
+  const { items, countFor, loading, error, reload } = useCommitteeRegister("documents");
 
   const committeeId = data?.committee?.id;
   const orgId = data?.committee?.organization_id;
-
-  const fetchDocs = async () => {
-    if (!committeeId) return;
-    try {
-      const all = await base44.entities.Document.filter({ committee_id: committeeId });
-      setDocs(all || []);
-    } catch { setDocs([]); }
-    setLoading(false);
-  };
-
-  useEffect(() => { fetchDocs(); }, [committeeId]);
+  const docs = items("documents");
+  const total = countFor("documents") ?? docs.length;
+  const base = `/o/${orgRef}/c/${committeeRef}`;
 
   if (!data) return <TableSkeleton rows={4} />;
 
@@ -62,7 +59,7 @@ export default function CommitteeDocuments() {
       <PageHeader
         icon={FileText}
         title={getTitle("وثائق اللجنة", "Committee Documents", lang)}
-        badge={<span className="text-sm text-muted-foreground">({docs.length})</span>}
+        badge={<span className="text-sm text-muted-foreground">({total})</span>}
         actions={canManageDocuments && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
             <Plus className="w-4 h-4" aria-hidden="true" />
@@ -83,7 +80,7 @@ export default function CommitteeDocuments() {
             organization_id: orgId,
             status: "draft",
           }}
-          onSuccess={fetchDocs}
+          onSuccess={reload}
           submitLabel={t("إنشاء", "Create")}
           fields={[
             { name: "title", label: t("عنوان الوثيقة", "Document Title"), required: true, fullWidth: true, placeholder: "Q3 Financial Report" },
@@ -95,25 +92,33 @@ export default function CommitteeDocuments() {
         />
       )}
 
-      {loading ? (
+      {error ? (
+        <div className="raqeem-card p-6 text-center space-y-3">
+          <p className="text-sm text-state-danger-ink">
+            {t("تعذّر عرض سجل وثائق اللجنة في نطاقك الحالي.", "The committee's document register could not be shown in your current scope.")}
+          </p>
+          <Button size="sm" variant="outline" onClick={reload}>{t("إعادة المحاولة", "Try again")}</Button>
+        </div>
+      ) : loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
       ) : docs.length === 0 ? (
         <EmptyState icon={FileText} title={t("لا توجد وثائق", "No Documents")} description={t("لم يتم إضافة وثائق لهذه اللجنة.", "No documents added for this committee.")} />
       ) : (
         <div className="space-y-2">
           {docs.map((d) => (
-            <div key={d.id} className="raqeem-card p-4 flex items-center gap-3">
-              <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+            <Link key={d.id} to={`${base}/documents/${d.id}`} className="raqeem-card p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+              <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{L.title(d)}</div>
                 <div className="text-xs text-muted-foreground">
                   {d.document_type && t(DOC_TYPES.find((t2) => t2.value === d.document_type)?.label_ar || d.document_type, d.document_type)}
-                  {d.classification && ` · ${d.classification}`}
+                  {d.classification && ` · ${t(CLASSIFICATIONS.find((c) => c.value === d.classification)?.label_ar || d.classification, CLASSIFICATIONS.find((c) => c.value === d.classification)?.label_en || d.classification)}`}
                   {d.created_date ? ` · ${formatDate(d.created_date)}` : ""}
                 </div>
               </div>
               <StatusBadge label={d.status || "draft"} colorClass="bg-secondary text-muted-foreground" />
-            </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground rtl:rotate-180 shrink-0" aria-hidden="true" />
+            </Link>
           ))}
         </div>
       )}

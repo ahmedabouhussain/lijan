@@ -5,17 +5,46 @@ import { CATEGORY_LABELS } from "@/lib/docs/releaseLabels";
 
 const DOWNLOAD_SUCCESS_RESET_MS = 4000;
 
-// Downloads are authorized and audited on the server; the file itself is served
-// through a short-lived signed URL from the app's private storage.
-function startBrowserDownload(url, filename) {
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.rel = "noopener";
-  link.target = "_blank";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+// Downloads are authorized, audited AND signed on the server: the gate returns a short-lived link
+// for a document the active release actually publishes, so the client never signs a storage
+// reference of its own and can never be pointed at a file outside the release.
+//
+// The download is then completed by THIS browser: the file is fetched and saved under its own
+// name. That keeps the click inside the app (no viewer tab, no lost PDF in a standalone window)
+// and does not depend on the browser honouring a cross-origin download attribute.
+async function downloadFile({ url, filename }) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`download_failed_${res.status}`);
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  try {
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = filename || "document";
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } finally {
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 10000);
+  }
+}
+
+/** Why a governed download was refused — the reader is told which of the three it is. */
+function refusalMessage(decision, t) {
+  if (decision?.code === "unauthenticated") {
+    return t(
+      "تنزيل المستندات يتطلب تسجيل الدخول بحساب مؤسسي.",
+      "Downloading the documents requires signing in with an institutional account."
+    );
+  }
+  if (decision?.code === "not_found") {
+    return t("هذا الملف لم يعد ضمن الإصدار المنشور.", "This file is no longer part of the published release.");
+  }
+  return t(
+    "تعذر تجهيز هذا الملف لهذه الجلسة. تحقق من صلاحية الوصول ثم حاول مرة أخرى.",
+    "This file could not be prepared for this session. Check your access and try again."
+  );
 }
 
 export default function useDocumentationPack() {
@@ -146,20 +175,13 @@ export default function useDocumentationPack() {
           format: asset.format,
           result: "success",
         });
-        if (!gate?.data?.allowed) {
+        const decision = gate?.data || gate || {};
+        if (!decision.allowed || !decision.signed_url) {
           setBusy((prev) => ({ ...prev, [key]: "error" }));
-          setNotice({
-            type: "error",
-            message: t(
-              "تعذر تجهيز هذا الملف لهذه الجلسة. تحقق من صلاحية الوصول ثم حاول مرة أخرى.",
-              "This file could not be prepared for this session. Check your access and try again."
-            ),
-          });
+          setNotice({ type: "error", message: refusalMessage(decision, t) });
           return;
         }
-        const signed = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: asset.file_uri, expires_in: 300 });
-        if (!signed?.signed_url) throw new Error("signed_url_missing");
-        startBrowserDownload(signed.signed_url, asset.filename);
+        await downloadFile({ url: decision.signed_url, filename: decision.filename || asset.filename });
         setBusy((prev) => ({ ...prev, [key]: "success" }));
         window.setTimeout(() => setBusy((prev) => ({ ...prev, [key]: null })), DOWNLOAD_SUCCESS_RESET_MS);
       } catch {
@@ -168,7 +190,7 @@ export default function useDocumentationPack() {
           type: "error",
           message: t("تعذر تنزيل الملف. حاول مرة أخرى بعد قليل.", "The file could not be downloaded. Please try again shortly."),
         });
-        audit({ asset_key: key, category: asset.category, action: "download", result: "failure", error_reference: "signed_url_unavailable" });
+        audit({ asset_key: key, category: asset.category, action: "download", result: "failure", error_reference: "delivery_failed" });
       }
     },
     [release, audit, t]
@@ -186,30 +208,23 @@ export default function useDocumentationPack() {
         format: "zip",
         result: "success",
       });
-      if (!gate?.data?.allowed) {
+      const decision = gate?.data || gate || {};
+      if (!decision.allowed || !decision.signed_url) {
         setBusy((prev) => ({ ...prev, pack: "error" }));
-        setNotice({
-          type: "error",
-          message: t(
-            "تعذر تجهيز الحزمة الكاملة لهذه الجلسة. تحقق من صلاحية الوصول ثم حاول مرة أخرى.",
-            "The complete pack could not be prepared for this session. Check your access and try again."
-          ),
-        });
+        setNotice({ type: "error", message: refusalMessage(decision, t) });
         return;
       }
-      const signed = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: release.zip_file_uri, expires_in: 300 });
-      if (!signed?.signed_url) throw new Error("signed_url_missing");
-      startBrowserDownload(signed.signed_url, release.zip_filename);
+      await downloadFile({ url: decision.signed_url, filename: decision.filename || release.zip_filename });
       setBusy((prev) => ({ ...prev, pack: "success" }));
       window.setTimeout(() => setBusy((prev) => ({ ...prev, pack: null })), DOWNLOAD_SUCCESS_RESET_MS);
-    } catch {
+      } catch {
       setBusy((prev) => ({ ...prev, pack: "error" }));
       setNotice({
         type: "error",
         message: t("تعذر تنزيل الحزمة الكاملة. حاول مرة أخرى بعد قليل.", "The complete pack could not be downloaded. Please try again shortly."),
       });
-      audit({ action: "pack_download", result: "failure", error_reference: "signed_url_unavailable" });
-    }
+      audit({ action: "pack_download", result: "failure", error_reference: "delivery_failed" });
+      }
   }, [release, edition, audit, t]);
 
   // The in-page switch drives the whole page: interface direction, copy, and the document edition shown.
