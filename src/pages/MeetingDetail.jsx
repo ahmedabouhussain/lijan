@@ -19,6 +19,8 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import useCommitteeRecord from "@/hooks/useCommitteeRecord";
 import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import { SURFACE_STATE } from "@/lib/governedState";
 
 const MEETING_MODES = {
   physical: { ar: "حضوري", en: "Physical" },
@@ -52,7 +54,7 @@ export default function MeetingDetail() {
   // ONE governed read: the meeting, its committee, agenda, attendance, minutes, members and the
   // authority of this very seat all arrive together — from the same scope as the register that
   // listed the meeting. A meeting that can be listed can therefore always be opened.
-  const { bundle, loading, error, reload: load } = useCommitteeRecord("Meeting", id);
+  const { bundle, state, reload: load } = useCommitteeRecord("Meeting", id);
   const meeting = bundle?.record || null;
   const committee = bundle?.committee || null;
   const agendaItems = bundle?.agenda || [];
@@ -162,29 +164,15 @@ export default function MeetingDetail() {
     setSavingDecision(false);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-secondary border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
-
+  // Nothing to show is the SHARED state of the governed read — a refusal, a scope miss, a lapsed
+  // exploration session and a technical failure each say their own thing, and none of them is ever
+  // reported as a missing meeting. Only a successful read that returned no record may read as such.
   if (!meeting) {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/meetings` : "/";
-    // The reason is stated according to what actually happened — never a raw server string.
-    const reason = /member of this committee/i.test(error || "")
-      ? t("لا توجد عضوية مسندة إلى هذا الحساب في هذه اللجنة.", "No membership is assigned to this account in this committee.")
-      : error
-      ? t("تعذّر فتح هذا الاجتماع في نطاقك الحالي.", "This meeting could not be opened in your current scope.")
-      : t("قد يكون هذا الاجتماع قد حُذف، أو أن الرابط الذي فتحته قديم.", "This meeting may have been deleted, or the link you opened is out of date.");
     return (
-      <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
-        <h2 className="text-lg font-semibold text-foreground mb-1">
-          {t("الاجتماع غير متوفر", "Meeting not available")}
-        </h2>
-        <p className="text-sm text-muted-foreground mb-4">{reason}</p>
-        <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
+      <div className="max-w-lg mx-auto my-10 space-y-3">
+        <RegisterStatePanel state={state || SURFACE_STATE.NOT_FOUND} onRetry={load} icon={Calendar} />
+        <Link to={backTo} className="block text-center text-primary hover:underline text-sm font-medium">
           {t("العودة إلى قائمة الاجتماعات", "Back to the meetings list")}
         </Link>
       </div>
