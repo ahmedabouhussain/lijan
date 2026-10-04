@@ -2,6 +2,35 @@
 
 **الكتابة التجريبية متوقفة. `write_scope` لم يُفتح. لا نشر. لا إشعارات حقيقية. لا تعديل سجلات مؤسسية حقيقية.**
 
+## التقرير التالي — الإصدار `authz-1.1.0` (نسخة مجمّدة)
+
+| الحقل | القيمة |
+|---|---|
+| Authority Kernel Version | **`authz-1.1.0`** — يحل محل `authz-1.0.0` (تغيير أمني مادي ⇒ الاسم لا يستمر) |
+| Source Hash | combined **`69256cf18accaa98e94679c6f7d404804ddff92b494a3e8408a57ffc4cee144b`** — التفصيل والحِزم في `base44/shared/authorityPolicyManifest.json` |
+| Built At | `2026-10-04T12:21:59Z` (توقيت البناء مسجل في السجل نفسه) |
+| Change From `authz-1.0.0` | منع مغلق عند فشل قراءة التنحّي · منع مغلق عند فشل قراءة المنحة · أثر مصدر النطاق · حارس الأوامر · اشتقاق النطاق من السجل · فصل الحقوق الشخصية عن صلاحيات المكتب · `action.close` كحق قبول |
+| Policy | `DELEGABLE_CAPABILITIES` 11 · `OPERATIONAL_CAPABILITIES` 31 · الحقوق الشخصية: `conflict.declare` · `recusal.record` |
+| Functions Linked | **54** وظيفة مرتبطة بهذا الإصدار (تُحدَّد آليًا من الاستيراد) |
+| Tests | `TestAuthorizationGuard` — **Authority Role Tests 30** · **Authority Positive Tests 12** · **Fail-Closed Tests 15** |
+| Prior Evidence | **مُبطَلة** — لا تُحمل نتائج `authz-1.0.0` إلى هذا الإصدار، وقد أُعيد تشغيل كل اختبارات السلطة على النسخة المجمّدة |
+| Command Coverage | **16/51 موضعًا على المسار المحروس** — الجرد الكامل والتداخل: `docs/AUTHORITY_COMMAND_LEDGER.md` |
+| Fail-Open Findings | **0** |
+| Read-Authorized Writes | **0** (قاعدة `write-gated-by-read` صارت خطأً يمنع الدمج) |
+| Name-Based Identity | **0** (قاعدة `name-identity-match` صارت خطأً يمنع الدمج) |
+| Positive Tests | **PASS 12/12** (مسار كامل: طلب ← قرار سلطة ← كتابة ← تدقيق) |
+| Negative Tests | **PASS 30/30** (Authority Role Tests على المنطق النقي) |
+| Fail-Closed Tests | **PASS 15/15** (عزل متعمّد لكل واقعة على حدة، بلا أي كتابة) |
+| Concurrency Tests | **NOT ESTABLISHED** — يوجد سباق حقيقي في منع التصويت المكرر (قراءة ثم كتابة). لا تُصنَّف ناجحة حتى تُقاس |
+| Browser Acceptance | **NOT TESTED** |
+| Showcase Write Eligibility | **BLOCKED** |
+
+> **لا تصنيف عام بـ PASS:** تغطية ترحيل الأوامر (35 موضعًا متبقيًا) والسباق في التصويت المكرر و«الكتابة التجريبية» ليست مغلقة، فالإصدار يبقى `IN PROGRESS` على مستوى المنصة.
+
+**تصحيح تسمية:** ما كُتب سابقًا «اختبارات الأداء الخمسة PASS 30/30» هو في الحقيقة **`Authority Role Tests`** — اختبارات أدوار وصلاحيات (سماح/منع) على المنطق النقي، وليست اختبارات أداء: لا زمن ولا حمل ولا `p50/p95/p99` ولا معدل أخطاء مدّعى في أي موضع.
+
+---
+
 ## 0. الحالة المعتمدة الآن
 
 | المحور | الحالة |
@@ -12,7 +41,9 @@
 | Delegation Enforcement | **PARTIAL** |
 | Recusal Identity Safety | **PARTIAL** |
 | Decision Rights Separation | **PARTIAL** |
-| Command Migration Coverage | **PARTIAL — 8/50 sites on the guarded path, 50/50 inherit the unified policy** |
+| Command Migration Coverage | **PARTIAL — 16/51 sites on the guarded path, 35 need a trusted target (union of overlaps: 35 unique)** |
+| Read-Authorized Writes | **0** |
+| Name-Based Identity / Recusal | **0** |
 | Register Surface Coverage | **NOT ESTABLISHED — no ratio until the atomic inventory is closed** |
 | Showcase Write Eligibility | **BLOCKED** |
 | Browser Acceptance | **NOT TESTED** |
@@ -89,7 +120,7 @@
 | 9 | **تسجيل الحضور بالمقعد**: `AttendancePanel` يرسل `member_id`/`member_user_id`، و`CertifyAttendance` يرفض سجلًا بلا مقعد (`identity_required`) | لا اعتماد حضور باسم | 
 | 10 | **`scripts/authority-guardrails.mjs`**: قواعد أدق (المصدر العميل فقط)، وسجل هجرة يطبع المحروس مقابل المرشَّح | الفحص الثابت صار يقرأ تقدّم الهجرة |
 
-**اختبارات**: `TestAuthorizationGuard` = **PASS 30/30** على `authz-1.0.0` بعد إضافة الحقّين الجديدين.
+**اختبارات**: `TestAuthorizationGuard` على الإصدار `authz-1.1.0` = **Authority Role Tests 30/30** · **Authority Positive Tests 12/12** · **Fail-Closed Tests 15/15**. (نتائج `authz-1.0.0` مُبطَلة ولم تُحمل إلى هذا الإصدار.)
 
 ---
 

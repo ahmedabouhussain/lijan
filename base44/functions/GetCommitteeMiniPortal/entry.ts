@@ -297,11 +297,16 @@ export default async function(req) {
       effectiveRole = sorted[0].role;
     }
 
-    // Check recusal
+    // Recusal is matched by IDENTIFIER — this caller's user id or one of its own seats.
+    // A display name is never an identity key.
     const recusals = await base44.asServiceRole.entities.Recusal
-      .filter({ committee_id: committee.id, member_name: user.full_name || user.email, status: 'active' })
+      .filter({ committee_id: committee.id, status: 'active' })
       .catch(() => []);
-    const isRecused = (recusals || []).length > 0;
+    const ownSeatIds = activeMemberships.map((m) => m.id).filter(Boolean);
+    const isRecused = (recusals || []).some((r) => {
+      const ids = [r.user_id, r.member_user_id, r.person_id, r.membership_id, r.committee_membership_id].filter(Boolean);
+      return ids.includes(user.id) || ownSeatIds.some((id) => ids.includes(id));
+    });
 
     // Get all members (ordered by role)
     const allMembers = await base44.asServiceRole.entities.CommitteeMembership
