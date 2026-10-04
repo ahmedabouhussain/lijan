@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // DeclareConflict — records a conflict of interest declaration.
 export default async function(req) {
@@ -12,13 +12,22 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, conflict_type, description are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'read' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // The committee itself is the trusted target of a self-declaration: only a person holding a seat
+    // in it may declare a conflict, and the seat is resolved server-side.
+    const auth = await authorizeCommand(base44, {
+      capability: 'conflict.declare',
+      target_type: 'Committee',
+      target_id: committee_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const declaration = await base44.asServiceRole.entities.ConflictDeclaration.create({
       organization_id: auth.organization_id,
-      committee_id,
+      committee_id: auth.trusted_target.derived_committee_id,
       member_id: auth.membership?.id || null,
+      membership_id: auth.membership?.id || null,
+      member_user_id: auth.user.id,
       member_name: auth.user.full_name || auth.user.email,
       conflict_type,
       description,

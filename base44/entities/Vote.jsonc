@@ -20,11 +20,19 @@
     },
     "voter_name": {
       "type": "string",
-      "title": "Voter Full Name"
+      "title": "Voter Full Name (display only)"
     },
     "voter_user_id": {
       "type": "string",
-      "title": "Voter User ID"
+      "title": "Voter User ID \u2014 identity of record"
+    },
+    "voter_membership_id": {
+      "type": "string",
+      "title": "Voter Seat (committee membership id) \u2014 identity of record"
+    },
+    "eligible_voter_snapshot_id": {
+      "type": "string",
+      "title": "Eligible-Voter Snapshot this vote was cast against"
     },
     "voter_role": {
       "type": "string",

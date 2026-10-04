@@ -12,11 +12,19 @@
     },
     "member_id": {
       "type": "string",
-      "title": "Member ID"
+      "title": "Member ID (legacy \u2014 the seat id)"
+    },
+    "member_user_id": {
+      "type": "string",
+      "title": "Declaring Person (user id) \u2014 identity of record"
+    },
+    "membership_id": {
+      "type": "string",
+      "title": "Declaring Seat (committee membership id) \u2014 identity of record"
     },
     "member_name": {
       "type": "string",
-      "title": "Member Name"
+      "title": "Member Name (display only, never an identity)"
     },
     "conflict_type": {
       "type": "string",

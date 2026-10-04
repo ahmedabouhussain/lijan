@@ -12,11 +12,19 @@
     },
     "member_id": {
       "type": "string",
-      "title": "Member ID"
+      "title": "Member ID (legacy \u2014 the seat id)"
+    },
+    "member_user_id": {
+      "type": "string",
+      "title": "Recused Person (user id) \u2014 identity of record"
+    },
+    "membership_id": {
+      "type": "string",
+      "title": "Recused Seat (committee membership id) \u2014 identity of record"
     },
     "member_name": {
       "type": "string",
-      "title": "Member Name"
+      "title": "Member Name (display only, never an identity)"
     },
     "agenda_item_id": {
       "type": "string",

@@ -12,7 +12,7 @@
 | Delegation Enforcement | **PARTIAL** |
 | Recusal Identity Safety | **PARTIAL** |
 | Decision Rights Separation | **PARTIAL** |
-| Command Migration Coverage | **PARTIAL — 1/50 sites migrated, 50/50 inherit the unified policy** |
+| Command Migration Coverage | **PARTIAL — 8/50 sites on the guarded path, 50/50 inherit the unified policy** |
 | Register Surface Coverage | **NOT ESTABLISHED — no ratio until the atomic inventory is closed** |
 | Showcase Write Eligibility | **BLOCKED** |
 | Browser Acceptance | **NOT TESTED** |
@@ -65,12 +65,31 @@
 
 | المعرّف | الموضع | العيب | الأثر |
 |---|---|---|---|
-| P0-1 | `GenerateProduct` | `.catch(() => ({ allowed: true, ... }))` — **السماح عند فشل حل السلطة** (fail-open) | أخطر نمط في المنصة: خطأ تقني يتحول إلى إذن |
+| ~~P0-1~~ | ~~`GenerateProduct`~~ | ~~`.catch(() => ({ allowed: true, ... }))` — السماح عند فشل حل السلطة~~ — **أُغلق في الجولة الثانية** | لم يعد خطأ تقني يتحول إلى إذن |
 | P0-2 | `UpdateActionProgress` · `CloseAction` · `RecordRecusal` · `DeclareConflict` · `RequestActionExtension` · `ReviewActionExtension` · `RespondToReview` · `RespondToInvitation` · `NotifyAffectedMembers` | **كتابة محكومة بصلاحية `read`** | الكتابة ليست محكومة بحق تشغيلي |
-| P0-3 | 8 مواضع تقرأ/تكتب التنحّي بالاسم (`CastVote` · `CertifyAttendance` · `RespondToInvitation` · `DeclareConflict` · `RecordRecusal` · `AcknowledgeCommitteeChange` · `NotifyAffectedMembers` · `GetCommitteeMiniPortal`) | هوية بالاسم | انتحال/تفويض خاطئ |
+| P0-3 (جزئي) | أُغلق في 4 مواضع: `CastVote` · `CertifyAttendance` · `DeclareConflict` · `RecordRecusal` (صارت تُكتب وتُطابَق بالهوية: `membership_id` / `member_user_id` / `voter_membership_id`). المتبقي 4: `RespondToInvitation` · `AcknowledgeCommitteeChange` · `NotifyAffectedMembers` · `GetCommitteeMiniPortal` | هوية بالاسم | انتحال/تفويض خاطئ |
 | P0-4 | 49 موضع أوامر لم يُمرَّر لها السجل المستهدف | النطاق لا يُشتق بعد من السجل في كل موضع | بند 2 مُنفَّذ في الحارس، لكن المواضع لا تفعّله بعد |
 | P0-5 | `ReviewRequest` | تكليف بدور بلا مستلم (`reviewer_user_id` فقط) | عقد التكليف غير مُصلح بعد |
 | P0-6 | `AuthorityGrant.permitted_actions` | فارغ في السجلات السبعة | المنحة لا تضيّق ولا توسّع فعليًا (`grant_status: unpopulated_no_restriction`) |
+
+---
+
+### 2.1 ما أُغلق في الجولة الثانية (بعد تحديث الحارس)
+
+| # | التغيير | الأثر |
+|---|---|---|
+| 1 | **`commandGuard.ts` — نقطة واحدة للسلطة على سجل موثوق**: يُحمّل السجل المستهدف بنفسه، يمشي في سلسلة آبائه إلى اللجنة ويرفض أي تعارض بينها، ويتحقق أن كل سجل يلمسه الأمر داخل اللجنة نفسها، ثم يسأل النواة | `committee_id` القادم من الطلب صار **مقارنة فقط**: التعارض مرفوض ومسجَّل |
+| 2 | **بوابة حالة**: `meeting.start` (من `scheduled` فقط) · `minutes.approve` (من `draft`/`in_review`) · `vote.certify` (من `voting`) · `action.close` · `committee.activate` · `committee.close` | لا انتقال حالة خارج حالته المشروعة |
+| 3 | **ربط الفاعل بالسجل**: من لا يحمل صفة مكتبية يعمل فقط على ما هو مُسنَد إليه (`owner_user_id`) | لا تنفيذ باسم غير صاحبه |
+| 4 | **النواة مرفوضة-مغلقة في الوقائع**: فشل قراءة مجموعة التنحّي أو المنحة = `authority_unavailable` (503)، وليس مجموعة فارغة | الفرق بين «لا يوجد» و«لم أستطع القراءة» لم يعد يمنح صلاحية |
+| 5 | **`scope_provenance` في كل قرار**: `target_record` أو `committee_lookup_hint` | أثَر التدقيق يعرف من أين جاء النطاق |
+| 6 | **حقول هوية**: `Recusal` · `ConflictDeclaration` · `Attendance` · `Vote` · `Delegation` (+`Action.owner_user_id`) | التنحّي والتفويض يُحلّان بالمعرّف لا بالاسم |
+| 7 | **حقّان صريحان للتصريح الشخصي**: `conflict.declare` و `recusal.record` لمن يحمل مقعدًا (مشتقان من حق `read` للمقعد) بدل الكتابة بحق قراءة | فصل الكتابة عن القراءة في هذين الموضعين |
+| 8 | **7 أوامر على المسار المحروس**: `CastVote` · `CertifyAttendance` · `DeclareConflict` · `RecordRecusal` · `ApproveMinutes` · `StartMeeting` · `CloseAction` (و`SignRecord` من الجولة الأولى) | 8/50 |
+| 9 | **تسجيل الحضور بالمقعد**: `AttendancePanel` يرسل `member_id`/`member_user_id`، و`CertifyAttendance` يرفض سجلًا بلا مقعد (`identity_required`) | لا اعتماد حضور باسم | 
+| 10 | **`scripts/authority-guardrails.mjs`**: قواعد أدق (المصدر العميل فقط)، وسجل هجرة يطبع المحروس مقابل المرشَّح | الفحص الثابت صار يقرأ تقدّم الهجرة |
+
+**اختبارات**: `TestAuthorizationGuard` = **PASS 30/30** على `authz-1.0.0` بعد إضافة الحقّين الجديدين.
 
 ---
 

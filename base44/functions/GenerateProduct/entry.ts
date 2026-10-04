@@ -25,11 +25,19 @@ export default async function(req) {
       return Response.json({ error: 'product_type and organization_id are required' }, { status: 400 });
     }
 
-    // Resolve authority
+    // Resolve authority. A failure to resolve is NOT a permission: this call used to fall back to
+    // "allowed" when the guard could not answer, which is exactly the fail-open the policy forbids.
+    const authCommittee = committee_id
+      ? await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null)
+      : null;
     const auth = await resolveAuthority(base44, {
-      committee_id,
       capability: 'committee.manage',
-    }).catch(() => ({ allowed: true, user: { id: 'system', full_name: 'System' }, organization_id }));
+      record: authCommittee,
+      committee_id,
+    });
+    if (!auth.allowed) {
+      return Response.json({ error: auth.reason || 'Forbidden', code: auth.code || null }, { status: auth.status || 403 });
+    }
 
     // 1. Look up template: org-specific first, then platform default
     let template = null;

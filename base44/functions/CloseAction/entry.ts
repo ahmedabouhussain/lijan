@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchNotification } from '../../shared/notificationEngine.ts';
 
 // CloseAction — closes an action after evidence verification.
@@ -11,11 +11,17 @@ export default async function(req) {
 
     if (!action_id) return Response.json({ error: 'action_id is required' }, { status: 400 });
 
-    const action = await base44.asServiceRole.entities.Action.get(action_id);
-    if (!action) return Response.json({ error: 'Action not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the committee is derived from the action record itself, and
+    // the parent chain (action → decision / meeting → committee) must agree before it is used.
+    const auth = await authorizeCommand(base44, {
+      capability: 'action.admin',
+      target_type: 'Action',
+      target_id: action_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: action.committee_id, capability: 'action.admin' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    const action = auth.target;
 
     // Evidence verification gate — cannot close based on percentage alone
     if (!evidence_url && !action.evidence_url) {

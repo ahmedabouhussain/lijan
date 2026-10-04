@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // StartMeeting — transitions a scheduled meeting to in_progress.
 export default async function(req) {
@@ -10,15 +10,17 @@ export default async function(req) {
 
     if (!meeting_id) return Response.json({ error: 'meeting_id is required' }, { status: 400 });
 
-    const meeting = await base44.asServiceRole.entities.Meeting.get(meeting_id);
-    if (!meeting) return Response.json({ error: 'Meeting not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the committee is derived from the meeting record itself, and
+    // the permitted-state gate (a meeting may only be started while 'scheduled') is applied here.
+    const auth = await authorizeCommand(base44, {
+      capability: 'meeting.start',
+      target_type: 'Meeting',
+      target_id: meeting_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: meeting.committee_id, capability: 'meeting.start' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-
-    if (meeting.status !== 'scheduled') {
-      return Response.json({ error: `Cannot start a meeting in '${meeting.status}' status` }, { status: 400 });
-    }
+    const meeting = auth.target;
 
     await base44.asServiceRole.entities.Meeting.update(meeting_id, { status: 'in_progress' });
 

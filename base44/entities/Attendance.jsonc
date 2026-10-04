@@ -16,15 +16,19 @@
     },
     "member_id": {
       "type": "string",
-      "title": "Committee Member ID"
+      "title": "Committee Membership ID (the seat) \u2014 identity of record"
+    },
+    "member_user_id": {
+      "type": "string",
+      "title": "Person (user id) \u2014 identity of record"
     },
     "member_name": {
       "type": "string",
-      "title": "Member Name"
+      "title": "Member Name (display only, never an identity)"
     },
     "member_name_en": {
       "type": "string",
-      "title": "Member Name (English)"
+      "title": "Member Name (English, display only)"
     },
     "member_role": {
       "type": "string",

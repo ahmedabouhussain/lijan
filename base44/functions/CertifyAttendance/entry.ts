@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // CertifyAttendance — secretary certifies official attendance for a meeting.
 export default async function(req) {
@@ -12,20 +12,33 @@ export default async function(req) {
       return Response.json({ error: 'meeting_id, attendance_records (array) are required' }, { status: 400 });
     }
 
-    const meeting = await base44.asServiceRole.entities.Meeting.get(meeting_id);
-    if (!meeting) return Response.json({ error: 'Meeting not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the committee is derived from the meeting record itself.
+    const auth = await authorizeCommand(base44, {
+      capability: 'attendance.certify',
+      target_type: 'Meeting',
+      target_id: meeting_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: meeting.committee_id, capability: 'attendance.certify' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    const meeting = auth.target;
+    const committee_id = auth.trusted_target.derived_committee_id;
 
     let present = 0, absent = 0, apologies = 0;
     for (const rec of attendance_records) {
+      // The SEAT is the identity of record. A record without one cannot be attributed to a person,
+      // so it is refused rather than matched by a display name.
+      if (!rec.member_id) {
+        return Response.json({ error: 'Each attendance record must carry the committee seat (member_id)', code: 'identity_required' }, { status: 400 });
+      }
       const existing = await base44.asServiceRole.entities.Attendance
-        .filter({ meeting_id, member_name: rec.member_name }).catch(() => []);
+        .filter({ meeting_id, member_id: rec.member_id }).catch(() => []);
 
       const data = {
         organization_id: auth.organization_id,
-        meeting_id, committee_id: meeting.committee_id,
+        meeting_id, committee_id,
+        member_id: rec.member_id || null,
+        member_user_id: rec.member_user_id || null,
         member_name: rec.member_name,
         member_role: rec.member_role || 'member',
         attendance_status: rec.attendance_status,

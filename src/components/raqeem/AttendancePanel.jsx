@@ -22,9 +22,14 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
   const [certifying, setCertifying] = useState(false);
   const [localStatus, setLocalStatus] = useState({});
 
+  // Attendance is held against the SEAT. A record already stored carries the seat it was certified
+  // for; records certified before seats were recorded are still readable by their stored name.
   const attendanceMap = useMemo(() => {
     const map = {};
-    (attendance || []).forEach(a => { map[a.member_name] = a.attendance_status; });
+    (attendance || []).forEach(a => {
+      if (a.member_id) map[a.member_id] = a.attendance_status;
+      if (a.member_name) map[a.member_name] = a.attendance_status;
+    });
     Object.assign(map, localStatus);
     return map;
   }, [attendance, localStatus]);
@@ -33,9 +38,13 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
     .filter(m => m.status === "active")
     .sort((a, b) => (ROLE_ORDER[a.role] ?? 99) - (ROLE_ORDER[b.role] ?? 99));
 
+  const statusOf = (member) => {
+    const name = member.full_name || member.full_name_ar;
+    return attendanceMap[member.id] || attendanceMap[name] || "absent";
+  };
+
   const presentCount = activeMembers.filter(m => {
-    const name = m.full_name || m.full_name_ar;
-    const s = attendanceMap[name];
+    const s = statusOf(m);
     return s === "present" || s === "late";
   }).length;
 
@@ -44,21 +53,19 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
   const isLive = ["in_progress", "adjourned", "completed"].includes(meeting.status);
 
   const setStatus = (member, status) => {
-    const name = member.full_name || member.full_name_ar;
-    setLocalStatus(prev => ({ ...prev, [name]: status }));
+    setLocalStatus(prev => ({ ...prev, [member.id]: status }));
   };
 
   const certify = async () => {
     setCertifying(true);
     try {
-      const records = activeMembers.map(m => {
-        const name = m.full_name || m.full_name_ar;
-        return {
-          member_name: name,
-          member_role: m.role,
-          attendance_status: attendanceMap[name] || "absent",
-        };
-      });
+      const records = activeMembers.map(m => ({
+        member_id: m.id,
+        member_user_id: m.user_id || null,
+        member_name: m.full_name || m.full_name_ar,
+        member_role: m.role,
+        attendance_status: statusOf(m),
+      }));
       await base44.functions.invoke("CertifyAttendance", { meeting_id: meeting.id, attendance_records: records });
       setLocalStatus({});
       onChanged();
@@ -107,7 +114,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
         ) : (
           activeMembers.map(m => {
             const name = m.full_name || m.full_name_ar;
-            const currentStatus = attendanceMap[name] || "absent";
+            const currentStatus = statusOf(m);
             return (
               <div key={m.id} className="flex items-center justify-between py-1.5 border-b border-border last:border-0 gap-2">
                 <div className="flex items-center gap-2 min-w-0">

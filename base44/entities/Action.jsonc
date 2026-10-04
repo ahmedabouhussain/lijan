@@ -46,6 +46,10 @@
       "type": "string",
       "title": "Owner (English)"
     },
+    "owner_user_id": {
+      "type": "string",
+      "title": "Owner User ID (identity of record \u2014 an assignee may act only on their own action)"
+    },
     "owner_organization_id": {
       "type": "string",
       "title": "Owner Organization ID"

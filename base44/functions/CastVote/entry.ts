@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
@@ -12,13 +12,18 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, decision_id, vote_choice are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'vote.cast' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
+    // Authority on a TRUSTED target: the committee is DERIVED from the decision record itself, the
+    // committee_id the caller sent is only compared against it, and recusal is resolved by
+    // identifier inside the guard — never by a name comparison.
+    const auth = await authorizeCommand(base44, {
+      capability: 'vote.cast',
+      target_type: 'Decision',
+      target_id: decision_id,
+      claimed_committee_id: committee_id,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const decision = await base44.asServiceRole.entities.Decision.get(decision_id);
-    if (!decision || decision.committee_id !== committee_id) {
-      return Response.json({ error: 'Decision not found' }, { status: 404 });
-    }
+    const decision = auth.target;
 
     if (decision.status !== 'voting') {
       return Response.json({ error: 'Voting is not open for this decision' }, { status: 400 });
@@ -31,19 +36,16 @@ export default async function(req) {
       return Response.json({ error: 'You have already voted on this decision' }, { status: 400 });
     }
 
-    // Check recusal
-    const recusals = await base44.asServiceRole.entities.Recusal
-      .filter({ committee_id, member_name: auth.user.full_name || auth.user.email, status: 'active' }).catch(() => []);
-    if (recusals && recusals.length > 0) {
-      return Response.json({ error: 'Cannot vote while recused' }, { status: 403 });
-    }
-
+    // A recusal was already resolved by identifier inside the guard (a name match there may only
+    // ever deny), so no name comparison happens here.
     const vote = await base44.asServiceRole.entities.Vote.create({
       organization_id: auth.organization_id,
-      committee_id, decision_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      decision_id,
       meeting_id: decision.meeting_id || null,
       voter_name: auth.user.full_name || auth.user.email,
       voter_user_id: auth.user.id,
+      voter_membership_id: auth.membership?.id || null,
       voter_role: auth.effective_role,
       vote_choice,
       dissent_reason: dissent_reason || null,

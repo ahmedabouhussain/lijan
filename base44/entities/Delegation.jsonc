@@ -12,11 +12,15 @@
     },
     "from_user_id": {
       "type": "string",
-      "title": "From User ID"
+      "title": "From User ID (the sitting Chair) \u2014 identity of record"
+    },
+    "from_membership_id": {
+      "type": "string",
+      "title": "From Seat (committee membership id)"
     },
     "from_member_name": {
       "type": "string",
-      "title": "From Member Name"
+      "title": "From Member Name (display only)"
     },
     "from_role": {
       "type": "string",
@@ -33,11 +37,15 @@
     },
     "to_user_id": {
       "type": "string",
-      "title": "To User ID"
+      "title": "To User ID \u2014 identity of record"
+    },
+    "to_membership_id": {
+      "type": "string",
+      "title": "To Seat (committee membership id)"
     },
     "to_member_name": {
       "type": "string",
-      "title": "To Member Name"
+      "title": "To Member Name (display only)"
     },
     "to_role": {
       "type": "string",
@@ -54,7 +62,7 @@
     },
     "scope": {
       "type": "string",
-      "title": "Scope of Authority Transfer"
+      "title": "Scope of Authority Transfer (comma-separated delegable capabilities; empty = all delegable)"
     },
     "reason": {
       "type": "string",

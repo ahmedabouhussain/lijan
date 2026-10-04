@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 
 // ApproveMinutes — chair/vice_chair approves draft meeting minutes.
@@ -11,15 +11,17 @@ export default async function(req) {
 
     if (!minutes_id) return Response.json({ error: 'minutes_id is required' }, { status: 400 });
 
-    const minutes = await base44.asServiceRole.entities.MeetingMinutes.get(minutes_id);
-    if (!minutes) return Response.json({ error: 'Minutes not found' }, { status: 404 });
+    // Authority on a TRUSTED target: the committee is derived from the minutes record itself, and
+    // the permitted-state gate (only draft or in_review minutes may be approved) is applied here.
+    const auth = await authorizeCommand(base44, {
+      capability: 'minutes.approve',
+      target_type: 'MeetingMinutes',
+      target_id: minutes_id,
+      claimed_committee_id: body.committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
-    const auth = await resolveAuthority(base44, { committee_id: minutes.committee_id, capability: 'minutes.approve' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-
-    if (!['draft', 'in_review'].includes(minutes.status)) {
-      return Response.json({ error: `Cannot approve minutes in '${minutes.status}' status` }, { status: 400 });
-    }
+    const minutes = auth.target;
 
     await base44.asServiceRole.entities.MeetingMinutes.update(minutes_id, {
       status: 'approved',
