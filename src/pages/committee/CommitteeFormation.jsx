@@ -83,7 +83,7 @@ export default function CommitteeFormation() {
           50
         );
         if (!cancelled) setAmendments(res || []);
-      } catch (e) {
+      } catch {
         if (!cancelled) setAmendments([]);
       }
       if (!cancelled) setLoadingAmendments(false);

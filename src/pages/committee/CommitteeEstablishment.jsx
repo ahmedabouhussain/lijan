@@ -94,7 +94,7 @@ export default function CommitteeEstablishment() {
         committee_id: data.committee.id,
       }, "-created_date", 50);
       setInstruments(res || []);
-    } catch (e) {}
+    } catch {}
     setLoading(false);
   };
 
@@ -113,7 +113,7 @@ export default function CommitteeEstablishment() {
         mime_type: file.type,
         file_size: file.size,
       }));
-    } catch (err) {
+    } catch {
       setMsg(t("تعذّر رفع الملف", "The file could not be uploaded"));
     }
     setUploading(false);

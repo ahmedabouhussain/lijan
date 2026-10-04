@@ -105,7 +105,7 @@ export default function GovernancePolicies() {
 }
 
 /* ── Bilingual Section Row ── */
-function BilingualSection({ icon: Icon, number, titleAr, titleEn, bodyAr, bodyEn }) {
+function BilingualSection({ icon: Icon, titleAr, titleEn, bodyAr, bodyEn }) {
   return (
     <div className="flex gap-4">
       <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">

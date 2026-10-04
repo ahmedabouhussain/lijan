@@ -58,7 +58,7 @@ export default function NotificationPreferences() {
           digest_frequency: "instant",
         });
       }
-    } catch (e) {
+    } catch {
       setPrefs({
         email_enabled: true,
         in_app_enabled: true,

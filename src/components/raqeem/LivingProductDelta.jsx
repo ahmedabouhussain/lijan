@@ -81,7 +81,7 @@ export default function LivingProductDelta({ committeeId, lastGeneratedAt }) {
         newDocuments: newDocuments.slice(0, 3),
         newDocumentsCount: newDocuments.length,
       });
-    } catch (e) {
+    } catch {
       setDelta(null);
     }
     setLoading(false);

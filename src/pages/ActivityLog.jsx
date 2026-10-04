@@ -63,7 +63,6 @@ export default function ActivityLog() {
 
   const uniqueLoginUsers = new Set(loginEvents.map((e) => e.actor_email).filter((e) => e && e !== "anonymous@visitor")).size;
   const anonymousDemos = demoEvents.filter((e) => !e.actor_user_id || e.actor_user_id === "anonymous").length;
-  const authenticatedDemos = demoEvents.length - anonymousDemos;
 
   const activeEvents = tab === "logins" ? loginEvents : demoEvents;
   const filtered = activeEvents.filter((e) => {

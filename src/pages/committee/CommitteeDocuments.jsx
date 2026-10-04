@@ -4,7 +4,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
-import { useCrudAction } from "@/hooks/useCrudAction";
 import { base44 } from "@/api/base44Client";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -38,7 +37,6 @@ export default function CommitteeDocuments() {
   const { t, lang } = useLanguage();
   const { getTitle } = usePageConfig("documents");
   const { canManageDocuments } = useCommitteeAdmin();
-  const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);

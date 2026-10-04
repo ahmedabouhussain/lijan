@@ -104,7 +104,7 @@ export default function CommitteeAudit() {
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("الحالة المعاد بناؤها حتى", "Reconstructed State as of")} {formatDate(timeMachineDate)}
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="p-2 rounded-md bg-secondary/30 text-center">
                 <div className="text-lg font-bold text-foreground">{reconstructedState.decisions.length}</div>
                 <div className="text-[11px] text-muted-foreground">{t("قرار", "Decisions")}</div>

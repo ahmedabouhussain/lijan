@@ -26,7 +26,6 @@ export default function FormationImpactPreview({ change, data }) {
   const { t } = useLanguage();
   if (!change || !data) return null;
 
-  const { committee, members, meetings, registers } = data;
   const impacts = computeImpacts(change, data);
 
   if (impacts.length === 0) {

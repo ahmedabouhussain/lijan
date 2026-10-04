@@ -1,7 +1,7 @@
 import React from 'react';
 import SourceTag from './SourceTag';
 
-export default function DependenciesView({ data }) {
+export default function DependenciesView() {
   return (
     <div className="space-y-3" dir="rtl">
       <h2 className="text-lg font-bold">التبعيات بين الجهات</h2>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
 import PageHeader from "@/components/raqeem/PageHeader";
@@ -50,7 +49,6 @@ const PRODUCT_CATEGORIES = {
 export default function ProductCatalog({ onGenerate }) {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { canManageGovernance } = useCommitteeAdmin();
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

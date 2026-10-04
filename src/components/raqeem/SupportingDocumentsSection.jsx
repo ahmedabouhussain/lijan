@@ -41,7 +41,7 @@ export default function SupportingDocumentsSection({ value, onChange }) {
           idx === i ? { ...d, file_url, file_name: file.name } : d
         )
       );
-    } catch (e) {
+    } catch {
       // ignore
     }
     setUploadingIdx(null);

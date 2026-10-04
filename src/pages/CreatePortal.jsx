@@ -89,7 +89,7 @@ export default function CreatePortal() {
       } else {
         setResolution(data);
       }
-    } catch (e) {
+    } catch {
       // Silently fail — don't block creation
     }
     setChecking(false);

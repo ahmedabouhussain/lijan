@@ -21,7 +21,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onChange(file_url);
-    } catch (err) {
+    } catch {
       setError(t("تعذّر رفع الشعار", "Could not upload the logo"));
     }
     setUploading(false);
@@ -50,7 +50,7 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
       } else {
         setError(t("تعذّر إنشاء الشعار", "Could not create the logo"));
       }
-    } catch (err) {
+    } catch {
       setError(t("تعذّر إنشاء الشعار بالذكاء الاصطناعي", "Could not generate the logo with AI"));
     }
     setGenerating(false);

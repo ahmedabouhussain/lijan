@@ -28,13 +28,11 @@ export default function ChairBrief({ data, base }) {
     (d) => d.status === "pending_approval" || d.status === "draft"
   );
 
-  let healthStatus = "stable";
   let healthLabel = { ar: "مستقرة", en: "Stable" };
   let healthIcon = CheckCircle2;
   let healthColor = "text-emerald-600";
 
   if (overdueActions.length > 2 || pendingDecisions.length > 3) {
-    healthStatus = "critical";
     healthLabel = { ar: "تحتاج متابعة", en: "Needs Attention" };
     healthIcon = AlertCircle;
     healthColor = "text-primary";

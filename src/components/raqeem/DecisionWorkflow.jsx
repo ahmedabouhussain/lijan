@@ -20,12 +20,12 @@ export default function DecisionWorkflow({ decision, onChanged }) {
   const [memberVotes, setMemberVotes] = useState({});
   const [members, setMembers] = useState([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
-  const [existingVotes, setExistingVotes] = useState([]);
+  const [, setExistingVotes] = useState([]);
   const [escalationLevel, setEscalationLevel] = useState("reminder");
   const [supersedeById, setSupersedeById] = useState("");
   const [otherDecisions, setOtherDecisions] = useState([]);
   const [loadingDecisions, setLoadingDecisions] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [, setSaving] = useState(false);
 
   const log = async (action, desc, oldVal, newVal) => {
     try {

@@ -116,7 +116,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
               <Input value={form.presenter} onChange={(e) => update("presenter", e.target.value)} placeholder={t("اسم المقدم", "Presenter name")} />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <Label className="text-xs">{t("المدة (دقيقة)", "Duration (min)")}</Label>
               <Input type="number" value={form.time_allocation_minutes} onChange={(e) => update("time_allocation_minutes", parseInt(e.target.value) || 15)} />

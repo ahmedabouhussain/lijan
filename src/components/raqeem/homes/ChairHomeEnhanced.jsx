@@ -18,7 +18,6 @@ export default function ChairHome({ data, base }) {
   const decisionsAwaitingCert = decisions.filter((d) => d.status === "voting" || d.status === "in_review");
   const overdueActions = actions.filter((a) => isOverdue(a.deadline) && a.status !== "closed");
   const quorumRisk = upcoming.length > 0 && members.length < (committee.quorum_count || 3);
-  const blockers = decisionsAwaitingCert.length + overdueActions.length + (quorumRisk ? 1 : 0);
 
   // Determine dominant next action
   let nextAction = null;

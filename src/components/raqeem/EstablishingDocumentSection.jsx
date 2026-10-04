@@ -32,7 +32,7 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
       const res = await base44.integrations.Core.UploadFile({ file });
       const file_url = res.file_url || res;
       onChange({ ...value, file_url, file_name: file.name });
-    } catch (e) {
+    } catch {
       setError("تعذّر رفع الملف");
     }
     setUploading(false);

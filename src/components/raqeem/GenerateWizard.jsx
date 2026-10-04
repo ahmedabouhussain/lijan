@@ -206,7 +206,7 @@ export default function GenerateWizard({ open, onOpenChange, onGenerate, committ
             {/* Detail level */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("مستوى التفصيل", "Detail Level")}</label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {[
                   { key: "summary", ar: "ملخص", en: "Summary" },
                   { key: "standard", ar: "قياسي", en: "Standard" },

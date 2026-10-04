@@ -29,7 +29,7 @@ export default function FormationHistory() {
         committee_id: data.committee.id,
       }, "-version_number", 50);
       setVersions(res || []);
-    } catch (e) {}
+    } catch {}
     setLoading(false);
   };
 

@@ -27,7 +27,6 @@ export default function CommitteeEvidence() {
 
   if (!data) return <TableSkeleton rows={4} />;
   const actions = (data.registers?.actions || []).filter((a) => a.status === "evidence_pending" || (a.status === "under_review" && !a.compliance_verified));
-  const committeeId = data.committee.id;
 
   const handleUpload = async (actionId) => {
     await execute("UpdateActionProgress", {

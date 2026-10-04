@@ -63,7 +63,7 @@ export default function WorkGroupDocumentCenter({
       } else {
         window.open(signed_url, "_blank", "noopener,noreferrer");
       }
-    } catch (e) {
+    } catch {
       setError(t("تعذّر فتح الملف المطلوب.", "The requested file could not be opened."));
     }
     setBusy(null);

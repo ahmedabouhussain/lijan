@@ -89,7 +89,7 @@ export default function CompletionLedger({ committeeId }) {
         <div className="h-2 rounded-full bg-secondary overflow-hidden">
           <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${completionRate}%` }} />
         </div>
-        <div className="grid grid-cols-3 gap-2 mt-3 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 text-center">
           <div>
             <div className="text-lg font-bold text-foreground">{total}</div>
             <div className="text-[11px] text-muted-foreground">{t("إجمالي", "Total")}</div>

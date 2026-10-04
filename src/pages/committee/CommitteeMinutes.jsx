@@ -30,7 +30,7 @@ export default function CommitteeMinutes() {
   const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);
   const [actionId, setActionId] = useState(null);
-  const [actionType, setActionType] = useState("");
+  const [, setActionType] = useState("");
 
   if (!data) return <TableSkeleton rows={4} />;
   const minutes = data.registers?.minutes || [];

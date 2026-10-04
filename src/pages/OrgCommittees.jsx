@@ -14,9 +14,8 @@ export default function OrgCommittees() {
   const { t } = useLanguage();
 
   if (!data) return <TableSkeleton rows={4} />;
-  const { committees, my_role } = data;
+  const { committees } = data;
   const all = [...committees.active, ...committees.draft, ...committees.suspended, ...committees.closing];
-  const isAdmin = my_role === "owner" || my_role === "admin";
 
   return (
     <div className="space-y-4">

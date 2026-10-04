@@ -54,7 +54,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
       // Inheritance: if the effective config's committee_id doesn't match, it's inherited from org or system default
       const effConfig = d.config || {};
       setIsInherited(!effConfig.committee_id || effConfig.committee_id !== committeeId);
-    } catch (e) {
+    } catch {
       setConfig({ page_key: pageKey, sections: [], labels: {}, visible: true, sidebar_visible: true });
     }
   }, [committeeId, pageKey]);
@@ -108,7 +108,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
         setDirty(false);
         if (!auto) setToast(t("تم حفظ المسودة", "Draft saved"));
       }
-    } catch (e) {
+    } catch {
       setToast(t("خطأ في الحفظ", "Save error"));
     }
     setSaving(false);
@@ -135,7 +135,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
         setEffectiveFrom("");
         await loadConfig();
       }
-    } catch (e) {
+    } catch {
       setToast(t("خطأ في النشر", "Publish error"));
     }
     setPublishing(false);
@@ -151,7 +151,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
       });
       setToast(t("تم استعادة الإصدار", "Version restored"));
       await loadConfig();
-    } catch (e) {
+    } catch {
       setToast(t("خطأ في الاستعادة", "Restore error"));
     }
   };
@@ -168,7 +168,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
       setShowResetDialog(false);
       setResetReason("");
       await loadConfig();
-    } catch (e) {
+    } catch {
       setToast(t("خطأ في إعادة التعيين", "Reset error"));
     }
     setResetting(false);

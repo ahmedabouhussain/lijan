@@ -50,7 +50,7 @@ export default function CommitteeActions() {
       />
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="raqeem-card p-3 text-center">
           <div className="text-lg font-bold text-foreground">{open.length}</div>
           <div className="text-[11px] text-muted-foreground">{t("مفتوحة", "Open")}</div>

@@ -123,7 +123,7 @@ export default function CommitteeAmendments() {
         });
         setReviewStages(byAmendment);
       }
-    } catch (e) {}
+    } catch {}
     setLoading(false);
   };
 

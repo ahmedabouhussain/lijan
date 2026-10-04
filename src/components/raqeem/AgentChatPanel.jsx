@@ -186,7 +186,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     () =>
       messages
         .filter((m) => !isAmeenReloadMessage(m.content))
-        .map((m, i) => {
+        .map((m) => {
           const mustReplace =
             languageFallback && m.role === "assistant" && !isReplyInActiveLanguage(lang, m.content);
           return {
@@ -233,7 +233,6 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
     if (!conversation || loading) return;
     send(pendingPrompt);
     consumeAmeenPrompt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPrompt, conversation, loading, isActive, accessDenied]);
 
   const disabled = !isActive || accessDenied || sending;

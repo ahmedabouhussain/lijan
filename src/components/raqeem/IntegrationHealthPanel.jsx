@@ -52,7 +52,7 @@ export default function IntegrationHealthPanel({ lang = 'ar' }) {
     try {
       const result = await base44.functions.invoke('GetIntegrationHealth', {});
       setHealth(result);
-    } catch (error) {
+    } catch {
       toast({ title: lang === 'ar' ? 'خطأ في جلب حالة التكاملات' : 'Error fetching integration health', variant: 'destructive' });
     } finally {
       setLoading(false);
