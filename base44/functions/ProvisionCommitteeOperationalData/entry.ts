@@ -80,6 +80,10 @@ export default async function (req: any) {
         report.push({ committee: target.key, error: 'not_found' });
         continue;
       }
+
+      // Human-readable identity of this committee in the report — its public id where it
+      // has one, its record id otherwise.
+      const committeeKey = committee.public_id || committee.id;
       // Provisioned records inherit the committee's own data class: a production
       // register's records are never stamped as demonstration data.
       const base = {
@@ -109,7 +113,7 @@ export default async function (req: any) {
         .catch(() => []));
 
       const entry: Record<string, any> = {
-        committee: publicId,
+        committee: committeeKey,
         attendance_created: 0,
         attendance_rebuilt: 0,
         seats_added: 0,
@@ -133,7 +137,7 @@ export default async function (req: any) {
             roster: DEMO_MEMBER_NAMES,
             institutions: DEMO_INSTITUTIONS,
             targetVoting: 8,
-            seed: publicId.length % DEMO_MEMBER_NAMES.length,
+            seed: committeeKey.length % DEMO_MEMBER_NAMES.length,
           });
           if (added.length) {
             await sr.entities.CommitteeMembership.bulkCreate(added.map((s) => ({ ...base, ...s })));
@@ -207,7 +211,7 @@ export default async function (req: any) {
           await sr.entities.MeetingMinutes.create({
             ...base,
             meeting_id: meeting.id,
-            minutes_number: `${publicId}-${String(meeting.date || '').slice(0, 10)}`,
+            minutes_number: `${committeeKey}-${String(meeting.date || '').slice(0, 10)}`,
             ...sync,
             status: 'draft',
             body: 'مسودة محضر مُولَّدة من سجل الحضور المعتمد للاجتماع.',

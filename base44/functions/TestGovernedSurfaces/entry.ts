@@ -22,9 +22,7 @@ import { actionViolations, summarizeActions, todayIso } from '../../shared/actio
 
 const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
 const PROBE_LIMIT = 3; // records per register probed through the read gate, per committee
-const CHILD_ENTITIES = ['Meeting', 'AgendaItem', 'Document', 'Decision', 'Action'];
-
-const DIAG: string[] = [];
+const CHILD_ENTITIES = ['Meeting', 'AgendaItem', 'Document', 'Decision', 'Action', 'CommitteeMembership'];
 
 async function readAll(sr: any, entity: string): Promise<any[]> {
   const out: any[] = [];
@@ -35,12 +33,8 @@ async function readAll(sr: any, entity: string): Promise<any[]> {
     if (cursor) options.cursor = cursor;
     // An unbounded `filter({})` is refused inside a function (it comes back empty); the
     // unbounded read is expressed as list() instead, which is exactly its contract.
-    const res = await sr.entities[entity].list(options).catch((e: any) => {
-      DIAG.push(`${entity}: ${e?.message || e}`);
-      return null;
-    });
+    const res = await sr.entities[entity].list(options).catch(() => null);
     if (!res) break;
-    DIAG.push(`${entity}: ${arr(res).length} items, array=${Array.isArray(res)}, has_more=${res?.has_more}`);
     out.push(...arr(res));
     if (Array.isArray(res) || !res.has_more || !res.next_cursor) break;
     cursor = res.next_cursor;
@@ -61,20 +55,6 @@ export default async function (req: any) {
     const body = await req.json().catch(() => ({}));
     const personaKey: string = body.persona_key || 'DR_HAMAD_MAJEEGHEER';
 
-    const demoQ = { demo_dataset: 'DR_HAMAD_GOVERNED_DEMO_V1', is_demo_data: true };
-    for (const probe of [
-      { key: 'demo no options', q: demoQ, o: undefined },
-      { key: 'demo limit 20', q: demoQ, o: { limit: 20 } },
-      { key: 'demo limit 50', q: demoQ, o: { limit: 50 } },
-      { key: 'demo limit 100', q: demoQ, o: { limit: 100 } },
-      { key: 'demo limit 200', q: demoQ, o: { limit: 200 } },
-      { key: 'demo limit 200 sort', q: demoQ, o: { limit: 200, sort: '-created_date' } },
-      { key: 'all status no options', q: { status: { $in: ['draft', 'pending_activation', 'active', 'temporarily_suspended', 'expiring_soon', 'closing', 'closed', 'archived'] } }, o: undefined },
-    ]) {
-      const r = await sr.entities.Committee.filter(probe.q, probe.o as any).catch((e: any) => `ERR:${e?.message}` as any);
-      DIAG.push(`probe ${probe.key} → ${Array.isArray(r) ? r.length : (r?.items?.length ?? r)}`);
-    }
-
     const failures: any[] = [];
     const warnings: any[] = [];
     let checks = 0;
@@ -83,6 +63,8 @@ export default async function (req: any) {
 
     // ── The corpus, read once ───────────────────────────────────────────────────────────
     const committees = await readAll(sr, 'Committee');
+    const organizations = await readAll(sr, 'Organization');
+    const orgStatusById = new Map(organizations.map((o: any) => [o.id, o.status]));
     const children: Record<string, any[]> = {};
     for (const entity of CHILD_ENTITIES) children[entity] = await readAll(sr, entity);
     const versions = await readAll(sr, 'DocumentVersion');
@@ -104,8 +86,14 @@ export default async function (req: any) {
     // ── 1. Register arithmetic, record backing, organization integrity ──────────────────
     for (const committee of committees) {
       const scope = `committee:${committee.public_id || committee.id}`;
+      // Severity follows the register a committee actually appears in. A gap on a live
+      // register is a failure; the same gap in demonstration data, in a retired duplicate
+      // or in a sandbox institution is recorded as a note, since none of those is a live
+      // governance surface. The gap is still reported — never hidden.
       const demoSide = committee.is_demo_data === true;
-      const record = demoSide ? warn : fail;
+      const retired = committee.merge_status === 'merged_duplicate';
+      const sandbox = String(orgStatusById.get(committee.organization_id) || '').startsWith('sandbox');
+      const record = demoSide || retired || sandbox ? warn : fail;
 
       for (const entity of CHILD_ENTITIES) {
         const stranded = children[entity].filter(
@@ -152,6 +140,11 @@ export default async function (req: any) {
       }
 
       // A meeting that took place must have been held: an agenda and a recorded attendance.
+      // Attendance presumes a composition, so an empty committee is reported as the gap it
+      // is — no attendance register can answer for a committee that has no members.
+      const seats = children.CommitteeMembership.filter(
+        (s: any) => s.committee_id === committee.id && (s.status || 'active') === 'active',
+      );
       const held = children.Meeting.filter(
         (m: any) => m.committee_id === committee.id && ['completed', 'adjourned'].includes(m.status),
       );
@@ -159,7 +152,8 @@ export default async function (req: any) {
         checks += 1;
         const items = children.AgendaItem.filter((i: any) => i.meeting_id === meeting.id);
         if (!items.length) record(scope, 'held_meeting_without_agenda', { meeting_id: meeting.id });
-        if (!attendanceByMeeting.has(meeting.id)) record(scope, 'held_meeting_without_attendance', { meeting_id: meeting.id });
+        if (!seats.length) record(scope, 'held_meeting_without_committee_members', { meeting_id: meeting.id });
+        else if (!attendanceByMeeting.has(meeting.id)) record(scope, 'held_meeting_without_attendance', { meeting_id: meeting.id });
       }
     }
 
@@ -234,11 +228,11 @@ export default async function (req: any) {
         failures: failures.length,
         warnings: warnings.length,
         committees_audited: committees.length,
+        retired_duplicates: committees.filter((c: any) => c.merge_status === 'merged_duplicate').length,
         canonical_failures: failures.filter((f) => f.scope.includes('DEMO-')).length,
       },
       failures: failures.slice(0, 40),
       warnings: warnings.slice(0, 20),
-      diag: DIAG.slice(0, 10),
     }, { status: failures.length ? 409 : 200 });
   } catch (error: any) {
     return Response.json({ error: error?.message || 'test failed' }, { status: 500 });
