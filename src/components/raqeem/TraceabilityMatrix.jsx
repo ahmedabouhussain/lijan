@@ -2,7 +2,7 @@ import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCommittee } from "@/lib/CommitteeContext";
 import useCommitteeRegister from "@/hooks/useCommitteeRegister";
-import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
 import { Link2, CheckCircle2, AlertCircle, ArrowLeft, ArrowRight, FileText, Gavel, Calendar, ListChecks, FileCheck } from "lucide-react";
 
 const CHAIN_STAGES = [
@@ -18,9 +18,21 @@ export default function TraceabilityMatrix() {
   const { data } = useCommittee();
   // Reports, decisions and actions all come from the server register — the same scope as each
   // record's own page — so a stage count and the register behind it can never disagree.
-  const { items: registerItems, loading } = useCommitteeRegister(["products", "decisions", "actions"]);
+  const { items: registerItems, state, reload } = useCommitteeRegister(["products", "decisions", "actions"]);
 
-  if (loading) return <TableSkeleton rows={3} />;
+  // The chain is drawn from the registers themselves: when they cannot be read, that is stated
+  // instead of drawing a chain of zeros that would read as "no governance activity".
+  if (state) {
+    return (
+      <RegisterStatePanel
+        state={state}
+        onRetry={reload}
+        icon={Link2}
+        emptyTitle={t("لا توجد سجلات في السلسلة", "No records in the chain")}
+        emptyDescription={t("قُرِئت سجلات القرارات والإجراءات والتقارير بنجاح، ولا تحتوي على أي سجل في نطاقك الحالي.", "The decisions, actions and reports registers were read successfully and hold no record in your current scope.")}
+      />
+    );
+  }
 
   const products = registerItems("products");
   const decisions = registerItems("decisions");

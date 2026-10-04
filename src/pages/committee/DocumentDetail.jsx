@@ -8,6 +8,8 @@ import LocalizedField from "@/components/raqeem/LocalizedField";
 import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
 import { useLanguage } from "@/lib/LanguageContext";
 import useCommitteeRecord from "@/hooks/useCommitteeRecord";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import { SURFACE_STATE } from "@/lib/governedState";
 import { formatDate, DOCUMENT_STATUS, CLASSIFICATION } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
 
@@ -33,7 +35,7 @@ const VERDICT_LABEL = {
 export default function DocumentDetail() {
   const { t } = useLanguage();
   const { orgRef, committeeRef, documentId } = useParams();
-  const { bundle, loading, error, reload } = useCommitteeRecord("Document", documentId);
+  const { bundle, state, reload } = useCommitteeRecord("Document", documentId);
   const [busy, setBusy] = useState("");
   const [actionError, setActionError] = useState("");
   const [comments, setComments] = useState("");
@@ -91,27 +93,17 @@ export default function DocumentDetail() {
     setBusy("");
   };
 
-  if (loading) {
+  // ONE state surface for every outcome that is not a loaded document: loading, no authority,
+  // out of scope, unavailable, or a technical failure — never a zero and never a bare "not found".
+  if (state || !document) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-secondary border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!document) {
-    const reason = /member of this committee/i.test(error || "")
-      ? t("لا توجد عضوية مسندة إلى هذا الحساب في هذه اللجنة.", "No membership is assigned to this account in this committee.")
-      : error
-      ? t("تعذّر فتح هذا المستند في نطاقك الحالي.", "This document could not be opened in your current scope.")
-      : t("قد يكون هذا المستند قد حُذف، أو أن الرابط الذي فتحته قديم.", "This document may have been deleted, or the link you opened is out of date.");
-    return (
-      <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
-        <h2 className="text-lg font-semibold text-foreground mb-1">{t("المستند غير متوفر", "Document not available")}</h2>
-        <p className="text-sm text-muted-foreground mb-4">{reason}</p>
-        <Link to={`${base}/documents`} className="text-primary hover:underline text-sm font-medium">
-          {t("العودة إلى مستودع وثائق اللجنة", "Back to the committee document repository")}
-        </Link>
+      <div className="max-w-lg mx-auto my-10 space-y-3">
+        <RegisterStatePanel state={state || SURFACE_STATE.NOT_FOUND} onRetry={reload} icon={FileText} />
+        <p className="text-center">
+          <Link to={`${base}/documents`} className="text-primary hover:underline text-sm font-medium">
+            {t("العودة إلى مستودع وثائق اللجنة", "Back to the committee document repository")}
+          </Link>
+        </p>
       </div>
     );
   }

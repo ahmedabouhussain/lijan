@@ -8,7 +8,7 @@ import useCommitteeRegister from "@/hooks/useCommitteeRegister";
 import { Link, useParams } from "react-router-dom";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import EmptyState from "@/components/raqeem/EmptyState";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
 import { FileText, Plus, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
@@ -44,7 +44,9 @@ export default function CommitteeDocuments() {
   // The register is listed by the SERVER, in the same scope as a document's own page, so a listed
   // document always opens. Listing it here would show only what this visitor's own row-level
   // rules happened to allow — which is not the committee's register.
-  const { items, countFor, loading, error, reload } = useCommitteeRegister("documents");
+  // The state of the register — loading, empty, no authority, out of scope, unavailable — travels
+  // with the same read, so a refusal can never be rendered as a count of zero.
+  const { items, countFor, state, reload } = useCommitteeRegister("documents");
 
   const committeeId = data?.committee?.id;
   const orgId = data?.committee?.organization_id;
@@ -92,17 +94,14 @@ export default function CommitteeDocuments() {
         />
       )}
 
-      {error ? (
-        <div className="raqeem-card p-6 text-center space-y-3">
-          <p className="text-sm text-state-danger-ink">
-            {t("تعذّر عرض سجل وثائق اللجنة في نطاقك الحالي.", "The committee's document register could not be shown in your current scope.")}
-          </p>
-          <Button size="sm" variant="outline" onClick={reload}>{t("إعادة المحاولة", "Try again")}</Button>
-        </div>
-      ) : loading ? (
-        <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
-      ) : docs.length === 0 ? (
-        <EmptyState icon={FileText} title={t("لا توجد وثائق", "No Documents")} description={t("لم يتم إضافة وثائق لهذه اللجنة.", "No documents added for this committee.")} />
+      {state ? (
+        <RegisterStatePanel
+          state={state}
+          onRetry={reload}
+          icon={FileText}
+          emptyTitle={t("لا توجد وثائق", "No Documents")}
+          emptyDescription={t("قُرِئ سجل وثائق اللجنة بنجاح، ولا يحتوي على أي وثيقة في نطاقك الحالي.", "The committee's document register was read successfully and holds no document in your current scope.")}
+        />
       ) : (
         <div className="space-y-2">
           {docs.map((d) => (

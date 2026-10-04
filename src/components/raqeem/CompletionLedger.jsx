@@ -1,7 +1,7 @@
 import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import useCommitteeRegister from "@/hooks/useCommitteeRegister";
-import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
 import { CheckCircle2, Clock, FileText } from "lucide-react";
 
 const PRODUCT_TYPE_LABELS = {
@@ -42,18 +42,19 @@ function hasEvidence(product) {
 export default function CompletionLedger() {
   const { t, lang } = useLanguage();
   // Governance products come from the server register, in the same scope as each product's page.
-  const { items, loading } = useCommitteeRegister("products");
+  const { items, state, reload } = useCommitteeRegister("products");
   const products = items("products");
 
-  if (loading) return <TableSkeleton rows={4} />;
-  if (products.length === 0) {
+  // A register that could not be read states why — it is never drawn as a completion rate of zero.
+  if (state) {
     return (
-      <div className="raqeem-card p-6 text-center">
-        <FileText className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-        <p className="text-sm text-muted-foreground">
-          {t("لا توجد منتجات حوكمة بعد", "No governance products yet")}
-        </p>
-      </div>
+      <RegisterStatePanel
+        state={state}
+        onRetry={reload}
+        icon={FileText}
+        emptyTitle={t("لا توجد منتجات حوكمة بعد", "No governance products yet")}
+        emptyDescription={t("قُرِئ سجل منتجات الحوكمة بنجاح، ولا يحتوي على أي منتج في نطاقك الحالي.", "The governance products register was read successfully and holds no product in your current scope.")}
+      />
     );
   }
 

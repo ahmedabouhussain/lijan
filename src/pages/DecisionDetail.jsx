@@ -13,13 +13,15 @@ import { L } from "@/lib/l10n";
 import LocalizedField from "@/components/raqeem/LocalizedField";
 import useCommitteeRecord from "@/hooks/useCommitteeRecord";
 import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import { SURFACE_STATE } from "@/lib/governedState";
 
 export default function DecisionDetail() {
   const { t } = useLanguage();
   const { id, orgRef, committeeRef } = useParams();
   // The same governed read as the register that listed this decision — so a decision that is
   // listed always opens, with its committee, meeting, votes and resulting actions.
-  const { bundle, loading, error, reload: load } = useCommitteeRecord("Decision", id);
+  const { bundle, state, reload: load } = useCommitteeRecord("Decision", id);
   const decision = bundle?.record || null;
   const committee = bundle?.committee || null;
   const meeting = bundle?.meeting || null;
@@ -28,28 +30,18 @@ export default function DecisionDetail() {
   const supersedingDecision = bundle?.superseding_decision || null;
   const isExploration = bundle?.is_demo_mode === true;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-secondary border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!decision) {
+  // ONE state surface for every outcome that is not a loaded decision: loading, no authority,
+  // out of scope, unavailable or a technical failure. A refusal is never shown as an empty page.
+  if (state || !decision) {
     const backTo = orgRef && committeeRef ? `/o/${orgRef}/c/${committeeRef}/decisions` : "/";
-    const reason = /member of this committee/i.test(error || "")
-      ? t("لا توجد عضوية مسندة إلى هذا الحساب في هذه اللجنة.", "No membership is assigned to this account in this committee.")
-      : error
-      ? t("تعذّر فتح هذا القرار في نطاقك الحالي.", "This decision could not be opened in your current scope.")
-      : t("قد يكون هذا القرار قد حُذف، أو أن الرابط الذي فتحته قديم.", "This decision may have been deleted, or the link you opened is out of date.");
     return (
-      <div className="raqeem-card p-8 text-center max-w-lg mx-auto my-10">
-        <h2 className="text-lg font-semibold text-foreground mb-1">{t("القرار غير متوفر", "Decision not available")}</h2>
-        <p className="text-sm text-muted-foreground mb-4">{reason}</p>
-        <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
-          {t("العودة إلى سجل القرارات", "Back to the decisions register")}
-        </Link>
+      <div className="max-w-lg mx-auto my-10 space-y-3">
+        <RegisterStatePanel state={state || SURFACE_STATE.NOT_FOUND} onRetry={load} icon={Gavel} />
+        <p className="text-center">
+          <Link to={backTo} className="text-primary hover:underline text-sm font-medium">
+            {t("العودة إلى سجل القرارات", "Back to the decisions register")}
+          </Link>
+        </p>
       </div>
     );
   }

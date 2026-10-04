@@ -10,6 +10,8 @@ import { ShieldCheck, Clock, History, Calendar, CheckCircle2 } from "lucide-reac
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import CompletionLedger from "@/components/raqeem/CompletionLedger";
 import TraceabilityMatrix from "@/components/raqeem/TraceabilityMatrix";
+import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import { SURFACE_STATE } from "@/lib/governedState";
 
 export default function CommitteeAudit() {
   const { data } = useCommittee();
@@ -23,13 +25,14 @@ export default function CommitteeAudit() {
   // rank the server withholds it, and the page says so instead of showing an empty history.
   const {
     items: registerItems,
-    loading: eventsLoading,
     withheld,
-    error: eventsError,
     reload: reloadEvents,
+    stateFor,
   } = useCommitteeRegister("audit_events");
   const events = registerItems("audit_events");
   const eventsWithheld = withheld.includes("audit_events");
+  // A rank-withheld register is an authority state, not an empty history.
+  const eventsState = stateFor("audit_events");
 
   // Change Tracker — reconstruct state at a past date
   useEffect(() => {
@@ -159,28 +162,15 @@ export default function CommitteeAudit() {
           {t("سجل الأحداث", "Event Log")}
         </h3>
         {eventsWithheld ? (
-          <div className="raqeem-card p-8 text-center">
-            <ShieldCheck className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" aria-hidden="true" />
-            <p className="text-sm text-muted-foreground">
-              {t("سجل الأحداث متاح لعضوية اللجنة.", "The event log is available to committee membership.")}
-            </p>
-          </div>
-        ) : eventsError ? (
-          <div className="raqeem-card p-6 text-center space-y-3">
-            <p className="text-sm text-state-danger-ink">
-              {t("تعذّر عرض سجل الأحداث في نطاقك الحالي.", "The event log could not be shown in your current scope.")}
-            </p>
-            <button onClick={reloadEvents} className="text-xs text-primary hover:underline">
-              {t("إعادة المحاولة", "Try again")}
-            </button>
-          </div>
-        ) : eventsLoading ? (
-          <TableSkeleton rows={3} />
-        ) : events.length === 0 ? (
-          <div className="raqeem-card p-8 text-center">
-            <ShieldCheck className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">{t("لا توجد أحداث تدقيق", "No audit events")}</p>
-          </div>
+          <RegisterStatePanel state={SURFACE_STATE.NO_AUTHORITY} icon={ShieldCheck} />
+        ) : eventsState ? (
+          <RegisterStatePanel
+            state={eventsState}
+            onRetry={reloadEvents}
+            icon={ShieldCheck}
+            emptyTitle={t("لا توجد أحداث تدقيق", "No audit events")}
+            emptyDescription={t("قُرِئ سجل الأحداث بنجاح، ولا يحتوي على أي حدث في نطاقك الحالي.", "The event log was read successfully and holds no event in your current scope.")}
+          />
         ) : (
           <div className="raqeem-card divide-y divide-border">
             {events.slice(0, 50).map((e) => (
