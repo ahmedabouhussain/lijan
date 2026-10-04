@@ -1,4 +1,4 @@
-import { AlertTriangle, Clock, User, FileText, Vote, GitBranch, Calendar, ShieldAlert } from "lucide-react";
+import { Clock, User, FileText, GitBranch, Calendar, ShieldAlert } from "lucide-react";
 
 /**
  * SilentFailureRadar™ — Section 13

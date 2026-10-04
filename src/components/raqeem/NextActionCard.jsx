@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, AlertTriangle, ShieldCheck, Lock, Clock, FileText, Gavel, CheckSquare, Calendar } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function NextActionCard({ to, icon: Icon, title, subtitle, urgency = "normal", actionLabel }) {
   const { t } = useLanguage();

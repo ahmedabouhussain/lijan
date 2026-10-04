@@ -8,7 +8,7 @@ import { useCrudAction } from "@/hooks/useCrudAction";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import { TrendingUp, Plus, ArrowUpCircle, Loader2 } from "lucide-react";
+import { TrendingUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";

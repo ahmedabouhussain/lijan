@@ -4,11 +4,9 @@ import { CommitteeProvider, useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import {
   ChevronLeft, ChevronDown, LayoutDashboard, Users, Calendar, FileText,
-  Gavel, CheckSquare, Network, BarChart3, Settings, ShieldCheck,
+  CheckSquare, BarChart3, Settings,
   Lock, UserCircle, AlertTriangle, Menu, X, ArrowLeftRight,
-  ClipboardList, Package, UserCheck, PenLine, FileCheck, GitBranch,
-  TrendingUp, Brain, Bot, ScrollText, BookOpen, Plug, Bell, Award,
-  Users2, ShieldOff, History,
+  ClipboardList, BookOpen, Plug,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/raqeem/StatusBadge";

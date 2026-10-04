@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useOrg } from "@/lib/OrgContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
-import { Bell, Check, CheckCheck, AlertCircle, Mail, MailOpen, Filter } from "lucide-react";
+import { Bell, CheckCheck, Mail } from "lucide-react";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { formatDate } from "@/lib/raqeemUtils";
 import { Button } from "@/components/ui/button";

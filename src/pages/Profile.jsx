@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
-  User as UserIcon, Mail, Shield, Save, Camera, Phone, Briefcase,
+  Mail, Shield, Save, Camera, Briefcase,
   CheckCircle2, LogOut, PenLine, Building2, Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

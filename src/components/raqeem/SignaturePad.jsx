@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { PenLine, Eraser, Type, Upload, Check } from "lucide-react";
+import { PenLine, Eraser, Type, Check } from "lucide-react";
 
 export default function SignaturePad({ value, onChange, onSave, saving }) {
   const canvasRef = useRef(null);

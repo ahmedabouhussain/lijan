@@ -9,7 +9,6 @@ import {
   Target,
   Map as MapIcon,
   Plus,
-  X,
   Archive,
 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";

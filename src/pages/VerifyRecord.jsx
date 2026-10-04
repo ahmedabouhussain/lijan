@@ -3,11 +3,10 @@ import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   ShieldCheck, ShieldAlert, FileText, Calendar, User, Lock,
-  CheckCircle2, XCircle, Loader2, Award, Link2,
+  CheckCircle2, Loader2, Award, Link2,
 } from "lucide-react";
 import { CLASSIFICATION, formatDate } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
-import StatusBadge from "@/components/raqeem/StatusBadge";
 import QRCode from "@/components/raqeem/QRCode";
 import { Image } from "@/components/ui/image";
 

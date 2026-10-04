@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import EmptyState from "@/components/raqeem/EmptyState";
 import PageHeader from "@/components/raqeem/PageHeader";
 import ProductViewer from "@/components/raqeem/ProductViewer";
-import { FileText, Loader2, Search, ChevronRight, ChevronLeft, Check, X, Clock } from "lucide-react";
+import { FileText, Search, ChevronRight, ChevronLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { L } from "@/lib/l10n";

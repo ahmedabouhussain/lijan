@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import SovereignCard from "@/components/raqeem/SovereignCard";
-import { Sparkles, CalendarClock, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Sparkles, AlertCircle, CheckCircle2 } from "lucide-react";
 
 /**
  * ChairBrief™ — calm one-glance brief for the committee chair.

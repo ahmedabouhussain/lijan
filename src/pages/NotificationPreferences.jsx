@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 
 const EVENT_TYPES = [
   { key: "meeting_scheduled", ar: "جدولة اجتماع", en: "Meeting Scheduled" },

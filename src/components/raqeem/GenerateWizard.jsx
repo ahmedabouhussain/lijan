@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import {
   FileText, ScrollText, BookOpen, Package, Lock, BarChart3,
-  ChevronLeft, Check, Sparkles, Loader2, AlertCircle,
+  ChevronLeft, Check, Sparkles, Loader2,
   FileCheck, FileSpreadsheet, Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

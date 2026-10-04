@@ -7,8 +7,8 @@ import {
 import { base44 } from "@/api/base44Client";
 import {
   ScrollText, Scale, FileText, GitFork, MessageSquare, Vote,
-  User, Clock, CheckCircle2, TrendingUp, GitBranch, ShieldCheck,
-  Circle, Link2, ChevronLeft,
+  User, CheckCircle2, TrendingUp, ShieldCheck,
+  Circle, ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

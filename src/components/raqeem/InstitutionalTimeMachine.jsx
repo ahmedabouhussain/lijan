@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter,
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Loader2, History, GitCompare, AlertCircle } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { cn } from "@/lib/utils";
 
 /**
  * Institutional Change Tracker™ — Section 9

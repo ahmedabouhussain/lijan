@@ -8,7 +8,7 @@ import { base44 } from "@/api/base44Client";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import { Network, Plus, Lock } from "lucide-react";
+import { Network, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
-import { Loader2, GitCompare, ArrowRight, FileText, CheckCircle2, AlertTriangle, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Loader2, GitCompare, ArrowRight, FileText, CheckCircle2, Users } from "lucide-react";
 
 /**
  * Living Institutional Product™ — Section 6

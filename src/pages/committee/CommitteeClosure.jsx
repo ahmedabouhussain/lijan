@@ -8,7 +8,6 @@ import { Lock, Loader2, X } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";

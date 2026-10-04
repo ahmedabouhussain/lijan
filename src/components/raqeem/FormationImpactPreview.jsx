@@ -2,8 +2,8 @@ import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import SovereignCard from "@/components/raqeem/SovereignCard";
 import {
-  Users, Vote, FileSignature, ArrowLeftRight, UserCheck,
-  Calendar, ShieldOff, CheckSquare, AlertTriangle, CheckCircle2, XCircle,
+  Users, Vote, FileSignature, ArrowLeftRight,
+  Calendar, CheckSquare, AlertTriangle, CheckCircle2, XCircle,
 } from "lucide-react";
 
 /**

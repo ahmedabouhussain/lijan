@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
-import { CheckCircle2, Clock, AlertCircle, FileText, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileText } from "lucide-react";
 
 const PRODUCT_TYPE_LABELS = {
   meeting_minutes: { ar: "محاضر اجتماع", en: "Meeting Minutes" },

@@ -3,7 +3,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Network, Users2, CalendarClock, Flag, CheckSquare, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users2, CalendarClock, Flag, CheckSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";

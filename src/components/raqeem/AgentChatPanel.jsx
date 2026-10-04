@@ -10,7 +10,6 @@ import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
 import { AMEEN_SANDBOX_AGENT_NAME } from "@/lib/ameenContext";
 import { nameOf } from "@/lib/l10n";
 import {
-  LOCALE_BLOCK_OPEN,
   ameenDirective,
   stripAmeenDirective,
   isAmeenReloadMessage,

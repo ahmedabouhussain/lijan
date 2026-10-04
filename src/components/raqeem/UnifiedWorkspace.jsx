@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Building2, Users, Gavel, ChevronLeft, Plus, Loader2,
+  Building2, Users, Gavel, ChevronLeft, Plus,
   ShieldCheck, Crown, Pen, User, AlertCircle,
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import { L } from "@/lib/l10n";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
-import BrandLogo from "@/components/raqeem/BrandLogo";
-import BrandWordmark from "@/components/brand/BrandWordmark";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
-import { BRAND } from "@/lib/brand";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";

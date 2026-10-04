@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import NextActionCard from "@/components/raqeem/NextActionCard";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { DECISION_STATUS, ACTION_STATUS, MEETING_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
-import { Calendar, Gavel, CheckSquare, FileText, AlertTriangle, Clock, ArrowLeft } from "lucide-react";
+import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { Calendar, Gavel, CheckSquare, FileText, AlertTriangle, Clock } from "lucide-react";
 
 export default function MemberHome({ data, base, userName }) {
   const { t } = useLanguage();

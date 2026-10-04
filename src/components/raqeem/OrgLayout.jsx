@@ -4,7 +4,7 @@ import { OrgProvider, useOrg } from "@/lib/OrgContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import {
   LayoutDashboard, Users, Bell, Settings, UserCircle,
-  ShieldCheck, Menu, X, AlertTriangle, Building2, Plus,
+  Menu, X, AlertTriangle, Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ChevronRight, Calendar, Clock, Users, Gavel, Play, Pause, Square, Ban, Plus, X, MapPin, Video, Repeat, RefreshCw, Loader2 } from "lucide-react";
-import { MEETING_STATUS, DECISION_STATUS, CLASSIFICATION, formatDate } from "@/lib/raqeemUtils";
+import { MEETING_STATUS, DECISION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AgendaManager from "@/components/raqeem/AgendaManager";
 import MinutesManager from "@/components/raqeem/MinutesManager";

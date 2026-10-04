@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
-import { ShieldCheck, ShieldX, ChevronDown, ChevronUp, Lock, Clock, UserX, AlertTriangle } from "lucide-react";
+import { ShieldCheck, ShieldX, ChevronDown, ChevronUp, Lock, AlertTriangle } from "lucide-react";
 
 const CAPABILITY_LABELS = {
   vote: { ar: "التصويت", en: "Vote" },

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import NextActionCard from "@/components/raqeem/NextActionCard";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
-import { ShieldCheck, AlertTriangle, Gavel, TrendingUp, Clock, CheckSquare, ArrowLeft } from "lucide-react";
+import { DECISION_STATUS, isOverdue } from "@/lib/raqeemUtils";
+import { ShieldCheck, AlertTriangle, Gavel, TrendingUp } from "lucide-react";
 
 export default function ChairHome({ data, base }) {
   const { t } = useLanguage();

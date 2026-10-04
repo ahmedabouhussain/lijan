@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 /**
  * AutoFullscreen — requests browser fullscreen on the first user interaction.

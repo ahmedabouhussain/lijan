@@ -7,7 +7,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import PageHeader from "@/components/raqeem/PageHeader";
 import GenerateWizard from "@/components/raqeem/GenerateWizard";
 import LivingProductDelta from "@/components/raqeem/LivingProductDelta";
-import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive, History } from "lucide-react";
+import { FileText, Loader2, Sparkles, Search, FileCheck, Gavel, FileSpreadsheet, ClipboardList, BookOpen, ScrollText, Mail, Vote, BarChart3, ShieldAlert, Scale, FileArchive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { Sparkles, Loader2, Wand2, FileText, Check, X, RefreshCw } from "lucide-react";
+import { Sparkles, Loader2, Wand2, Check, RefreshCw } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 
 // SmartFormAssist — reusable AI-powered form assistance component.
 // Provides field suggestions, auto-fill from context, and human-in-the-loop review.

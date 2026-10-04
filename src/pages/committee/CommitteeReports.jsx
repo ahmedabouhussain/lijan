@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -6,7 +6,7 @@ import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import { cn } from "@/lib/utils";
-import { BarChart3, TrendingUp, ShieldCheck, CheckCircle, AlertTriangle, Clock, Loader2, Download } from "lucide-react";
+import { BarChart3, ShieldCheck, CheckCircle, AlertTriangle, Clock, Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";

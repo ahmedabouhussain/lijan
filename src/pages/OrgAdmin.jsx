@@ -4,7 +4,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import { Settings, Users, Shield, Building2, Ban, RotateCcw, Loader2, AlertTriangle, UserX } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import EmptyState from "@/components/raqeem/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
