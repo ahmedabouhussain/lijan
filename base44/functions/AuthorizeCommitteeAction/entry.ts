@@ -37,6 +37,11 @@ export default async function (req) {
     // A caller may describe where it believes the record lives; a contradiction is refused, never honoured.
     const claimed = committee_id || record_committee_id || null;
 
+    // This endpoint is the read-only PROBE surfaces use to decide whether to show a control. It
+    // writes nothing itself, so it is not a command site and needs no trusted target: the invariant
+    // that matters — no WRITE is ever authorized on client-supplied scope — binds the commands.
+    // When a caller does name a record, that record IS the scope, and a contradicting committee claim
+    // is refused by the kernel rather than honoured.
     const decision = await resolveAuthority(base44, { capability, record, committee_id: claimed });
 
     return Response.json({

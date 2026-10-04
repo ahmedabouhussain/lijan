@@ -74,7 +74,10 @@ for (const file of files) {
   // A command site is on the guarded path only when it names a TRUSTED TARGET through the guard.
   // Asking the kernel directly — or calling the guard without a target — is the migration backlog.
   const trustedTarget = guarded && TRUSTED_TARGET.test(src);
-  const hintOnly = HINT_ONLY_CALL.test(src) || !trustedTarget;
+  // The invariant is about WRITES: a read-only probe (AuthorizeCommitteeAction, a Test* harness) may
+  // ask the kernel directly and is not a command site at all. A file that WRITES while asking the
+  // kernel directly — or through the guard without naming a target — is the migration backlog.
+  const hintOnly = (HINT_ONLY_CALL.test(src) || !trustedTarget) && writes;
   const nameMatch = /(filter|find|some)\([^)]*\bmember_name\s*[:=]/.test(src);
   const readGate = /(^|[\s({,;])capability:\s*['"](read|view|list|access)['"]/m.test(src);
   const capability = (src.match(CAPABILITY) || [])[1] || null;

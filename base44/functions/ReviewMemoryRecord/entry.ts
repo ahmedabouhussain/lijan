@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resolveAuthority } from '../../shared/authorityKernel.ts';
+import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 
 // ReviewMemoryRecord — Memory Review and Approval Workflow
 // Transitions an AIOutputLedger (institutional_memory) record through:
@@ -31,10 +31,15 @@ export default async function(req) {
       ? 'minutes.review'
       : 'minutes.approve';
 
-    const auth = await resolveAuthority(base44, { committee_id, capability });
-    if (!auth.allowed) {
-      return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-    }
+    // Authority on a TRUSTED target: the memory ledger record is the target, so its own committee is
+    // what the review decision is made against — the committee_id the caller sent is only compared.
+    const auth = await authorizeCommand(base44, {
+      capability,
+      target_type: 'AIOutputLedger',
+      target_id: ledger_id,
+      claimed_committee_id: committee_id || null,
+    });
+    if (!auth.allowed) return refusalResponse(auth);
 
     const now = new Date().toISOString();
     const reviewerName = auth.user.full_name || auth.user.email;

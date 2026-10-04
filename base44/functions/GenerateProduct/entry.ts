@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 
 // GenerateProduct — generates a structured governance product from a template.
 // Uses InvokeLLM to produce structured JSON sections (no HTML/Markdown).
@@ -132,7 +133,19 @@ ${committeeContext.name_ar || committeeContext.name_en || '—'}
       confidence: typeof s.confidence === 'number' ? s.confidence : 0.5,
     }));
 
-    // 4. Create ProductInstance
+    // 4. Create ProductInstance — exclusivity on the same generation request: a second identical
+    // request (double tap, retry after a timeout) loses the claim instead of producing a twin product.
+    const claim = await claimTransition(base44, {
+      key: `product.generate:${committee_id || '-'}:${product_type}:${source_entity_id || '-'}`,
+      command: 'GenerateProduct',
+      entity_type: 'Committee',
+      entity_id: committee_id || null,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id,
+      actor_user_id: auth.user?.id || null,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'This product is already being generated from the same source');
+
     const instance = await base44.asServiceRole.entities.ProductInstance.create({
       organization_id,
       committee_id: committee_id || null,
@@ -155,6 +168,8 @@ ${committeeContext.name_ar || committeeContext.name_en || '—'}
       human_edited: false,
       correlation_id: auth.correlation_id || null,
     });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: instance.id });
 
     // 5. Audit
     try {

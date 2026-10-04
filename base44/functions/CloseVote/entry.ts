@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 
 // CloseVote — closes voting and tallies results.
 export default async function(req) {
@@ -56,6 +57,18 @@ export default async function(req) {
       passed = true; // Chair decides
     }
 
+    // Exclusivity on CERTIFICATION: two simultaneous closes would both tally and both write a result.
+    const claim = await claimTransition(base44, {
+      key: `vote.certify:${decision_id}`,
+      command: 'CloseVote',
+      entity_type: 'Decision',
+      entity_id: decision_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'This vote has already been closed and certified');
+
     await base44.asServiceRole.entities.Decision.update(decision_id, {
       vote_for: voteFor, vote_against: voteAgainst, vote_abstain: voteAbstain,
       status: passed ? 'approved' : 'rejected',
@@ -69,6 +82,8 @@ export default async function(req) {
       description: `Vote closed: ${voteFor} for, ${voteAgainst} against, ${voteAbstain} abstain → ${passed ? 'APPROVED' : 'REJECTED'} (${rule})`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: decision_id });
 
     return Response.json({
       status: 'ok', decision_id,

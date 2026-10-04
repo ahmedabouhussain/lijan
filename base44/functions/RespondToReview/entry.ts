@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
+import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 
 // RespondToReview — reviewer submits their verdict on a review request.
 export default async function(req) {
@@ -35,6 +36,19 @@ export default async function(req) {
       }, { status: 403 });
     }
 
+    // Exclusivity on the REVIEW RESPONSE: one reviewer answers one request once. A repeated submission
+    // (a retry after a timeout, a double tap) loses the claim and writes no second response.
+    const claim = await claimTransition(base44, {
+      key: `review.respond:${review_request_id}:${auth.user.id}`,
+      command: 'RespondToReview',
+      entity_type: 'ReviewRequest',
+      entity_id: review_request_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+      organization_id: auth.organization_id,
+      actor_user_id: auth.user.id,
+    });
+    if (!claim.won) return duplicateResponse(claim, 'Your review response has already been recorded');
+
     const response = await base44.asServiceRole.entities.ReviewResponse.create({
       organization_id: auth.organization_id,
       committee_id: reviewRequest.committee_id,
@@ -51,6 +65,8 @@ export default async function(req) {
     });
 
     await base44.asServiceRole.entities.ReviewRequest.update(review_request_id, { status: 'responded' });
+
+    await completeTransition(base44, claim.claim_id, { result_ref: response.id });
 
     await base44.asServiceRole.entities.AuditEvent.create({
       organization_id: auth.organization_id, committee_id: reviewRequest.committee_id,
