@@ -1,40 +1,43 @@
 import React, { useState } from "react";
-import { Eye, Download, Loader2 } from "lucide-react";
-import { signedFileUrl, logFileAccess } from "@/lib/secureFiles";
+import { Eye, Download, Loader2, Clock, AlertCircle } from "lucide-react";
+import { requestFileAccess, accessNotice, LEGACY_STATE } from "@/lib/secureFiles";
 import { useLanguage } from "@/lib/LanguageContext";
 
-// Opens a sensitive stored file through a link that is minted at the moment of the click
-// and logged in the audit trail. Nothing is signed until the user asks, and the link is
-// never stored on the record.
+// Opens a sensitive stored file. Nothing is signed until the user asks, and the link is
+// produced by the server gate — which authenticates the user, judges permission, purpose and
+// classification for THIS record, minted a short-lived link, and recorded the decision in the
+// audit trail. The component must declare which record the file belongs to.
 export default function SecureFileLink({
   fileRef,
   action = "preview",
   entityType,
   entityId,
   committeeId,
-  title,
+  purpose = "",
   label,
   className = "",
   showIcon = true,
 }) {
   const { t } = useLanguage();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [legacy, setLegacy] = useState(false);
 
   const open = async () => {
     if (!fileRef || busy) return;
     setBusy(true);
-    setError("");
+    setNotice("");
+    setLegacy(false);
     try {
-      const url = await signedFileUrl(fileRef);
-      if (!url) {
-        setError(t("الملف غير متاح", "File unavailable"));
+      const res = await requestFileAccess({ fileRef, entityType, entityId, committeeId, action, purpose });
+      if (res.url) {
+        window.open(res.url, "_blank", "noopener,noreferrer");
         return;
       }
-      await logFileAccess({ action, fileRef, entityType, entityId, committeeId, title });
-      window.open(url, "_blank", "noopener,noreferrer");
+      setLegacy(res.state === LEGACY_STATE);
+      setNotice(accessNotice(res.state, t));
     } catch (e) {
-      setError(e?.message || t("تعذّر فتح الملف", "The file could not be opened"));
+      setNotice(e?.message || t("تعذّر فتح الملف", "The file could not be opened"));
     } finally {
       setBusy(false);
     }
@@ -44,7 +47,7 @@ export default function SecureFileLink({
 
   return (
     <span className="inline-flex flex-col items-start gap-0.5">
-      <button type="button" onClick={open} disabled={busy} className={className}>
+      <button type="button" onClick={open} disabled={busy} aria-busy={busy} className={className}>
         {busy ? (
           <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
         ) : showIcon ? (
@@ -52,7 +55,16 @@ export default function SecureFileLink({
         ) : null}
         {label}
       </button>
-      {error && <span className="text-xs text-muted-foreground">{error}</span>}
+      {notice && (
+        <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+          {legacy ? (
+            <Clock className="w-3 h-3" aria-hidden="true" />
+          ) : (
+            <AlertCircle className="w-3 h-3" aria-hidden="true" />
+          )}
+          {notice}
+        </span>
+      )}
     </span>
   );
 }

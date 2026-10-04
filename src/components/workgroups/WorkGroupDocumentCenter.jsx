@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import { FileText, Download, Eye, Archive, Loader2, Sparkles, History, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
-import { signedFileUrl, uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
+import { requestFileAccess, uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
 import { useAmeenSafe } from "@/lib/AmeenContext";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -57,7 +57,14 @@ export default function WorkGroupDocumentCenter({
     try {
       // Legacy versions may still point at the old public storage; the helper returns a
       // public link as-is and mints a short-lived signed link for private storage.
-      const signed_url = await signedFileUrl(version.file_url);
+      // The link is minted by the governed gate, which judges permission and scope first.
+      const access = await requestFileAccess({
+        fileRef: version.file_url,
+        entityType: "DocumentVersion",
+        entityId: version.id,
+        action: "preview",
+      });
+      const signed_url = access.url;
       await logFileAccess({ action: "preview", fileRef: version.file_url, entityType: "DocumentVersion", entityId: version.id, title: version.file_name || version.version_label });
       if (mode === "download") {
         const a = document.createElement("a");

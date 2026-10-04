@@ -1,14 +1,23 @@
 import React from "react";
-import { Loader2, AlertCircle } from "lucide-react";
-import { useSecureFileUrl } from "@/lib/secureFiles";
+import { Loader2, AlertCircle, Clock } from "lucide-react";
+import { useSecureFileUrl, accessNotice, LEGACY_STATE } from "@/lib/secureFiles";
 import { useLanguage } from "@/lib/LanguageContext";
 
 // Renders a sensitive stored image (signature, personal photo) through a short-lived signed
-// link that is minted for this view only. A file the viewer cannot resolve never leaks its
-// existence: the viewer simply sees the neutral notice below.
-export default function SecureFileImage({ fileRef, alt = "", className = "", fallback = null }) {
+// link minted by the server gate for this view only. The component must declare WHICH record
+// the file belongs to, because the server judges the viewer's permission and scope from it.
+// A file the viewer cannot resolve never leaks its existence: the viewer sees a neutral notice.
+export default function SecureFileImage({
+  fileRef,
+  entityType,
+  entityId,
+  committeeId,
+  alt = "",
+  className = "",
+  fallback = null,
+}) {
   const { t } = useLanguage();
-  const { url, loading, error } = useSecureFileUrl(fileRef);
+  const { url, loading, error, state } = useSecureFileUrl(fileRef, { entityType, entityId, committeeId });
 
   if (loading) {
     return (
@@ -18,11 +27,15 @@ export default function SecureFileImage({ fileRef, alt = "", className = "", fal
     );
   }
 
-  if (error) {
+  if (error || state) {
     return (
       <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-        <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
-        {t("الملف غير متاح", "File unavailable")}
+        {state === LEGACY_STATE ? (
+          <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+        ) : (
+          <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
+        )}
+        {accessNotice(state, t)}
       </span>
     );
   }

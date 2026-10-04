@@ -153,7 +153,7 @@ export default function SignaturePad({ value, onChange }) {
         <div className="flex items-center justify-between gap-3 p-3 bg-secondary/40 rounded-md border border-border">
           <div className="text-xs text-muted-foreground">التوقيع الحالي:</div>
           {value?.image_url ? (
-            <SecureFileImage fileRef={value.image_url} alt="signature" className="h-12 object-contain" />
+            <SecureFileImage fileRef={value.image_url} entityType="Signature" entityId={value.id} alt="signature" className="h-12 object-contain" />
           ) : (
             <span className="text-2xl text-foreground" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}>
               {value.text}

@@ -149,6 +149,39 @@
       "title": "Reminder Count",
       "default": 0
     },
+    "escalation_revision": {
+      "type": "number",
+      "title": "Escalation Revision (compare-and-set lock)",
+      "default": 0
+    },
+    "escalation_transition_id": {
+      "type": "string",
+      "title": "Escalation Transition ID (identifies the request that actually moved the action)"
+    },
+    "last_escalation_key": {
+      "type": "string",
+      "title": "Last Escalation Idempotency Key"
+    },
+    "last_escalation_at": {
+      "type": "string",
+      "title": "Last Escalation At",
+      "format": "date-time"
+    },
+    "last_escalation_correlation": {
+      "type": "string",
+      "title": "Last Escalation Correlation ID"
+    },
+    "escalation_notice_state": {
+      "type": "string",
+      "title": "Escalation Notice State",
+      "enum": [
+        "none",
+        "notified",
+        "no_recipient",
+        "failed"
+      ],
+      "default": "none"
+    },
     "compliance_verified": {
       "type": "boolean",
       "title": "Compliance Verified",

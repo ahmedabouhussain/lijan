@@ -39,7 +39,7 @@ export default async function(req: Request): Promise<Response> {
       });
     }
 
-    // Fetch committee context (public-safe fields only)
+    // Issuing body — identity only. Mandate text and internal typing are not public.
     let committee = null;
     if (product.committee_id) {
       try {
@@ -47,13 +47,12 @@ export default async function(req: Request): Promise<Response> {
         committee = {
           name_ar: c.name_ar,
           name_en: c.name_en,
-          mandate: c.mandate,
-          type: c.type,
         };
       } catch { /* committee not found */ }
     }
 
-    // Fetch signatures (public-safe fields only)
+    // Signatories — the fact of signing only. A signature image, its link and its
+    // stored path are never part of public verification.
     let signatures = [];
     if (product.committee_id) {
       try {
@@ -65,26 +64,31 @@ export default async function(req: Request): Promise<Response> {
         signatures = (sigs || []).map((s) => ({
           signer_name: s.signer_name,
           signer_role: s.signer_role,
-          signature_image_url: s.signature_image_url,
-          signature_text: s.signature_text,
           signed_at: s.signed_at,
         }));
       } catch { /* signatures not found */ }
     }
 
+    // Verification code and document fingerprint — safe, stable, non-reversible.
+    const verificationCode = product.verification_code || `VRF-${String(productId).slice(-8).toUpperCase()}`;
+    const fingerprint = product.document_fingerprint || null;
+    const revoked = Boolean(product.revoked_at) || product.status === 'archived';
+
     return Response.json({
       product: {
         id: product.id,
         title: product.title || product.title_ar,
+        title_ar: product.title_ar,
         product_type: product.product_type,
-        classification: product.classification,
         status: product.status,
-        verified: true,
+        verified: !revoked,
+        revoked,
+        revocation_reason: product.revocation_reason || null,
+        verification_code: verificationCode,
+        fingerprint,
         generated_at: product.generated_at,
-        generated_by_name: product.generated_by_name,
-        approved_by_name: product.approved_by_name,
         approved_at: product.approved_at,
-        export_format: product.export_format,
+        approved_by_name: product.approved_by_name,
       },
       committee,
       signatures,

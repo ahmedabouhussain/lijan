@@ -84,7 +84,9 @@ export default function Profile() {
       // A personal photo is private by default: it is stored privately and rendered
       // through a short-lived signed link inside the authorised surfaces only.
       const file_uri = await uploadPrivateFile(file);
-      await logFileAccess({ action: "upload", fileRef: file_uri, entityType: "UserProfile", entityId: effectiveActor?.id, title: file.name });
+      // Recorded without a record id, so the audit row is keyed by the file itself: that
+      // is what lets the governed gate serve this draft photo back to its uploader only.
+      await logFileAccess({ action: "upload", fileRef: file_uri, entityType: "UserProfile", title: file.name });
       setAvatarUrl(file_uri);
     } catch (error) {
       console.warn("The personal photo could not be stored:", error?.message || error);
@@ -158,7 +160,7 @@ export default function Profile() {
             <div className="relative shrink-0">
               <div className="w-24 h-24 rounded-full border-4 border-card bg-primary/10 overflow-hidden flex items-center justify-center">
                 {avatarUrl ? (
-                  <SecureFileImage fileRef={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                  <SecureFileImage fileRef={avatarUrl} entityType="UserProfile" alt="avatar" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-2xl font-bold text-primary">{initials}</span>
                 )}

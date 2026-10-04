@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/LanguageContext";
 import SecureFileLink from "@/components/raqeem/SecureFileLink";
-import { uploadPrivateFile, signedFileUrl, logFileAccess } from "@/lib/secureFiles";
+import { uploadPrivateFile, requestFileAccess, logFileAccess } from "@/lib/secureFiles";
 
 const DOC_TYPES = [
   { value: "decision", label: "قرار" },
@@ -49,10 +49,17 @@ export default function EstablishingDocumentSection({ value, onChange, onExtract
     setExtracting(true);
     setError("");
     try {
-      // The extractor needs a readable link for this one call — a short-lived signed one.
-      const readableUrl = await signedFileUrl(value.file_url);
-      if (!readableUrl) throw new Error(t("الملف غير متاح", "File unavailable"));
-      const res = await base44.functions.invoke("ExtractCommitteeCharter", { file_url: readableUrl });
+      // The extractor needs a readable link for this one call. It is requested from the
+      // governed gate, which serves this draft file only to the user who uploaded it.
+      const access = await requestFileAccess({
+        fileRef: value.file_url,
+        entityType: "EstablishingDocument",
+        entityId: value.id,
+        action: "preview",
+        purpose: "ai_extraction",
+      });
+      if (!access.url) throw new Error(t("الملف غير متاح", "File unavailable"));
+      const res = await base44.functions.invoke("ExtractCommitteeCharter", { file_url: access.url });
       const data = res.data || res;
       if (data.error) {
         setError(data.error);

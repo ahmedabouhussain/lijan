@@ -83,8 +83,58 @@
     },
     "file_url": {
       "type": "string",
-      "title": "Exported File URL",
-      "format": "uri"
+      "title": "LEGACY Exported File URL (public links pending migration \u2014 never written for new files)"
+    },
+    "storage_key": {
+      "type": "string",
+      "title": "Internal Storage Key (private file reference \u2014 never a public URL)"
+    },
+    "file_type": {
+      "type": "string",
+      "title": "File Type (e.g. application/pdf)"
+    },
+    "file_size_bytes": {
+      "type": "number",
+      "title": "File Size (bytes)"
+    },
+    "document_fingerprint": {
+      "type": "string",
+      "title": "Document Fingerprint (SHA-256 of the produced bytes)"
+    },
+    "file_version": {
+      "type": "number",
+      "title": "File Version",
+      "default": 0
+    },
+    "file_classification": {
+      "type": "string",
+      "title": "File Classification (snapshot at generation)"
+    },
+    "file_owner_user_id": {
+      "type": "string",
+      "title": "File Owner User ID"
+    },
+    "file_created_at": {
+      "type": "string",
+      "title": "File Created At",
+      "format": "date-time"
+    },
+    "export_template": {
+      "type": "string",
+      "title": "Export Template / Product Identity (the template the file was produced from)"
+    },
+    "verification_code": {
+      "type": "string",
+      "title": "Public Verification Code"
+    },
+    "revoked_at": {
+      "type": "string",
+      "title": "Revoked At",
+      "format": "date-time"
+    },
+    "revocation_reason": {
+      "type": "string",
+      "title": "Revocation Reason"
     },
     "classification": {
       "type": "string",

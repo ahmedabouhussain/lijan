@@ -7,11 +7,25 @@
  * Runtime Spike Result (2026-09-02):
  *   jspdf works in browser → valid %PDF- output with Arabic text.
  *   Backend jspdf NOT available (Deno runtime, browser-only library).
- *   Strategy: Generate PDF client-side, upload via UploadFile, persist file_url.
+ * Runtime Spike Result (2026-09-02):
+ *   jspdf works in browser → valid %PDF- output with Arabic text.
+ *   Backend jspdf NOT available (Deno runtime, browser-only library).
+ *   Strategy: generate the PDF client-side, then upload it to PRIVATE storage and
+ *   keep its identity on the record — never a public URL.
  */
 
 import { base44 } from '@/api/base44Client';
 import { arabicFontFaceCss, ARABIC_FONT_STACK } from '@/lib/arabicTypography';
+import { uploadPrivateFile, logFileAccess } from '@/lib/secureFiles';
+
+/** SHA-256 of the produced bytes — the document fingerprint, stored with the record. */
+async function sha256Hex(blob) {
+  const bytes = await blob.arrayBuffer();
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 const MAROON = [138, 21, 56];
 const WARM_WHITE = [250, 248, 245];
@@ -137,7 +151,12 @@ export async function renderPDF(sections, meta, lang = 'ar') {
 }
 
 /**
- * Generate PDF, upload to storage, and update ProductInstance with file_url.
+ * Generate the PDF, store it in PRIVATE storage, and record its identity on the
+ * ProductInstance: internal storage key, file type, size, fingerprint, version,
+ * classification, owner, committee, creation time and the export template.
+ * No permanent link is written, and no signed link is ever persisted — a signed
+ * link is minted on demand by the governed gate (`RequestFileAccess`) after the
+ * server has judged the viewer's permission and scope.
  */
 export async function generateAndUploadPDF(product, lang = 'ar') {
   let sections = [];
@@ -161,14 +180,40 @@ export async function generateAndUploadPDF(product, lang = 'ar') {
   const fileName = `${product.product_type}_${product.id || Date.now()}.pdf`;
   const file = new File([blob], fileName, { type: 'application/pdf' });
 
-  const { file_url } = await base44.integrations.Core.UploadFile({ file });
+  const storageKey = await uploadPrivateFile(file);
+  if (!storageKey) throw new Error('generated_document_upload_failed');
 
-  // Update ProductInstance with file_url
+  const fingerprint = await sha256Hex(blob);
+  const createdAt = new Date().toISOString();
+  const nextVersion = (product.file_version || 0) + 1;
+
   if (product.id) {
-    await base44.entities.ProductInstance.update(product.id, { file_url });
+    // The exported file is a governed record, not a public link.
+    await base44.entities.ProductInstance.update(product.id, {
+      storage_key: storageKey,
+      file_type: 'application/pdf',
+      file_size_bytes: blob.size,
+      document_fingerprint: fingerprint,
+      file_version: nextVersion,
+      file_classification: product.classification || 'internal',
+      file_owner_user_id: product.generated_by_user_id || null,
+      file_created_at: createdAt,
+      export_template: product.product_type,
+      export_format: 'pdf',
+    });
+
+    await logFileAccess({
+      action: 'upload',
+      fileRef: storageKey,
+      entityType: 'ProductInstance',
+      entityId: product.id,
+      committeeId: product.committee_id,
+      title: product.title,
+      reason: 'generated_document',
+    });
   }
 
-  return { file_url, sizeBytes: blob.size };
+  return { storage_key: storageKey, fingerprint, sizeBytes: blob.size, version: nextVersion };
 }
 
 /**

@@ -19,6 +19,10 @@ export default function CommitteeLogoSection({ value, onChange, committeeInfo })
     setUploading(true);
     setError("");
     try {
+      // The committee logo is an APPROVED PUBLIC IDENTITY ASSET: a committee's mark is
+      // published with its public registration, so it is deliberately uploaded to public
+      // storage. Every sensitive governance file goes through private storage instead
+      // (see lib/secureFiles.js) — this is the only public upload path in the app.
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onChange(file_url);
     } catch {

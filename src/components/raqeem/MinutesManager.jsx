@@ -282,7 +282,7 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
                         <StatusBadge label={t("موقّع", "Signed")} colorClass="bg-emerald-50 text-emerald-700" />
                       </div>
                       {sig.signature_image_url ? (
-                        <SecureFileImage fileRef={sig.signature_image_url} alt="signature" className="h-10 object-contain mb-1" />
+                        <SecureFileImage fileRef={sig.signature_image_url} entityType="Signature" entityId={sig.id} alt="signature" className="h-10 object-contain mb-1" />
                       ) : (
                         <div className="text-xl text-foreground mb-1" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}>
                           {sig.signature_text}
