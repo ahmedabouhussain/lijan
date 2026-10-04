@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import { OrgProvider, useOrg } from "@/lib/OrgContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import {
-  LayoutDashboard, Users, Bell, Settings, UserCircle,
-  Menu, X, AlertTriangle, Plus,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
+import { useAuth } from "@/lib/AuthContext";
+import { LayoutDashboard, Users, Bell, Settings, Plus, AlertTriangle } from "lucide-react";
 import PageNav from "@/components/raqeem/PageNav";
-import NotificationCenter from "@/components/raqeem/NotificationCenter";
-import BrandLogo from "@/components/raqeem/BrandLogo";
-import { Image } from "@/components/ui/image";
-import BrandWordmark from "@/components/brand/BrandWordmark";
-import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import { L } from "@/lib/l10n";
+import AppShell from "@/components/nav/AppShell";
+import ShellLoading from "@/components/nav/SidebarSkeleton";
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", icon: LayoutDashboard },
@@ -26,49 +19,14 @@ function OrgShell() {
   const { orgRef } = useParams();
   const location = useLocation();
   const { data, loading, error } = useOrg();
-  const { t } = useLanguage();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { t, dir } = useLanguage();
+  const { user } = useAuth();
 
-  if (loading) {
-    return (
-      <div className="min-h-app bg-background flex" dir={document.documentElement.dir}>
-        <aside className="hidden lg:flex w-64 shrink-0 bg-sidebar flex-col">
-          <div className="px-5 py-5 border-b border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-sidebar-accent/20 sovereign-shimmer" />
-              <div className="space-y-1.5">
-                <div className="h-4 w-24 bg-sidebar-foreground/15 rounded sovereign-shimmer" />
-                <div className="h-3 w-16 bg-sidebar-foreground/10 rounded sovereign-shimmer" />
-              </div>
-            </div>
-          </div>
-          <nav className="flex-1 px-3 py-4 space-y-1.5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-9 bg-sidebar-foreground/10 rounded-md sovereign-shimmer" />
-            ))}
-          </nav>
-        </aside>
-        <div className="flex-1 flex flex-col">
-          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-            <div className="h-6 w-48 bg-muted/70 rounded-md sovereign-shimmer" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="raqeem-card p-5 space-y-3">
-                  <div className="h-4 w-32 bg-muted/70 rounded-md sovereign-shimmer" />
-                  <div className="h-3 w-full bg-muted/70 rounded-md sovereign-shimmer" />
-                  <div className="h-3 w-3/4 bg-muted/70 rounded-md sovereign-shimmer" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <ShellLoading dir={dir} />;
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-app gap-3">
+      <div className="flex flex-col items-center justify-center min-h-app gap-3" dir={dir}>
         <div className="w-16 h-16 rounded-2xl bg-destructive/8 flex items-center justify-center ring-1 ring-destructive/15">
           <AlertTriangle className="w-7 h-7 text-destructive" />
         </div>
@@ -84,164 +42,66 @@ function OrgShell() {
   const base = `/o/${orgRef}`;
   const isAdmin = my_role === "owner" || my_role === "admin";
 
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      {/* Organization identity — the approved logo of the organization this portal belongs to */}
-      <div className="px-5 py-5 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ background: "#FFFFFF" }}>
-            {org.logo_url ? (
-              <Image src={org.logo_url} alt={L.name(org)} fittingType="fit" className="w-full h-full" />
-            ) : (
-              <BrandLogo className="w-full h-full" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="text-sm text-sidebar-foreground font-medium truncate">{L.name(org)}</div>
-            <div className="text-[10px] text-sidebar-foreground/40 truncate">{t(org.name_en, org.name_ar)}</div>
-          </div>
-        </Link>
-        {portal.sandbox_badge && (
-          <span className="inline-block mt-2 px-1.5 py-0.5 rounded text-[10px] bg-amber-900/30 text-amber-200">
-            {t("بيئة تجريبية", "Sandbox")}
-          </span>
-        )}
-      </div>
+  const toItem = (item) => {
+    const to = `${base}${item.to}`;
+    return {
+      to,
+      label: t(item.label, item.labelEn),
+      icon: item.icon,
+      active: location.pathname === to || (item.to !== "" && location.pathname.startsWith(to)),
+    };
+  };
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map((item) => {
-          const to = `${base}${item.to}`;
-          const active = location.pathname === to || (item.to !== "" && location.pathname.startsWith(to));
-          return (
-            <Link
-              key={item.to}
-              to={to}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
-                active
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                  : "text-sidebar-foreground/75 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              )}
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              <span>{t(item.label, item.labelEn)}</span>
-            </Link>
-          );
-        })}
+  const groups = [
+    {
+      id: "portal",
+      title: t("بوابة الجهة", "Organization Portal"),
+      items: NAV_ITEMS.map(toItem),
+    },
+    isAdmin && {
+      id: "admin",
+      title: t("الإدارة", "Administration"),
+      items: [{ to: `${base}/admin`, label: t("إدارة الجهة", "Org Administration"), icon: Settings, active: location.pathname === `${base}/admin` }],
+    },
+    {
+      id: "account",
+      title: t("الحساب", "Account"),
+      items: [
+        { to: "/", label: t("مساحتي", "My Workspace"), icon: LayoutDashboard, active: location.pathname === "/" },
+        { to: "/create-portal", label: t("بوابة جهة جديدة", "New Organization Portal"), icon: Plus, active: location.pathname === "/create-portal" },
+      ],
+    },
+  ].filter(Boolean);
 
-        {isAdmin && (
-          <>
-            <div className="pt-3 pb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-              {t("الإدارة", "Administration")}
-            </div>
-            <Link
-              to={`${base}/admin`}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
-                location.pathname === `${base}/admin`
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                  : "text-sidebar-foreground/75 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              )}
-            >
-              <Settings className="w-4 h-4 shrink-0" />
-              <span>{t("إدارة المنظمة", "Org Administration")}</span>
-            </Link>
-          </>
-        )}
-      </nav>
+  const context = {
+    portalTo: "/",
+    portalLabel: t("مساحتي", "My Workspace"),
+    name: L.name(org),
+    org,
+    logoUrl: org.logo_url,
+    orgLabel: t("الجهة", "Entity"),
+    orgName: "",
+    sandboxLabel: portal.sandbox_badge ? t("بيئة تجريبية", "Sandbox") : "",
+  };
 
-      {/* Profile + Create Portal */}
-      <div className="px-3 py-2 border-t border-sidebar-border space-y-1">
-        <Link
-          to="/"
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors"
-        >
-          <LayoutDashboard className="w-4 h-4 shrink-0" />
-          <span>{t("مساحتي", "My Workspace")}</span>
-        </Link>
-        <Link
-          to="/create-portal"
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors"
-        >
-          <Plus className="w-4 h-4 shrink-0" />
-          <span>{t("بوابة منظمة جديدة", "New Organization Portal")}</span>
-        </Link>
-        <Link
-          to="/profile"
-          onClick={() => setMobileOpen(false)}
-          className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-            location.pathname === "/profile"
-              ? "bg-sidebar-accent text-sidebar-accent-foreground"
-              : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground"
-          )}
-        >
-          <UserCircle className="w-4 h-4 shrink-0" />
-          <span>{t("الملف الشخصي", "My Profile")}</span>
-        </Link>
-      </div>
-
-      <div className="px-5 py-2 border-t border-sidebar-border flex items-center justify-between">
-        <LanguageSwitcher />
-        <NotificationCenter />
-      </div>
-      <div className="px-5 py-3 border-t border-sidebar-border space-y-1">
-        <BrandWordmark variant="light" />
-        <div className="text-[10px] text-sidebar-foreground/40 mt-1">{t("سلطة موثقة · قرار مُسنَد · أثر محفوظ", "Governed Authority · Evidence-Based Decisions · Preserved Impact")}</div>
-        <PoweredByConnection variant="light" />
-      </div>
-    </div>
-  );
+  const account = {
+    name: user?.full_name || user?.email || "",
+    detail: user?.email || "",
+    to: "/profile",
+  };
 
   return (
-    <div className="min-h-app bg-background flex" dir={document.documentElement.dir}>
-      <aside className="hidden lg:flex w-64 shrink-0 bg-sidebar flex-col">
-        <SidebarContent />
-      </aside>
-
-      {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-64 bg-sidebar flex-col flex">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 left-4 text-sidebar-foreground/60 hover:text-sidebar-foreground">
-              <X className="w-5 h-5" />
-            </button>
-            <SidebarContent />
-          </aside>
-        </div>
-      )}
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-          <button onClick={() => setMobileOpen(true)}>
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center" style={{ background: "#FFFFFF" }}>
-              {org.logo_url ? (
-                <Image src={org.logo_url} alt={L.name(org)} fittingType="fit" className="w-full h-full" />
-              ) : (
-                <BrandLogo className="w-full h-full" />
-              )}
-            </div>
-            <span className="font-bold text-sm truncate">{L.name(org)}</span>
-          </div>
-          <div className="w-5" />
-        </header>
-
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-            <PageNav />
-            <Outlet />
-          </div>
-        </main>
-      </div>
-    </div>
+    <AppShell
+      context={context}
+      groups={groups}
+      account={account}
+      mobileTitle={L.name(org)}
+      mainId="org-main"
+      skipLabel={t("تخطَّ إلى محتوى الجهة", "Skip to entity content")}
+    >
+      <PageNav />
+      <Outlet />
+    </AppShell>
   );
 }
 

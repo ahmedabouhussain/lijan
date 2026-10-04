@@ -234,6 +234,21 @@
     min-width: 44px;
   }
 
+  /* Navigation scroll — a hairline scrollbar inside the one scrolling region of the
+     sidebar. Never a thick default bar, never horizontal. */
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--sidebar-foreground) / 22%) transparent;
+    overscroll-behavior: contain;
+  }
+  .sidebar-scroll::-webkit-scrollbar { width: 6px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--sidebar-foreground) / 18%);
+    border-radius: 9999px;
+  }
+  .sidebar-scroll:hover::-webkit-scrollbar-thumb { background: hsl(var(--sidebar-foreground) / 32%); }
+
   /* Sovereign shimmer — smoother, institutional-grade skeleton pulse */
   .sovereign-shimmer {
     position: relative;

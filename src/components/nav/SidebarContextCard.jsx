@@ -63,9 +63,14 @@ export default function SidebarContextCard({ context, collapsed = false }) {
       </div>
 
       {context.orgName && (
-        <p className="mt-2 text-[12px] leading-snug text-sidebar-foreground/70 line-clamp-2 break-words">
-          {context.orgName}
-        </p>
+        <div className="mt-2.5">
+          {context.orgLabel && (
+            <span className="block text-[10px] text-sidebar-foreground/50">{context.orgLabel}</span>
+          )}
+          <p className="text-[12px] leading-snug text-sidebar-foreground/75 line-clamp-2 break-words">
+            {context.orgName}
+          </p>
+        </div>
       )}
 
       <div className="mt-2.5 flex flex-wrap items-center gap-1.5">

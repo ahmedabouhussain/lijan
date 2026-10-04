@@ -23,7 +23,7 @@ import { useAmeen } from "@/lib/AmeenContext";
  * AgentChatPanel — the single «أمين» chat surface.
  * One identity, one engine; the active context and role come from AmeenContext.
  */
-export default function AgentChatPanel({ variant = "inline", buttonClassName }) {
+export default function AgentChatPanel({ variant = "inline", buttonClassName, collapsed = false }) {
   const {
     identity,
     context,
@@ -395,6 +395,27 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
       </SheetContent>
     </Sheet>
   );
+
+  // Inside the shell sidebar: a full navigation row when open, a round icon when collapsed.
+  // Same panel, same identity — only the entry point differs.
+  if (variant === "nav") {
+    return panel(
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        title={collapsed ? name : undefined}
+        aria-label={name}
+        className={cn(
+          "flex items-center w-full min-h-[46px] rounded-md bg-white/10 text-sidebar-foreground transition-colors",
+          "hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+          collapsed ? "justify-center px-0" : "gap-3 px-2.5"
+        )}
+      >
+        <AmeenEmblem size={20} tone="inverse" />
+        {!collapsed && <span className="text-[15px] font-medium truncate">{name}</span>}
+      </button>
+    );
+  }
 
   if (variant === "floating") {
     return panel(
