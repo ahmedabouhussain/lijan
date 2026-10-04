@@ -2,39 +2,41 @@
 // Used by all governed page-configuration backend functions.
 
 import { resolveCapabilities } from './capabilityKernel.ts';
+import { capabilitiesForRole } from './authorityKernel.ts';
 
 /**
- * Authority boundary for ONE committee office.
- * Powers are scoped to the committee that granted them and never escalate:
+ * Authority boundary for ONE committee office — the SHOWCASE READ path.
+ *
+ * The booleans below are no longer decided here: they are DERIVED from the one capability table in
+ * authorityKernel.ts, so a showcase read and a backend command can never disagree about what a seat
+ * may do. The rules remain:
  *  - Committee Secretary prepares agendas, minutes and packs — never approves a decision.
  *  - Vice-Chair supports and recommends — Chair powers only with an ACTIVE delegation.
- *  - Member reviews, recommends and provides evidence — never approves.
+ *  - Member reviews, recommends and votes — never approves, issues or signs.
  *  - Chair approves only inside the committee that granted the office.
  */
 export function evaluateCommitteeAuthority({ role, delegationActive = false }) {
-  const isChair = role === 'chair';
+  const caps = new Set(capabilitiesForRole(role, { delegationActive }));
   const isViceChair = role === 'vice_chair';
-  const isSecretary = role === 'secretary';
-  const isMember = role === 'member';
-  const actingChair = isChair || (isViceChair && delegationActive);
+  const actingChair = caps.has('meeting.start') && (role === 'chair' || (isViceChair && delegationActive));
 
   return {
-    can_view_committee: !!role,
-    can_review: !!role,
-    can_comment: !!role,
-    can_recommend: isMember || isViceChair || isChair,
-    can_provide_evidence: !!role,
-    can_prepare_agenda: isChair || isSecretary,
-    can_approve_agenda: isChair,
-    can_run_agenda_progression: isChair,
-    can_prepare_minutes: isChair || isSecretary,
-    can_approve_minutes: isChair,
-    can_prepare_meeting_pack: isChair || isSecretary,
-    can_follow_up_actions: isChair || isSecretary,
-    can_assign_actions: isChair,
-    can_decide: isChair,
-    can_approve_decisions: isChair,
-    can_escalate: isChair,
+    can_view_committee: caps.has('read'),
+    can_review: caps.has('decision.review'),
+    can_comment: caps.has('decision.comment') || caps.has('comment.shared'),
+    can_recommend: caps.has('decision.propose'),
+    can_provide_evidence: caps.has('read'),
+    can_prepare_agenda: caps.has('agenda.edit'),
+    can_approve_agenda: caps.has('agenda.approve'),
+    can_run_agenda_progression: caps.has('meeting.start'),
+    can_prepare_minutes: caps.has('minutes.draft') || caps.has('minutes.review'),
+    can_approve_minutes: caps.has('minutes.approve'),
+    can_prepare_meeting_pack: caps.has('agenda.edit'),
+    can_follow_up_actions: caps.has('action.admin'),
+    can_assign_actions: caps.has('action.admin') && actingChair,
+    can_decide: caps.has('decision.issue'),
+    can_approve_decisions: caps.has('decision.approve'),
+    can_escalate: caps.has('escalation.approve'),
     can_act_as_chair: actingChair,
     requires_active_delegation: isViceChair,
     delegation_active: !!delegationActive,

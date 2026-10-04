@@ -12,17 +12,19 @@ export default async function(req) {
       return Response.json({ error: 'committee_id, document_type, document_id, signature_method, intent are required' }, { status: 400 });
     }
 
-    const auth = await resolveAuthority(base44, { committee_id, capability: 'decision.sign' });
-    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden' }, { status: auth.status || 403 });
-
-    // Check for recusal
-    if (auth.effective_role && ['vote.cast', 'decision.sign'].some(c => true)) {
-      const recusals = await base44.asServiceRole.entities.Recusal
-        .filter({ committee_id, member_name: auth.user.full_name || auth.user.email, status: 'active' }).catch(() => []);
-      if (recusals && recusals.length > 0) {
-        return Response.json({ error: 'Cannot sign while recused from this committee' }, { status: 403 });
-      }
+    // The scope is DERIVED from the target record — record → committee → organization — and the
+    // committee_id sent by the caller is only checked against it. Recusal is resolved (by
+    // identifier) inside the guard, so no name comparison happens here.
+    const targetEntity = { Document: 'Document', Decision: 'Decision', MeetingMinutes: 'MeetingMinutes', Action: 'Action' }[document_type];
+    const target = targetEntity
+      ? await base44.asServiceRole.entities[targetEntity].get(document_id).catch(() => null)
+      : null;
+    if (!target) {
+      return Response.json({ error: 'The target record of this signature could not be resolved', code: 'scope_unresolvable' }, { status: 403 });
     }
+
+    const auth = await resolveAuthority(base44, { capability: 'decision.sign_image', record: target, committee_id });
+    if (!auth.allowed) return Response.json({ error: auth.reason || 'Forbidden', code: auth.code || null }, { status: auth.status || 403 });
 
     const signature = await base44.asServiceRole.entities.Signature.create({
       organization_id: auth.organization_id,

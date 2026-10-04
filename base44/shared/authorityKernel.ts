@@ -1,165 +1,387 @@
-// ResolveEffectiveAuthority — the reusable server-side authority kernel.
-// Imported by every governed backend command. Never trusts client-supplied role/org/committee.
+// authorityKernel.ts — THE single authorization decision source for LIJAN™.
 //
-// Usage:
-//   import { resolveAuthority } from "../../shared/authorityKernel.ts";
-//   const auth = await resolveAuthority(base44, { committee_id, capability: "committee.activate" });
-//   if (!auth.allowed) return Response.json({ error: auth.reason }, { status: 403 });
+// Policy version travels with every decision so a refusal can always be traced to the rule set
+// that produced it. ONE pure evaluator answers "may this seat perform this act", and ONE
+// database-backed resolver feeds it the facts. Nothing else in the platform decides authority:
+// the command path (resolveAuthority) and the showcase read path (committeeAuth) both consume
+// capabilitiesForRole / evaluateActionPolicy from here.
+//
+// Contract (fixed):
+//   • ROLE = a template/ceiling, never a decision grant on its own.
+//   • AuthorityGrant = an explicit, bounded ADDITION or RESTRICTION on top of the ceiling.
+//   • A DENIAL always wins over a permission, and no grant can exceed the institutional ceiling.
+//   • Vice-Chair acts as Chair ONLY under an active, in-scope delegation.
+//   • Scope is DERIVED from the target record (record → committee → organization). Client-supplied
+//     organization_id / committee_id / role / *_id / is_admin / can_* are never an authority source.
+//   • Recusal is matched by identifiers. A legacy name match may only ever DENY, never permit, and
+//     it is reported as such in the decision context.
 
-export async function resolveAuthority(base44, opts) {
-  const { committee_id, organization_id, capability } = opts;
-  const user = await base44.auth.me();
-  if (!user) return { allowed: false, reason: "Unauthorized", status: 401, user: null };
+export const AUTHORITY_POLICY_VERSION = "authz-1.0.0";
 
-  // Platform admins bypass membership checks but still get logged
-  if (user.role === "admin") {
-    // Resolve organization_id from committee if not explicitly provided
-    let resolvedOrgId = organization_id || null;
-    if (!resolvedOrgId && committee_id) {
-      const committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
-      if (committee) resolvedOrgId = committee.organization_id;
-    }
-    return {
-      allowed: true,
-      user,
-      organization_id: resolvedOrgId,
-      committee_id: committee_id || null,
-      effective_role: "platform_admin",
-      authority_context: "platform_admin",
-      correlation_id: generateCorrelationId(),
-    };
-  }
+/** Read-only ceiling for platform admins: administration is not operational authority. */
+export const ADMIN_READ_CEILING = ["read", "audit.read", "report.export", "committee.view", "decision.view"];
 
-  // Resolve active organization from user profile (context only — not authorization)
-  const activeOrgId = organization_id || user.active_org_id;
-  if (!activeOrgId) {
-    return { allowed: false, reason: "No active organization context", status: 403, user };
-  }
+/** Capabilities that carry an operational consequence and therefore require a real right. */
+export const OPERATIONAL_CAPABILITIES = [
+  "committee.activate", "committee.manage", "committee.close",
+  "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
+  "vote.call", "vote.certify", "vote.cast",
+  "minutes.draft", "minutes.review", "minutes.approve",
+  "attendance.certify", "action.admin", "escalation.approve",
+  "decision.review", "decision.approve", "decision.issue", "decision.vote",
+  "decision.sign_image", "decision.digital_sign", "decision.execute",
+];
 
-  // Verify organization membership
-  const memberships = await base44.asServiceRole.entities.OrganizationMembership
-    .filter({ organization_id: activeOrgId, user_id: user.id, status: "active" })
-    .catch(() => []);
-  const orgMembership = (memberships || [])[0];
-  if (!orgMembership) {
-    return { allowed: false, reason: "Not a member of this organization", status: 403, user };
-  }
+/** Capabilities blocked for a member who is recused from the committee. */
+const RECUSAL_BLOCKED = [
+  "vote.cast", "vote.call", "vote.certify", "decision.vote",
+  "decision.approve", "decision.issue", "decision.sign_image", "decision.digital_sign",
+];
 
-  // Check organization status (suspended orgs block operational access)
-  const org = await base44.asServiceRole.entities.Organization.get(activeOrgId).catch(() => null);
-  if (!org || org.status === "suspended" || org.status === "closed") {
-    return { allowed: false, reason: "Organization is not operational", status: 403, user, organization_id: activeOrgId };
-  }
+/** What a delegation of chair authority may transfer — never a blanket role swap. */
+export const DELEGABLE_CAPABILITIES = [
+  "agenda.approve", "meeting.start", "vote.call", "vote.certify",
+  "minutes.approve", "decision.approve", "decision.issue",
+  "escalation.approve", "action.admin", "committee.activate",
+];
 
-  // If no committee context, return org-level authority
-  if (!committee_id) {
-    return {
-      allowed: true,
-      user,
-      organization_id: activeOrgId,
-      committee_id: null,
-      effective_role: orgMembership.role,
-      authority_context: `org:${orgMembership.role}`,
-      correlation_id: generateCorrelationId(),
-    };
-  }
-
-  // Verify committee belongs to this organization
-  const committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
-  if (!committee || committee.organization_id !== activeOrgId) {
-    return { allowed: false, reason: "Committee not found in this organization", status: 404, user, organization_id: activeOrgId };
-  }
-
-  // Resolve committee membership (effective-dated)
-  const cmMemberships = await base44.asServiceRole.entities.CommitteeMembership
-    .filter({ committee_id, user_id: user.id, status: "active" })
-    .catch(() => []);
-  const activeMemberships = (cmMemberships || []).filter((m) => {
-    const now = new Date().toISOString().split("T")[0];
-    if (m.term_start && now < m.term_start) return false;
-    if (m.term_end && now > m.term_end) return false;
-    return true;
-  });
-
-  if (activeMemberships.length === 0) {
-    // Org admin/owner oversight is read-only — no committee operational authority
-    if (orgMembership.role === "owner" || orgMembership.role === "admin") {
-      return {
-        allowed: isReadOnlyCapability(capability),
-        user,
-        organization_id: activeOrgId,
-        committee_id,
-        effective_role: "oversight",
-        authority_context: "org_admin_oversight_read_only",
-        correlation_id: generateCorrelationId(),
-        reason: isReadOnlyCapability(capability) ? null : "Administrative oversight is read-only",
-      };
-    }
-    return { allowed: false, reason: "Not a member of this committee", status: 403, user, organization_id: activeOrgId, committee_id };
-  }
-
-  // Check for active recusal on this committee
-  const recusals = await base44.asServiceRole.entities.Recusal
-    .filter({ committee_id, member_name: user.full_name || user.email, status: "active" })
-    .catch(() => []);
-
-  // Resolve effective role from memberships (highest authority wins)
-  const rolePriority = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate: 5, observer: 6, advisor: 7 };
-  const sortedMemberships = activeMemberships.sort((a, b) => (rolePriority[a.role] || 99) - (rolePriority[b.role] || 99));
-  const primaryMembership = sortedMemberships[0];
-  const effectiveRole = primaryMembership.role;
-
-  // Check recusal for sensitive capabilities
-  const recused = (recusals || []).length > 0;
-  if (recused && isVotingCapability(capability)) {
-    return { allowed: false, reason: "Member is recused from this committee", status: 403, user, organization_id: activeOrgId, committee_id, effective_role: effectiveRole };
-  }
-
-  // Check capability against role
-  if (!hasCapability(effectiveRole, capability)) {
-    return { allowed: false, reason: `Role '${effectiveRole}' does not have capability '${capability}'`, status: 403, user, organization_id: activeOrgId, committee_id, effective_role: effectiveRole };
-  }
-
-  return {
-    allowed: true,
-    user,
-    organization_id: activeOrgId,
-    committee_id,
-    effective_role: effectiveRole,
-    authority_context: `committee:${effectiveRole}`,
-    correlation_id: generateCorrelationId(),
-    membership: primaryMembership,
-  };
-}
-
-function isReadOnlyCapability(cap) {
-  if (!cap) return true;
-  return ["read", "view", "audit.read", "report.export"].includes(cap);
-}
-
-function isVotingCapability(cap) {
-  return ["vote.cast", "vote.call", "vote.certify"].includes(cap);
-}
-
-const ROLE_CAPABILITIES = {
-  chair: ["committee.activate", "committee.manage", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "escalation.approve", "committee.close", "read", "audit.read", "report.export"],
-  vice_chair: ["committee.activate", "agenda.approve", "meeting.start", "vote.call", "vote.certify", "decision.issue", "decision.sign", "minutes.approve", "read", "audit.read"],
-  secretary: ["meeting.schedule", "agenda.edit", "minutes.draft", "minutes.review", "attendance.certify", "action.admin", "read", "audit.read"],
-  member: ["agenda.propose", "vote.cast", "decision.sign", "comment.shared", "read"],
-  alternate: ["read"], // activated alternates get member capabilities via AlternateActivation
+/**
+ * Decision rights are separated deliberately:
+ *   vote ≠ approve ≠ issue, and a signature IMAGE is not a DIGITAL signature.
+ * `decision.digital_sign` is granted to NOBODY until an approved policy names the identity
+ * provider, the trust service and the legal instrument behind it.
+ */
+const ROLE_BASELINE = {
+  chair: [
+    "committee.activate", "committee.manage", "committee.close",
+    "meeting.schedule", "meeting.start", "agenda.edit", "agenda.approve",
+    "vote.call", "vote.certify", "vote.cast",
+    "minutes.draft", "minutes.review", "minutes.approve",
+    "attendance.certify", "action.admin", "escalation.approve",
+    "decision.view", "decision.comment", "decision.propose", "decision.review",
+    "decision.approve", "decision.issue", "decision.vote", "decision.acknowledge",
+    "decision.sign_image", "decision.execute",
+    "comment.shared", "read", "audit.read", "report.export",
+  ],
+  vice_chair: [
+    "agenda.propose", "decision.view", "decision.comment", "decision.propose",
+    "decision.review", "decision.vote", "decision.acknowledge", "comment.shared",
+    "read", "audit.read", "report.export",
+  ],
+  secretary: [
+    "meeting.schedule", "agenda.edit", "agenda.propose",
+    "minutes.draft", "minutes.review", "attendance.certify", "action.admin",
+    "decision.view", "decision.comment", "decision.review", "decision.acknowledge",
+    "read", "audit.read", "report.export",
+  ],
+  committee_administrator: [
+    "agenda.edit", "action.admin", "attendance.certify",
+    "decision.view", "decision.comment", "read", "audit.read",
+  ],
+  member: [
+    "agenda.propose", "decision.view", "decision.comment", "decision.propose",
+    "decision.vote", "decision.acknowledge", "comment.shared", "read",
+  ],
+  alternate: ["read"],
   observer: ["read"],
-  advisor: ["read", "comment.shared"],
+  advisor: ["read", "comment.shared", "decision.view", "decision.comment"],
   auditor: ["read", "audit.read", "report.export"],
 };
 
-// The authority of a committee role is a property of the ROLE, resolved in exactly one place.
-// Surfaces read it from here instead of hardcoding role lists of their own.
-export function capabilitiesForRole(role) {
-  return ROLE_CAPABILITIES[role] || [];
+export function capabilitiesForRole(role, { delegationActive = false } = {}) {
+  const base = ROLE_BASELINE[role] ? [...ROLE_BASELINE[role]] : [];
+  if (!delegationActive) return base;
+  for (const cap of DELEGABLE_CAPABILITIES) if (!base.includes(cap)) base.push(cap);
+  return base;
 }
 
-function hasCapability(role, capability) {
-  return capabilitiesForRole(role).includes(capability);
+export function isOperationalCapability(capability) {
+  return OPERATIONAL_CAPABILITIES.includes(capability);
+}
+
+/**
+ * The ONE decision. Pure — no I/O — so the same call can be exercised by tests and by commands.
+ */
+export function evaluateActionPolicy({
+  role = null,
+  capability,
+  delegationActive = false,
+  recusalActive = false,
+  recusalLegacyNameMatch = false,
+  grant = null,
+  isPlatformAdmin = false,
+} = {}) {
+  const base = { capability: capability || null, policy_version: AUTHORITY_POLICY_VERSION, effective_role: role || null };
+
+  if (!capability) return { ...base, allowed: false, reason: "No capability requested", code: "invalid_capability" };
+
+  // 'committee.view' is a legacy synonym of read: normalised here so the one command that used it
+  // keeps working, without gaining anything it did not already hold.
+  if (capability === "committee.view") capability = "read";
+
+  if (isPlatformAdmin) {
+    const readCeiling = ADMIN_READ_CEILING.includes(capability);
+    return {
+      ...base,
+      allowed: readCeiling,
+      reason: readCeiling ? null : "Platform administration does not carry operational committee authority",
+      code: readCeiling ? null : "admin_not_operational",
+      cap_source: readCeiling ? "admin_read_ceiling" : null,
+    };
+  }
+
+  // An existing grant that is out of validity or carries a declared conflict removes the seat's
+  // authority entirely — it is never silently ignored.
+  if (grant && grant.record_state === "out_of_validity") {
+    return { ...base, allowed: false, reason: "Authority grant is outside its validity window", code: "grant_out_of_validity", grant_status: "out_of_validity" };
+  }
+  if (grant && grant.conflict_status === "declared") {
+    return { ...base, allowed: false, reason: "A conflict of interest is declared for this seat", code: "conflict_declared", grant_status: "conflict_declared" };
+  }
+
+  if (recusalActive && RECUSAL_BLOCKED.includes(capability)) {
+    return {
+      ...base,
+      allowed: false,
+      reason: "Member is recused from this committee",
+      code: "recused",
+      recusal_legacy_name_match: recusalLegacyNameMatch === true,
+    };
+  }
+
+  if (!role) {
+    return { ...base, allowed: false, reason: "No committee seat is held in this committee", code: "no_seat" };
+  }
+
+  const granted = capabilitiesForRole(role, { delegationActive });
+  if (!granted.includes(capability)) {
+    return {
+      ...base,
+      allowed: false,
+      reason: `Role '${role}' does not hold capability '${capability}'`,
+      code: "role_missing_capability",
+      delegation_applied: delegationActive,
+    };
+  }
+
+  // Grant layer: explicit denial wins; an explicit list narrows; an addition may only add within
+  // the delegable envelope, never above the institutional ceiling.
+  if (grant) {
+    const denied = Array.isArray(grant.denied_actions) ? grant.denied_actions : [];
+    if (denied.includes(capability)) {
+      return { ...base, allowed: false, reason: "The authority grant explicitly denies this action", code: "grant_denied", grant_status: "permitted_subset" };
+    }
+    const permitted = Array.isArray(grant.permitted_actions) ? grant.permitted_actions : [];
+    const additions = Array.isArray(grant.additions) ? grant.additions : [];
+    if (!granted.includes(capability) && additions.includes(capability) && DELEGABLE_CAPABILITIES.includes(capability)) {
+      return { ...base, allowed: true, reason: null, code: null, cap_source: "grant_addition", grant_status: "extended" };
+    }
+    if (!granted.includes(capability) && permitted.length > 0 && !permitted.includes(capability)) {
+      return { ...base, allowed: false, reason: "Action is outside the authority granted to this seat", code: "not_in_grant", grant_status: "permitted_subset" };
+    }
+    return {
+      ...base,
+      allowed: true,
+      reason: null,
+      code: null,
+      cap_source: delegationActive ? "role_baseline_delegated" : "role_baseline",
+      grant_status: permitted.length === 0 ? "unpopulated_no_restriction" : "permitted_subset",
+    };
+  }
+
+  return {
+    ...base,
+    allowed: true,
+    reason: null,
+    code: null,
+    cap_source: delegationActive ? "role_baseline_delegated" : "role_baseline",
+    grant_status: "no_grant",
+    delegation_applied: delegationActive,
+  };
+}
+
+/** Statuses that make a delegation usable. */
+const DELEGATION_ACTIVE_STATUSES = ["active"];
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function coversToday(row) {
+  const today = todayISO();
+  if (row.start_date && today < row.start_date) return false;
+  if (row.end_date && today > row.end_date) return false;
+  return true;
+}
+
+function normalizeName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * Resolve the effective authority for ONE action.
+ *
+ * opts:
+ *   capability   — required. The act being performed.
+ *   record       — optional. When supplied, the committee is DERIVED from it and a conflicting
+ *                  committee_id in the request is refused (and audited) instead of honoured.
+ *   committee_id — a LOOKUP hint only. Ignored as an authority source when `record` is present.
+ *   organization_id — accepted for backwards compatibility and IGNORED as an authority source;
+ *                  the organization is always derived from the committee.
+ */
+export async function resolveAuthority(base44, opts = {}) {
+  const { capability, record = null } = opts;
+  const sr = base44.asServiceRole;
+  const correlation_id = generateCorrelationId();
+  const decision = (extra) => ({ correlation_id, policy_version: AUTHORITY_POLICY_VERSION, capability: capability || null, ...extra });
+
+  const user = await base44.auth.me().catch(() => null);
+  if (!user) return decision({ allowed: false, reason: "Unauthorized", code: "unauthenticated", status: 401, user: null });
+
+  const claimedCommitteeId = opts.committee_id || null;
+  const derivedCommitteeId = record && record.committee_id ? record.committee_id : null;
+
+  if (derivedCommitteeId && claimedCommitteeId && derivedCommitteeId !== claimedCommitteeId) {
+    await sr.entities.AuditEvent.create({
+      organization_id: record.organization_id || null,
+      committee_id: derivedCommitteeId,
+      actor_user_id: user.id, actor_name: user.full_name || user.email, actor_email: user.email,
+      action: "authority.scope_mismatch", entity_type: "Committee",
+      entity_id: derivedCommitteeId,
+      description: "A request carried a committee scope that differs from the target record's own scope; the request was refused.",
+      correlation_id, authority_context: `policy:${AUTHORITY_POLICY_VERSION}`,
+    }).catch(() => null);
+    return decision({
+      allowed: false, user, status: 403, code: "scope_mismatch",
+      reason: "The requested scope does not match the target record's scope",
+      committee_id: derivedCommitteeId, organization_id: record.organization_id || null,
+    });
+  }
+
+  const committeeId = derivedCommitteeId || claimedCommitteeId;
+  if (!committeeId) {
+    return decision({ allowed: false, user, status: 400, code: "no_scope", reason: "No committee scope could be derived for this action" });
+  }
+
+  const committee = await sr.entities.Committee.get(committeeId).catch(() => null);
+  if (!committee) return decision({ allowed: false, user, status: 404, code: "committee_not_found", reason: "Committee not found" });
+  // The organization is derived from the committee — never taken from the request.
+  const organizationId = committee.organization_id;
+
+  const isPlatformAdmin = user.role === "admin";
+  const membership = isPlatformAdmin ? null : (await sr.entities.CommitteeMembership
+    .filter({ committee_id: committeeId, user_id: user.id, status: "active" })
+    .catch(() => []))[0] || null;
+
+  const activeSeat = membership && coversToday(membership) ? membership : null;
+
+  // Recusal by identifier first; a legacy name match may only ever deny.
+  let recusalActive = false;
+  let recusalLegacyNameMatch = false;
+  if (activeSeat || isPlatformAdmin) {
+    const recusals = await sr.entities.Recusal
+      .filter({ committee_id: committeeId, status: "active" })
+      .catch(() => []);
+    for (const rec of recusals || []) {
+      const byId = [rec.user_id, rec.member_user_id, rec.person_id, rec.membership_id, rec.committee_membership_id]
+        .filter(Boolean);
+      if (byId.includes(user.id) || (activeSeat && byId.includes(activeSeat.id))) { recusalActive = true; break; }
+      const byName = normalizeName(rec.member_name);
+      if (byName && (byName === normalizeName(user.full_name) || byName === normalizeName(user.email))) {
+        recusalActive = true; recusalLegacyNameMatch = true; break;
+      }
+    }
+  }
+
+  const grant = isPlatformAdmin ? null : (await loadGrant(sr, user, committeeId));
+
+  // An active delegation: either a Delegation record naming this user, or a grant whose own
+  // delegation field is active. Both are re-read on EVERY action — a lapsed delegation stops
+  // working immediately, even inside an already-open session.
+  const delegation = isPlatformAdmin ? null : await resolveDelegation(sr, user, committeeId, activeSeat);
+  const delegationActive = !!delegation || (grant ? grant.delegation_active === true : false);
+
+  const verdict = evaluateActionPolicy({
+    role: activeSeat ? activeSeat.role : null,
+    capability,
+    delegationActive,
+    recusalActive,
+    recusalLegacyNameMatch,
+    grant,
+    isPlatformAdmin,
+  });
+
+  // An org administrator without a seat keeps read-only oversight, as before.
+  if (!verdict.allowed && !activeSeat && !isPlatformAdmin) {
+    const orgMemberships = await sr.entities.OrganizationMembership
+      .filter({ organization_id: organizationId, user_id: user.id, status: "active" })
+      .catch(() => []);
+    const orgRole = (orgMemberships || [])[0]?.role || null;
+    if (orgRole === "owner" || orgRole === "admin") {
+      const readOnly = ADMIN_READ_CEILING.includes(capability);
+      return decision({
+        allowed: readOnly, user, organization_id: organizationId, committee_id: committeeId,
+        effective_role: "oversight", status: readOnly ? 200 : 403,
+        reason: readOnly ? null : "Administrative oversight is read-only", code: readOnly ? null : "oversight_read_only",
+        authority_context: "org_admin_oversight_read_only",
+        capabilities: [], membership: null, committee,
+      });
+    }
+  }
+
+  return decision({
+    allowed: verdict.allowed,
+    user,
+    organization_id: organizationId,
+    committee_id: committeeId,
+    effective_role: isPlatformAdmin ? "platform_admin" : (activeSeat ? activeSeat.role : null),
+    status: verdict.allowed ? 200 : (verdict.code === "no_seat" || verdict.code === "role_missing_capability" || verdict.code === "recused" ? 403 : 403),
+    reason: verdict.reason,
+    code: verdict.code,
+    cap_source: verdict.cap_source || null,
+    grant_status: verdict.grant_status || null,
+    delegation_applied: delegationActive,
+    delegation: delegation ? { id: delegation.id, from_user_id: delegation.from_user_id || null, scope: delegation.scope || null } : null,
+    recusal_legacy_name_match: recusalLegacyNameMatch,
+    authority_context: isPlatformAdmin ? "platform_admin_read_only" : `committee:${verdict.effective_role || "none"}`,
+    capabilities: capabilitiesForRole(verdict.effective_role, { delegationActive }),
+    membership: activeSeat || null,
+    committee,
+  });
+}
+
+async function loadGrant(sr, user, committeeId) {
+  const rows = await sr.entities.AuthorityGrant
+    .filter({ committee_id: committeeId, person_key: user.id })
+    .catch(() => []);
+  const grant = (rows || [])[0] || null;
+  if (!grant) return null;
+  const inValidity = (!grant.validity_start || todayISO() >= grant.validity_start)
+    && (!grant.validity_end || todayISO() <= grant.validity_end);
+  return {
+    id: grant.id,
+    permitted_actions: grant.permitted_actions || [],
+    denied_actions: grant.denied_actions || [],
+    record_state: inValidity ? "in_validity" : "out_of_validity",
+    conflict_status: grant.conflict_status || "none",
+    delegation_active: grant.delegation_status === "active" && inValidity,
+    purpose: grant.purpose || null,
+  };
+}
+
+/**
+ * Delegation must name the delegate, belong to this committee, be active, be inside its own dates,
+ * and — when it carries a scope — that scope is read as an explicit capability list. No delegation
+ * means no chair authority for a Vice-Chair.
+ */
+async function resolveDelegation(sr, user, committeeId, seat) {
+  if (!seat) return null;
+  const rows = await sr.entities.Delegation
+    .filter({ committee_id: committeeId, to_user_id: user.id, status: { $in: DELEGATION_ACTIVE_STATUSES } })
+    .catch(() => []);
+  const usable = (rows || []).filter((d) => coversToday(d))[0] || null;
+  if (!usable) return null;
+  return usable;
 }
 
 function generateCorrelationId() {
