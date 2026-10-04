@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Compass, Crown, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Compass, Crown, FileSearch, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { resolveDemoPersona, DEMO_ROLE_LENSES } from "@/lib/demoPersonas";
 import RoleLensSection from "@/components/demo/RoleLensSection";
@@ -27,6 +27,7 @@ const JOURNEY_DEFS = [
   {
     slug: "auditor",
     personaKey: "FAHAD_AL_FIHAIDI",
+    icon: FileSearch,
     titleAr: "المراجع والحوكمة",
     titleEn: "Auditor & Governance Reviewer",
     summaryAr: "مسار المراجعة: الوصول للقراءة والتحقق، ومتابعة الالتزام دون سلطة اعتماد.",
@@ -87,7 +88,9 @@ export default function ExploreGateway() {
 
           <div className="mt-8 space-y-3">
             {journeys.map((journey) => {
-              const Icon = journey.icon;
+              // A journey is only carded with its own icon; a missing one must never
+              // leave an undefined element type, which takes the whole route down.
+              const Icon = journey.icon || Compass;
               return (
                 <button
                   key={journey.slug}
