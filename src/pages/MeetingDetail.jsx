@@ -10,7 +10,7 @@ import AttendancePanel from "@/components/raqeem/AttendancePanel";
 import LiveVotingWidget from "@/components/raqeem/LiveVotingWidget";
 import CalendarSyncButton from "@/components/raqeem/CalendarSyncButton";
 import OutlookSyncButton from "@/components/raqeem/OutlookSyncButton";
-import { useCommittee } from "@/lib/CommitteeContext";
+import { useCommitteeSafe } from "@/lib/CommitteeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,10 +72,14 @@ export default function MeetingDetail() {
     ? t("قرار جديد", "New decision")
     : t("اقتراح مشروع قرار", "Propose a decision draft");
 
-  const { data: cData } = useCommittee();
-  const myRole = cData?.my_role;
-  const isOversight = cData?.is_oversight;
-  const isRecused = cData?.is_recused;
+  // This page is mounted on two routes: inside the committee workspace (provider present) and on the
+  // legacy flat route /meetings/:id (no provider). The role therefore comes from the committee
+  // context when it exists, and otherwise from the governed read's own answer — the page renders on
+  // both routes instead of crashing outside the provider.
+  const cData = useCommitteeSafe();
+  const myRole = cData?.my_role || bundle?.my_role || null;
+  const isOversight = cData?.is_oversight === true;
+  const isRecused = cData?.is_recused === true;
   const canCertify = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair", "secretary"].includes(myRole);
   const canCallVote = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair"].includes(myRole);
   const canCastVote = !isExploration && !isOversight && !isRecused && ["chair", "vice_chair", "secretary", "member"].includes(myRole);
