@@ -34,6 +34,15 @@
       "type": "string",
       "title": "Reviewer User ID"
     },
+    "reviewer_role": {
+      "type": "string",
+      "title": "Reviewer Role (a request may be addressed to the seat a person holds)",
+      "enum": [
+        "chair",
+        "vice_chair",
+        "secretary"
+      ]
+    },
     "review_type": {
       "type": "string",
       "title": "Review Type",

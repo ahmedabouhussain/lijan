@@ -64,8 +64,8 @@ export async function resolveMyReviewTasks(sr, { committee_id, user_id, role }) 
       document_type: doc.document_type || null,
       classification: doc.classification || null,
       requested_by_name: r.requested_by_name || null,
-      review_note: r.review_note || null,
-      deadline: r.deadline || null,
+      review_note: r.instructions || r.review_note || null,
+      deadline: r.due_date || r.deadline || null,
       has_file: !!(version.file_url || version.storage_key),
     });
   }
