@@ -32,7 +32,7 @@ const ROLE_OPTIONS = [
 export default function CommitteeMembers() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription, getEmptyState, isSectionVisible } = usePageConfig("members");
+  const { getTitle, getDescription, getEmptyState } = usePageConfig("members");
   const { canManageMembership } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);

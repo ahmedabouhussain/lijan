@@ -10,7 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
 
-export default function MinutesManager({ meeting, committee, members, attendance, minutes, onChanged }) {
+export default function MinutesManager({ meeting, members, attendance, minutes, onChanged }) {
   const { t } = useLanguage();
   const [generating, setGenerating] = useState(false);
   const [editing, setEditing] = useState(false);

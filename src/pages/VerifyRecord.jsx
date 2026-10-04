@@ -17,7 +17,7 @@ import { Image } from "@/components/ui/image";
  * Route: /verify/:type/:id
  */
 export default function VerifyRecord() {
-  const { type, id } = useParams();
+  const { id } = useParams();
   const { t, lang } = useLanguage();
   const [record, setRecord] = useState(null);
   const [committee, setCommittee] = useState(null);

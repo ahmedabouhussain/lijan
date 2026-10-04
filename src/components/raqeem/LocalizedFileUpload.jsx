@@ -8,7 +8,6 @@ export default function LocalizedFileUpload({
   accept = ".pdf,.doc,.docx,.png,.jpg,.jpeg",
   label,
   uploadingLabel,
-  chooseLabel,
   dropLabel,
   onUpload,
 }) {

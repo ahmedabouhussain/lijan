@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Home, ChevronLeft } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -11,8 +11,7 @@ import { cn } from "@/lib/utils";
  */
 export default function StickyPageNav({ crumbs = [] }) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { t, lang } = useLanguage();
+    const { t, lang } = useLanguage();
   const isRTL = lang === "ar";
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
 

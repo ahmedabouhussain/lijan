@@ -36,7 +36,7 @@ const CLASSIFICATION = [
 export default function CommitteeGovernanceRules() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("governance-rules");
+  const { getTitle } = usePageConfig("governance-rules");
   const { canManageGovernance } = useCommitteeAdmin();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});

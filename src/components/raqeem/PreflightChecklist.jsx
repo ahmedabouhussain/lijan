@@ -141,8 +141,7 @@ export default function PreflightChecklist({ results }) {
 
   const failed = results.filter((r) => r.status === "fail");
   const warnings = results.filter((r) => r.status === "warn");
-  const passed = results.filter((r) => r.status === "pass");
-  const allPassed = failed.length === 0;
+    const allPassed = failed.length === 0;
 
   return (
     <div className="space-y-2">

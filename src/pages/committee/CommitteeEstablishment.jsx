@@ -54,7 +54,7 @@ const STATUS_LABELS = {
 
 export default function CommitteeEstablishment() {
   const { t } = useLanguage();
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { getTitle } = usePageConfig("establishment");
   const [instruments, setInstruments] = useState([]);
   const [loading, setLoading] = useState(true);

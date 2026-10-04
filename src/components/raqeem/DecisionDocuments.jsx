@@ -28,7 +28,7 @@ const DOC_STATUS = {
   archived: { ar: "مؤرشف", en: "Archived", color: "text-muted-foreground bg-secondary" },
 };
 
-export default function DecisionDocuments({ decision, committee }) {
+export default function DecisionDocuments({ decision }) {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
   const [linkedDocs, setLinkedDocs] = useState([]);

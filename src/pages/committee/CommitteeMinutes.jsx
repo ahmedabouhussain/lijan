@@ -25,7 +25,7 @@ const PROTECTED_STATES = ["approved", "issued", "amended", "superseded"];
 export default function CommitteeMinutes() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("minutes");
+  const { getTitle } = usePageConfig("minutes");
   const { canManageMinutes } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);

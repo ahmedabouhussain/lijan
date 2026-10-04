@@ -78,7 +78,7 @@ function buildEvents({ workGroup, meetings, minutes, decisions, actions, t }) {
 }
 
 export default function WorkGroupTimeline({ workGroup, meetings = [], minutes = [], decisions = [], actions = [] }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const events = buildEvents({ workGroup, meetings, minutes, decisions, actions, t });
 
   if (events.length === 0) {

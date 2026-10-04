@@ -32,7 +32,7 @@ const CHANNELS = [
 ];
 
 export default function NotificationPreferences() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [prefs, setPrefs] = useState(null);
   const [loading, setLoading] = useState(true);

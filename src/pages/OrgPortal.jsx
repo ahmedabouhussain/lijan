@@ -18,7 +18,7 @@ export default function OrgPortal() {
 
   if (!data) return <TableSkeleton rows={4} />;
 
-  const { organization: org, portal, my_role, my_membership, committees } = data;
+  const { organization: org, portal, my_role, committees } = data;
   const allCommittees = [...committees.active, ...committees.draft, ...committees.suspended, ...committees.closing];
   const myCommitteeIds = new Set(data.my_committee_ids || []);
   const myCommittees = allCommittees.filter((c) => myCommitteeIds.has(c.id));

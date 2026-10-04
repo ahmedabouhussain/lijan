@@ -2,7 +2,7 @@ import React from "react";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 
-export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
+export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
     <div className="min-h-app flex items-center justify-center bg-background px-4 relative safe-x">
       <div className="absolute top-4 right-4 z-10">

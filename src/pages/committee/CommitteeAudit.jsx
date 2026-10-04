@@ -13,7 +13,7 @@ import TraceabilityMatrix from "@/components/raqeem/TraceabilityMatrix";
 export default function CommitteeAudit() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("audit");
+  const { getTitle } = usePageConfig("audit");
   const [events, setEvents] = useState([]);
   const [timeMachineDate, setTimeMachineDate] = useState("");
   const [reconstructedState, setReconstructedState] = useState(null);

@@ -21,7 +21,7 @@ const CAPABILITY_LABELS = {
 const ROLE_LABELS_AR = { chair: "رئيس", vice_chair: "نائب الرئيس", secretary: "أمين السر", member: "عضو", alternate: "بديل", observer: "مراقب", advisor: "مستشار", oversight: "إشراف" };
 const ROLE_LABELS_EN = { chair: "Chair", vice_chair: "Vice Chair", secretary: "Secretary", member: "Member", alternate: "Alternate", observer: "Observer", advisor: "Advisor", oversight: "Oversight" };
 
-export default function AuthorityLens({ capability, role, isOversight, isRecused, committeeName, className }) {
+export default function AuthorityLens({ capability, role, isOversight, isRecused, className }) {
   const { t, lang } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 

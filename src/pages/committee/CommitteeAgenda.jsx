@@ -30,7 +30,7 @@ const STATUS = {
 export default function CommitteeAgenda() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("agenda");
+  const { getTitle } = usePageConfig("agenda");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);

@@ -29,9 +29,9 @@ const LEVEL_OPTIONS = [
 ];
 
 export default function CommitteeRisks() {
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("risks");
+  const { getTitle } = usePageConfig("risks");
   const { canManageExecution } = useCommitteeAdmin();
   const [risks, setRisks] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -11,7 +11,7 @@ function formatSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function DocumentationPackHero({ release, isAr, t, onDownloadPack, packState, title, description }) {
+export default function DocumentationPackHero({ release, isAr, onDownloadPack, packState, title, description }) {
   const busy = packState === "loading";
   const summaryParts = [
     "ZIP",

@@ -15,7 +15,7 @@ export default function CommitteeRecusals() {
   const { records, loading, reload } = useCommitteeScopedData("Recusal");
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription, getEmptyState } = usePageConfig("recusals");
+  const { getTitle, getDescription } = usePageConfig("recusals");
   const { canManageGovernance } = useCommitteeAdmin();
   const [showCreate, setShowCreate] = useState(false);
 

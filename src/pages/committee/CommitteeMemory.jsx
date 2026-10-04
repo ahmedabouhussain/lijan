@@ -16,7 +16,7 @@ import { formatDate } from "@/lib/raqeemUtils";
 export default function CommitteeMemory() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("memory");
+  const { getTitle } = usePageConfig("memory");
   const { canManageGovernance, canManageMinutes } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [records, setRecords] = useState([]);

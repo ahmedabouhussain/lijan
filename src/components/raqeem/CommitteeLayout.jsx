@@ -26,7 +26,6 @@ import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import PersonaContextPath from "@/components/demo/PersonaContextPath";
 
 // Role-Adaptive Navigation — admin roles see all; members/observers see only what serves their role.
-const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
 
 const NAV_ITEMS = [
   { to: "", label: "الرئيسية", labelEn: "Home", shortLabel: "الرئيسية", shortLabelEn: "Home", icon: LayoutDashboard },

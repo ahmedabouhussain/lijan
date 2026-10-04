@@ -34,7 +34,7 @@ const LEVEL_OPTIONS = [
 export default function CommitteeEscalations() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("escalations");
+  const { getTitle } = usePageConfig("escalations");
   const { canManageExecution } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);

@@ -29,8 +29,7 @@ export function detectSilentFailures(data) {
   const decisions = registers?.decisions || [];
   const escalations = registers?.escalations || [];
   const delegations = registers?.delegations || [];
-  const documents = registers?.documents || [];
-  const minutes = registers?.minutes || [];
+    const minutes = registers?.minutes || [];
   const upcoming = meetings?.upcoming || [];
 
   // 1. Decision without execution owner

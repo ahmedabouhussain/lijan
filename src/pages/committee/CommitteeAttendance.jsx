@@ -20,9 +20,9 @@ const ATT_STATUS = {
 };
 
 export default function CommitteeAttendance() {
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("attendance");
+  const { getTitle } = usePageConfig("attendance");
   const { canManageMinutes } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [records, setRecords] = useState([]);

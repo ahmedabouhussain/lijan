@@ -27,9 +27,9 @@ const INTENT_OPTIONS = [
 ];
 
 export default function CommitteeSignatures() {
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("signatures");
+  const { getTitle } = usePageConfig("signatures");
   const { canManageMinutes } = useCommitteeAdmin();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);

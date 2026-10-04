@@ -13,7 +13,7 @@ export default function ChairBrief({ data, base }) {
   const { t, lang } = useLanguage();
   if (!data) return null;
 
-  const { committee, meetings, registers, my_role } = data;
+  const { meetings, registers, my_role } = data;
   if (!["chair", "vice_chair"].includes(my_role)) return null;
 
   const upcoming = meetings?.upcoming || [];

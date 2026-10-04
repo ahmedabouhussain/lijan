@@ -187,7 +187,6 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName }) 
       messages
         .filter((m) => !isAmeenReloadMessage(m.content))
         .map((m, i) => {
-          const id = messageId(m, i);
           const mustReplace =
             languageFallback && m.role === "assistant" && !isReplyInActiveLanguage(lang, m.content);
           return {

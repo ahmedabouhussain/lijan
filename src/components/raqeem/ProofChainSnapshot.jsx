@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ShieldCheck, Hash, FileText, Users, Gavel, Pen, Clock, ChevronDown, ChevronUp, Lock } from "lucide-react";
 
 export default function ProofChainSnapshot({ decision, committee, votes = [], signatures = [], actions = [], className }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
   if (!decision) return null;

@@ -16,7 +16,7 @@ import { L } from "@/lib/l10n";
 export default function CommitteeMandate() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("mandate");
+  const { getTitle } = usePageConfig("mandate");
   const { canManageGovernance } = useCommitteeAdmin();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});

@@ -28,12 +28,12 @@ function MaturityBar({ label, value, color }) {
 export default function CommitteeReports() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("reports");
+  const { getTitle } = usePageConfig("reports");
   const { canManageGovernance } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
 
   if (!data) return <TableSkeleton rows={4} />;
-  const { counters, committee, registers, meetings, members } = data;
+  const { counters, committee, registers, meetings } = data;
   const committeeId = committee.id;
 
   const decisions = registers.decisions || [];

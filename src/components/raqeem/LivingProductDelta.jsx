@@ -9,7 +9,7 @@ import { Loader2, GitCompare, ArrowRight, FileText, CheckCircle2, Users } from "
  * new decisions, closed actions, new risks, formation changes, new evidence, pending items.
  * Does NOT modify the old official product — creates a new linked version.
  */
-export default function LivingProductDelta({ committeeId, productType, lastGeneratedAt }) {
+export default function LivingProductDelta({ committeeId, lastGeneratedAt }) {
   const { t, lang } = useLanguage();
   const [delta, setDelta] = useState(null);
   const [loading, setLoading] = useState(true);

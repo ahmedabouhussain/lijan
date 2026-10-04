@@ -34,9 +34,9 @@ const CLASSIFICATIONS = [
 ];
 
 export default function CommitteeDocuments() {
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("documents");
+  const { getTitle } = usePageConfig("documents");
   const { canManageDocuments } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [showCreate, setShowCreate] = useState(false);

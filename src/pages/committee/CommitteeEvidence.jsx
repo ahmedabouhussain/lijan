@@ -19,7 +19,7 @@ import { L } from "@/lib/l10n";
 export default function CommitteeEvidence() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("evidence");
+  const { getTitle } = usePageConfig("evidence");
   const { canManageExecution } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [uploadingFor, setUploadingFor] = useState(null);

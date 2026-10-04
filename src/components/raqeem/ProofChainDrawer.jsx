@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
  * from mandate → meeting → agenda → deliberation → vote → minutes → decision → signature → action → evidence → closure → impact.
  * Not a complex graph — a simple vertical timeline.
  */
-export default function ProofChainDrawer({ entityType, entityId, entityTitle, children }) {
+export default function ProofChainDrawer({ entityType, entityId, entityTitle }) {
   const { t, lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [chain, setChain] = useState(null);

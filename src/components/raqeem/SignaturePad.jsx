@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { PenLine, Eraser, Type, Check } from "lucide-react";
 
-export default function SignaturePad({ value, onChange, onSave, saving }) {
+export default function SignaturePad({ value, onChange }) {
   const canvasRef = useRef(null);
   const [mode, setMode] = useState(value?.image_url ? "drawn" : value?.text ? "typed" : "drawn");
   const [text, setText] = useState(value?.text || "");

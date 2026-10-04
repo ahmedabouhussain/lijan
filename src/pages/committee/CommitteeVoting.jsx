@@ -16,7 +16,7 @@ import { L } from "@/lib/l10n";
 export default function CommitteeVoting() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("voting");
+  const { getTitle } = usePageConfig("voting");
   const { orgRef, committeeRef } = useParams();
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +28,7 @@ export default function CommitteeVoting() {
   const canCallVote = !is_oversight && !is_recused && ["chair", "vice_chair"].includes(my_role);
   const canCastVote = !is_oversight && !is_recused && ["chair", "vice_chair", "secretary", "member"].includes(my_role);
 
-  const handleVoteAction = async (fn, payload, successMsg) => {
+  const handleVoteAction = async (fn, payload) => {
     setVoting(true); setError("");
     try {
       await base44.functions.invoke(fn, payload);

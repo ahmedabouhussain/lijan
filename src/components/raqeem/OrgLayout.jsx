@@ -80,7 +80,7 @@ function OrgShell() {
 
   if (!data) return null;
 
-  const { organization: org, portal, my_role, my_membership } = data;
+  const { organization: org, portal, my_role } = data;
   const base = `/o/${orgRef}`;
   const isAdmin = my_role === "owner" || my_role === "admin";
 

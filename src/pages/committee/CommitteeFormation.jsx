@@ -61,9 +61,9 @@ const STATUS_COLORS = {
 };
 
 export default function CommitteeFormation() {
-  const { data, reload } = useCommittee();
+  const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("formation");
+  const { getTitle } = usePageConfig("formation");
   const navigate = useNavigate();
   const { orgRef, committeeRef } = useParams();
   const [amendments, setAmendments] = useState([]);

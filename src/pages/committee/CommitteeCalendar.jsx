@@ -27,7 +27,7 @@ const MODE_LABELS = {
 export default function CommitteeCalendar() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("calendar");
+  const { getTitle } = usePageConfig("calendar");
   const { orgRef, committeeRef } = useParams();
   const [statusFilter, setStatusFilter] = useState("all");
   const [modeFilter, setModeFilter] = useState("all");

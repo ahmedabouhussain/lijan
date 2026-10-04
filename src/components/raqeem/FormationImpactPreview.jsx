@@ -23,7 +23,7 @@ import {
  * Calm, focused preview — not a blocking gate.
  */
 export default function FormationImpactPreview({ change, data }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   if (!change || !data) return null;
 
   const { committee, members, meetings, registers } = data;

@@ -31,7 +31,7 @@ const TYPE_OPTIONS = Object.entries(DEP_TYPE).map(([value, v]) => ({ value, labe
 export default function CommitteeDependencies() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("dependencies");
+  const { getTitle } = usePageConfig("dependencies");
   const { canManageExecution } = useCommitteeAdmin();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);

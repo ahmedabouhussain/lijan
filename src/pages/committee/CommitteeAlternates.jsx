@@ -14,7 +14,7 @@ import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 export default function CommitteeAlternates() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("alternates");
+  const { getTitle } = usePageConfig("alternates");
   const { canManageMembership } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [activatingId, setActivatingId] = useState(null);

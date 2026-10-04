@@ -16,7 +16,7 @@ import { L } from "@/lib/l10n";
 export default function CommitteeClosure() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("closure");
+  const { getTitle } = usePageConfig("closure");
   const [showClose, setShowClose] = useState(false);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);

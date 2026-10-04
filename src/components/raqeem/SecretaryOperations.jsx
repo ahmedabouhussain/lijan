@@ -10,7 +10,7 @@ import { ClipboardCheck, AlertCircle, FileText, UserCheck } from "lucide-react";
  * Not a full dashboard — a focused strip that complements the WorkInbox.
  */
 export default function SecretaryOperations({ data, base }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   if (!data) return null;
 
   const { my_role, meetings, registers } = data;
@@ -18,8 +18,7 @@ export default function SecretaryOperations({ data, base }) {
 
   const upcoming = meetings?.upcoming || [];
   const nextMeeting = upcoming[0];
-  const now = new Date();
-
+  
   // Calculate readiness gaps for next meeting
   const gaps = [];
   if (nextMeeting) {

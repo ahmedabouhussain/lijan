@@ -33,7 +33,7 @@ const TASK_OPTIONS = [
 export default function CommitteeAI() {
   const { data } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle, getDescription } = usePageConfig("ai");
+  const { getTitle } = usePageConfig("ai");
   const { canManageGovernance } = useCommitteeAdmin();
   const { submitting, execute } = useCrudAction();
   const [records, setRecords] = useState([]);
