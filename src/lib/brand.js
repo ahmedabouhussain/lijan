@@ -8,6 +8,15 @@ export const BRAND_LOGO_URL =
 export const BRAND_INTRO_VIDEO_URL =
   "https://media.base44.com/videos/public/6a96a0e0cd5dac701b62b7f5/f43411a16_Cq91lW4B.mp4";
 
+// ── Parent platform (CONNECTION™) ──
+// The approved lockup is a dark wordmark for light surfaces; the maroon surfaces keep the
+// white endorsement line instead, so the parent identity stays legible wherever it appears.
+export const CONNECTION_LOGO_URL =
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/86205ff34_image.png";
+
+export const CONNECTION_WEBSITE_URL = "https://www.connectionos.ai/";
+export const CONNECTION_WEBSITE_LABEL = "connectionos.ai";
+
 // ── Central brand configuration ──
 export const BRAND = {
   nameAr: "لِجان",
