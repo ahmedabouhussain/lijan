@@ -1,0 +1,260 @@
+LIJAN implementation references for Base44
+5 October 2026
+Companion to LIJAN Competitive Full Product Sprint Execution Mandate dated 5 October 2026
+Existing application 6a96a0e0cd5dac701b62b7f5
+
+ملخص بالعربية
+
+هذه مراجع تنفيذية واضحة لفريق Base44. كل مرجع يحدد الصفحة أو القسم المطلوب فحصه، والقدرة المعلنة لدى المرجع، وما يجب تنفيذه في لِجان، والسبرنت واختبار القبول المرتبطين به. احتفظنا بترقيم المراجع R-01 إلى R-13 من خطة التنفيذ وأضفنا R-14 إلى R-17، دون تغيير S0 إلى S10 أو A01 إلى A24.
+
+ابدؤوا بهادف والمجلس ومجلس تك لفهم دورة التشكيل والاجتماع والقرار. استخدموا OnBoard وDiligent لضبط تعدد السياقات والأدوار، وiBabs للتنفيذ والتقارير والمستندات، ومراجع الذكاء الاصطناعي لضبط أمين. المرجع القطري يشرح حاجة مؤسسية حقيقية للتنسيق والمتابعة، وليس منتجًا منافسًا أو إثباتًا لاعتماد لِجان.
+
+المطلوب تجاوز الحد الأدنى عبر إثبات السلطة وقت الفعل، وحفظ نسخة الدليل، وتنفيذ القرار بين جهات مستقلة، والتحقق من الإغلاق، ومنع تسرب الصلاحيات. وجود العربية أو التصويت أو تعدد اللجان أو إجابات AI بمصادر لا يكفي وحده لادعاء التفوق.
+
+BEGIN COPY READY BASE44 BRIEF
+
+Use these references to implement the existing LIJAN sprint mandate. Extend existing working components and records. Preserve its S0–S10, C-01–C-10, J01–J14 and canonical A01–A24 numbering. This reference pack explains the mandate; it does not replace its scope, gates, permissions or latest implementation status.
+
+For each requirement, record: R-ID, exact source section, C-ID, sprint, existing component/command/entity, retain/fix/extend decision, implementation gap, A-ID, test evidence and remaining unknowns. Inspect latest code before editing; an earlier observation is not proof a defect still exists. Keep source implementation and executed acceptance separate.
+
+READING RULES
+
+All URLs below are official primary sources checked on 5 October 2026. Commercial pages establish advertised capabilities; help documentation establishes documented behavior. Neither is a hands-on competitor acceptance test. The notes below are paraphrases. Do not copy proprietary UI, branding, code or assets. Build LIJAN's own institutional experience.
+
+“Minimum parity” means the capability the market already documents. “Proposed improvement” means the LIJAN-specific behavior we must prove. It does not mean competitors cannot provide it. Qatar availability, named deployment, product edition, add-ons, hosting and procurement fit need separate evidence. Almajles, Hadif and Majles Tech are Saudi/regional references. BoardPAC advertises Qatar coverage; a Qatar-built full equivalent or named Qatar deployment was not established here. This is a scoped benchmark, not a census.
+
+Fast reading order: R-02/R-17 for S1–S2; R-04/R-05 for S3; R-01/R-03 for S4; R-07 for S5; R-06/R-14/R-16 for S6; R-08/R-09 for S7; R-13 for S8; R-10/R-12/R-15 for S9–S10. All references contribute to the S0 baseline and S10 comparative review.
+
+R-01  Almajles meeting to execution
+
+URLs
+https://almajles.com/en/
+https://almajles.com/en/faq/
+Inspect: homepage “The meeting cycle,” six steps; FAQ questions about tracking implementation and data storage.
+Documented capability: proxies, quorum, voting, minutes/resolutions and execution. FAQ describes responsibility assignment and performance reporting; it also advertises Saudi residency with enterprise on-premise/private-cloud options.
+Minimum parity: one connected agenda-to-decision-to-action workflow, with policy-dependent quorum and proxies.
+LIJAN requirement/proposed improvement: reuse MeetingDetail, MinutesManager and DecisionActionBoard; bind every approved output to the same source meeting, vote round and record version. Carry the issued decision into verified execution without manual re-entry.
+Mapping: S1/S4/S5; C-01/C-03/C-07; A06/A07/A08/A12/A13; J06/J08–J11.
+Acceptance: run one authorized synthetic cycle and compare meeting, minutes, issued package, actions and AR/EN export. Missing required quorum or ratification must block the relevant transition. Upload alone must not close an obligation. Record mismatches and re-entry effort.
+Unknowns: specific licensing, Qatar deployment suitability, exact proxy rules and comparative workflow performance. Supplier residency/compliance claims are not LIJAN certifications or Qatar approval.
+
+R-02  Hadif formation and authority
+
+URL
+https://hadif.sa/councils-committees-governance.html
+Inspect: bullets beginning “تعريف المجلس/اللجنة,” “تشكيل المجلس/اللجنة,” “تعريف الموضوعات,” “المصادقة على المحضر”; feature bullets for conflict-based hiding and expired-committee archiving.
+Documented capability: terms, membership types, weighted votes, conflicts, minimum topic evidence, parent ratification, permissions and archive.
+Minimum parity: configurable formation, appointments, eligibility, topic recusal and ratification. These concepts are not unique to LIJAN.
+LIJAN requirement/proposed improvement: connect FoundingInstrument/InstrumentVersion, appointments, seat, Representation, AuthorityGrant and Delegation. Freeze authority-at-action evidence while rechecking current authority for new actions. Distinguish employer, appointing authority and represented institution.
+Mapping: S1/S2/S4/S6; C-01/C-03/C-08; A02/A04/A05/A08/A14/A21; J05/J07/J13/J14.
+Acceptance: expire delegation while an old tab is open; deny the next action, preserve the earlier valid action and hand over open obligations. Principal and alternate cannot double-count one seat. Recusal must affect retrieval and voting under the approved rule.
+Unknowns: independently administered cross-institution grants, historical reconstruction depth, exact conflict/quorum policies and Qatar references require demonstration.
+
+R-03  Majles Tech internal and external committees
+
+URL
+https://site.majles.tech/public/assets/files/Majles%20Tech%20Company%20Profile_ar.pdf
+Inspect: printed p8, creation/roles/regulations and voting; p9, minutes approval/signing/execution; p10, circulation and internal/external committees. PDF page numbers are printed numbers, equivalent to PDF viewer pages 8–10.
+Documented capability: committee roles and regulations, electronic voting, minutes review/signing, execution follow-up, circulation and external committees from nomination through execution.
+Minimum parity: external participation and committee-to-unit follow-up must work; do not claim external committees alone as LIJAN innovation.
+LIJAN requirement/proposed improvement: independently owning agencies receive scoped obligations from one authoritative decision, acknowledge or clarify them, and return proof for independent verification without opening confidential deliberations.
+Mapping: S2/S4/S5; C-01/C-03/C-04/C-07; A08/A12/A13/A19/A21; J09–J11.
+Acceptance: three synthetic agencies process one decision; show original/linked IDs, recipient access boundaries, returned evidence and accepted closure. Retry a failed delivery without duplicating an obligation.
+Unknowns: current edition, detailed federation/permission rules and integration terms. Profile age needs confirmation; the PDF opened successfully, while direct homepage retrieval failed. Do not infer a current outage of the application.
+
+R-04  OnBoard multi board context and material access
+
+URL
+https://www.onboardmeetings.com/board-portal/committees-and-multi-board/
+Inspect: “Unify Boards Under One Hub,” “Permission Materials With Precision,” “Show Committees Only Their Work,” and FAQ on notifications/integrations/shared documents.
+Documented capability: entity switching, committee/role/time-bound access, confidential sections, context notifications and live-linked shared materials.
+Minimum parity: scoped role/context switching, preparation materials and action-oriented notifications.
+LIJAN requirement/proposed improvement: extend UnifiedWorkspace/WorkInbox and context-safe routes. One person holds independent appointments; a role in one institution cannot authorize another. Keep frozen voting materials stable even if a shared source document later changes.
+Mapping: S3/S9, with S1/S2 authority dependencies; C-02/C-03/C-08/C-10; A01/A03/A04/A09/A15/A16; J01–J04/J13.
+Acceptance: chair A/member B/secretary C in separate tabs; follow a notification to its exact task, then revoke B. Old links, search, cached context and queued actions must not retain B access or inherit A authority. Measure task-finding effort and context errors.
+Unknowns: depth of independent institution ownership, release entitlements and comparable configuration effort. Live-linked documents do not themselves prove immutable voting snapshots.
+
+R-05  Diligent Boards committee versus application roles
+
+URL
+https://help.diligentoneplatform.com/helpdocs/d1p/en-us/Content/boards/administrators/managing_boards/roles-and-permissions.htm
+Inspect: tables “Committee-level roles” and “Application-level roles,” especially Coordinator, Director, User manager and Settings manager.
+Documented capability: distinct committee/content roles and application administration; a director can belong to multiple committees.
+Minimum parity: application administration, preparation, membership and operational authority are separately modeled.
+LIJAN requirement/proposed improvement: align GetCommitteeCapabilities, authorityKernel, commandGuard and UI action gates. Technical administration must not grant decision, ratification or oversight authority by implication.
+Mapping: S1/S2/S3/S6; C-02/C-03; A02/A03/A04/A08/A20.
+Acceptance: run a named actor/command/resource matrix through authenticated server calls, not only hidden buttons. A secretary can prepare permitted content but cannot approve outside mandate; oversight can read a permitted metric but not its restricted appendix.
+Unknowns: do not import Diligent Entities, Community or other products into Boards. Exact edition and buyer-specific configuration remain to verify.
+
+R-06  BoardPAC consolidated work and Qatar market coverage
+
+URLs
+https://boardpac.co/secure-board-governance-starts-here/
+https://boardpac.co/partners/
+Inspect: “Board & Committee Management,” “Governance & Compliance,” “Cross-Board Dashboard”; partner page “Middle East.”
+Documented capability: membership/roles, decision/action records and a consolidated view of boards, meetings and open actions. Partner geography lists Qatar.
+Minimum parity: usable cross-committee work and institutional portfolio views.
+LIJAN requirement/proposed improvement: connect personal work to restricted institutional/oversight indicators; every metric states definition, period, denominator, coverage and freshness, with permission-aware proof.
+Mapping: S3/S6/S10; C-02/C-05/C-09; A15/A20/A24.
+Acceptance: reconcile an open-action count to permitted source records, exclude unverifiable closures, label incomplete coverage, and deny confidential drill-through. Compare preparation/reporting effort on the same dataset.
+Unknowns: listed geography is not proof of Qatar origin, a named Qatari customer or regulatory acceptance. Deployment terms, Arabic depth and national authority fit are not established here.
+
+R-07  iBabs actions documents mobile and integrations
+
+URLs
+https://www.ibabs.com/en/features/
+https://www.ibabs.com/en/actions-decisions/
+Inspect: feature sections “Approval Flows,” “Language support,” “Multi-board support,” “Offline access,” “Sensitivity labels,” “SharePoint Integration”; Actions page “Automate the Follow-Up Process.”
+Documented capability: Arabic, board-specific permissions, native/offline access, document classification integration, owners/due dates/status, notifications, exports and decision lists.
+Minimum parity: accountable action tracking, Arabic/mobile access, configurable approvals and document integration. Responsive web must not be called native/offline parity.
+LIJAN requirement/proposed improvement: connect assignments to scoped evidence and verifier decisions; preserve classifications/versions across export and integration failures. Label mocks, unavailable connectors and unsupported offline behavior honestly.
+Mapping: S4/S5/S8/S9; C-01/C-04/C-07/C-08; A12/A13/A16/A18/A19/A23.
+Acceptance: return then accept execution evidence; deny self-verification where prohibited. Retry notification/import without duplicate effects. Produce readable AR/EN exports from the same record. Offline writes cannot silently bypass current authorization.
+Unknowns: edition/add-ons, exact integration semantics, Qatar hosting fit and native-app requirements for the target buyer.
+
+R-08  OnBoard AI citations and institutional history
+
+URLs
+https://www.onboardmeetings.com/onboard-ai/
+https://www.onboardmeetings.com/ai-info/
+Inspect: “The Four Rules Behind Every Answer,” “Three Layers of Context,” and AI Suite availability table on the second page.
+Documented capability: permission-bound retrieval, cited record-based answers, insufficient-evidence acknowledgment and human judgment, alongside board history and expertise context.
+Minimum parity: sourced, permission-aware AI is already advertised; AMEEN cannot claim uniqueness for citations alone.
+LIJAN requirement/proposed improvement: filter retrieval before model access; cite record/version/date; reconstruct historical authority without granting expired current access; reauthorize citation opening and invalidate revoked cache/index/chat access.
+Mapping: S7, supported by S1/S2/S4; C-06; A10/A12/A17; J08/J13/J14.
+Acceptance: ask the same bilingual historical question before and after revocation and through another role. Verify every material assertion against allowed source versions; missing evidence produces an explicit limit. Test adversarial document instructions and stale citations.
+Unknowns: the availability table is labeled June 2026 and lists Early Access/Beta for some features; do not treat it as definitive October entitlement. No independent AI accuracy comparison has been performed.
+
+R-09  Diligent AI access for current and archived books
+
+URL
+https://www.diligent.com/resources/blog/ai-innovations-connected-governance-workflows
+Inspect: “Role-based GovernAI controls: The right access, at the right time” and “Control over AI-generated content.”
+Documented capability: AI feature access by role, with separate current/archived-book settings and administrative control over generated content.
+Minimum parity: historic records and AI features need explicit role/policy boundaries.
+LIJAN requirement/proposed improvement: make AMEEN personal versus committee context explicit; retention, access revocation and institutional memory must use the same governed source rules. AI drafts never become official acts automatically.
+Mapping: S7/S4/S9; C-06; A08/A14/A17.
+Acceptance: an archived record may remain preserved while the current user is denied access; AI cannot return it through summaries or citation snippets. A reviewed memory output retains provenance and approved retention treatment.
+Unknowns: precise current edition and content lifecycle details. The source covers multiple Diligent products; use only the relevant Boards statements.
+
+R-10  iBabs AI privacy recovery and operational disclosures
+
+URL
+https://www.ibabs.com/en/privacy-factsheet/
+Inspect: “iBabs Platform and Data Privacy,” “iBabs Debrief: Technical details,” “Information Security statement,” and “Customization & Flexibility.”
+Documented capability: optional AI disabled by default, human review, versioned edits, retention/access configuration and explicit hosting/security/recovery disclosures.
+Minimum parity: document real data flows and operational responsibilities, not just a security badge.
+LIJAN requirement/proposed improvement: inventory primary records, files, backups, logs, AI processing, support/subprocessor access and keys. Agree buyer-owned recovery objectives; export and restore authority/evidence/classification links in an isolated test. Separate application controls from Base44/provider guarantees.
+Mapping: S4/S7/S9/S10; C-06/C-09; A14/A17/A23/A24.
+Acceptance: restore the authorized fixture, reconcile counts/versions/access and measure recovery. Unsupported objectives or unavailable external reviews remain BLOCKED/NOT TESTED. Do not copy competitor recovery targets into LIJAN promises.
+Unknowns: supplier factsheet claims require assurance/contract review; they neither certify LIJAN nor establish Qatar residency suitability.
+
+R-11  Diligent Community public governance
+
+URL
+https://www.diligent.com/products/community
+Inspect: “Board management built for public governance,” “Smarter tools for transparent, efficient governance,” “Committee manager,” “Digital voting” and “Goal tracking.”
+Documented capability: agenda approvals/publishing, meeting records, committees, votes, goals and an accessible public information surface.
+Minimum parity: public-sector workflow and publication controls need deliberate design.
+LIJAN requirement/proposed improvement: keep protected formation registry, institutional oversight and explicitly approved public extracts separate. Reuse PublicCommittees without exposing private records by default.
+Mapping: S4/S6/S8; C-01/C-05/C-07; A11/A18/A20/A22.
+Acceptance: unauthenticated synthetic public view receives only approved/redacted content; drafts, private registry fields, restricted documents and real audit actors remain denied, including downloads. No live publication is authorized by this brief.
+Unknowns: Community is separate from Boards and serves public/elected-board needs. Its public-access model is not a mandate to publish diwan/confidential committee material.
+
+R-12  Microsoft Dataverse configurable substitute
+
+URLs
+https://learn.microsoft.com/en-us/power-platform/admin/wp-security-cds
+https://learn.microsoft.com/en-us/power-platform/admin/manage-dataverse-auditing
+Inspect: “Role-based security,” “Matrix data access structure,” “Record-level security,” “Column-level security”; auditing introduction, supported/unsupported operations and environment/table/column configuration.
+Documented capability: configurable roles, teams, record/column boundaries and audit history. Role grants accumulate. Core auditing does not cover retrieve/export operations; separate activity logging has its own requirements.
+Minimum parity: evaluate real security and audit coverage, including indirect paths; generic CRUD history is insufficient.
+LIJAN requirement/proposed improvement: provide a domain-ready authority/evidence workflow with explicit denied-action, export and sensitive-read coverage and predictable setup burden. Reuse guarded reads/commands and AuditEvent; do not migrate to Dataverse from this reference.
+Mapping: S0/S1/S9/S10; C-03/C-09/C-10; A03/A04/A10/A23/A24.
+Acceptance: test guessed IDs, direct APIs/files, search/counts, exports and background jobs; show actual audit evidence. Compare implementation, support and configuration effort against the buyer's configured incumbent using the same workflow.
+Unknowns: licensing, environment setup, logging retention and custom implementation effort. Dataverse is a building-block substitute, not evidence of a ready-made national committee product.
+
+R-13  W3C accessibility requirements
+
+URL
+https://www.w3.org/TR/WCAG22/
+Inspect: 1.3.1 Info and Relationships; 1.3.2 Meaningful Sequence; 1.4.3 Contrast; 1.4.10 Reflow; 2.1.1 Keyboard; 2.4.3 Focus Order; 2.4.7 Focus Visible; 2.4.11 Focus Not Obscured; 2.5.8 Target Size; 3.1.1/3.1.2 Language; 3.3.8 Accessible Authentication; 4.1.2 Name Role Value; 4.1.3 Status Messages; section 5 Conformance.
+Reference role: official testable accessibility criteria, not competitor evidence.
+LIJAN requirement: apply the mandate's WCAG 2.2 AA target across the complete critical workflow. This selected reading list is not the full A/AA checklist. Include RTL/LTR, long Arabic names, zoom, forms, dialogs, errors, progress and contextual restrictions.
+Mapping: S8 and every changed sprint; C-07; A01/A12/A15/A18; all J01–J14.
+Acceptance: perform actual keyboard/screen-reader and narrow/zoomed-layout tests; verify language metadata, focus, labels, reading sequence, status announcements and legible exports. Record untested devices and failed criteria explicitly.
+Proposed improvement: lower task errors and review/correction effort for target Arabic/English roles, measured with users.
+Unknowns: conformance needs a scoped assessment of all applicable criteria and complete processes; this reference does not confer certification or legal compliance.
+
+R-14  Qatar climate institutional coordination
+
+URL
+https://www.mecc.gov.qa/Arabic/About/Departments/Minister/Undersecretary/AssistantUndersecretaryClimate/Pages/Climate-Change-Department.aspx
+Inspect: responsibilities 3 and 4 for cross-entity implementation/periodic reporting; 7 for coordination with the climate committee; 12 and 13 for indicators/inventory and reporting.
+Reference role: an official Qatar institutional process reference, not commercial SaaS. It supports the need for accountable coordination, follow-up, reporting and technical preparation.
+LIJAN requirement/proposed improvement: model a reusable, synthetic cross-agency governance scenario with source-backed mandates, responsible institutions, obligations, indicators, reporting periods and limited oversight. A climate sector configuration must use the same kernel as economic/procurement/investment committees.
+Mapping: S2/S5/S6/S7; C-03/C-04/C-05; A19/A20/A21; J09–J14.
+Acceptance: one scoped report distinguishes source owners, reporting periods, missing submissions and verified closure; oversight sees authorized evidence but not a confidential annex. Mandate overlap warnings require human review and never create jurisdiction.
+Unknowns: this department page is not the complete/current constituting instrument or committee membership list. Obtain current buyer-approved instruments before real configuration. It establishes neither LIJAN adoption nor national authority.
+
+R-15  OWASP security verification framework
+
+URL
+https://owasp.org/projects/asvs
+Inspect: “What is the ASVS,” “More Details on the ASVS,” “How To Reference ASVS Requirements” and the official Downloads link. Pin the chosen released version and exact applicable requirement IDs in the test register.
+Reference role: a technical security verification framework, not certification and not proof Base44 or LIJAN satisfies a control.
+LIJAN requirement: map relevant requirements to server authorization, sessions, input/rich-text handling, data protection, API behavior, logs and secure configuration; record whether application or provider owns each control. Use the required independent testing/retest gate from S10.
+Mapping: S0/S1/S9/S10; C-09; A03/A04/A09/A12/A17/A22/A23/A24.
+Acceptance: execute the defined negative tests against the named authorized build; record expected/actual results and remediation/retest evidence. Critical unresolved authority/isolation failures prevent the applicable release gate. No exploit testing of competitor services is authorized.
+Proposed improvement: buyer-reviewable control evidence and clear residual risks rather than unsupported assurance language.
+Unknowns: exact assessment scope and requirements need the real architecture; no independent penetration test or compliance acceptance is supplied by this pack.
+
+R-16  iBabs Monitor governance processes and portfolios
+
+URL
+https://www.ibabs.com/en/monitor/
+Inspect: “This is what control over your processes looks like,” “Stay informed at every step,” and “Maximum flexibility with tailored setup.”
+Documented capability: organization-specific process modules, status/deadlines, metadata, individual dashboards, access management and reporting.
+Minimum parity: configurable workflows, commitments and contextual reporting are established capabilities.
+LIJAN requirement/proposed improvement: reuse OrgPortal/ReportCenter/CompletionLedger; derive metrics from authoritative records, expose coverage/denominator/freshness and show mandate/dependency exceptions without broadening visibility. Preserve one decision instead of making report-only duplicates.
+Mapping: S5/S6/S7; C-04/C-05/C-10; A13/A19/A20.
+Acceptance: an overdue commitment appears once in the correct portfolio, links to permitted proof, and remains incomplete when verification is missing. Partial agency submissions cannot appear as complete national totals. Measure reconciliation and report-preparation effort.
+Unknowns: setup can involve vendor specialists; product entitlement and implementation effort need checking. A configurable dashboard alone is not a LIJAN advantage.
+
+R-17  OnBoard voting and defensible decision context
+
+URL
+https://www.onboardmeetings.com/board-portal/voting-and-approvals/
+Inspect: “Approve Decisions Anywhere,” “Defensible, Audit-Ready Records,” “Context Travels With Votes” and “Connect Today's Vote to Its Backstory.”
+Documented capability: approvals associated with supporting materials, quorum/due dates, vote attribution, locked outcomes, holds/export and decision history.
+Minimum parity: auditable votes and contextual history already exist in the market.
+LIJAN requirement/proposed improvement: bind the exact immutable proposal/material/policy, historical seat/delegation and voting round to one issued package; current read/export must match that package or explicitly show an amendment. Apply one ambiguity-rejecting round contract to every vote and issuance path.
+Mapping: S1/S4/S9; C-01/C-03/C-08; A06/A07/A08/A09/A10/A12.
+Acceptance: attempt stale proposal, duplicate/concurrent seat vote, ambiguous active round, repeated issuance and tampered evidence. Each must refuse or reconcile as specified without partial official effects. A valid authenticated cycle persists one coherent package. Export proves the same content, not merely a self-consistent manifest detached from live display.
+Unknowns: exact weighted/multitier rules and immutable-history implementation need demonstration; the FAQ's question wording alone does not prove every scenario is supported.
+
+SPRINT CROSSWALK
+
+S0 Baseline and test bed: R-01–R-17; establish current source/deployment/evidence status. A01/A22.
+S1 One trustworthy decision: R-02/R-05/R-12/R-15/R-17. A02–A10, with A01 regression.
+S2 Constitution appointments continuity: R-02/R-03/R-05/R-14. A02/A04/A05/A14/A21.
+S3 Personal multi-institution workspace: R-04/R-05/R-06/R-07/R-13. A01/A04/A15/A16/A18.
+S4 Meetings minutes official records: R-01/R-02/R-03/R-07/R-10/R-11/R-17. A06–A12/A14/A18.
+S5 Cross-agency execution: R-01/R-03/R-07/R-14/R-16. A13/A14/A16/A19.
+S6 Institutional and national oversight: R-02/R-05/R-06/R-11/R-14/R-16. A19–A22.
+S7 AMEEN memory reports: R-08/R-09/R-10/R-14/R-16. A10/A12/A17/A20.
+S8 Arabic English mobile accessibility: R-03/R-07/R-11/R-13. A01/A12/A15/A18 and privacy regressions.
+S9 Integrations resilient operations: R-04/R-07/R-10/R-12/R-15/R-17. A03/A09/A14/A16/A23.
+S10 Comparative value handover: all relevant references; all J01–J14 and A01–A24, including independent/buyer evidence required for A24.
+
+REQUIRED BASE44 RESPONSE AND EVIDENCE
+
+1. Return one compact mapping for each R-ID: inspected section, current LIJAN implementation, specific gap, planned existing-component change, sprint, A-ID and evidence needed. Cite the exact source, not only a homepage.
+2. State the first safe implementation slice under the existing mandate. Do not restart the app, invent another sprint sequence or replace established entities without inspecting them.
+3. Preserve known fixes and regression tests. The mandate's approximately 12:32 UTC source assessment remains historical context; re-read current source. Do not label old screenshots as the newest deployed result.
+4. Use one coherent authorized synthetic dataset through the fourteen scenes. Show successful and denied paths, correct acting capacity, authoritative IDs and accepted evidence. A source diff, helper test, screenshot and authenticated persisted cycle prove different things.
+5. Use the mandate's B-01–B-06 comparative tasks. Record competitor edition/configuration, setup effort, time, handoffs, errors, privacy/integrity failures and actual cost scope. Agree buyer thresholds before claiming improvement. If competitors were not exercised, say “LIJAN demonstrated; comparative advantage untested.”
+6. Keep public policy references separate from software products, standards separate from certifications, and advertised capability separate from verified behavior. Missing documentation is an unknown.
+7. This pack authorizes no builder message, live publishing, real-recipient invitations, competitor trial/accounts, credentials, new persistent access, paid services, real institutional data or destructive migration. Follow the existing mandate's controlled-environment and approval boundaries. Report unsupported platform invariants with evidence rather than simulating success.
+
+END COPY READY BASE44 BRIEF

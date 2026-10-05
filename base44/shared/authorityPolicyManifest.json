@@ -21,6 +21,17 @@
       { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "contract": "decision-integrity-1.2.0 (recorded policy version; the previous 1.1.0 evidence carries no round binding and is re-run)" },
       { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" }
     ],
+    "command_site_revisions": [
+      {
+        "site": "base44/functions/CastVote/entry.ts",
+        "at": "2026-10-05T16:20:00Z",
+        "class": "security",
+        "what": "the site no longer resolves its own frozen round (status:'active', sort -created_date, limit 1). It consumes loadRoundContext and refuses BEFORE any write when the contract reports conflict 'multiple_active_rounds'; the round's ballots are read from the same context (ctx.ballots) instead of a second independent query.",
+        "why": "with two active rounds the site bound a ballot to whichever round the sort put first, while issuance and the governed read REFUSE that same state — so a ballot could be recorded against an electorate no package may be issued from (silent orphan vote + false 'has voted' state). See D-039 / reference R-17.",
+        "kernel_impact": "NONE — no module digest above changed, so this does not by itself invalidate the authority/integrity/eligibility unit evidence; the three suites were re-run anyway (PASS).",
+        "coverage_gap": "no suite exercises the CastVote HANDLER: the round contract's own cases pass (incl. two active rounds => no round chosen), but the site behaviour is verified by source + build + module suites only."
+      }
+    ],
     "policy": {
       "delegable_capabilities": 13,
       "operational_capabilities": 37,
@@ -52,6 +63,8 @@
       "decision_integrity_suite": "PASS 40/40 (policy decision-integrity-1.2.0, writes_performed: 0)",
       "round_binding_cases": "PASS DI-035…DI-040 (named round readable once superseded · supersession reported · only the round's own ballots · the same package reconciles against its issued round and NOT against the active round · the package records its round · two active rounds choose none)",
       "vote_eligibility_suite": "PASS 12/12 (policy vote-eligibility-1.0.0, writes_performed: 0)",
+      "suites_rerun_after_command_site_revision": "PASS — 38/38 + 14/14 + 15/15 · 40/40 · 12/12 (2026-10-05, after the CastVote round-contract change)",
+      "command_site_executed_cases": "NONE — no handler-level case exercises CastVote's round resolution",
       "frontend_build": "vite build status=0",
       "concurrency_critical_tests": "NOT ESTABLISHED",
       "persisted_voting_cycle": "NOT TESTED",
@@ -59,6 +72,8 @@
       "scope_note": "these suites are NOT completion of A02–A10: no successful live issuance package and no persisted round have been exercised"
     },
     "open_defects": [
+      "the decision STATE CHAIN is unreachable in this build: CreateDecisionDraft writes 'draft', OpenVote accepts only 'voting' | 'proposed', and nothing writes 'proposed' — so no governed draft can open a voting round (D-041). This is a policy choice (widening OpenVote's gate vs adding a submit command), not a bug to guess at, and it is why no positive cycle is evidenced",
+      "attendance in AttendancePanel still falls back to matching by member name (D-040)",
       "packages issued under decision-integrity 1.1.0 carry NO round binding, so they cannot be bound to the round they came from (reported as unbound_legacy_package, never silently rebound); no package has been issued in production, so no such record exists yet",
       "no correction path exists: re-issuance after a superseded round is refused (issuance_package_exists / correction_procedure: null) until a correction procedure is defined and policy-authorized",
       "simultaneous-run concurrency measurement is not available from the builder environment (D-009)",

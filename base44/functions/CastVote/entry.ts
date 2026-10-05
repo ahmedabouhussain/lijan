@@ -1,8 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
-
-const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
+import { loadRoundContext } from '../../shared/roundContext.ts';
 
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
@@ -34,9 +33,30 @@ export default async function(req) {
 
     // A ballot belongs to a FROZEN round. Without one there is no electorate to be eligible in, so
     // the vote is not recorded: "no frozen round" is a governed stop, not an assumption.
-    const roundRows = await base44.asServiceRole.entities.EligibleVoterSnapshot
-      .filter({ decision_id, status: 'active' }, { sort: '-created_date', limit: 1 }).catch(() => []);
-    const round = (Array.isArray(roundRows) ? roundRows : (roundRows?.items || []))[0] || null;
+    //
+    // D-039 (S1, R-17): this function used to resolve its own round — `status:'active'`, sorted
+    // `-created_date`, limit 1 — so with two active rounds it silently bound the ballot to whichever
+    // the sort put first, while issuance and the governed read REFUSE that same state
+    // (`multiple_active_rounds`). The ballot was then recorded against an electorate no package could
+    // ever be issued from: a silent orphan vote plus a false "has voted" state. The ONE round contract
+    // (`roundContext`, round-context-1.1.0) now answers for this path too, and by contract it never
+    // chooses an electorate by sort order.
+    const ctx = await loadRoundContext(base44.asServiceRole, {
+      decision_id,
+      committee_id: auth.trusted_target.derived_committee_id,
+    });
+    if (ctx.conflict === 'multiple_active_rounds') {
+      return Response.json({
+        error: 'More than one active frozen round exists for this decision',
+        code: 'multiple_active_rounds',
+        message: {
+          ar: 'توجد أكثر من دورة تصويت نشطة لهذا القرار؛ لا تُختار دورة تلقائيًا ولا يُسجَّل صوت حتى تُحسم الدورة.',
+          en: 'More than one active frozen round exists for this decision; no round is chosen automatically and no ballot is recorded until the round is resolved.',
+        },
+        rounds_seen: ctx.rounds_seen,
+      }, { status: 409 });
+    }
+    const round = ctx.round;
     if (!round) {
       return Response.json({
         error: 'No frozen voting round exists for this decision',
@@ -72,8 +92,9 @@ export default async function(req) {
     // The two reads below are COURTESY refusals with a precise reason — they show the duplicate to the
     // person instead of dropping it silently. The authoritative controls stay the claim (concurrency)
     // and ballot reconciliation at issuance, where a seat or person counted twice is a BLOCKER.
-    const roundVotes = arr(await base44.asServiceRole.entities.Vote
-      .filter({ decision_id, eligible_voter_snapshot_id: round.id }).catch(() => []));
+    // The ballots of THIS round come from the same round context that resolved it: one contract, one
+    // read path, so a ballot is never judged against a differently-resolved electorate.
+    const roundVotes = ctx.ballots;
     if (roundVotes.some((v) => v.voter_user_id === auth.user.id)) {
       return Response.json({
         error: 'This person has already voted in this round',
