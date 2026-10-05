@@ -73,10 +73,11 @@ export default function MeetingDetail() {
   const canAdjournMeeting = !isExploration && authority.includes("meeting.adjourn");
   const canCancelMeeting = !isExploration && authority.includes("meeting.cancel");
   const canScheduleMeeting = !isExploration && authority.includes("meeting.schedule");
-  // A decision draft is created by a governed command that requires `agenda.propose`. The chair
-  // baseline carries `decision.propose` but NOT `agenda.propose`, so the mismatch is DECLARED here
-  // instead of being bridged by a browser write — see D-021.
-  const canDraftDecision = !isExploration && authority.includes("agenda.propose");
+  // A decision draft is created by the governed command CreateDecisionDraft, which requires
+  // `decision.propose` (D-033). The control is therefore gated by THAT capability: the earlier gate
+  // on `agenda.propose` belonged to agenda preparation and blocked the chair's own right to propose
+  // a decision — the mismatch that the browser-side write used to bridge (D-021, D-042).
+  const canDraftDecision = !isExploration && authority.includes("decision.propose");
   const decisionActionLabel = t("مشروع قرار جديد", "New decision draft");
 
   // This page is mounted on two routes: inside the committee workspace (provider present) and on the
@@ -304,11 +305,11 @@ export default function MeetingDetail() {
                 <Plus className="w-3.5 h-3.5" /> {decisionActionLabel}
               </button>
             )}
-            {!canDraftDecision && !isExploration && authority.includes("decision.propose") && (
+            {!canDraftDecision && !isExploration && (
               <span className="text-xs text-muted-foreground text-right max-w-[18rem]">
                 {t(
-                  "إنشاء مشروع قرار معطّل: لا أمر محكوم يطابق صلاحية مقعدك (الأمر المحكوم يطلب «agenda.propose»)، ولا يُنشأ قرار من المتصفح.",
-                  "Creating a decision draft is disabled: no governed command matches your seat's capability (the command requires 'agenda.propose'), and a decision is never created from the browser.",
+                  "إنشاء مشروع قرار متاح لمن يحمل قدرة «decision.propose» في هذا المقعد؛ ولا يُنشأ قرار من المتصفح.",
+                  "Creating a decision draft requires the 'decision.propose' capability in this seat; a decision is never created from the browser.",
                 )}
               </span>
             )}

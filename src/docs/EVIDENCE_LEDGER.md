@@ -70,6 +70,22 @@
 | A01 · A12 بصريًا · A15–A18 · نشرة عامة · بيانات حقيقية | **NOT TESTED / غير مُصرَّح** | معاينة مخوّلة · قرار مالك · تصريح منفصل | غير مُسنَد |
 | P1-03/P1-04/P1-05 | **مفتوحة** | لم تُبدأ | غير مُسنَد |
 
+## 7. دفعة S0 — خط الأساس وجرد المصدر (rev `eafdbb4`)
+
+كل ما في هذا القسم **قراءة وجرد وبناء**: لا اختبار متصفح، ولا دورة محفوظة، ولا كتابة بيانات (`writes_performed: 0`). ولا سطر منه يُقرأ على أنه اجتياز G0 أو G1.
+
+| المعرّف | ما نُفِّذ | النتيجة |
+|---|---|---|
+| **E-S0-001** | تثبيت هوية البناء | `git rev-parse --short` → `eafdbb4` · `git log -1 --format=%cI` → `2026-10-05T12:40:49+00:00` · `git status --porcelain` → **0 ملف** (شجرة نظيفة) |
+| **E-S0-002** | بناء الواجهة | `npx vite build` → `status=0` · `dist/` كامل · 108 أصول · 3.5MB |
+| **E-S0-003** | بصمات السياسة (مُعرِّفات نسخ الأدلة) | `authorityKernel 34582b1f…` · `commandGuard 1495412a…` · `transitionClaim b3c6bbfb…` · `decisionIntegrity a3ce3c73…` (`decision-integrity-1.2.0`) · `roundContext af188171…` (`round-context-1.1.0`) · `voteEligibility a181fe9b…` · `committeeAuth 5163c88c…` · `governedReadPolicy 1e754002…` · `fileAccessPolicy e3d7127d…` · `showcaseSession 8f7963e1…` · `capabilityKernel 32948519…` · `recordGovernance 3fc44d6b…` |
+| **E-S0-004** | جرد الوحدات | 87 كيانًا · 119 دالة خادمية · 40 وحدة مشتركة · 3 مسارات عمل · وكيلان · 74 صفحة · 188 مكوّنًا · 6 أسر اختبار (`TestAuthorizationGuard` · `TestDecisionIntegrity` · `TestFileAccessPolicy` · `TestGovernedSurfaces` · `TestShowcaseIsolation` · `TestVoteEligibility`) |
+| **E-S0-005** | جرد المسارات | **96 مسارًا**: 55 داخل مساحة اللجنة (`/o/:orgRef/c/:committeeRef/…`) و39 مسار دخول/عام |
+| **E-S0-006** | جرد الكتابات المباشرة من العميل | **38 موضعًا في 23 ملفًا**؛ منها **27 موضعًا على سجلات محكومة**، مُدرجة ملفًا:سطرًا في `BASELINE_S0.md` §5 |
+| **E-S0-007** | جرد الأتمتة والتكامل | 3 مسارات عمل (اثنان بجدول يومي: `0 7 * * *` و`0 9 * * *`، وثالث بمُشغّل) · موصّلان app-user فقط (Google Calendar «Calender»، Outlook Calendar) · **لا مفتاح بيئة مستخدم في الخادم** (`process.env` غير مُستدعى) |
+| **E-S0-008** | فحص الوصلات المعلنة في الموجز (قراءة مصدر) | **مُثبَت**: اختيار `CastVote` لدورته (D-039) · تعطيل إنشاء القرار بـ`agenda.propose` (D-042) · سلسلة حالة القرار غير القابلة للوصول (D-041) · مطابقة الاسم في الحضور (D-040). **لم يُعَد إنتاجه**: «الحضور الناقص يظهر حاضرًا» في `AttendancePanel` (الافتراضي `absent`) |
+| **E-S0-009** | أول إصلاح آمن (D-042) | `MeetingDetail`: بوابة إنشاء القرار صارت `decision.propose`، والبناء بعد الإصلاح `status=0` — بلا أي تغيير في سلطة الخادم |
+
 ## 6. قائمة التغييرات (للتراجع) — هذه الدفعة
 
 **أُضيف**: `base44/shared/roundContext.ts` · (سابقًا: `IssueSnapshot.jsonc` · `EligibleVoterSnapshot.jsonc` · `decisionIntegrity.ts` · `voteEligibility.ts` · `TestDecisionIntegrity` · `TestVoteEligibility` · `IssuanceIntegrityPanel.jsx` · `LegacyRecordRedirect.jsx` · `richText.js`)
