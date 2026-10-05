@@ -66,13 +66,18 @@ export default function MeetingDetail() {
   const authority = bundle?.authority || [];
   // A control appears only when this seat's own authority permits the action — never merely
   // because the record exists. Exploration executes nothing.
-  const canControlMeeting = !isExploration && authority.includes("meeting.start");
-  const canIssueDecision = !isExploration && authority.includes("decision.issue");
-  const canProposeDecision = !isExploration && authority.includes("agenda.propose");
-  const canAddDecision = canIssueDecision || canProposeDecision;
-  const decisionActionLabel = canIssueDecision
-    ? t("قرار جديد", "New decision")
-    : t("اقتراح مشروع قرار", "Propose a decision draft");
+  // Each control is gated by ITS OWN capability, never by a neighbouring one: a seat that may cancel
+  // a meeting is not thereby given the right to start one, and vice versa. A step with no governed
+  // command (or no permitted transition) is not offered as a browser write.
+  const canStartMeeting = !isExploration && authority.includes("meeting.start");
+  const canAdjournMeeting = !isExploration && authority.includes("meeting.adjourn");
+  const canCancelMeeting = !isExploration && authority.includes("meeting.cancel");
+  const canScheduleMeeting = !isExploration && authority.includes("meeting.schedule");
+  // A decision draft is created by a governed command that requires `agenda.propose`. The chair
+  // baseline carries `decision.propose` but NOT `agenda.propose`, so the mismatch is DECLARED here
+  // instead of being bridged by a browser write — see D-021.
+  const canDraftDecision = !isExploration && authority.includes("agenda.propose");
+  const decisionActionLabel = t("مشروع قرار جديد", "New decision draft");
 
   // This page is mounted on two routes: inside the committee workspace (provider present) and on the
   // legacy flat route /meetings/:id (no provider). The role therefore comes from the committee
@@ -96,11 +101,18 @@ export default function MeetingDetail() {
         cancelled: "CancelMeeting",
       };
       const fn = fnMap[newStatus];
-      if (fn) {
-        await base44.functions.invoke(fn, { meeting_id: id });
-      } else {
-        // "completed" — governed direct update (requires meeting.start capability context)
-        await base44.entities.Meeting.update(id, { status: newStatus });
+      // A step with no governed command is refused HERE, in words: meeting state is never written
+      // from the browser, and nothing about this surface pretends otherwise.
+      if (!fn) {
+        setActionError(t("لا يوجد أمر خادمي محكوم لهذه الخطوة، ولا تُكتب حالة الاجتماع من المتصفح.", "There is no governed server command for this step, and meeting state is never written from the browser."));
+        setStatusUpdating(false);
+        return;
+      }
+      const res = await base44.functions.invoke(fn, { meeting_id: id });
+      if (res?.data?.error) {
+        setActionError(res.data.error);
+        setStatusUpdating(false);
+        return;
       }
       load();
     } catch (e) {
@@ -117,7 +129,8 @@ export default function MeetingDetail() {
       await base44.functions.invoke("GenerateMeetingInstances", { series_master_id: id });
       load();
     } catch (e) {
-      console.error("Generate failed:", e);
+      // A refusal is reported as it is — and a failed generation says so instead of only logging.
+      setActionError(e?.response?.data?.error || t("تعذّر إنشاء النسخ الإضافية من السلسلة.", "Additional series instances could not be generated."));
     }
     setGeneratingInstances(false);
   };
@@ -127,32 +140,22 @@ export default function MeetingDetail() {
     setSavingDecision(true);
     setActionError("");
     try {
-      if (canProposeDecision) {
-        // A member PROPOSES a draft through the governed endpoint. It carries a proposal, not an
-        // issued decision: it becomes one only after review and voting.
-        await base44.functions.invoke("CreateDecisionDraft", {
-          committee_id: meeting.committee_id,
-          meeting_id: id,
-          title: decisionForm.title,
-          proposal: decisionForm.proposal,
-          legal_basis: decisionForm.legal_basis,
-          owner_name: decisionForm.owner_name,
-          deadline: decisionForm.deadline,
-        });
-      } else {
-        const dec = await base44.entities.Decision.create({
-          ...decisionForm,
-          committee_id: meeting.committee_id,
-          meeting_id: id,
-          status: "draft",
-        });
-        await base44.entities.AuditLog.create({
-          action: "create",
-          entity_type: "Decision",
-          entity_id: dec.id,
-          entity_title: decisionForm.title,
-          description: L.pair("إنشاء قرار من الاجتماع", "Decision created from the meeting"),
-        });
+      // ONE path, governed: a draft decision is created by CreateDecisionDraft. The former
+      // browser-side Decision.create fallback — which let a seat write a decision record and its own
+      // audit line straight from the client — is removed (D-021).
+      const res = await base44.functions.invoke("CreateDecisionDraft", {
+        committee_id: meeting.committee_id,
+        meeting_id: id,
+        title: decisionForm.title,
+        proposal: decisionForm.proposal,
+        legal_basis: decisionForm.legal_basis,
+        owner_name: decisionForm.owner_name,
+        deadline: decisionForm.deadline,
+      });
+      if (res?.data?.error) {
+        setActionError(res.data.error);
+        setSavingDecision(false);
+        return;
       }
       setDecisionForm({ title: "", proposal: "", legal_basis: "", owner_name: "", deadline: "" });
       setShowDecisionForm(false);
@@ -221,41 +224,50 @@ export default function MeetingDetail() {
 
         {/* Meeting status controls — each one only for a seat whose authority covers it */}
         <div className="flex items-center gap-2 flex-wrap">
-          {canControlMeeting && <CalendarSyncButton meetingId={id} />}
-          {canControlMeeting && <OutlookSyncButton meetingId={id} />}
-          {canControlMeeting && meeting.is_series_master && (
+          {canScheduleMeeting && <CalendarSyncButton meetingId={id} />}
+          {canScheduleMeeting && <OutlookSyncButton meetingId={id} />}
+          {canScheduleMeeting && meeting.is_series_master && (
             <Button size="sm" variant="outline" onClick={generateMoreInstances} disabled={generatingInstances}>
               {generatingInstances ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
               {t("إنشاء نسخ إضافية", "Generate more instances")}
             </Button>
           )}
-          {canControlMeeting && status === "scheduled" && (
+          {canStartMeeting && status === "scheduled" && (
             <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
               {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("بدء الاجتماع", "Start Meeting")}
             </Button>
           )}
-          {canControlMeeting && status === "in_progress" && (
-            <>
-              <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")} disabled={statusUpdating}>
-                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} {t("تأجيل", "Adjourn")}
-              </Button>
-              <Button size="sm" onClick={() => updateMeetingStatus("completed")} disabled={statusUpdating}>
-                {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Square className="w-3.5 h-3.5" />} {t("إنهاء", "Complete")}
-              </Button>
-            </>
-          )}
-          {canControlMeeting && status === "adjourned" && (
-            <Button size="sm" onClick={() => updateMeetingStatus("in_progress")} disabled={statusUpdating}>
-              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} {t("استئناف", "Resume")}
+          {canAdjournMeeting && status === "in_progress" && (
+            <Button size="sm" variant="secondary" onClick={() => updateMeetingStatus("adjourned")} disabled={statusUpdating}>
+              {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Pause className="w-3.5 h-3.5" />} {t("تأجيل", "Adjourn")}
             </Button>
           )}
-          {canControlMeeting && (status === "scheduled" || status === "in_progress" || status === "adjourned") && (
+          {status === "in_progress" && (
+            <Button size="sm" disabled title={t("لا يوجد أمر خادمي محكوم لإنهاء الاجتماع بعد، ولا تُكتب حالته من المتصفح.", "No governed server command completes a meeting yet, and its state is never written from the browser.")}>
+              <Square className="w-3.5 h-3.5" /> {t("إنهاء", "Complete")}
+            </Button>
+          )}
+          {status === "adjourned" && (
+            <Button size="sm" disabled title={t("بوابة الحالة تسمح ببدء اجتماع في حالة «مجدول» فقط؛ لا استئناف لاجتماع مؤجّل، ولا تُكتب حالته من المتصفح.", "The state gate starts a meeting only while it is 'scheduled'; an adjourned meeting cannot be resumed, and its state is never written from the browser.")}>
+              <Play className="w-3.5 h-3.5" /> {t("استئناف", "Resume")}
+            </Button>
+          )}
+          {canCancelMeeting && (status === "scheduled" || status === "in_progress") && (
             <Button size="sm" variant="destructive" onClick={() => updateMeetingStatus("cancelled")} disabled={statusUpdating}>
               {statusUpdating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Ban className="w-3.5 h-3.5" />} {t("إلغاء", "Cancel")}
             </Button>
           )}
         </div>
       </div>
+
+      {["in_progress", "adjourned"].includes(status) && (
+        <p className="text-xs text-muted-foreground">
+          {t(
+            "الخطوات المعطّلة معلنة بصورتها: إنهاء الاجتماع بلا أمر محكوم · استئناف اجتماع مؤجّل خارج ما تسمح به بوابة الحالة · وفي الحالتين لا تُكتب حالة الاجتماع من المتصفح.",
+            "Unavailable steps are declared as they are: completing a meeting has no governed command · resuming an adjourned one is outside what the state gate permits · in neither case is meeting state written from the browser.",
+          )}
+        </p>
+      )}
 
       {isExploration && <ExplorationNotice />}
 
@@ -278,7 +290,7 @@ export default function MeetingDetail() {
           <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
             <Clock className="w-4 h-4 text-primary" /> {t("جدول الأعمال", "Agenda")}
           </h2>
-          <AgendaManager meetingId={id} items={agendaItems} onChanged={load} />
+          <AgendaManager meetingId={id} committeeId={meeting.committee_id} items={agendaItems} onChanged={load} />
         </div>
 
         {/* Decisions */}
@@ -287,10 +299,18 @@ export default function MeetingDetail() {
             <h2 className="text-sm font-semibold flex items-center gap-2">
               <Gavel className="w-4 h-4 text-primary" /> {t("القرارات", "Decisions")}
             </h2>
-            {canAddDecision && !showDecisionForm && (
+            {canDraftDecision && !showDecisionForm && (
               <button onClick={() => setShowDecisionForm(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                 <Plus className="w-3.5 h-3.5" /> {decisionActionLabel}
               </button>
+            )}
+            {!canDraftDecision && !isExploration && authority.includes("decision.propose") && (
+              <span className="text-xs text-muted-foreground text-right max-w-[18rem]">
+                {t(
+                  "إنشاء مشروع قرار معطّل: لا أمر محكوم يطابق صلاحية مقعدك (الأمر المحكوم يطلب «agenda.propose»)، ولا يُنشأ قرار من المتصفح.",
+                  "Creating a decision draft is disabled: no governed command matches your seat's capability (the command requires 'agenda.propose'), and a decision is never created from the browser.",
+                )}
+              </span>
             )}
           </div>
 

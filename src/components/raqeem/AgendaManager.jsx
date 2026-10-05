@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, X, Lock, ShieldCheck } from "lucide-react";
+import { Plus, Trash2, X, Lock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,10 +9,16 @@ import { AGENDA_ITEM_STATUS, READINESS, CLASSIFICATION } from "@/lib/raqeemUtils
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 
-export default function AgendaManager({ meetingId, items = [], onChanged }) {
+export default function AgendaManager({ meetingId, committeeId, items = [], onChanged }) {
   const { t, lang } = useLanguage();
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
+  // A refusal from a governed command is REPORTED with the server's own reason, never swallowed.
+  const [actionError, setActionError] = useState(null);
+  const reportRefusal = (e, fallbackAr, fallbackEn) => {
+    const serverMsg = e?.data?.error || e?.response?.data?.error || e?.message;
+    setActionError({ ar: serverMsg || fallbackAr, en: serverMsg || fallbackEn });
+  };
   const [form, setForm] = useState({
     title: "",
     objective: "",
@@ -20,7 +26,6 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
     time_allocation_minutes: 15,
     required_decision: "",
     classification: "internal",
-    readiness: "not_ready",
   });
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
@@ -28,64 +33,60 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
   const create = async () => {
     if (!form.title.trim()) return;
     setSaving(true);
+    setActionError(null);
     try {
-      const seq = (items?.length || 0) + 1;
-      // The presenter is written into the ACTIVE language's own field, so a value typed on
-      // an English page can never be stored as the Arabic reading, and vice versa.
+      // Submitted through the GOVERNED command: it derives the committee from the meeting itself,
+      // assigns the sequence and writes the server audit event. Readiness is not chosen here — it is
+      // computed from the item's evidence requirements by the governed evaluation.
       const { presenter, ...rest } = form;
-      await base44.entities.AgendaItem.create({
+      const res = await base44.functions.invoke("SubmitAgendaItem", {
+        committee_id: committeeId,
+        meeting_id: meetingId,
         ...rest,
         [lang === "ar" ? "presenter_ar" : "presenter_en"]: presenter,
-        meeting_id: meetingId,
-        sequence: seq,
-        status: "pending",
       });
-      await base44.entities.AuditLog.create({
-        action: "create",
-        entity_type: "AgendaItem",
-        entity_title: form.title,
-        description: L.pair("إضافة بند جدول أعمال", "Agenda item added"),
-      });
-      setForm({ title: "", objective: "", presenter: "", time_allocation_minutes: 15, required_decision: "", classification: "internal", readiness: "not_ready" });
+      if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر إضافة البند.", "The item could not be submitted."); setSaving(false); return; }
+      setForm({ title: "", objective: "", presenter: "", time_allocation_minutes: 15, required_decision: "", classification: "internal" });
       setShow(false);
       onChanged();
-    } catch {}
+    } catch (e) {
+      reportRefusal(e, "تعذّر إضافة البند: الصلاحية غير كافية أو الخدمة غير متاحة.", "The item could not be submitted: authority insufficient or service unavailable.");
+    }
     setSaving(false);
   };
 
-  const changeStatus = async (itemId, status) => {
-    try {
-      await base44.entities.AgendaItem.update(itemId, { status });
-      await base44.entities.AuditLog.create({
-        action: "status_change",
-        entity_type: "AgendaItem",
-        entity_id: itemId,
-        new_value: status,
-        description: `${L.pair("تغيير حالة بند الجدول إلى", "Agenda item status changed to")} ${L.label(AGENDA_ITEM_STATUS, status, status)}`,
-      });
-      onChanged();
-    } catch {}
+  // An agenda item's status has NO governed command yet. pending → in_discussion → decided /
+  // deferred / withdrawn is a governance act, so it is NOT written from the browser: the controls
+  // below are declared unavailable with their reason (D-022).
+  const changeStatus = () => {
+    setActionError({
+      ar: "تغيير حالة بند الجدول معطّل: لا يوجد أمر خادمي محكوم لهذه الخطوة، ولا تُكتب حالة البند من المتصفح.",
+      en: "Changing an agenda item's status is disabled: no governed server command exists for this step, and item state is never written from the browser.",
+    });
   };
 
-  const updateReadiness = async (itemId, readiness) => {
+  // Readiness is COMPUTED from the item's evidence requirements — the surface asks for the
+  // evaluation instead of asserting the value itself.
+  const evaluateReadiness = async (itemId) => {
+    setActionError(null);
     try {
-      await base44.entities.AgendaItem.update(itemId, { readiness });
-      await base44.entities.AuditLog.create({
-        action: "update",
-        entity_type: "AgendaItem",
-        entity_id: itemId,
-        new_value: readiness,
-        description: `${L.pair("تحديث جاهزية البند إلى", "Item readiness updated to")} ${L.label(READINESS, readiness, readiness)}`,
-      });
+      const res = await base44.functions.invoke("EvaluateAgendaReadiness", { agenda_item_id: itemId });
+      if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر تقييم جاهزية البند.", "Item readiness could not be evaluated."); return; }
       onChanged();
-    } catch {}
+    } catch (e) {
+      reportRefusal(e, "تعذّر تقييم جاهزية البند: الصلاحية غير كافية.", "Item readiness could not be evaluated: insufficient authority.");
+    }
   };
 
   const remove = async (itemId) => {
+    setActionError(null);
     try {
       await base44.entities.AgendaItem.delete(itemId);
       onChanged();
-    } catch {}
+    } catch (e) {
+      // Removal rides on the record's own administrative rule; a refusal says so instead of nothing.
+      reportRefusal(e, "تعذّر حذف البند: الحذف إجراء إداري محكوم بقاعدة السجل.", "The item could not be removed: deletion is an administrative act governed by the record's own rule.");
+    }
   };
 
   const sorted = [...items].sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
@@ -93,6 +94,12 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
 
   return (
     <div className="space-y-3">
+      {actionError && (
+        <div className="rounded-md border border-state-danger-ink/30 bg-state-danger-surface p-2.5 flex items-start gap-2">
+          <AlertTriangle className="w-3.5 h-3.5 text-state-danger-ink shrink-0 mt-0.5" />
+          <p className="text-[11px] text-state-danger-ink">{t(actionError.ar, actionError.en)}</p>
+        </div>
+      )}
       {!show ? (
         <button onClick={() => setShow(true)} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
           <Plus className="w-3.5 h-3.5" /> {t("إضافة بند جدول أعمال", "Add agenda item")}
@@ -116,7 +123,7 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
               <Input value={form.presenter} onChange={(e) => update("presenter", e.target.value)} placeholder={t("اسم المقدم", "Presenter name")} />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs">{t("المدة (دقيقة)", "Duration (min)")}</Label>
               <Input type="number" value={form.time_allocation_minutes} onChange={(e) => update("time_allocation_minutes", parseInt(e.target.value) || 15)} />
@@ -125,14 +132,6 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
               <Label className="text-xs">{t("التصنيف", "Classification")}</Label>
               <select value={form.classification} onChange={(e) => update("classification", e.target.value)} className={selectClass}>
                 {Object.entries(CLASSIFICATION).map(([k, v]) => (
-                  <option key={k} value={k}>{t(v.ar, v.en)}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label className="text-xs">{t("الجاهزية", "Readiness")}</Label>
-              <select value={form.readiness} onChange={(e) => update("readiness", e.target.value)} className={selectClass}>
-                {Object.entries(READINESS).map(([k, v]) => (
                   <option key={k} value={k}>{t(v.ar, v.en)}</option>
                 ))}
               </select>
@@ -180,54 +179,27 @@ export default function AgendaManager({ meetingId, items = [], onChanged }) {
                   <div className="flex items-center gap-2 p-2 rounded-md bg-amber-50 border border-amber-200">
                     <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span className="text-[10px] text-amber-800 font-medium">
-                      {t("بوابة الجاهزية مغلقة — البند غير جاهز للقرار. حدّث الجاهزية إلى «جاهز» لفتح البوابة.", "Readiness gate closed — this item is not ready for decision. Set readiness to Ready to open the gate.")}
+                      {t("بوابة الجاهزية مغلقة — البند غير جاهز للقرار. تُفتح البوابة عندما تُحسب الجاهزية «جاهز» من متطلبات الأدلة.", "Readiness gate closed — this item is not ready for decision. The gate opens when the readiness evaluation computes 'Ready' from the evidence requirements.")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                    <span className="text-[10px] text-muted-foreground">{t("تحديث الجاهزية:", "Update readiness:")}</span>
-                    {Object.entries(READINESS).map(([k, v]) => (
-                      <button
-                        key={k}
-                        onClick={() => updateReadiness(item.id, k)}
-                        className={`text-[10px] px-2 py-1 rounded border ${item.readiness === k ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-secondary"}`}
-                      >
-                        {t(v.ar, v.en)}
-                      </button>
-                    ))}
+                    <span className="text-[10px] text-muted-foreground">
+                      {t("الجاهزية محسوبة من متطلبات الأدلة، لا مُختارة يدويًا.", "Readiness is computed from the evidence requirements, never asserted by hand.")}
+                    </span>
+                    <button onClick={() => evaluateReadiness(item.id)} className="text-[10px] px-2 py-1 rounded border border-primary text-primary hover:bg-primary/5">
+                      {t("تقييم الجاهزية", "Evaluate readiness")}
+                    </button>
                   </div>
                 </div>
               )}
 
               {item.status !== "decided" && item.status !== "withdrawn" && (
-                <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border flex-wrap">
-                  {item.status === "pending" && (
-                    <button onClick={() => changeStatus(item.id, "in_discussion")} className="text-[10px] px-2 py-1 rounded bg-state-progress-surface text-state-progress-ink hover:bg-state-progress-surface/70">
-                      {t("بدء المناقشة", "Start discussion")}
-                    </button>
+                <p className="mt-2 pt-2 border-t border-border text-[10px] text-muted-foreground">
+                  {t(
+                    "بدء المناقشة · تم القرار · التأجيل · السحب: معطّلة لأن لا أمر خادمي محكوم لها بعد، ولا تُكتب حالة البند من المتصفح.",
+                    "Start discussion · Decided · Defer · Withdraw: disabled because no governed server command exists for them yet, and item state is never written from the browser.",
                   )}
-                  {item.status === "in_discussion" && (
-                    <>
-                      <button
-                        onClick={() => changeStatus(item.id, "decided")}
-                        disabled={item.readiness !== "ready"}
-                        className={`text-[10px] px-2 py-1 rounded inline-flex items-center gap-1 ${
-                          item.readiness === "ready"
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-secondary text-muted-foreground/50 cursor-not-allowed"
-                        }`}
-                      >
-                        {item.readiness === "ready" ? <ShieldCheck className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                        {t("تم القرار", "Decided")}
-                      </button>
-                      <button onClick={() => changeStatus(item.id, "deferred")} className="text-[10px] px-2 py-1 rounded bg-amber-50 text-amber-700 hover:bg-amber-100">
-                        {t("تأجيل", "Defer")}
-                      </button>
-                    </>
-                  )}
-                  <button onClick={() => changeStatus(item.id, "withdrawn")} className="text-[10px] px-2 py-1 rounded bg-red-50 text-destructive hover:bg-red-100">
-                    {t("سحب", "Withdraw")}
-                  </button>
-                </div>
+                </p>
               )}
             </div>
             );

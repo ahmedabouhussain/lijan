@@ -28,15 +28,15 @@
 |---|---|---|---|
 | 1 | سلامة الإصدار (P0-01) + تصنيف P0-02 + إصلاح لوحة القرار | مُنفَّذة · 20/20 + 12/12 على الخادم | E-A07-DI · E-A06-EL · E-BUILD-002 |
 | 2 | إغلاق D-013: الهيئة الناخبة كسجل مجمّد يُقنَّن به الصوت والإصدار | **مُنفَّذة هذه الدفعة** | E-A06-FREEZE-001 · E-A06-EL-011 · E-A07-DI-019/020 · E-A06-REFUSE-002/003 · E-BUILD-003 |
-| 3 | تصنيف بقية الأزرار المحكومة (الاجتماعات · المحاضر · المستندات) بالنمط نفسه | **جزئية هذه الدفعة**: لوحة المحضر كاملة (D-018/019/020) · المتبقي: الاجتماعات والمستندات والأجندة والإعدادات | E-D002-INV-001 · E-A12-REG-002/003/004 · E-BUILD-004 |
+| 3 | تصنيف بقية الأزرار المحكومة (الاجتماعات · المحاضر · المستندات) بالنمط نفسه | **جزئية هذه الدفعة**: المحاضر · الاجتماعات · الأجندة (D-018…D-024) · المتبقي: المستندات · إعدادات اللجنة · مركز التقارير | E-D002-INV-001 · E-A12-REG-002…006 · E-BUILD-004/005 |
 | 4 | P1-03 (الأسماء والأنواع والطوابير) · P1-04 (عدسة المراجع) · P1-05 (منشأ البيانات) | تالية | — |
 
 ### جرد الكتابات المحكومة من الواجهة (E-D002-INV-001 — من المصدر لا من الواجهة)
 | السطح | ما كان يُكتب من المتصفح | الأمر المحكوم المتاح | الحالة |
 |---|---|---|---|
 | `MinutesManager` | حالة المحضر · الاعتماد · التوقيع · الحضور · سجل تدقيق · نص المحضر | `CertifyAttendance` · `SignRecord` · `ApproveMinutes` | **مُحوَّل** (المحتوى فقط بلا أمر مقعدي) |
-| `MeetingDetail` | `Meeting.update` · `Decision.create` | `StartMeeting` · `AdjournMeeting` · `CancelMeeting` · `CreateDecisionDraft` | متبقٍّ |
-| `AgendaManager` | `AgendaItem.update` · `AuditLog.create` | `SubmitAgendaItem` · `EvaluateAgendaReadiness` | متبقٍّ |
+| `MeetingDetail` | — (صفر كتابة محكومة من المتصفح بعد الدفعة) | `StartMeeting` · `AdjournMeeting` · `CancelMeeting` · `CreateDecisionDraft` · `GenerateMeetingInstances` | **مُحوَّل** (D-021) |
+| `AgendaManager` | `AgendaItem.delete` فقط — إداري بقاعدة السجل | `SubmitAgendaItem` · `EvaluateAgendaReadiness` | **مُحوَّل** (D-022 · D-024) |
 | `DecisionDocuments` | `Document.update` | `SubmitCommitteeRecord` · `PublishCommitteeRecord` | متبقٍّ |
 | `CommitteeSettings` · `CommitteeMandate` · `CommitteeGovernanceRules` | `Committee.update` | `TransitionCommitteeStatus` · `RenewCommittee` · `UpdateCommitteeFormation` | متبقٍّ |
 | `ReportCenter` · `lib/documentEngine` | `ProductInstance.update` | `GenerateProduct` · `VerifyProductInstance` | متبقٍّ |
