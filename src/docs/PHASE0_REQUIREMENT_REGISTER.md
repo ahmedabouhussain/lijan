@@ -28,8 +28,19 @@
 |---|---|---|---|
 | 1 | سلامة الإصدار (P0-01) + تصنيف P0-02 + إصلاح لوحة القرار | مُنفَّذة · 20/20 + 12/12 على الخادم | E-A07-DI · E-A06-EL · E-BUILD-002 |
 | 2 | إغلاق D-013: الهيئة الناخبة كسجل مجمّد يُقنَّن به الصوت والإصدار | **مُنفَّذة هذه الدفعة** | E-A06-FREEZE-001 · E-A06-EL-011 · E-A07-DI-019/020 · E-A06-REFUSE-002/003 · E-BUILD-003 |
-| 3 | تصنيف بقية الأزرار المحكومة (الاجتماعات · المحاضر · المستندات) بالنمط نفسه | تالية | — |
+| 3 | تصنيف بقية الأزرار المحكومة (الاجتماعات · المحاضر · المستندات) بالنمط نفسه | **جزئية هذه الدفعة**: لوحة المحضر كاملة (D-018/019/020) · المتبقي: الاجتماعات والمستندات والأجندة والإعدادات | E-D002-INV-001 · E-A12-REG-002/003/004 · E-BUILD-004 |
 | 4 | P1-03 (الأسماء والأنواع والطوابير) · P1-04 (عدسة المراجع) · P1-05 (منشأ البيانات) | تالية | — |
+
+### جرد الكتابات المحكومة من الواجهة (E-D002-INV-001 — من المصدر لا من الواجهة)
+| السطح | ما كان يُكتب من المتصفح | الأمر المحكوم المتاح | الحالة |
+|---|---|---|---|
+| `MinutesManager` | حالة المحضر · الاعتماد · التوقيع · الحضور · سجل تدقيق · نص المحضر | `CertifyAttendance` · `SignRecord` · `ApproveMinutes` | **مُحوَّل** (المحتوى فقط بلا أمر مقعدي) |
+| `MeetingDetail` | `Meeting.update` · `Decision.create` | `StartMeeting` · `AdjournMeeting` · `CancelMeeting` · `CreateDecisionDraft` | متبقٍّ |
+| `AgendaManager` | `AgendaItem.update` · `AuditLog.create` | `SubmitAgendaItem` · `EvaluateAgendaReadiness` | متبقٍّ |
+| `DecisionDocuments` | `Document.update` | `SubmitCommitteeRecord` · `PublishCommitteeRecord` | متبقٍّ |
+| `CommitteeSettings` · `CommitteeMandate` · `CommitteeGovernanceRules` | `Committee.update` | `TransitionCommitteeStatus` · `RenewCommittee` · `UpdateCommitteeFormation` | متبقٍّ |
+| `ReportCenter` · `lib/documentEngine` | `ProductInstance.update` | `GenerateProduct` · `VerifyProductInstance` | متبقٍّ |
+| إشعارات وتكوين (`NotificationOutbox` · `NotificationTemplate` · `NotificationPreference` · `OrganizationAsset` · `OrganizationMembership`) | إدارة تكوين ومطالعة | لا أوامر لجنة لهذه الأسطح | خارج نواة اللجنة — تُصنَّف كتابة تكوين لا حكم |
 
 **أثر بيانات الشريحة 2**: كيان جديد واحد (`EligibleVoterSnapshot`) يُكتب **فقط** عند فتح تصويت — لا كتابة على أي سجل قائم، ولا إعادة بذر، ولا حذف. `CastVote` صار يرفض بصوت بلا دورة مجمّدة (D-017)، و`IssueDecision` يسمّي أساس هيئته صريحًا.
 

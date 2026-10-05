@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Send, Edit3, Save, X, UserCheck, PenLine, AlertTriangle } from "lucide-react";
+import { FileText, Sparkles, Edit3, Save, X, UserCheck, PenLine, AlertTriangle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import SecureFileImage from "@/components/raqeem/SecureFileImage";
