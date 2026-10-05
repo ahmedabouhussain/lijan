@@ -9,7 +9,8 @@ import {
   refusalBody,
   refusalStatus,
 } from '../../shared/governedReadPolicy.ts';
-import { evaluateIssuanceReadiness, issuanceVerdict } from '../../shared/decisionIntegrity.ts';
+import { evaluateIssuanceReadiness, issuanceVerdict, verifyStoredManifest } from '../../shared/decisionIntegrity.ts';
+import { loadRoundContext } from '../../shared/roundContext.ts';
 
 // GetCommitteeRecord — the SINGLE governed read path for a committee record's detail surface.
 //
@@ -110,27 +111,48 @@ async function loadRelated(sr: any, entityType: string, record: any, committee: 
 // over contradictory evidence (P0-01). The verdict is computed in the same scope as the record and
 // returned alongside it; the surface shows it, and the contradiction is never relabelled away.
 async function decisionIntegrity(sr: any, record: any, committee: any) {
-  const [memberships, recusals, attendance, snapshots, votes, signatures] = await Promise.all([
-    sr.entities.CommitteeMembership.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
-    sr.entities.Recusal.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
+  // The ELECTORATE, the recusals and the ballots are read through the ROUND context, so this read
+  // reconstructs the package from the seats that were FROZEN at the event time — rechecking today's
+  // authority must never rewrite the historical electorate (5 Oct review). A decision with no frozen
+  // round is reported as such; it is not re-derived "live" and presented as equivalent.
+  const [attendance, snapshots, signatures, roundCtx] = await Promise.all([
     record.meeting_id ? sr.entities.Attendance.filter({ meeting_id: record.meeting_id }).catch(() => []) : Promise.resolve([]),
     sr.entities.IssueSnapshot.filter({ decision_id: record.id }, { sort: '-created_date', limit: 1 }).catch(() => []),
-    sr.entities.Vote.filter({ decision_id: record.id }).catch(() => []),
     sr.entities.Signature.filter({ document_type: 'Decision', document_id: record.id, status: 'active' }).catch(() => []),
+    loadRoundContext(sr, { decision_id: record.id, committee_id: committee.id }),
   ]);
   const stored = arr(snapshots)[0] || null;
   const readiness = evaluateIssuanceReadiness({
-    decision: record, committee, memberships, recusals, votes: arr(votes), attendance: arr(attendance),
-    signatures: arr(signatures), proof_links: [record.legal_basis],
+    decision: record, committee,
+    memberships: roundCtx.memberships,
+    recusals: roundCtx.recusals,
+    votes: roundCtx.ballots,
+    attendance: arr(attendance), signatures: arr(signatures), proof_links: [record.legal_basis],
+    now: roundCtx.as_of || undefined,
   });
-  const verdict = issuanceVerdict({ decision: record, stored, recomputed: readiness });
+  // A stored package is verified against its own digest on EVERY read, not compared with itself.
+  const manifest_check = await verifyStoredManifest(stored);
+  const verdict = issuanceVerdict({ decision: record, stored, recomputed: readiness, manifest_check });
   return {
     ...verdict,
+    round: roundCtx.round
+      ? {
+        id: roundCtx.round.id,
+        round: roundCtx.round.round || 1,
+        frozen_on: roundCtx.round.frozen_on || null,
+        eligibility_policy_version: roundCtx.round.eligibility_policy_version || null,
+        proposal_version: roundCtx.round.proposal_version || null,
+        frozen_seat_count: (roundCtx.round.eligible_seat_ids || []).length,
+      }
+      : null,
+    electorate_basis: roundCtx.basis,
+    manifest_verification: manifest_check,
     readiness: { ready: readiness.ready, blockers: readiness.blockers, completeness: readiness.completeness },
     facts: {
       electorate_size: readiness.electorate.size,
       accepted_ballot_count: readiness.ballots.accepted_count,
       rejected_ballot_count: readiness.ballots.ineligible.length + readiness.ballots.duplicates.length + readiness.ballots.malformed.length,
+      ballots_out_of_round: roundCtx.out_of_round_votes.length,
       tally: readiness.ballots.tally,
       quorum: readiness.quorum,
       signatures: readiness.signatures,

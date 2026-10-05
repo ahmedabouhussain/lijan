@@ -77,19 +77,28 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
   // Attendance is CERTIFIED through the governed command, not written row by row from the browser.
   // The command requires the seat id on every record, derives the committee from the meeting itself
   // and writes the server audit event; the whole set is sent so certification is ONE act.
+  //
+  // DEFECT CORRECTED (5 Oct review): every member with no recorded status was submitted as 'present',
+  // so changing one attendee fabricated a full quorum out of silence. Only seats with an EXPLICIT
+  // status are submitted; an unrecorded seat stays UNKNOWN until it is certified, and unknown
+  // attendance never counts toward quorum.
   const setAttendance = async (memberId, status) => {
     setActionError(null);
-    const records = members.map((m) => {
-      const rec = attendance.find((a) => a.member_id === m.id);
-      return {
-        member_id: m.id,
-        member_user_id: m.user_id || null,
-        member_name: L.name(m, "full_name"),
-        member_role: m.role || "member",
-        attendance_status: m.id === memberId ? status : (rec?.attendance_status || "present"),
-        arrival_time: rec?.arrival_time || null,
-      };
-    });
+    const records = members
+      .map((m) => {
+        const rec = attendance.find((a) => a.member_id === m.id);
+        const decided = m.id === memberId ? status : rec?.attendance_status;
+        if (!decided) return null;
+        return {
+          member_id: m.id,
+          member_user_id: m.user_id || null,
+          member_name: L.name(m, "full_name"),
+          member_role: m.role || "member",
+          attendance_status: decided,
+          arrival_time: rec?.arrival_time || null,
+        };
+      })
+      .filter(Boolean);
     try {
       const res = await base44.functions.invoke("CertifyAttendance", { meeting_id: meeting.id, attendance_records: records });
       if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر تثبيت الحضور.", "Attendance could not be certified."); return; }
@@ -99,7 +108,15 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
     }
   };
 
-  const presentCount = attendance.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
+  // Distinct SEATS marked present or late: a duplicated row for one seat must not inflate the figure
+  // the panel shows. The authoritative quorum figure is computed server-side when attendance is
+  // certified, over distinct eligible voting seats.
+  const presentCount = new Set(
+    attendance
+      .filter((a) => a.attendance_status === "present" || a.attendance_status === "late")
+      .map((a) => a.member_id)
+      .filter(Boolean),
+  ).size;
   const quorumMet = presentCount >= (meeting.quorum_required || 3);
 
   // The meeting record is the authority for the date. A draft that disagrees with it is not a

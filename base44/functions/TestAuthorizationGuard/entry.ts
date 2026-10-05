@@ -52,6 +52,19 @@ const ROLE_CASES = [
   { id: 'AUTH-028', role: null, capability: 'read', delegation: false, expect: false, note: 'no seat means no authority' },
   { id: 'AUTH-029', role: 'chair', capability: 'decision.issue', delegation: false, isPlatformAdmin: true, expect: false, note: 'is_admin is NOT operational authority' },
   { id: 'AUTH-030', role: null, capability: 'audit.read', delegation: false, isPlatformAdmin: true, expect: true, note: 'administration keeps a read-only ceiling' },
+  // ── Grant NARROWING (defect corrected in authz-1.2.0-rc.2) ─────────────────
+  // The narrowing branch used to require the capability to be ABSENT from the role as well, which the
+  // preceding branch had already returned on — so the branch was unreachable and a populated
+  // permitted_actions list narrowed nothing. These four cases are the ones that fail if it regresses.
+  { id: 'AUTH-031', role: 'chair', capability: 'decision.issue', delegation: false, grant: { permitted_actions: ['read', 'decision.vote'], denied_actions: [], record_state: 'in_validity', conflict_status: 'none' }, expect: false, expectCode: 'not_in_grant', note: 'a ROLE-held right OUTSIDE a nonempty allow-list is refused' },
+  { id: 'AUTH-032', role: 'chair', capability: 'decision.issue', delegation: false, grant: { permitted_actions: ['decision.issue'], denied_actions: [], record_state: 'in_validity', conflict_status: 'none' }, expect: true, note: 'an action LISTED in the allow-list is allowed' },
+  { id: 'AUTH-033', role: 'chair', capability: 'decision.issue', delegation: false, grant: { permitted_actions: ['decision.issue'], denied_actions: ['decision.issue'], record_state: 'in_validity', conflict_status: 'none' }, expect: false, expectCode: 'grant_denied', note: 'explicit denial wins over the same action being listed' },
+  { id: 'AUTH-034', role: 'vice_chair', capability: 'meeting.start', delegation: true, grant: { permitted_actions: ['decision.propose'], denied_actions: [], record_state: 'in_validity', conflict_status: 'none' }, expect: false, expectCode: 'not_in_grant', note: 'narrowing applies to a DELEGATED baseline too' },
+  { id: 'AUTH-035', role: 'chair', capability: 'decision.issue', delegation: false, grant: { permitted_actions: ['decision.issue'], record_state: 'out_of_validity', conflict_status: 'none' }, expect: false, expectCode: 'grant_out_of_validity', note: 'EXPIRY still applies with a populated allow-list' },
+  { id: 'AUTH-036', role: 'chair', capability: 'decision.issue', delegation: false, grant: { permitted_actions: ['decision.issue'], record_state: 'in_validity', conflict_status: 'declared' }, expect: false, expectCode: 'conflict_declared', note: 'a declared conflict (revocation) still removes the seat' },
+  // ── D-023 alignment: the NARROW decision-proposal contract ─────────────────
+  { id: 'AUTH-037', role: 'chair', capability: 'decision.propose', delegation: false, expect: true, note: 'the chair HOLDS decision.propose (the right the draft command now requires)' },
+  { id: 'AUTH-038', role: 'secretary', capability: 'decision.propose', delegation: false, expect: false, note: 'preparation is not proposal: the secretary does NOT propose a decision' },
 ];
 
 // ── Isolated data-layer stub (no real record is read; no write can land) ────
@@ -141,6 +154,12 @@ const POSITIVE_CASES = [
   { id: 'POS-012', label: 'vice-chair starts a meeting under an ACTIVE delegation', role: 'vice_chair', expect: true,
     opts: { capability: 'meeting.start', target_type: 'Meeting', target_id: 'MTG-T1' },
     records: () => baseRecords('vice_chair', { Meeting: { 'MTG-T1': MEETING }, [`Delegation!filter`]: [{ id: 'DEL-T1', committee_id: COM, to_user_id: USER.id, status: 'active' }] }) },
+  { id: 'POS-013', label: 'chair proposes a decision draft — through decision.propose, NOT agenda.propose (D-023)', role: 'chair', expect: true,
+    opts: { capability: 'decision.propose', target_type: 'Committee', target_id: COM, mode: 'create' },
+    records: () => baseRecords('chair') },
+  { id: 'POS-014', label: 'member proposes a decision draft (members hold decision.propose)', role: 'member', expect: true,
+    opts: { capability: 'decision.propose', target_type: 'Committee', target_id: COM, mode: 'create' },
+    records: () => baseRecords('member') },
 ];
 
 // ── Suite 3 · Fail-Closed Tests (a fact that cannot be read is not an absent fact) ─
@@ -217,7 +236,9 @@ export default async function (req) {
       return {
         test_id: c.id, suite: 'Authority Role Tests', actor_role: c.role, operation: c.capability,
         delegation: !!c.delegation, recusal: !!c.recusal, grant: c.grant ? c.grant.record_state : null,
-        expected: c.expect, actual: verdict.allowed, passed: verdict.allowed === c.expect,
+        expected: c.expect, actual: verdict.allowed,
+        passed: verdict.allowed === c.expect && (!c.expectCode || verdict.code === c.expectCode),
+        expected_code: c.expectCode || null,
         code: verdict.code || null, cap_source: verdict.cap_source || null, note: c.note,
       };
     });

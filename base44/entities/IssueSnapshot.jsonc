@@ -20,7 +20,7 @@
     },
     "snapshot_version": {
       "type": "number",
-      "title": "Snapshot Version (1 = first issuance; a correction links to the record it corrects)",
+      "title": "Snapshot Version (1 = first issuance; a CORRECTION is a NEW linked record, never an edit)",
       "default": 1
     },
     "corrects_snapshot_id": {
@@ -33,7 +33,7 @@
     },
     "proposal_version": {
       "type": "string",
-      "title": "Frozen Proposal Version"
+      "title": "Frozen Proposal Version (the round's own proposal version)"
     },
     "material_version": {
       "type": "string",
@@ -45,7 +45,7 @@
     },
     "integrity_policy_version": {
       "type": "string",
-      "title": "Integrity Policy Version in Force"
+      "title": "Integrity Policy Version in Force (a change to the evaluator invalidates earlier evidence)"
     },
     "authority_policy_version": {
       "type": "string",
@@ -61,7 +61,7 @@
     },
     "quorum_present": {
       "type": "number",
-      "title": "Quorum Present"
+      "title": "Quorum Present (distinct eligible voting seats, not attendance rows)"
     },
     "quorum_met": {
       "type": "boolean",
@@ -83,7 +83,7 @@
     },
     "electorate_size": {
       "type": "number",
-      "title": "Eligible Electorate Size"
+      "title": "Eligible Electorate Size (as frozen in the round, not as the register stands today)"
     },
     "electorate_basis": {
       "type": "string",
@@ -119,7 +119,7 @@
       "items": {
         "type": "string"
       },
-      "title": "Rejected Ballots (ineligible / duplicate / malformed, with the reason)"
+      "title": "Rejected Ballots (ineligible / duplicate / malformed / out_of_round, with the reason)"
     },
     "tally_for": {
       "type": "number",
@@ -160,11 +160,11 @@
     },
     "evidence_manifest": {
       "type": "string",
-      "title": "Evidence Manifest (canonical JSON of the frozen package)"
+      "title": "Evidence Manifest (canonical JSON of the frozen package; verified against manifest_sha256 on every read)"
     },
     "manifest_sha256": {
       "type": "string",
-      "title": "Manifest Digest (deterministic content fingerprint \u2014 a digest, not proof of legal validity)"
+      "title": "Manifest Digest (deterministic content fingerprint, verified by RE-HASHING the stored manifest \u2014 a digest, not proof of legal validity or trusted time)"
     },
     "assurance_level": {
       "type": "string",
@@ -185,7 +185,7 @@
     },
     "issued_at": {
       "type": "string",
-      "title": "Server Issued At",
+      "title": "Server Issued At (server clock \u2014 not an independent trusted timestamp)",
       "format": "date-time"
     },
     "source_meeting_id": {
@@ -237,12 +237,12 @@
     },
     "update": {
       "user_condition": {
-        "role": "admin"
+        "role": "__append_only_no_writer__"
       }
     },
     "delete": {
       "user_condition": {
-        "role": "admin"
+        "role": "__append_only_no_writer__"
       }
     }
   }

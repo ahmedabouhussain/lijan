@@ -2,6 +2,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 
+const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
+
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
   try {
@@ -61,11 +63,47 @@ export default async function(req) {
       }, { status: 403 });
     }
 
+    // Identity and replay (defect corrected, 5 Oct review): the claim key was
+    // `vote.cast:<decision>:<user>` — it omitted the ROUND and the SEAT, so a legitimate LATER round
+    // could not be voted in at all, while two seats held by one person collided on the same key. The
+    // key is now bound to (decision, round, seat): a new round is a new claim, and a repeated vote in
+    // the same round is refused on the seat's own identity.
+    //
+    // The two reads below are COURTESY refusals with a precise reason — they show the duplicate to the
+    // person instead of dropping it silently. The authoritative controls stay the claim (concurrency)
+    // and ballot reconciliation at issuance, where a seat or person counted twice is a BLOCKER.
+    const roundVotes = arr(await base44.asServiceRole.entities.Vote
+      .filter({ decision_id, eligible_voter_snapshot_id: round.id }).catch(() => []));
+    if (roundVotes.some((v) => v.voter_user_id === auth.user.id)) {
+      return Response.json({
+        error: 'This person has already voted in this round',
+        code: 'already_voted_in_round',
+        message: {
+          ar: 'سُجّل صوت لهذا الشخص في هذه الدورة بالفعل؛ لا يُسجَّل صوت ثانٍ، ويشمل ذلك الجمع بين مقعد أصيل ومقعد بديل.',
+          en: 'A ballot for this person is already recorded in this round; no second ballot is recorded. This includes holding a principal seat and an alternate seat.',
+        },
+        round: round.round || 1,
+      }, { status: 409 });
+    }
+    const seatTaken = roundVotes.find((v) => v.voter_membership_id === seatId);
+    if (seatTaken) {
+      return Response.json({
+        error: 'This seat has already voted in this round',
+        code: 'seat_already_voted',
+        message: {
+          ar: 'سجّل هذا المقعد صوته في هذه الدورة؛ لا يُسجَّل صوت ثانٍ للمقعد نفسه.',
+          en: 'This seat has already voted in this round; no second ballot is recorded for the same seat.',
+        },
+        round: round.round || 1,
+        voted_at: seatTaken.voted_at || null,
+      }, { status: 409 });
+    }
+
     // Exclusivity on the VOTE transition. Two simultaneous votes from one seat both pass a
     // read-then-write duplicate check, so the right to vote is CLAIMED first: exactly one claim wins,
     // every later claim on the same key is refused, and no second material vote is ever written.
     const claim = await claimTransition(base44, {
-      key: `vote.cast:${decision_id}:${auth.user.id}`,
+      key: `vote.cast:${decision_id}:${round.id}:${seatId}`,
       command: 'CastVote',
       entity_type: 'Decision',
       entity_id: decision_id,

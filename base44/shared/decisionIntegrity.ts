@@ -16,9 +16,16 @@
 // legal validity, trusted time or independently verified tamper resistance, and the assurance it
 // carries is reported alongside it rather than implied.
 //
-// POLICY VERSION: decision-integrity-1.0.0 (security material — a change invalidates prior evidence).
+// POLICY VERSION: decision-integrity-1.1.0 (security material — a change invalidates prior evidence).
+// 1.1.0 (5 Oct 2026): two corrections, both reported in the 5 October review.
+//   • QUORUM is counted over DISTINCT ELIGIBLE VOTING SEATS, not over attendance rows: a duplicated
+//     row for one seat can no longer inflate it, and a present observer or advisor — who holds no
+//     vote — no longer makes a quorum. Rows that were ignored are named with their reason.
+//   • A stored evidence_manifest is VERIFIED against its own manifest_sha256 (verifyStoredManifest).
+//     The previous comparison in issuanceVerdict was a no-op, so an altered package still read as
+//     intact. Evidence produced under 1.0.0 is INVALIDATED and must be re-run against 1.1.0.
 
-export const INTEGRITY_POLICY_VERSION = "decision-integrity-1.0.0";
+export const INTEGRITY_POLICY_VERSION = "decision-integrity-1.1.0";
 
 /** The mandatory items of an issuance package. `satisfied_when` is evaluated, never assumed. */
 export const ISSUANCE_REQUIREMENTS = [
@@ -103,6 +110,36 @@ export function reconcileBallots({ votes = [], seats = [] } = {}) {
 }
 
 /**
+ * The seats PRESENT, counted as evidence rather than as rows: only a DISTINCT seat that is an
+ * eligible voting seat of the electorate counts toward quorum. So
+ *   • a second row for the same seat (double entry, a corrected row not replaced) is IGNORED;
+ *   • an observer or advisor — present, but not in the electorate and holding no vote — is IGNORED;
+ *   • a present row with no seat identity is IGNORED, because it cannot be attributed to anyone.
+ * Every ignored row is returned with its reason, so a quorum figure is always accounted for.
+ */
+export function presentSeats({ attendance = [], seats = [] }: { attendance?: any[]; seats?: any[] } = {}) {
+  const eligible = new Set((seats || []).map((s) => s.seat_id));
+  const seen = new Set();
+  const seat_ids = [];
+  const ignored = [];
+  for (const a of attendance || []) {
+    if (!["present", "late"].includes(a.attendance_status)) continue;
+    const seat = a.member_id || null;
+    if (!seat) { ignored.push({ row_id: a.id || null, reason: "no_seat_identity" }); continue; }
+    if (!eligible.has(seat)) { ignored.push({ seat_id: seat, reason: "not_an_eligible_voting_seat" }); continue; }
+    if (seen.has(seat)) { ignored.push({ seat_id: seat, reason: "duplicate_row_for_one_seat" }); continue; }
+    seen.add(seat);
+    seat_ids.push(seat);
+  }
+  return {
+    count: seat_ids.length,
+    seat_ids,
+    ignored,
+    basis: "distinct eligible voting seats marked present or late; duplicate rows collapse and non-voting seats do not count",
+  };
+}
+
+/**
  * Whether signatures are required is POLICY, read from the committee/mandate. An explicit
  * 'not_required' is recorded as such; anything else is treated as REQUIRED but unmet until
  * evidence exists — missing data is never read as permission.
@@ -147,8 +184,9 @@ export function evaluateIssuanceReadiness({
   const electorate = eligibleSeats({ memberships, recusals, asOf });
   const ballots = reconcileBallots({ votes, seats: electorate.seats });
   const quorumRequired = Number(committee.quorum_count || decision.quorum_required || 0) || 0;
-  const presentCount = (attendance || []).filter((a) => ["present", "late"].includes(a.attendance_status)).length;
-  const quorumMet = quorumRequired > 0 ? presentCount >= quorumRequired : (attendance || []).length > 0;
+  const present = presentSeats({ attendance, seats: electorate.seats });
+  const presentCount = present.count;
+  const quorumMet = quorumRequired > 0 ? presentCount >= quorumRequired : present.count > 0;
   const threshold = thresholdFor(committee.voting_rule, ballots.cast, electorate.size);
   const sig = signatureRequirement({ committee, signatures });
 
@@ -210,7 +248,11 @@ export function evaluateIssuanceReadiness({
     decision_number: decision.decision_number || null,
     proposal_digest_source: { proposal: decision.proposal || null, proposal_en: decision.proposal_en || null, legal_basis: decision.legal_basis || null },
     voting_rule: committee.voting_rule || null,
-    quorum: { required: quorumRequired, present: presentCount, met: quorumMet },
+    quorum: {
+      required: quorumRequired, present: presentCount, met: quorumMet,
+      present_seats: present.seat_ids.slice().sort(),
+      ignored_attendance_rows: present.ignored.length,
+    },
     electorate: { size: electorate.size, seat_ids: electorate.seats.map((s) => s.seat_id).sort(), excluded: electorate.excluded },
     ballots: { accepted: ballots.accepted.map((b) => ({ seat: b.seat_id, choice: b.choice, method: b.method })).sort((a, b) => String(a.seat).localeCompare(String(b.seat))), tally: ballots.tally, excluded_count: ballots.ineligible.length + ballots.duplicates.length + ballots.malformed.length },
     threshold,
@@ -228,7 +270,7 @@ export function evaluateIssuanceReadiness({
     completeness,
     electorate,
     ballots,
-    quorum: { required: quorumRequired, present: presentCount, met: quorumMet },
+    quorum: { required: quorumRequired, present: presentCount, met: quorumMet, seats_present: present.seat_ids, ignored_rows: present.ignored, basis: present.basis },
     threshold,
     signatures: sig,
     manifest_input,
@@ -265,21 +307,61 @@ export const ASSURANCE = {
  * read of an issued decision so a clean badge can never sit over contradictory evidence, and so the
  * contradiction is SHOWN rather than relabelled away.
  */
-export function issuanceVerdict({ decision = {}, stored = null, recomputed }: { decision?: any; stored?: any; recomputed: any }) {
+export async function verifyStoredManifest(stored: any) {
+  if (!stored) return { verified: false, code: "no_snapshot", computed: null, declared: null };
+  const declared = nonEmpty(stored.manifest_sha256) ? stored.manifest_sha256 : null;
+  const manifest = nonEmpty(stored.evidence_manifest) ? stored.evidence_manifest : null;
+  if (!manifest) return { verified: false, code: "manifest_missing", computed: null, declared };
+  if (!declared) return { verified: false, code: "digest_missing", computed: null, declared: null };
+  // The stored manifest is re-canonicalised before hashing, so a manifest that is merely re-ordered
+  // still verifies while any change of CONTENT does not. Verification is recomputation, never a
+  // comparison of a value with itself.
+  let canonical = manifest;
+  try { canonical = canonicalManifest(JSON.parse(manifest)); } catch { canonical = manifest; }
+  const computed = await manifestDigest(canonical);
+  return {
+    verified: computed === declared,
+    code: computed === declared ? null : "manifest_digest_mismatch",
+    computed,
+    declared,
+    basis: "the stored evidence_manifest is re-canonicalised and re-hashed; the result is compared with the stored manifest_sha256",
+  };
+}
+
+/**
+ * What a READER is allowed to conclude about a record that presents as issued. This runs on every
+ * read of an issued decision so a clean badge can never sit over contradictory evidence, and so the
+ * contradiction is SHOWN rather than relabelled away.
+ *
+ * `manifest_check` is the result of verifyStoredManifest (async, because hashing is). When it is
+ * absent the package is reported as unverified rather than assumed intact.
+ */
+export function issuanceVerdict({ decision = {}, stored = null, recomputed, manifest_check = null }: { decision?: any; stored?: any; recomputed: any; manifest_check?: any }) {
   if (!["issued", "executing", "effective", "in_force"].includes(decision.status)) {
     return { state: "not_issued", verified: false, reasons: [], assurance: ASSURANCE };
   }
   const reasons = [];
   if (!stored) reasons.push({ code: "no_snapshot", ar: "لا توجد حزمة إصدار محفوظة لهذا القرار.", en: "No stored issuance package exists for this decision." });
   if (!recomputed.ready) reasons.push(...recomputed.blockers);
-  if (stored && stored.manifest_sha256 && stored.manifest_canonical && stored.manifest_sha256 !== stored.manifest_sha256.replace(/^/, "")) {
-    // digest comparison is done by the caller against the canonical form it can rebuild
+  if (stored) {
+    if (!manifest_check) {
+      reasons.push({ code: "manifest_not_verified", ar: "لم تُتحقَّق بصمة حزمة الإصدار المحفوظة.", en: "The stored issuance package digest was not verified." });
+    } else if (!manifest_check.verified) {
+      reasons.push({
+        code: manifest_check.code || "manifest_unverified",
+        ar: "محتوى حزمة الإصدار المحفوظة لا يطابق بصمتها — الحزمة غير موثوقة ولا تُعدّ دليلًا.",
+        en: "The stored issuance package's content does not match its own digest — it is not trustworthy evidence.",
+        computed: manifest_check.computed || null,
+        declared: manifest_check.declared || null,
+      });
+    }
   }
   return {
     state: stored && reasons.length === 0 ? "verified" : (stored ? "inconsistent" : "unverified"),
     verified: !!(stored && reasons.length === 0),
     reasons,
     assurance: ASSURANCE,
+    manifest_verification: manifest_check,
     completeness: recomputed.completeness,
     message_ar: reasons.length ? ISSUANCE_COPY.unverified_ar : null,
     message_en: reasons.length ? ISSUANCE_COPY.unverified_en : null,

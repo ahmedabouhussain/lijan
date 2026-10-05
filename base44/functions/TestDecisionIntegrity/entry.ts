@@ -1,8 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import {
-  evaluateIssuanceReadiness, issuanceVerdict, canonicalManifest, manifestDigest,
+  evaluateIssuanceReadiness, issuanceVerdict, verifyStoredManifest, presentSeats, canonicalManifest, manifestDigest,
   INTEGRITY_POLICY_VERSION, ISSUANCE_REQUIREMENTS,
 } from '../../shared/decisionIntegrity.ts';
+import { loadRoundContext } from '../../shared/roundContext.ts';
 
 // TestDecisionIntegrity — the EXECUTED evidence for the issuance invariant raised by P0-01.
 //
@@ -22,7 +23,11 @@ const D = (over: any = {}) => ({
 const C = (over: any = {}) => ({ id: 'C-FIXTURE', quorum_count: 3, voting_rule: 'simple_majority', mandate: 'Mandate text', ...over });
 const seat = (n: number) => ({ id: `SEAT-${n}`, status: 'active', user_id: `USER-${n}`, voting_right: true, role: 'member' });
 const ballot = (n: number, choice = 'for') => ({ id: `V-${n}-${choice}`, voter_membership_id: `SEAT-${n}`, voter_user_id: `USER-${n}`, vote_choice: choice });
-const attendanceFor = (n: number) => Array.from({ length: n }, (_, i) => ({ id: `A-${i}`, attendance_status: 'present' }));
+// Attendance rows carry the SEAT (member_id). The earlier fixture omitted it — a present row with no
+// seat identity, which the 1.1.0 quorum rule correctly IGNORES. That was a defect in the FIXTURE, not
+// in the evaluator (the same class as DI-012/DI-016 earlier): a row that cannot be attributed to a
+// seat is not evidence that a seat was present.
+const attendanceFor = (n: number) => Array.from({ length: n }, (_, i) => ({ id: `A-${i}`, member_id: `SEAT-${i + 1}`, attendance_status: 'present' }));
 
 function codes(result: any) { return (result.blockers || []).map((b: any) => b.code); }
 
@@ -149,6 +154,95 @@ export default async function (req) {
     });
     check('DI-020', 'The same round reconciles and becomes issuable when every ballot belongs to a frozen seat', roundExact.ready === true && roundExact.ballots.accepted_count === 2, { ready: roundExact.ready, accepted: roundExact.ballots.accepted_count, blockers: codes(roundExact) });
 
+    // ── F-I: the stored manifest is VERIFIED against its own digest (it was a no-op before) ───────
+    const canonical = canonicalManifest(coherent.manifest_input);
+    const digest = await manifestDigest(canonical);
+    const intact = await verifyStoredManifest({ evidence_manifest: canonical, manifest_sha256: digest });
+    check('DI-021', 'An intact stored package verifies by RE-HASHING its content', intact.verified === true && intact.computed === digest, { code: intact.code });
+    // The content is altered while the stored digest is left exactly as issued: the shape a tampered
+    // package actually takes.
+    const tamperedContent = canonical.replace('"2026/09"', '"2026/10"');
+    const contentAltered = await verifyStoredManifest({ evidence_manifest: tamperedContent, manifest_sha256: digest });
+    check('DI-022', 'ALTERED CONTENT is detected although the stored digest is untouched', tamperedContent !== canonical && contentAltered.verified === false && contentAltered.code === 'manifest_digest_mismatch', { computed: String(contentAltered.computed).slice(0, 22) + '…', declared: String(digest).slice(0, 22) + '…' });
+    const digestAltered = await verifyStoredManifest({ evidence_manifest: canonical, manifest_sha256: 'sha256:' + '0'.repeat(64) });
+    check('DI-023', 'An ALTERED DIGEST is detected against unchanged content', digestAltered.verified === false && digestAltered.code === 'manifest_digest_mismatch');
+    const noManifest = await verifyStoredManifest({ manifest_sha256: digest });
+    check('DI-024', 'A snapshot with no manifest is not verified', noManifest.verified === false && noManifest.code === 'manifest_missing');
+    const tamperVerdict = issuanceVerdict({ decision: D({ status: 'issued', issued_at: '2026-10-05T00:00:00.000Z' }), stored: { id: 'SNP-1', evidence_manifest: tamperedContent, manifest_sha256: digest }, recomputed: coherent, manifest_check: contentAltered });
+    check('DI-025', 'A tampered package reads as inconsistent, never verified', tamperVerdict.verified === false && tamperVerdict.state === 'inconsistent' && tamperVerdict.reasons.some((r: any) => r.code === 'manifest_digest_mismatch'), { state: tamperVerdict.state });
+    const unverifiedVerdict = issuanceVerdict({ decision: D({ status: 'issued', issued_at: '2026-10-05T00:00:00.000Z' }), stored: { id: 'SNP-1', evidence_manifest: canonical, manifest_sha256: digest }, recomputed: coherent, manifest_check: null });
+    check('DI-026', 'A package whose digest was NOT checked is reported unverified, never assumed intact', unverifiedVerdict.verified === false && unverifiedVerdict.reasons.some((r: any) => r.code === 'manifest_not_verified'));
+    const cleanVerdict = issuanceVerdict({ decision: D({ status: 'issued', issued_at: '2026-10-05T00:00:00.000Z' }), stored: { id: 'SNP-1', evidence_manifest: canonical, manifest_sha256: digest }, recomputed: coherent, manifest_check: intact });
+    check('DI-027', 'An intact AND reconciling package reads as verified', cleanVerdict.verified === true && cleanVerdict.state === 'verified', { state: cleanVerdict.state });
+
+    // ── F-J: quorum is counted over DISTINCT ELIGIBLE VOTING SEATS, not rows ─────────────────────
+    const dupAndObserver = evaluateIssuanceReadiness({
+      decision: D({ vote_for: 2, vote_against: 0, vote_abstain: 0 }), committee: C({ quorum_count: 2 }),
+      memberships: [seat(1), seat(2)],
+      votes: [ballot(1), ballot(2)],
+      attendance: [
+        { id: 'A-1', member_id: 'SEAT-1', attendance_status: 'present' },
+        { id: 'A-1-DUP', member_id: 'SEAT-1', attendance_status: 'present' },
+        { id: 'A-2', member_id: 'SEAT-2', attendance_status: 'present' },
+        { id: 'A-OBS', member_id: 'SEAT-OBS', attendance_status: 'present' },
+      ],
+      signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
+    });
+    check('DI-028', 'A duplicate row for one seat and a present non-voting seat do NOT count toward quorum', dupAndObserver.quorum.present === 2 && dupAndObserver.quorum.met === true && dupAndObserver.quorum.ignored_rows.length === 2, dupAndObserver.quorum);
+    const observerQuorum = evaluateIssuanceReadiness({
+      decision: D({ vote_for: 1, vote_against: 0, vote_abstain: 0 }), committee: C({ quorum_count: 2 }),
+      memberships: [seat(1)],
+      votes: [ballot(1)],
+      attendance: [{ id: 'A-OBS', member_id: 'SEAT-OBS', attendance_status: 'present' }, { id: 'A-1', member_id: 'SEAT-1', attendance_status: 'present' }],
+      signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
+    });
+    check('DI-029', 'A present observer cannot make a quorum', observerQuorum.quorum.present === 1 && observerQuorum.quorum.met === false && codes(observerQuorum).includes('quorum_not_met'), observerQuorum.quorum);
+    const principalAlternate = evaluateIssuanceReadiness({
+      decision: D({ vote_for: 2, vote_against: 0, vote_abstain: 0 }), committee: C(),
+      memberships: [
+        { id: 'SEAT-P', status: 'active', user_id: 'USER-SAME', voting_right: true, role: 'member' },
+        { id: 'SEAT-A', status: 'active', user_id: 'USER-SAME', voting_right: true, role: 'member' },
+      ],
+      votes: [
+        { id: 'V-P', voter_membership_id: 'SEAT-P', voter_user_id: 'USER-SAME', vote_choice: 'for' },
+        { id: 'V-A', voter_membership_id: 'SEAT-A', voter_user_id: 'USER-SAME', vote_choice: 'for' },
+      ],
+      attendance: attendanceFor(2), signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
+    });
+    check('DI-030', 'One person holding a PRINCIPAL and an ALTERNATE seat is never counted twice', principalAlternate.ballots.accepted_count === 1 && codes(principalAlternate).includes('duplicate_seat_ballot'), { accepted: principalAlternate.ballots.accepted_count, duplicates: principalAlternate.ballots.duplicates });
+    const seatRows = presentSeats({ attendance: [{ member_id: 'SEAT-1', attendance_status: 'late' }, { member_id: 'SEAT-1', attendance_status: 'present' }], seats: [{ seat_id: 'SEAT-1' }] });
+    check('DI-031', 'presentSeats names the ignored rows instead of hiding them', seatRows.count === 1 && seatRows.ignored[0].reason === 'duplicate_row_for_one_seat', seatRows);
+
+    // ── F-K: the ROUND decides whose seats and which ballots belong to it ─────────────────────────
+    // A seat whose appointment has since ENDED, an election the register no longer lists as active,
+    // and a ballot cast in an EARLIER round: none of them may be re-decided by reading today's rows.
+    const roundStub = {
+      entities: {
+        EligibleVoterSnapshot: { filter: async () => [{ id: 'RND-2', round: 2, status: 'active', frozen_on: '2026-10-01', eligible_seat_ids: ['SEAT-1', 'SEAT-2'], eligible_count: 2, eligibility_policy_version: 'vote-eligibility-1.0.0', proposal_version: 'pv-2' }] },
+        CommitteeMembership: { filter: async () => [
+          { id: 'SEAT-1', user_id: 'USER-1', role: 'member', status: 'active' },
+          { id: 'SEAT-2', user_id: 'USER-2', role: 'member', status: 'ended', term_end: '2026-09-30' },
+        ] },
+        Recusal: { filter: async () => [] },
+        Vote: { filter: async () => [
+          { id: 'V-R1', voter_membership_id: 'SEAT-1', voter_user_id: 'USER-1', vote_choice: 'for', eligible_voter_snapshot_id: 'RND-1' },
+          { id: 'V-R2', voter_membership_id: 'SEAT-1', voter_user_id: 'USER-1', vote_choice: 'for', eligible_voter_snapshot_id: 'RND-2' },
+        ] },
+      },
+    };
+    const ctx = await loadRoundContext(roundStub, { decision_id: 'DEC-FIXTURE', committee_id: 'C-FIXTURE' });
+    check('DI-032', 'Only ballots bound to the ACTIVE round are counted; an earlier round is REPORTED, not counted', ctx.ballots.length === 1 && ctx.ballots[0].id === 'V-R2' && ctx.out_of_round_votes.length === 1, { in_round: ctx.ballots.map((b: any) => b.id), out_of_round: ctx.out_of_round_votes.map((v: any) => v.id) });
+    check('DI-033', 'A seat whose appointment has since ENDED is still the seat that was frozen (historical electorate preserved)', ctx.memberships.length === 2 && ctx.unresolved_seat_ids.length === 0 && ctx.as_of === '2026-10-01', { seats: ctx.memberships.map((m: any) => m.id), as_of: ctx.as_of });
+    const unresolved = await loadRoundContext({
+      entities: {
+        EligibleVoterSnapshot: { filter: async () => [{ id: 'RND-3', round: 3, status: 'active', frozen_on: '2026-10-02', eligible_seat_ids: ['SEAT-1', 'SEAT-DELETED'], eligible_count: 2 }] },
+        CommitteeMembership: { filter: async () => [{ id: 'SEAT-1', user_id: 'USER-1', status: 'active' }] },
+        Recusal: { filter: async () => [] },
+        Vote: { filter: async () => [] },
+      },
+    }, { decision_id: 'DEC-FIXTURE', committee_id: 'C-FIXTURE' });
+    check('DI-034', 'A round naming a seat that no longer EXISTS is reported unresolved (a broken chain, not a pass)', unresolved.unresolved_seat_ids.length === 1 && unresolved.unresolved_seat_ids[0] === 'SEAT-DELETED', { unresolved: unresolved.unresolved_seat_ids });
+
     const failed = results.filter((r) => r.verdict === 'FAIL');
     return Response.json({
       integrity_policy_version: INTEGRITY_POLICY_VERSION,
@@ -158,6 +252,9 @@ export default async function (req) {
         'F-B': 'issued record without a stored package', 'F-C': 'duplicate / excess / ineligible ballots',
         'F-D': 'quorum and rule-specific threshold', 'F-E': 'coherent complete package',
         'F-F': 'explicit not-required signature policy vs missing evidence', 'F-G': 'manifest digest determinism',
+        'F-I': 'stored-manifest verification: intact / altered content / altered digest / missing manifest',
+        'F-J': 'quorum over distinct eligible voting seats; principal + alternate',
+        'F-K': 'the round decides the seats and the ballots: ended seat preserved, other-round ballot reported',
       },
       writes_performed: 0,
       results,

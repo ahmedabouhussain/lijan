@@ -5,11 +5,20 @@
 // anything material happens, then re-read: the claim that sorts first by (created_date, id) wins and
 // every other writer finds itself behind an earlier claim and REFUSES.
 //
-// Why this is safe where a plain check is not: each writer creates its own claim BEFORE it reads the
-// claim set. So the only way a writer can see itself first is if it truly is first — any concurrent
-// writer that created a claim earlier already appears in the set, and one that creates later will see
-// the earlier claim and lose. At most one writer proceeds, and the tie-break is deterministic and
-// identical for every writer, so all of them agree on the winner (§ no lost update).
+// WHAT THIS IS, AND WHAT IT IS NOT (stated, not assumed):
+//   • It IS a deterministic winner-selection protocol. Every writer creates its claim BEFORE reading
+//     the claim set, so a writer can only see itself first if it truly is first; the tie-break is
+//     (created_date, id), which is identical for every writer, so all writers agree on ONE winner and
+//     only that winner performs the material effect.
+//   • It is NOT store-level atomicity. The platform exposes NO unique constraint and NO transactional
+//     rollback: two claim ROWS may both exist. What is excluded is two MATERIAL effects, because only
+//     the winner proceeds — uniqueness of the claim row itself is not guaranteed by the store.
+//   • A simultaneous pair has NOT been measured. No concurrent-request environment is available from
+//     this build environment (D-009), so nothing here is evidence of concurrency safety.
+//   • Recovery: an interrupted winner leaves its claim in 'claimed'. Selection ignores 'abandoned'
+//     claims, so a released claim never blocks a later legitimate attempt; a STUCK 'claimed' row
+//     still blocks that key and needs releaseTransition (governed maintenance) or a stale-claim
+//     policy, which is not defined yet.
 //
 // Scope: EXCLUSIVITY and IDEMPOTENCY, not rollback. A claim is released when the transition fails, and
 // marked completed with the record it produced when it succeeds.
@@ -59,7 +68,13 @@ export async function claimTransition(base44, { key, command, entity_type = null
     return { won: false, code: "claim_unavailable", correlation_id };
   }
   const items = Array.isArray(rows) ? rows : (rows && rows.items) || [];
-  const ordered = [...items].sort((a, b) => {
+  // Only claims that still HOLD or COMPLETED a transition are candidates. An ABANDONED claim was
+  // released by its own writer after a failure, so it must never out-sort and block a later
+  // legitimate attempt on the same key (it previously did: the released row stayed in the set and
+  // kept winning the tie-break).
+  const CANDIDATE_STATUSES = ["claimed", "completed"];
+  const candidates = items.filter((r) => CANDIDATE_STATUSES.includes(r.status || "claimed"));
+  const ordered = [...candidates].sort((a, b) => {
     const byDate = String(a.created_date || "").localeCompare(String(b.created_date || ""));
     if (byDate !== 0) return byDate;
     return String(a.id || "").localeCompare(String(b.id || ""));

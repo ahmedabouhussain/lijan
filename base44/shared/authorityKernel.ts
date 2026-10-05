@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.1";
+export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.2";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,12 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.1";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.2.0-rc.1",
-  supersedes: "authz-1.1.0",
+  version: "authz-1.2.0-rc.2",
+  supersedes: "authz-1.2.0-rc.1",
   change_class: "security",
   changes: [
+    "GRANT NARROWING CORRECTED: a role-held right outside a NONEMPTY permitted_actions list is refused. The previous condition also required the capability to be absent from the role — a state the preceding branch had already returned on — so the branch was unreachable and every populated grant narrowed nothing.",
+    "decision.propose named as an OPERATIONAL capability, so the narrow decision-proposal right is what the command, the UI and the role tests use. agenda.propose is NOT granted to the chair as a workaround: proposing and agenda preparation remain distinct rights.",
     "trusted-target coverage extended to every writing command (no committee lookup hint)",
     "capabilities named for the acts that had no operational right: meeting.adjourn, meeting.cancel, agenda.propose, memory.compile",
     "compare-and-swap transition claim on the critical writes (one material effect per transition)",
@@ -62,7 +64,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
   "action.close", "escalation.approve", "review.respond", "amendment.notify", "amendment.acknowledge",
   "agenda.evaluate", "instrument.extract",
-  "decision.review", "decision.approve", "decision.issue", "decision.vote",
+  "decision.propose", "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute",
 ];
 
@@ -231,7 +233,13 @@ export function evaluateActionPolicy({
     if (!granted.includes(capability) && additions.includes(capability) && DELEGABLE_CAPABILITIES.includes(capability)) {
       return { ...base, allowed: true, reason: null, code: null, cap_source: "grant_addition", grant_status: "extended" };
     }
-    if (!granted.includes(capability) && permitted.length > 0 && !permitted.includes(capability)) {
+    // NARROWING. A populated permitted_actions list is the seat's explicit envelope: a right the ROLE
+    // would otherwise carry is REFUSED when it falls outside that list. The branch above has already
+    // returned whenever the role does not hold the capability, so the condition here is the LIST
+    // alone. Requiring `!granted.includes(capability)` as well made this branch unreachable — the
+    // capability was always granted by the time control arrived — so a populated grant narrowed
+    // nothing and every role right passed through.
+    if (permitted.length > 0 && !permitted.includes(capability)) {
       return { ...base, allowed: false, reason: "Action is outside the authority granted to this seat", code: "not_in_grant", grant_status: "permitted_subset" };
     }
     return {

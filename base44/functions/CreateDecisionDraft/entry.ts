@@ -15,8 +15,15 @@ export default async function(req) {
     // Authority on a TRUSTED target: a new draft belongs to the meeting it names, else to the
     // committee record itself. The committee_id the caller sent is only COMPARED against the
     // derived truth — it is never used as a scope.
+    //
+    // D-023: proposing a DECISION is its own right (`decision.propose`), held by chair, vice-chair
+    // and member. Requiring `agenda.propose` here meant the chair — who holds decision.propose but
+    // not agenda.propose — could not create a governed draft at all, which is what the browser-side
+    // write had been covering. The narrow right is aligned across the command, the capability
+    // catalogue, the UI gates and the role tests; the chair is deliberately NOT granted
+    // agenda.propose, because agenda preparation is the secretary's distinct preparation right.
     const auth = await authorizeCommand(base44, {
-      capability: 'agenda.propose',
+      capability: 'decision.propose',
       target_type: meeting_id ? 'Meeting' : 'Committee',
       target_id: meeting_id || committee_id,
       mode: 'create',

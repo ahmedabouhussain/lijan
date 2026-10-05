@@ -3,10 +3,13 @@ import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts'
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 import {
-  evaluateIssuanceReadiness, issuanceVerdict, canonicalManifest, manifestDigest,
+  evaluateIssuanceReadiness, issuanceVerdict, verifyStoredManifest, canonicalManifest, manifestDigest,
   ISSUANCE_COPY, INTEGRITY_POLICY_VERSION, ASSURANCE,
 } from '../../shared/decisionIntegrity.ts';
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
+import { loadRoundContext } from '../../shared/roundContext.ts';
+
+const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
 
 // IssueDecision — issues a decision AS A GOVERNED TRANSITION, never as a writable status field.
 //
@@ -52,30 +55,45 @@ export default async function(req) {
     }
 
     // ── Facts, all read server-side ─────────────────────────────────────────────────────────────
-    const [signatures, votes, memberships, recusals, attendance, actions, snapshots] = await Promise.all([
+    // The memberships, recusals and ballots that decide this package come from the ROUND context, not
+    // from today's register: the frozen round is the authority for who was eligible and for which
+    // ballots belong to it (see shared/roundContext.ts).
+    //
+    // DEFECT CORRECTED HERE (5 Oct review): this Promise.all carried EIGHT queries while destructuring
+    // SEVEN names, so the EligibleVoterSnapshot result was discarded and `frozenRounds` was then
+    // referenced without being declared — every issuance attempt that got past the guard died in a
+    // ReferenceError and answered 500. The round is now resolved by ONE call that cannot drift out of
+    // step with its own destructuring, and a missing round BLOCKS issuance rather than falling back.
+    const [signatures, attendance, actions, snapshots, roundCtx] = await Promise.all([
       sr.entities.Signature.filter({ document_type: 'Decision', document_id: decision_id, status: 'active' }).catch(() => []),
-      sr.entities.Vote.filter({ decision_id }).catch(() => []),
-      sr.entities.CommitteeMembership.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
-      sr.entities.Recusal.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
       decision.meeting_id ? sr.entities.Attendance.filter({ meeting_id: decision.meeting_id }).catch(() => []) : Promise.resolve([]),
       sr.entities.Action.filter({ decision_id }).catch(() => []),
       sr.entities.IssueSnapshot.filter({ decision_id }, { sort: '-created_date', limit: 1 }).catch(() => []),
-      sr.entities.EligibleVoterSnapshot.filter({ decision_id, status: 'active' }, { sort: '-created_date', limit: 1 }).catch(() => []),
+      loadRoundContext(sr, { decision_id, committee_id: committee.id }),
     ]);
-    const storedSnapshot = (Array.isArray(snapshots) ? snapshots : (snapshots?.items || []))[0] || null;
+    const storedSnapshot = arr(snapshots)[0] || null;
 
-    // The electorate is the one the VOTING ROUND froze, not whoever holds a seat today. Ballots are
-    // reconciled against those seats, so a seat appointed after the round opened cannot contribute a
-    // vote to it. When a decision carries no frozen round the live register is used, and the package
-    // SAYS so: a live recomputation is weaker evidence than a frozen round and is never described as
-    // one. A frozen round whose seats can no longer all be resolved is a broken chain, not a pass.
-    const frozenRoundRows = Array.isArray(frozenRounds) ? frozenRounds : (frozenRounds?.items || []);
-    const frozenRound = frozenRoundRows[0] || null;
-    const frozenSeatIds = frozenRound?.eligible_seat_ids || null;
-    const electorateMemberships = frozenSeatIds
-      ? (memberships || []).filter((m) => frozenSeatIds.includes(m.id))
-      : (memberships || []);
-    if (frozenSeatIds && electorateMemberships.length !== frozenSeatIds.length) {
+    // A missing frozen round BLOCKS new issuance. A live recomputation of today's register is not an
+    // equivalent package: it is weaker evidence, it is never substituted for a frozen round, and it is
+    // never described as one. A SEPARATE, policy-authorized alternative procedure could supply
+    // equivalent evidence — none is defined in this build, so the answer here is a governed stop.
+    if (!roundCtx.round) {
+      return Response.json({
+        error: 'No frozen voting round exists for this decision',
+        code: 'no_frozen_round',
+        message: {
+          ar: 'لا توجد دورة تصويت مجمّدة لهذا القرار؛ لا يصدر قرار على إعادة حساب حيّة. يلزم فتح التصويت لتثبيت الهيئة الناخبة، أو إجراء بديل معتمد بالسياسة يوفّر أدلة مكافئة.',
+          en: 'No frozen voting round exists for this decision; issuance does not proceed on a live recomputation. Either the vote is reopened so the electorate is frozen, or a policy-authorized alternative procedure must supply equivalent evidence.',
+        },
+        policy_authorized_alternative: null,
+        decided: 'refused_before_write',
+        correlation_id: auth.correlation_id,
+      }, { status: 409 });
+    }
+
+    // A round naming a seat whose row no longer exists is a broken chain, not a pass. A seat that
+    // merely ENDED is not broken: it is resolved historically, because that is the seat that voted.
+    if (roundCtx.unresolved_seat_ids.length > 0) {
       return Response.json({
         error: 'The frozen voting round can no longer be resolved',
         code: 'frozen_round_unresolvable',
@@ -83,14 +101,15 @@ export default async function(req) {
           ar: 'دورة التصويت المجمّدة تشير إلى مقاعد لم تعد موجودة؛ لا يمكن الإصدار على أساس ناقص.',
           en: 'The frozen voting round names seats that no longer exist; issuance cannot rest on an incomplete electorate.',
         },
-        frozen_seats: frozenSeatIds.length,
-        resolved_seats: electorateMemberships.length,
+        frozen_seats: (roundCtx.round.eligible_seat_ids || []).length,
+        resolved_seats: roundCtx.memberships.length,
+        unresolved_seat_ids: roundCtx.unresolved_seat_ids,
+        decided: 'refused_before_write',
         correlation_id: auth.correlation_id,
       }, { status: 409 });
     }
-    const electorateBasisNote = frozenSeatIds
-      ? `frozen round ${frozenRound.round || 1} of ${frozenSeatIds.length} seat(s), frozen on ${frozenRound.frozen_on || '—'}`
-      : 'live membership recomputation — this decision carries no frozen voting round';
+
+    const electorateBasisNote = roundCtx.basis;
 
     const proofLinks = [
       ...(actions || []).map((a) => a.evidence_url),
@@ -98,7 +117,15 @@ export default async function(req) {
     ];
 
     const readiness = evaluateIssuanceReadiness({
-      decision, committee, memberships: electorateMemberships, recusals, votes, attendance, signatures, proof_links: proofLinks,
+      decision, committee,
+      // The frozen seats, the recusals as they stood on the freeze day, and ONLY the ballots bound to
+      // this round — evaluated as of that day, so today's register cannot rewrite the electorate and
+      // a ballot from another round cannot be counted here.
+      memberships: roundCtx.memberships,
+      recusals: roundCtx.recusals,
+      votes: roundCtx.ballots,
+      attendance, signatures, proof_links: proofLinks,
+      now: roundCtx.as_of || undefined,
     });
 
     const buildProofChain = (issuedAt) => ({
@@ -137,7 +164,10 @@ export default async function(req) {
     // Already issued: return the VERIFICATION verdict, never a bare "ok". A contradictory package
     // is reported as inconsistent here rather than hidden behind a successful response.
     if (decision.status === 'issued' || decision.status === 'executing') {
-      const verdict = issuanceVerdict({ decision, stored: storedSnapshot, recomputed: readiness });
+      // The stored package is VERIFIED against its own digest before any verdict is reported, so a
+      // tampered package can never be returned as a clean result.
+      const manifestCheck = await verifyStoredManifest(storedSnapshot);
+      const verdict = issuanceVerdict({ decision, stored: storedSnapshot, recomputed: readiness, manifest_check: manifestCheck });
       return Response.json({
         status: 'ok',
         decision_id,
@@ -216,6 +246,9 @@ export default async function(req) {
         ...readiness.ballots.ineligible.map((b) => `${b.seat_id || b.user_id}:ineligible`),
         ...readiness.ballots.duplicates.map((b) => `${b.seat_id || b.user_id}:duplicate`),
         ...readiness.ballots.malformed.map((b) => `${b.vote_id}:malformed`),
+        // Ballots bound to ANOTHER round are recorded as rejected here, so a ballot from another
+        // round is visible in the package instead of being silently dropped.
+        ...roundCtx.out_of_round_votes.map((v) => `${v.voter_membership_id || v.voter_user_id || v.id}:out_of_round`),
       ],
       tally_for: readiness.ballots.tally.for,
       tally_against: readiness.ballots.tally.against,
@@ -274,7 +307,7 @@ export default async function(req) {
       const deepLink = orgRef && committeeRef
         ? `/o/${orgRef}/c/${committeeRef}/decisions/${decision_id}`
         : `/o/${committeeRef || committee.id}/c/${committeeRef || committee.id}/decisions/${decision_id}`;
-      const notifParams = (memberships || [])
+      const notifParams = (roundCtx.memberships || [])
         .filter((m) => m.user_id && m.user_id !== auth.user.id)
         .map((m) => ({
           organization_id: auth.organization_id,
@@ -305,12 +338,18 @@ export default async function(req) {
       decision_id,
       snapshot_id: snapshot.id,
       manifest_sha256: digest,
-      frozen_round: frozenRound
-        ? { id: frozenRound.id, round: frozenRound.round || 1, eligible_count: frozenRound.eligible_count ?? null, frozen_on: frozenRound.frozen_on || null }
-        : null,
+      frozen_round: {
+        id: roundCtx.round.id, round: roundCtx.round.round || 1,
+        eligible_count: roundCtx.round.eligible_count ?? null,
+        frozen_on: roundCtx.round.frozen_on || null,
+        eligibility_policy_version: roundCtx.round.eligibility_policy_version || null,
+        proposal_version: roundCtx.round.proposal_version || null,
+      },
+      ballots_in_round: roundCtx.ballots.length,
+      ballots_out_of_round: roundCtx.out_of_round_votes.length,
       electorate_basis: electorateBasisNote,
       assurance: ASSURANCE,
-      issuance: issuanceVerdict({ decision: { ...decision, status: 'issued', issued_at: issuedAt }, stored: snapshot, recomputed: readiness }),
+      issuance: issuanceVerdict({ decision: { ...decision, status: 'issued', issued_at: issuedAt }, stored: snapshot, recomputed: readiness, manifest_check: await verifyStoredManifest(snapshot) }),
       proof_chain: buildProofChain(issuedAt),
       correlation_id: auth.correlation_id,
     });

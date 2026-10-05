@@ -1,82 +1,89 @@
 {
   "manifest": "AUTHORITY POLICY MANIFEST — LIJAN™",
-  "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment)",
+  "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.2.0-rc.1",
-    "supersedes": "authz-1.1.0",
-    "built_at": "2026-10-04T12:35:37Z",
+    "version": "authz-1.2.0-rc.2",
+    "supersedes": "authz-1.2.0-rc.1",
+    "built_at": "2026-10-05T14:35:00Z",
+    "repository_revision": {
+      "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
+      "note": "this slice is an uncommitted working tree on top of that commit; the revision is identified by the per-file digests below"
+    },
     "change_class": "security",
     "frozen": true,
     "invalidates_prior_evidence": true,
+    "combined_sha256": null,
     "source_files": [
-      {
-        "path": "base44/shared/authorityKernel.ts",
-        "sha256": "db0bb9810c799863c0212cea927401497f81b8bfa13760dccb69611116b6aa17"
-      },
-      {
-        "path": "base44/shared/commandGuard.ts",
-        "sha256": "1495412a0e4c031370673b6a0a583c93f238fbae882c5f45f80f8082c3af7f70"
-      },
-      {
-        "path": "base44/shared/transitionClaim.ts",
-        "sha256": "b1651f6dedd77dd8bfc09d4ea314938fca387fd66596accf093380c0385e01f9"
-      }
+      { "path": "base44/shared/authorityKernel.ts", "sha256": "34582b1fcd6d98a485c8f8be6f601d387460a257d487121623e75b8deda10ac5" },
+      { "path": "base44/shared/commandGuard.ts", "sha256": "1495412a0e4c031370673b6a0a583c93f238fbae882c5f45f80f8082c3af7f70" },
+      { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789" },
+      { "path": "base44/shared/decisionIntegrity.ts", "sha256": "5540b49f1638d24601431fc59050654add7a79921d9d2d0f1fa23a802257750b" },
+      { "path": "base44/shared/roundContext.ts", "sha256": "94afb0af2d845ae68c04aaabcde4397349735aa18d4b1591a6bc7b791b76572e" }
     ],
-    "combined_sha256": "37adfedc84c6a959f77ae951e1b4046a3bc33c10bfc18a351d1b5674626a9113",
     "policy": {
       "delegable_capabilities": 13,
-      "operational_capabilities": 36,
+      "operational_capabilities": 37,
+      "operational_additions_this_round": ["decision.propose"],
       "self_service_capabilities": ["conflict.declare", "recusal.record", "amendment.acknowledge"],
-      "capabilities_named_this_round": ["meeting.adjourn", "meeting.cancel", "agenda.propose", "memory.compile", "amendment.acknowledge"],
       "admin_read_ceiling": ["read", "audit.read", "report.export", "committee.view", "decision.view"],
-      "digital_signature_granted_to": "nobody (until an approved policy names the trust service)"
+      "digital_signature_granted_to": "nobody (until an approved policy names the trust service)",
+      "agenda_propose_granted_to": "vice_chair, secretary, member — deliberately NOT the chair (D-023 resolved through decision.propose, never by widening agenda.propose)"
     },
-    "linked_functions": 54,
-    "command_coverage": {
-      "committee_scope_command_sites": 54,
-      "guarded_with_trusted_target": 54,
-      "pending_lookup_hint": 0,
-      "read_authorized_writes": 0,
-      "name_based_identity": 0,
-      "writers_outside_committee_scope": 24,
-      "method": "static enumeration of base44/functions (guard call or write) + direct-kernel-call check"
-    },
-    "tests": {
-      "authority_role_tests": "PASS 30/30",
-      "authority_positive_tests": "PASS 12/12",
-      "fail_closed_tests": "PASS 15/15",
-      "concurrency_critical_tests": "NOT ESTABLISHED",
-      "browser_acceptance": "NOT TESTED"
+    "grant_narrowing": {
+      "state": "CORRECTED",
+      "defect": "the narrowing branch required the capability to be absent from the role as well, a state the preceding branch had already returned on, so a populated permitted_actions list narrowed nothing",
+      "rule_now": "a role-held right outside a NONEMPTY permitted_actions list is refused with code not_in_grant; explicit denial still wins; the list can only restrict, never extend",
+      "evidence": "AUTH-031…AUTH-036"
     },
     "concurrency": {
-      "mechanism": "claim-before-write (TransitionClaim) + revision compare-and-swap already present in ProcessEscalation",
-      "claimed_sites": [
-        "CastVote", "CloseVote", "IssueDecision", "ApproveMinutes", "CloseAction",
-        "SignRecord", "UploadDocumentVersion", "RespondToReview", "GenerateProduct"
-      ],
+      "mechanism": "claim-before-write (TransitionClaim) + revision compare-and-swap in ProcessEscalation",
+      "claimed_sites": ["CastVote", "CloseVote", "IssueDecision", "ApproveMinutes", "CloseAction", "SignRecord", "UploadDocumentVersion", "RespondToReview", "GenerateProduct"],
       "compare_and_swap_sites": ["ProcessEscalation (escalation_revision)"],
-      "residual_risk": "the claim protocol is create-then-read and has no store-level unique constraint; a truly simultaneous pair is decided deterministically by (created_date, id), but the platform exposes no transactional rollback, so a failed transition releases its claim instead of rolling back"
+      "changed_this_round": "CastVote's claim key is now (decision, round, seat) instead of (decision, person)",
+      "abandoned_claims": "excluded from winner selection, so a released claim no longer blocks a later legitimate attempt",
+      "unmet_invariant": "the store exposes NO unique constraint and NO transactional rollback: two claim ROWS may exist. Only the material effect is exclusive. A simultaneous pair has NOT been measured (no concurrent-request environment in this build environment).",
+      "open_resolution": "a stuck 'claimed' row still blocks its key and needs releaseTransition (governed maintenance) or a stale-claim policy that is not yet defined"
+    },
+    "tests": {
+      "authority_role_tests": "PASS 38/38",
+      "authority_positive_tests": "PASS 14/14",
+      "fail_closed_tests": "PASS 15/15",
+      "decision_integrity_suite": "PASS 34/34 (policy decision-integrity-1.1.0, writes_performed: 0)",
+      "vote_eligibility_suite": "PASS 12/12 (policy vote-eligibility-1.0.0, writes_performed: 0)",
+      "frontend_build": "vite build status=0",
+      "concurrency_critical_tests": "NOT ESTABLISHED",
+      "persisted_voting_cycle": "NOT TESTED",
+      "browser_acceptance": "NOT TESTED",
+      "scope_note": "these suites are NOT completion of A02–A10: no successful live issuance package and no persisted round have been exercised"
     },
     "open_defects": [
-      "simultaneous-run concurrency test not measurable from the builder environment",
-      "24 writing functions sit outside committee scope and still need their own gate (see the ledger)",
+      "simultaneous-run concurrency measurement is not available from the builder environment (D-009)",
+      "no authenticated SEATED test actor exists, so no persisted end-to-end cycle can be executed (blocker, unassigned owner)",
+      "writing functions outside committee scope still need their own gate (see the ledger)",
       "CreateCommittee verifies organization ownership server-side but does not go through the kernel yet",
       "showcase write still closed (gate not passed)",
       "browser acceptance not tested",
-      "the repository gate scripts cannot be executed from the builder environment; coverage is derived by static enumeration instead"
+      "repository gate scripts cannot be executed from the builder environment; coverage is derived by static enumeration",
+      "the acceptance catalogue A01–A24 / J01–J14 is not present in the repository, so per-item status cannot be asserted"
     ]
   },
   "history": [
     {
+      "version": "authz-1.2.0-rc.1",
+      "superseded_at": "2026-10-05T14:35:00Z",
+      "evidence_state": "INVALIDATED — the grant-narrowing defect means its 'narrowing' behaviour was never in force; re-run all authority evidence against rc.2",
+      "recorded": {
+        "source_sha256_authorityKernel": "db0bb9810c799863c0212cea927401497f81b8bfa13760dccb69611116b6aa17",
+        "built_at": "2026-10-04T12:35:37Z",
+        "command_sites_guarded": 54
+      }
+    },
+    {
       "version": "authz-1.1.0",
       "superseded_at": "2026-10-04T12:32:13Z",
-      "evidence_state": "INVALIDATED — must not be carried forward",
-      "recorded": {
-        "combined_sha256": "69256cf18accaa98e94679c6f7d404804ddff92b494a3e8408a57ffc4cee144b",
-        "built_at": "2026-10-04T12:21:59Z",
-        "command_sites_guarded": 16
-      }
+      "evidence_state": "INVALIDATED",
+      "recorded": { "combined_sha256": "69256cf18accaa98e94679c6f7d404804ddff92b494a3e8408a57ffc4cee144b", "command_sites_guarded": 16 }
     },
     {
       "version": "authz-1.0.0",
