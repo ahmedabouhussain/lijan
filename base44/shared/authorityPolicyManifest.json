@@ -64,7 +64,7 @@
       "round_binding_cases": "PASS DI-035…DI-040 (named round readable once superseded · supersession reported · only the round's own ballots · the same package reconciles against its issued round and NOT against the active round · the package records its round · two active rounds choose none)",
       "vote_eligibility_suite": "PASS 12/12 (policy vote-eligibility-1.0.0, writes_performed: 0)",
       "suites_rerun_after_command_site_revision": "PASS — 38/38 + 14/14 + 15/15 · 40/40 · 12/12 (2026-10-05, after the CastVote round-contract change)",
-      "command_site_executed_cases": "NONE — no handler-level case exercises CastVote's round resolution",
+      "command_site_executed_cases": "ONE smoke case only — CastVote invoked on the edited build with no valid target refused at the authorization gate (404 target_not_found, correlation corr_muva2w0ck88pkz, zero writes). This proves the module loads and that refusal precedes the round read; it does NOT exercise the round resolution itself, so no case yet proves a ballot is refused under multiple_active_rounds",
       "frontend_build": "vite build status=0",
       "concurrency_critical_tests": "NOT ESTABLISHED",
       "persisted_voting_cycle": "NOT TESTED",
