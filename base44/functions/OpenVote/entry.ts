@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
+import { computeElectorate } from '../../shared/voteEligibility.ts';
 
 // OpenVote — opens a voting session for a decision.
 export default async function(req) {
@@ -32,15 +33,32 @@ export default async function(req) {
       return Response.json({ error: `Cannot open vote on decision with status '${decision.status}'` }, { status: 400 });
     }
 
-    // Eligibility freeze: get active voting members
+    // Eligibility freeze, computed by the ONE shared rule (base44/shared/voteEligibility.ts), so the
+    // electorate a vote is opened against is the same object a test can assert against.
     const members = await base44.asServiceRole.entities.CommitteeMembership
       .filter({ committee_id, status: 'active', voting_right: true }).catch(() => []);
-
-    // Exclude recused members
     const recusals = await base44.asServiceRole.entities.Recusal
       .filter({ committee_id, status: 'active' }).catch(() => []);
-    const recusedNames = new Set((recusals || []).map(r => r.member_name));
-    const eligibleVoters = (members || []).filter(m => !recusedNames.has(m.full_name));
+    const electorate = computeElectorate({ seats: members || [], recusals: recusals || [] });
+    const eligibleVoters = electorate.eligible;
+
+    // An electorate of zero is a governed stop, not an empty vote: opening it would invite the very
+    // contradiction this platform must refuse (a result with no one eligible to produce it).
+    if (eligibleVoters.length === 0) {
+      return Response.json({
+        error: 'No eligible voting seat exists for this committee',
+        code: 'no_electorate',
+        message: {
+          ar: 'لا يوجد مقعد تصويت مؤهل في هذه اللجنة؛ يلزم استكمال العضويات النشطة قبل فتح التصويت.',
+          en: 'No eligible voting seat exists in this committee; active memberships are required before a vote can be opened.',
+        },
+        seats_considered: electorate.size + electorate.excluded.out_of_term,
+        excluded_out_of_term: electorate.excluded.out_of_term,
+        excluded_recused: electorate.excluded.recused_by_identifier,
+        excluded_legacy_name_match: electorate.excluded.legacy_name_match,
+        eligibility_policy_version: electorate.policy_version,
+      }, { status: 409 });
+    }
 
     await base44.asServiceRole.entities.Decision.update(decision_id, { status: 'voting' });
 
@@ -49,7 +67,7 @@ export default async function(req) {
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,
       action: 'vote.open', entity_type: 'Decision', entity_id: decision_id,
       entity_title: decision.title,
-      description: `Vote opened: ${eligibleVoters.length} eligible voters (frozen)`,
+      description: `Vote opened: ${electorate.size} eligible seats frozen (by seat id: ${electorate.eligible_seat_ids.join(', ')}); excluded — out of term: ${electorate.excluded.out_of_term}, recused by identifier: ${electorate.excluded.recused_by_identifier}, legacy name match: ${electorate.excluded.legacy_name_match} (eligibility policy ${electorate.policy_version})`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
@@ -87,8 +105,13 @@ export default async function(req) {
 
     return Response.json({
       status: 'ok', decision_id,
+      // The frozen electorate is identified by SEAT, so a vote can later be reconciled against it.
+      eligible_seats: electorate.eligible_seats,
       eligible_voters: eligibleVoters.map(m => ({ name: m.full_name, role: m.role })),
-      eligible_count: eligibleVoters.length,
+      eligible_count: electorate.size,
+      eligible_seat_ids: electorate.eligible_seat_ids,
+      excluded: electorate.excluded,
+      eligibility_policy_version: electorate.policy_version,
       correlation_id: auth.correlation_id,
     });
   } catch (error) {

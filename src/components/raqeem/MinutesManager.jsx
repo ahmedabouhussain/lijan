@@ -3,16 +3,17 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Send, Edit3, Save, X, UserCheck, PenLine } from "lucide-react";
+import { FileText, Sparkles, Send, Edit3, Save, X, UserCheck, PenLine, AlertTriangle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import SecureFileImage from "@/components/raqeem/SecureFileImage";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import { MINUTES_STATUS, ATTENDANCE_STATUS, MEMBER_ROLE } from "@/lib/raqeemUtils";
+import { sanitizeRichText, formatRecordDate, hasSourceDrift } from "@/lib/richText";
 
 export default function MinutesManager({ meeting, members, attendance, minutes, onChanged }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [generating, setGenerating] = useState(false);
   const [editing, setEditing] = useState(false);
   const [body, setBody] = useState(minutes?.body || "");
@@ -51,7 +52,7 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
   const saveBody = async () => {
     setSaving(true);
     try {
-      await base44.entities.MeetingMinutes.update(minutes.id, { body, summary_ar: summary, generated_by_ai: false });
+      await base44.entities.MeetingMinutes.update(minutes.id, { body: sanitizeRichText(body), summary_ar: sanitizeRichText(summary), generated_by_ai: false });
       setEditing(false);
       onChanged();
     } catch {}
@@ -95,6 +96,10 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
 
   const presentCount = attendance.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
   const quorumMet = presentCount >= (meeting.quorum_required || 3);
+
+  // The meeting record is the authority for the date. A draft that disagrees with it is not a
+  // formatting detail: it is reported as drift and must be reviewed before approval.
+  const dateDrift = hasSourceDrift(minutes?.call_to_order, meeting?.date);
 
   const signElectronically = async () => {
     if (!currentUser) return;
@@ -231,8 +236,26 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
                 {t(minutes.summary_ar, minutes.summary_en)}
               </div>
             )}
+            {/* The authoritative date, and a conspicuous warning when the stored draft disagrees. */}
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>{t("تاريخ الاجتماع من سجله:", "Meeting date, from the meeting record:")} <span className="text-foreground">{formatRecordDate(meeting.date, lang)}</span></p>
+              {minutes.call_to_order && (
+                <p>{t("تاريخ المسودة المحفوظة:", "Stored draft date:")} {minutes.call_to_order}</p>
+              )}
+            </div>
+            {dateDrift && (
+              <div className="rounded-md border border-state-warning-ink/30 bg-state-warning-surface p-3 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-state-warning-ink shrink-0 mt-0.5" />
+                <p className="text-xs text-state-warning-ink">
+                  {t(
+                    `تاريخ هذه المسودة (${minutes.call_to_order || "—"}) لا يطابق تاريخ الاجتماع في سجله (${meeting.date || "—"}). راجعها قبل الاعتماد؛ لا تُعتمد كما هي.`,
+                    `This draft's date (${minutes.call_to_order || "—"}) does not match the meeting record date (${meeting.date || "—"}). Review it before approval; it must not be approved as it stands.`,
+                  )}
+                </p>
+              </div>
+            )}
             <div className="prose prose-sm max-w-none text-foreground leading-relaxed">
-              <ReactMarkdown>{minutes.body || "—"}</ReactMarkdown>
+              <ReactMarkdown>{sanitizeRichText(minutes.body) || "—"}</ReactMarkdown>
             </div>
 
             {/* Lifecycle controls */}

@@ -1,326 +1,214 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Send, Vote, Check, X, Clock, FileSignature, Play, CheckCircle2, ArrowUp, GitBranch, AlertTriangle } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, ArrowUp } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { DECISION_STATUS, ESCALATION_LEVEL, MEMBER_ROLE } from "@/lib/raqeemUtils";
+import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 
+// P0-02 determination, expressed in code rather than in a comment:
+//
+//  • An action that HAS a governed server command calls that command. This component writes no
+//    decision status, no vote and no escalation of its own — direct client writes are exactly how
+//    this record came to carry a result of 13 against an electorate of 0.
+//  • An action that has NO governed command stays unavailable and says why. There is no client-side
+//    implementation left behind the button, so no flag can re-enable a write path by accident.
+const GOVERNED_ACTIONS = {
+  open_vote: { capability: "vote.call", statuses: ["proposed", "draft", "under_review", "pending"] },
+  cast_vote: { capability: "vote.cast", statuses: ["voting"] },
+  issue: { capability: "decision.issue", statuses: ["approved"] },
+};
+
+// Each entry names the exact gap, so the determination is readable on the surface that owns it.
+const AWAITING_COMMAND = [
+  { ar: "إرسال للمراجعة", en: "Send for review", statuses: ["draft"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ الإرسال للمراجعة يُنفَّذ عبر مسار الإصدار المحكوم.", whyEn: "No governed server command exists for this transition yet." },
+  { ar: "اقتراح للتصويت", en: "Propose for vote", statuses: ["in_review"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد.", whyEn: "No governed server command exists for this transition yet." },
+  { ar: "فتح التصويت", en: "Open voting", statuses: ["draft", "in_review"], whyAr: "فتح التصويت يتطلب أن يكون القرار في حالة «مقترح».", whyEn: "Opening a vote requires the decision to be in the 'proposed' state." },
+  { ar: "إصدار القرار", en: "Issue decision", statuses: ["draft", "proposed", "voting", "issued", "executing", "completed"], whyAr: "الإصدار انتقال محروس: يقتضي أن يكون القرار في حالة «معتمد» واستيفاء المتطلبات الإلزامية.", whyEn: "Issuance is a governed transition: it requires the decision to be 'approved' with its mandatory requirements complete." },
+  { ar: "بدء التنفيذ", en: "Start execution", statuses: ["issued"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ التنفيذ يُدار من سجل الإجراءات.", whyEn: "No governed server command exists for this transition yet; execution is managed on the action record." },
+  { ar: "إكمال", en: "Complete", statuses: ["executing"], whyAr: "الإكمال يقتضي إجراءً مُسندًا بدليل متحقق منه؛ لا يُعتمد على تغيير الحالة هنا.", whyEn: "Completion requires an assigned action with verified evidence; it is not achieved by a status change here." },
+  { ar: "إلغاء بقرار لاحق", en: "Supersede", statuses: ["*"], whyAr: "الإلغاء بقرار لاحق يقتضي أمرًا محكومًا غير متوفر بعد؛ ولا يُكتب مباشرة.", whyEn: "Superseding requires a governed command that is not available yet; it is never written directly." },
+  { ar: "تصعيد القرار", en: "Escalate the decision", statuses: ["*"], whyAr: "التصعيد محكوم على سجل الإجراء، لا على القرار — صعِّد الإجراء المرتبط من «التنفيذ والمتابعة».", whyEn: "Escalation is governed on the action record, not on the decision — escalate the linked action from Execution." },
+];
+
+const hasCapability = (capabilities, name) => {
+  if (!capabilities) return false;
+  if (Array.isArray(capabilities)) return capabilities.includes(name);
+  if (typeof capabilities === "object") {
+    if (capabilities[name] === true) return true;
+    const list = capabilities.permitted || capabilities.capabilities || capabilities.allowed;
+    return Array.isArray(list) ? list.includes(name) : false;
+  }
+  return false;
+};
+
 export default function DecisionWorkflow({ decision, onChanged }) {
   const { t, lang } = useLanguage();
-  // Roles and every label below resolve to the ACTIVE language only.
-  const roleLabel = (role) => {
-    const entry = MEMBER_ROLE[role];
-    return entry ? (lang === "ar" ? entry.ar : entry.en) : role;
-  };
-  const [showVoting, setShowVoting] = useState(false);
-  const [showEscalate, setShowEscalate] = useState(false);
-  const [showSupersede, setShowSupersede] = useState(false);
-  const [memberVotes, setMemberVotes] = useState({});
-  const [members, setMembers] = useState([]);
-  const [loadingMembers, setLoadingMembers] = useState(false);
-  const [, setExistingVotes] = useState([]);
-  const [escalationLevel, setEscalationLevel] = useState("reminder");
-  const [supersedeById, setSupersedeById] = useState("");
-  const [otherDecisions, setOtherDecisions] = useState([]);
-  const [loadingDecisions, setLoadingDecisions] = useState(false);
-  const [, setSaving] = useState(false);
+  const [capabilities, setCapabilities] = useState(null);
+  const [role, setRole] = useState(null);
+  const [capError, setCapError] = useState(null);
+  const [authorityContext, setAuthorityContext] = useState(null);
+  const [busy, setBusy] = useState(null);
+  const [outcome, setOutcome] = useState(null);
 
-  const log = async (action, desc, oldVal, newVal) => {
+  const reloadAuthority = async () => {
+    if (!decision?.committee_id) return;
+    setCapError(null);
     try {
-      await base44.entities.AuditLog.create({
-        action,
-        entity_type: "Decision",
-        entity_id: decision.id,
-        entity_title: decision.title,
-        description: desc,
-        old_value: oldVal,
-        new_value: newVal,
-      });
-    } catch {}
-  };
-
-  const transition = async (newStatus, action, descLabel) => {
-    setSaving(true);
-    try {
-      const oldStatus = decision.status;
-      await base44.entities.Decision.update(decision.id, { status: newStatus });
-      await log(action, `${descLabel}: ${L.label(DECISION_STATUS, oldStatus, oldStatus)} → ${L.label(DECISION_STATUS, newStatus, newStatus)}`, oldStatus, newStatus);
-      onChanged();
-    } catch {}
-    setSaving(false);
-  };
-
-  const loadMembersAndVotes = async () => {
-    setLoadingMembers(true);
-    try {
-      const [mems, votesData] = await Promise.all([
-        base44.entities.CommitteeMembership.filter({ committee_id: decision.committee_id, status: "active" }).catch(() => []),
-        base44.entities.Vote.filter({ decision_id: decision.id }).catch(() => []),
-      ]);
-      const memList = mems || [];
-      const voteList = votesData || [];
-      setMembers(memList);
-      setExistingVotes(voteList);
-      const initial = {};
-      memList.forEach((m) => {
-        const existing = voteList.find((v) => v.voter_name === m.full_name);
-        initial[m.id] = {
-          choice: existing?.vote_choice || "abstain",
-          dissent: existing?.dissent_reason || "",
-          member: m,
-        };
-      });
-      setMemberVotes(initial);
-    } catch {}
-    setLoadingMembers(false);
-  };
-
-  const recordVotes = async (outcome) => {
-    setSaving(true);
-    try {
-      const voteList = Object.entries(memberVotes).filter(([, v]) => v.choice);
-      let forCount = 0, againstCount = 0, abstainCount = 0;
-      const dissentParts = [];
-
-      for (const [, v] of voteList) {
-        if (v.choice === "for") forCount++;
-        else if (v.choice === "against") againstCount++;
-        else abstainCount++;
-        if (v.choice === "against" && v.dissent) dissentParts.push(`${L.name(v.member, "full_name")}: ${v.dissent}`);
+      const res = await base44.functions.invoke("GetCommitteeCapabilities", { committee_id: decision.committee_id });
+      const data = res?.data || {};
+      if (data.error) {
+        setCapabilities(null);
+        setRole(null);
+        setCapError(data.message?.[lang] || data.error);
+        return;
       }
+      setCapabilities(data.capabilities ?? null);
+      setRole(data.role || null);
+      setAuthorityContext(data.authority_context || null);
+    } catch (e) {
+      setCapabilities(null);
+      setCapError(t(
+        "تعذّر التحقق من صلاحيتك في هذه اللجنة. أعد التحميل للمحاولة مرة أخرى.",
+        "Your authority in this committee could not be established. Reload to try again.",
+      ));
+    }
+  };
 
-      const now = new Date().toISOString();
-      const voteRecords = voteList.map(([, v]) => ({
-        decision_id: decision.id,
-        committee_id: decision.committee_id,
-        meeting_id: decision.meeting_id,
-        voter_name: v.member.full_name,
-        voter_role: v.member.role,
-        vote_choice: v.choice,
-        dissent_reason: v.choice === "against" ? v.dissent : undefined,
-        vote_method: "open",
-        voted_at: now,
-      }));
+  useEffect(() => { reloadAuthority(); }, [decision?.committee_id, decision?.id]);
 
-      await base44.entities.Vote.bulkCreate(voteRecords);
-
-      await base44.entities.Decision.update(decision.id, {
-        vote_for: forCount,
-        vote_against: againstCount,
-        vote_abstain: abstainCount,
-        dissent: dissentParts.join(" | ") || undefined,
-        status: outcome,
+  const run = async (key, label, fn) => {
+    setBusy(key);
+    setOutcome(null);
+    try {
+      const res = await fn();
+      const data = res?.data || {};
+      if (data.error) {
+        setOutcome({ kind: "refused", title: label, message: data.message?.[lang] || data.error, code: data.code || null, detail: data });
+      } else {
+        setOutcome({ kind: "ok", title: label, message: null, detail: data });
+      }
+      if (typeof onChanged === "function") onChanged();
+    } catch (e) {
+      const data = e?.response?.data || {};
+      setOutcome({
+        kind: "refused",
+        title: label,
+        message: data.message?.[lang] || data.error || e?.message || t("تعذّر تنفيذ الإجراء.", "The action could not be performed."),
+        code: data.code || null,
+        detail: data,
       });
-      await log("vote", `${L.pair("تصويت فردي", "Individual vote")}: ${forCount} ${L.pair("موافق", "for")} / ${againstCount} ${L.pair("رافض", "against")} / ${abstainCount} ${L.pair("ممتنع", "abstain")} — ${L.pair("النتيجة", "Result")}: ${L.label(DECISION_STATUS, outcome, outcome)}`, decision.status, outcome);
-      setShowVoting(false);
-      onChanged();
-    } catch {}
-    setSaving(false);
+    }
+    setBusy(null);
+    reloadAuthority();
   };
 
-  const escalate = async () => {
-    setSaving(true);
-    try {
-      await base44.entities.Decision.update(decision.id, { escalation_level: escalationLevel });
-      await log("escalate", `${L.pair("تصعيد إلى مستوى", "Escalated to level")}: ${L.label(ESCALATION_LEVEL, escalationLevel, escalationLevel)}`, decision.escalation_level || "none", escalationLevel);
-      setShowEscalate(false);
-      onChanged();
-    } catch {}
-    setSaving(false);
-  };
-
-  const supersede = async () => {
-    if (!supersedeById) return;
-    setSaving(true);
-    try {
-      await base44.entities.Decision.update(decision.id, { status: "superseded", superseded_by: supersedeById });
-      await log("status_change", L.pair("إلغاء بقرار لاحق", "Superseded by a later decision"), decision.status, "superseded");
-      setShowSupersede(false);
-      onChanged();
-    } catch {}
-    setSaving(false);
-  };
-
-  const loadOtherDecisions = async () => {
-    setLoadingDecisions(true);
-    try {
-      const all = await base44.entities.Decision.filter({ committee_id: decision.committee_id });
-      setOtherDecisions((all || []).filter((d) => d.id !== decision.id));
-    } catch {}
-    setLoadingDecisions(false);
-  };
-
-  const status = decision.status;
+  const status = decision?.status;
   const isFinal = ["rejected", "superseded", "closed"].includes(status);
+  const allowed = (spec) => spec.statuses.includes("*") || spec.statuses.includes(status);
+  const canDo = (key) => hasCapability(capabilities, GOVERNED_ACTIONS[key].capability) && allowed(GOVERNED_ACTIONS[key]);
 
-  const ActionBtn = ({ onClick, icon: Icon, label, variant = "default" }) => (
-    <button
-      onClick={onClick}
-      disabled={true}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50 ${
-        variant === "approve" ? "bg-state-success-ink text-state-success-surface" :
-        variant === "reject" ? "bg-destructive text-destructive-foreground" :
-        variant === "neutral" ? "bg-secondary text-secondary-foreground" :
-        "bg-primary text-primary-foreground"
-      }`}
-    >
-      <Icon className="w-3.5 h-3.5" /> {label}
-    </button>
-  );
+  const blocked = AWAITING_COMMAND.filter(allowed);
+
+  const ActionBtn = ({ onClick, icon: Icon, label, variant = "default", disabled, busyKey }) => {
+    const palette = variant === "approve" ? "bg-state-success-ink text-state-success-surface"
+      : variant === "reject" ? "bg-destructive text-destructive-foreground"
+      : "bg-primary text-primary-foreground";
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed ${palette}`}
+      >
+        {busyKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Icon className="w-3.5 h-3.5" />} {label}
+      </button>
+    );
+  };
 
   return (
     <div className="space-y-4">
-      <div className="p-3 rounded-md bg-state-warning-surface border border-state-warning-ink/20 flex items-center gap-2">
-        <AlertTriangle className="w-4 h-4 text-state-warning-ink shrink-0" />
-        <p className="text-xs text-state-warning-ink">{t("معطل مؤقتاً أثناء تأمين سير العمل المحكوم", "Temporarily unavailable while the governed workflow is being secured")}</p>
+      {/* Authority context — why an action is or is not available to THIS person. */}
+      <div className="p-3 rounded-md bg-secondary/40 border border-border flex items-start gap-2">
+        <Lock className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        {capError ? (
+          <p className="text-xs text-destructive">{capError}</p>
+        ) : (
+          <div className="text-xs text-muted-foreground space-y-0.5">
+            <p>{t("تُحدَّد صلاحيتك وفق عضويتك أو تفويضك الساري في هذه اللجنة، وليس وفق مسماك الوظيفي.", "Your authority follows your seat or active delegation in this committee, not your job title.")}</p>
+            {role && <p className="text-foreground">{t("تتصرف بصفتك:", "You are acting as:")} {role}{authorityContext ? ` · ${authorityContext}` : ""}</p>}
+          </div>
+        )}
       </div>
+
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-muted-foreground">{t("الحالة الحالية:", "Current status:")}</span>
         <StatusBadge label={L.label(DECISION_STATUS, status, status)} colorClass={DECISION_STATUS[status]?.color} size="md" />
-        {decision.escalation_level && decision.escalation_level !== "none" && (
-          <StatusBadge label={`${L.pair("تصعيد", "Escalation")}: ${L.label(ESCALATION_LEVEL, decision.escalation_level, decision.escalation_level)}`} colorClass="text-state-warning-ink bg-state-warning-surface" />
+        {decision?.escalation_level && decision.escalation_level !== "none" && (
+          <StatusBadge label={`${L.pair("تصعيد", "Escalation")}: ${decision.escalation_level}`} colorClass="text-state-warning-ink bg-state-warning-surface" />
         )}
       </div>
 
       {!isFinal && (
         <div className="flex flex-wrap items-center gap-2">
-          {status === "draft" && (
-            <ActionBtn onClick={() => transition("in_review", "status_change", t("إرسال للمراجعة", "Send for Review"))} icon={Send} label={t("إرسال للمراجعة", "Send for Review")} />
-          )}
-          {status === "in_review" && (
-            <ActionBtn onClick={() => transition("proposed", "status_change", t("اقتراح", "Propose"))} icon={Send} label={t("اقتراح للتصويت", "Propose for Vote")} />
-          )}
-          {status === "proposed" && (
-            <ActionBtn onClick={() => transition("voting", "status_change", t("فتح التصويت", "Open Voting"))} icon={Vote} label={t("فتح التصويت", "Open Voting")} />
-          )}
+          <ActionBtn
+            onClick={() => run("open_vote", t("فتح التصويت", "Open voting"), () => base44.functions.invoke("OpenVote", { committee_id: decision.committee_id, decision_id: decision.id }))}
+            icon={Vote}
+            label={t("فتح التصويت", "Open voting")}
+            disabled={!canDo("open_vote") || busy === "open_vote"}
+            busyKey={busy === "open_vote"}
+          />
           {status === "voting" && (
-            <ActionBtn onClick={() => { loadMembersAndVotes(); setShowVoting(true); }} icon={Vote} label={t("تسجيل التصويت", "Record Vote")} variant="approve" />
-          )}
-          {status === "approved" && (
-            <ActionBtn onClick={() => transition("issued", "issue", t("إصدار", "Issue"))} icon={FileSignature} label={t("إصدار القرار", "Issue Decision")} />
-          )}
-          {status === "issued" && (
-            <ActionBtn onClick={() => transition("executing", "status_change", t("بدء التنفيذ", "Start Execution"))} icon={Play} label={t("بدء التنفيذ", "Start Execution")} />
-          )}
-          {status === "executing" && (
-            <ActionBtn onClick={() => transition("completed", "close", t("إكمال", "Complete"))} icon={CheckCircle2} label={t("إكمال", "Complete")} variant="approve" />
-          )}
-          <ActionBtn onClick={() => setShowEscalate(true)} icon={ArrowUp} label={t("تصعيد", "Escalate")} variant="neutral" />
-          <ActionBtn onClick={() => { loadOtherDecisions(); setShowSupersede(true); }} icon={GitBranch} label={t("إلغاء بقرار لاحق", "Supersede")} variant="neutral" />
-          {status === "voting" && (
-            <ActionBtn onClick={() => transition("deferred", "status_change", t("تأجيل", "Defer"))} icon={Clock} label={t("تأجيل", "Defer")} variant="neutral" />
-          )}
-        </div>
-      )}
-
-      {showVoting && (
-        <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">{t("تسجيل التصويت الفردي", "Individual Roll-Call Vote")}</h4>
-            <button onClick={() => setShowVoting(false)} className="text-muted-foreground hover:text-foreground">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          {loadingMembers ? (
-            <p className="text-xs text-muted-foreground">{t("جارٍ تحميل الأعضاء...", "Loading members…")}</p>
-          ) : members.length === 0 ? (
-            <p className="text-xs text-muted-foreground">{t("لا يوجد أعضاء نشطون في هذه اللجنة", "No active members in this committee")}</p>
-          ) : (
             <>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {members.map((m) => {
-                  const mv = memberVotes[m.id] || { choice: "abstain", dissent: "" };
-                  const isAgainst = mv.choice === "against";
-                  return (
-                    <div key={m.id} className="border border-border rounded-md p-3 bg-card">
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium text-foreground truncate">{L.name(m, "full_name")}</div>
-                          <div className="text-[10px] text-muted-foreground">{roleLabel(m.role)}</div>
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          {["for", "against", "abstain"].map((choice) => {
-                            const labels = { for: t("موافق", "For"), against: t("رافض", "Against"), abstain: t("ممتنع", "Abstain") };
-                            const colors = {
-                              for: mv.choice === "for" ? "bg-state-success-ink text-state-success-surface" : "bg-secondary text-muted-foreground hover:bg-state-success-surface",
-                              against: mv.choice === "against" ? "bg-destructive text-destructive-foreground" : "bg-secondary text-muted-foreground hover:bg-state-danger-surface",
-                              abstain: mv.choice === "abstain" ? "bg-muted-foreground text-background" : "bg-secondary text-muted-foreground hover:bg-secondary/80",
-                            };
-                            return (
-                              <button
-                                key={choice}
-                                onClick={() => setMemberVotes((prev) => ({ ...prev, [m.id]: { ...prev[m.id], choice } }))}
-                                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${colors[choice]}`}
-                              >
-                                {labels[choice]}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                      {isAgainst && (
-                        <Input
-                          value={mv.dissent || ""}
-                          onChange={(e) => setMemberVotes((prev) => ({ ...prev, [m.id]: { ...prev[m.id], dissent: e.target.value } }))}
-                          placeholder={t("سبب المخالفة (اختياري)", "Dissent reason (optional)")}
-                          className="text-xs h-8"
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex items-center gap-2 pt-2 border-t border-border">
-                <ActionBtn onClick={() => recordVotes("approved")} icon={Check} label={t("اعتماد القرار", "Approve Decision")} variant="approve" />
-                <ActionBtn onClick={() => recordVotes("rejected")} icon={X} label={t("رفض القرار", "Reject Decision")} variant="reject" />
-                <ActionBtn onClick={() => recordVotes("deferred")} icon={Clock} label={t("تأجيل", "Defer")} variant="neutral" />
-              </div>
+              {["for", "against", "abstain"].map((choice) => (
+                <ActionBtn
+                  key={choice}
+                  onClick={() => run(`cast_${choice}`, t("تسجيل صوتي", "Cast my vote"), () => base44.functions.invoke("CastVote", { committee_id: decision.committee_id, decision_id: decision.id, vote_choice: choice }))}
+                  icon={choice === "for" ? Check : choice === "against" ? X : Clock}
+                  label={choice === "for" ? t("موافق", "For") : choice === "against" ? t("رافض", "Against") : t("ممتنع", "Abstain")}
+                  variant={choice === "for" ? "approve" : choice === "against" ? "reject" : "default"}
+                  disabled={!canDo("cast_vote") || !!busy}
+                  busyKey={busy === `cast_${choice}`}
+                />
+              ))}
             </>
           )}
+          <ActionBtn
+            onClick={() => run("issue", t("إصدار القرار", "Issue decision"), () => base44.functions.invoke("IssueDecision", { decision_id: decision.id, committee_id: decision.committee_id }))}
+            icon={FileSignature}
+            label={t("إصدار القرار", "Issue decision")}
+            variant="approve"
+            disabled={!canDo("issue") || busy === "issue"}
+            busyKey={busy === "issue"}
+          />
         </div>
       )}
 
-      {showEscalate && (
-        <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">{t("تصعيد القرار", "Escalate Decision")}</h4>
-            <button onClick={() => setShowEscalate(false)} className="text-muted-foreground hover:text-foreground">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <select value={escalationLevel} onChange={(e) => setEscalationLevel(e.target.value)} className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-            {Object.entries(ESCALATION_LEVEL).filter(([k]) => k !== "none").map(([k, v]) => (
-              <option key={k} value={k}>{lang === "ar" ? v.ar : v.en}</option>
-            ))}
-          </select>
-          <ActionBtn onClick={escalate} icon={ArrowUp} label={t("تأكيد التصعيد", "Confirm Escalation")} />
+      {/* The determination of what is deliberately unavailable, with the exact reason. */}
+      {blocked.length > 0 && (
+        <div className="rounded-md border border-border divide-y divide-border">
+          {blocked.map((item) => (
+            <div key={item.en} className="flex items-start gap-2 p-2.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-state-warning-ink shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground">{lang === "ar" ? item.ar : item.en}</p>
+                <p className="text-[11px] text-muted-foreground">{lang === "ar" ? item.whyAr : item.whyEn}</p>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {showSupersede && (
-        <div className="border border-border rounded-md p-4 space-y-3 bg-secondary/30">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">{t("إلغاء بقرار لاحق", "Supersede")}</h4>
-            <button onClick={() => setShowSupersede(false)} className="text-muted-foreground hover:text-foreground">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <p className="text-xs text-muted-foreground">{t("اختر القرار اللاحق الذي يُلغي هذا القرار:", "Choose the later decision that supersedes this one:")}</p>
-          {loadingDecisions ? (
-            <p className="text-xs text-muted-foreground">{t("جارٍ التحميل...", "Loading…")}</p>
-          ) : otherDecisions.length === 0 ? (
-            <p className="text-xs text-muted-foreground">{t("لا توجد قرارات أخرى في هذه اللجنة", "No other decisions in this committee")}</p>
-          ) : (
-            <select value={supersedeById} onChange={(e) => setSupersedeById(e.target.value)} className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-              <option value="">{t("— اختر القرار اللاحق —", "— Select the later decision —")}</option>
-              {otherDecisions.map((d) => (
-                <option key={d.id} value={d.id}>{L.title(d)} ({d.decision_number || t("بدون رقم", "No number")})</option>
-              ))}
-            </select>
+      {outcome && (
+        <div className={`rounded-md border p-3 text-xs space-y-1 ${outcome.kind === "ok" ? "border-state-success-ink/30 bg-state-success-surface text-state-success-ink" : "border-destructive/30 bg-state-danger-surface text-state-danger-ink"}`}>
+          <p className="font-medium">{outcome.title}{outcome.code ? ` · ${outcome.code}` : ""}</p>
+          {outcome.message && <p>{outcome.message}</p>}
+          {outcome.kind === "ok" && outcome.detail?.eligible_count != null && (
+            <p>{t("الهيئة الناخبة المجمّدة:", "Frozen electorate:")} {outcome.detail.eligible_count}{outcome.detail.excluded ? ` · ${t("مستبعد", "excluded")}: ${outcome.detail.excluded.recused_by_identifier + outcome.detail.excluded.out_of_term + outcome.detail.excluded.legacy_name_match}` : ""}</p>
           )}
-          <ActionBtn onClick={supersede} icon={GitBranch} label={t("تأكيد الإلغاء", "Confirm Supersede")} variant="reject" />
+          {outcome.kind === "ok" && outcome.detail?.issuance_state && (
+            <p>{t("حالة الإصدار:", "Issuance state:")} {outcome.detail.issuance_state}</p>
+          )}
+          {outcome.detail?.correlation_id && <p className="text-[10px] opacity-70">correlation: {outcome.detail.correlation_id}</p>}
         </div>
       )}
     </div>

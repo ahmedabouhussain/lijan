@@ -35,9 +35,25 @@ export default async function(req: Request): Promise<Response> {
       base44.asServiceRole.entities.MeetingMinutes.filter({ meeting_id: meetingId }).catch(() => []),
     ]);
 
-    // If minutes already exist, return them (idempotent)
+    // If minutes already exist, return them (idempotent) — and say plainly when the stored draft's
+    // date no longer matches the meeting record. A stale draft is REPORTED, never silently served
+    // as if it were current, and it is never overwritten (approved minutes are not disposable).
     if (existing && existing.length > 0) {
-      return Response.json({ minutes_id: existing[0].id, status: 'exists', minutes: existing[0] });
+      const draft = existing[0];
+      const drifted = !!(draft.call_to_order && meeting.date && draft.call_to_order !== meeting.date);
+      return Response.json({
+        minutes_id: draft.id,
+        status: 'exists',
+        minutes: draft,
+        source_meeting_date: meeting.date || null,
+        stale: drifted,
+        stale_reason: drifted
+          ? {
+            ar: `تاريخ المسودة المحفوظة (${draft.call_to_order}) لا يطابق تاريخ الاجتماع في سجله (${meeting.date}). راجع المسودة قبل اعتمادها؛ لا تُعتمد كما هي.`,
+            en: `The stored draft date (${draft.call_to_order}) does not match the meeting record date (${meeting.date}). Review the draft before approving it; it must not be approved as it stands.`,
+          }
+          : null,
+      });
     }
 
     // Build attendance summary
@@ -66,7 +82,7 @@ export default async function(req: Request): Promise<Response> {
 ## معلومات الاجتماع
 - اسم اللجنة: ${committee?.name_ar || ''}
 - عنوان الاجتماع: ${meeting.title || meeting.title_ar || ''}
-- التاريخ: ${meeting.date || ''}
+- التاريخ (المعتمد من سجل الاجتماع — اذكره كما هو حرفيًا ولا تُدرج أي تاريخ آخر): ${meeting.date || '—'}
 - الوضع: ${meeting.mode || ''}
 - الموقع: ${meeting.location || ''}
 
@@ -91,7 +107,11 @@ ${decisionsText || 'لا توجد قرارات'}
 ## ختام الجلسة
 (وقت الختام والاجتماع القادم)
 
-اكتب المحضر بلغة رسمية حكومية واضحة، مع التزام بالموضوعية وتجنب أي إضافة من عندك — استخدم فقط البيانات المقدمة، واترك الأقسام غير المتوفرة بكتابة "يُستكمل لاحقاً".`;
+اكتب المحضر بلغة رسمية حكومية واضحة، مع التزام بالموضوعية وتجنب أي إضافة من عندك — استخدم فقط البيانات المقدمة، واترك الأقسام غير المتوفرة بكتابة "يُستكمل لاحقاً".
+
+قيود إلزامية:
+- لا تُدرج أي وسوم HTML على الإطلاق (لا <br> ولا <div> ولا غيرها). استخدم Markdown فقط.
+- لا تُنشئ تواريخ أو أسماء أو أرقامًا غير موجودة في البيانات المقدمة، ولا تُغيّر تاريخ الاجتماع.`;
 
     // Generate draft via LLM
     const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
@@ -99,7 +119,39 @@ ${decisionsText || 'لا توجد قرارات'}
     });
 
     const rawMinutesBody = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.response || llmResponse?.text || JSON.stringify(llmResponse));
-    const minutesBody = brandedMarkdownHeader(`محضر ${meeting.title || ''}`) + '\n' + rawMinutesBody;
+
+    // Untrusted model output is reduced to text before it is stored: no markup passes through, so a
+    // draft can never print raw HTML inside an official record.
+    const stripMarkup = (value) => String(value || '')
+      .replace(/<\s*(script|style)[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/gi, '&')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    // The DATE IS COMPOSED BY THE SERVER from the meeting record, not by the model: whatever the
+    // draft says elsewhere, the authoritative date is stated once here in both languages.
+    const nowIso = new Date().toISOString();
+    const meetingTs = meeting.date ? Date.parse(meeting.date) : NaN;
+    const meetingInFuture = Number.isFinite(meetingTs) && meetingTs > Date.parse(nowIso);
+    const displayDate = (() => {
+      try {
+        return new Date(meeting.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Qatar' });
+      } catch (_e) { return meeting.date || '—'; }
+    })();
+    const provenanceBlock = [
+      '',
+      `> **تاريخ الاجتماع المعتمد (من سجل الاجتماع):** ${meeting.date || '—'} — ${displayDate}`,
+      `> **Authoritative meeting date (from the meeting record):** ${meeting.date || '—'} — ${displayDate}`,
+      `> _المصدر: سجل الاجتماع — لا تاريخ آخر مقبول · Source: the meeting record — no other date is authoritative · ${'أُنشئت المسودة'}: ${nowIso}_`,
+      ...(meetingInFuture
+        ? ['', `> **⚠️ ${'مسودة لاجتماع لم يُعقد بعد. لا تُعرض كمحضر مكتمل ولا تُعتمد قبل انعقاد الاجتماع.'} / Draft for a meeting that has not yet taken place. Not completed minutes, and not approvable before the meeting is held.**`]
+        : []),
+      '',
+    ].join('\n');
+    const minutesBody = brandedMarkdownHeader(`محضر ${meeting.title || ''}`) + '\n' + provenanceBlock + '\n' + stripMarkup(rawMinutesBody);
 
     // Generate a short Arabic summary
     const summaryPrompt = `لخص المحضر التالي لاجتماع رسمي في فقرة عربية واحدة (3-4 أسطر) تذكر فيها أهم القرارات والإجراءات:\n\n${minutesBody}`;

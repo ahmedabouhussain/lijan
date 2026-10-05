@@ -370,55 +370,6 @@ export default async function (req) {
       retry_available: failedDeliveries.length > 0,
       correlation_id: auth.correlation_id,
     });
-    const notifiedNames = [];
-    try {
-      const deepLink = committeePath(org, committee);
-      for (const recipient of recipients) {
-        if (recipient.user_id === auth.user.id) continue;
-        const res = await dispatchNotification(base44, {
-          organization_id: auth.organization_id,
-          committee_id: action.committee_id,
-          recipient_user_id: recipient.user_id,
-          recipient_email: recipient.email,
-          recipient_name: recipient.name,
-          event_type: 'escalation_triggered',
-          subject_ar: `تصعيد إجراء إلى ${label.ar}`,
-          subject_en: `Action escalated to ${label.en}`,
-          body_ar: `صُعِّد الإجراء «${action.title_ar || action.title}» إلى ${label.ar}.${escalation_note ? ` السبب: ${escalation_note}` : ''}`,
-          body_en: `The action "${action.title}" was escalated to ${label.en}.${escalation_note ? ` Reason: ${escalation_note}` : ''}`,
-          source_entity_type: 'Action',
-          source_entity_id: action_id,
-          source_title: action.title,
-          priority: nextEscalation === 'escalation_authority' ? 'high' : 'normal',
-          actor_name: auth.user.full_name || auth.user.email,
-          deep_link: deepLink || undefined,
-          correlation_id: auth.correlation_id,
-        });
-        if (res?.outbox_id) {
-          notified += 1;
-          notifiedNames.push(recipient.name || recipient.role);
-        }
-      }
-    } catch (error) {
-      console.error('Escalation notice failed:', error?.message || error);
-    }
-
-    await base44.asServiceRole.entities.Action.updateMany(
-      { id: action_id, escalation_transition_id: transitionId },
-      { $set: { escalation_notice_state: notified > 0 ? 'notified' : 'failed' } },
-    );
-
-    return Response.json({
-      status: 'ok',
-      action_id,
-      previous_escalation_level: action.escalation_level || 'none',
-      new_escalation_level: nextEscalation,
-      recipients: publicRecipients,
-      notified,
-      notified_names: notifiedNames,
-      notice_state: notified > 0 ? 'notified' : 'failed',
-      correlation_id: auth.correlation_id,
-    });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
