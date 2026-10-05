@@ -19,10 +19,11 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
   const [body, setBody] = useState(minutes?.body || "");
   const [summary, setSummary] = useState(minutes?.summary_ar || "");
   const [saving, setSaving] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
   const [signatures, setSignatures] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [signing, setSigning] = useState(false);
+  // A refusal from a governed command is REPORTED, never swallowed.
+  const [actionError, setActionError] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then((u) => setCurrentUser(u)).catch(() => {});
@@ -49,49 +50,53 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
     setGenerating(false);
   };
 
+  // A refusal from a governed command is REPORTED with the server's own reason, never swallowed:
+  // a silent no-op on a governance surface reads as success to the person who acted.
+  const reportRefusal = (e, fallbackAr, fallbackEn) => {
+    const serverMsg = e?.data?.error || e?.response?.data?.error || e?.message;
+    setActionError({ ar: serverMsg || fallbackAr, en: serverMsg || fallbackEn });
+  };
+
   const saveBody = async () => {
     setSaving(true);
+    setActionError(null);
     try {
       await base44.entities.MeetingMinutes.update(minutes.id, { body: sanitizeRichText(body), summary_ar: sanitizeRichText(summary), generated_by_ai: false });
       setEditing(false);
       onChanged();
-    } catch {}
+    } catch (e) {
+      reportRefusal(e, "تعذّر حفظ المحضر. راجع صلاحيتك ثم أعد المحاولة.", "The minutes could not be saved. Check your authority and try again.");
+    }
     setSaving(false);
   };
 
-  const transition = async (newStatus, extra = {}) => {
-    setTransitioning(true);
-    try {
-      await base44.entities.MeetingMinutes.update(minutes.id, { status: newStatus, ...extra });
-      await base44.entities.AuditLog.create({
-        action: "status_change",
-        entity_type: "MeetingMinutes",
-        entity_id: minutes.id,
-        entity_title: minutesTitle(),
-        description: `${L.pair("تغيير حالة المحضر إلى", "Minutes status changed to")} ${L.label(MINUTES_STATUS, newStatus, newStatus)}`,
-      });
-      onChanged();
-    } catch {}
-    setTransitioning(false);
-  };
+  // The minutes lifecycle is advanced by GOVERNED COMMANDS only (SignRecord + ApproveMinutes).
+  // The former client-side status write and the audit entry the actor wrote about itself are
+  // removed: a browser write is not an authority, and a self-reported audit line is not evidence.
 
-  const setAttendance = async (memberId, memberName, memberRole, status) => {
-    const existing = attendance.find((a) => a.member_id === memberId);
+  // Attendance is CERTIFIED through the governed command, not written row by row from the browser.
+  // The command requires the seat id on every record, derives the committee from the meeting itself
+  // and writes the server audit event; the whole set is sent so certification is ONE act.
+  const setAttendance = async (memberId, status) => {
+    setActionError(null);
+    const records = members.map((m) => {
+      const rec = attendance.find((a) => a.member_id === m.id);
+      return {
+        member_id: m.id,
+        member_user_id: m.user_id || null,
+        member_name: L.name(m, "full_name"),
+        member_role: m.role || "member",
+        attendance_status: m.id === memberId ? status : (rec?.attendance_status || "present"),
+        arrival_time: rec?.arrival_time || null,
+      };
+    });
     try {
-      if (existing) {
-        await base44.entities.Attendance.update(existing.id, { attendance_status: status });
-      } else {
-        await base44.entities.Attendance.create({
-          meeting_id: meeting.id,
-          committee_id: meeting.committee_id,
-          member_id: memberId,
-          member_name: memberName,
-          member_role: memberRole,
-          attendance_status: status,
-        });
-      }
+      const res = await base44.functions.invoke("CertifyAttendance", { meeting_id: meeting.id, attendance_records: records });
+      if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر تثبيت الحضور.", "Attendance could not be certified."); return; }
       onChanged();
-    } catch {}
+    } catch (e) {
+      reportRefusal(e, "تعذّر تثبيت الحضور: الصلاحية غير كافية أو الخدمة غير متاحة.", "Attendance could not be certified: authority insufficient or service unavailable.");
+    }
   };
 
   const presentCount = attendance.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
@@ -101,39 +106,32 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
   // formatting detail: it is reported as drift and must be reviewed before approval.
   const dateDrift = hasSourceDrift(minutes?.call_to_order, meeting?.date);
 
+  // Signing and approval are TWO governed steps, not one client write: SignRecord records the
+  // signature (deriving the committee from the minutes and taking the signer's real capacity, not a
+  // label the browser chose), and ApproveMinutes applies the chair/vice-chair rule and the state
+  // gate. A signature image is not a qualified digital signature, and the interface says so.
   const signElectronically = async () => {
     if (!currentUser) return;
     setSigning(true);
+    setActionError(null);
     try {
-      await base44.entities.Signature.create({
+      const sigRes = await base44.functions.invoke("SignRecord", {
+        committee_id: meeting.committee_id,
         document_type: "MeetingMinutes",
         document_id: minutes.id,
         document_title: minutesTitle(),
-        committee_id: meeting.committee_id,
-        signer_name: currentUser.full_name,
-        signer_user_id: currentUser.id,
-        signer_role: "chair",
         signature_method: currentUser.signature_image_url ? "drawn" : "typed",
         signature_text: currentUser.signature_text || currentUser.full_name,
         signature_image_url: currentUser.signature_image_url || undefined,
         intent: "approve",
-        signed_at: new Date().toISOString(),
-        status: "active",
       });
-      await base44.entities.MeetingMinutes.update(minutes.id, {
-        status: "approved",
-        approved_by_name: currentUser.full_name,
-        approved_date: new Date().toISOString().slice(0, 10),
-      });
-      await base44.entities.AuditLog.create({
-        action: "sign",
-        entity_type: "MeetingMinutes",
-        entity_id: minutes.id,
-        entity_title: minutesTitle(),
-        description: L.pair(`توقيع إلكتروني بواسطة ${currentUser.full_name}`, `Electronic signature by ${currentUser.full_name}`),
-      });
+      if (sigRes?.data?.error) { reportRefusal({ data: sigRes.data }, "تعذّر تسجيل التوقيع.", "The signature could not be recorded."); setSigning(false); return; }
+      const approveRes = await base44.functions.invoke("ApproveMinutes", { minutes_id: minutes.id });
+      if (approveRes?.data?.error) { reportRefusal({ data: approveRes.data }, "تعذّر اعتماد المحضر.", "The minutes could not be approved."); setSigning(false); return; }
       onChanged();
-    } catch {}
+    } catch (e) {
+      reportRefusal(e, "تعذّر التوقيع والاعتماد: الصلاحية غير كافية لهذه الخطوة.", "Signature and approval were refused: insufficient authority for this step.");
+    }
     setSigning(false);
   };
 
@@ -169,7 +167,7 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
                     {Object.entries(ATTENDANCE_STATUS).map(([key, val]) => (
                       <button
                         key={key}
-                        onClick={() => setAttendance(m.id, m.full_name, m.role, key)}
+                        onClick={() => setAttendance(m.id, key)}
                         className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
                           current === key ? val.color + " ring-1 ring-current" : "text-muted-foreground hover:bg-secondary"
                         }`}
@@ -258,31 +256,32 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
               <ReactMarkdown>{sanitizeRichText(minutes.body) || "—"}</ReactMarkdown>
             </div>
 
-            {/* Lifecycle controls */}
+            {actionError && (
+              <div className="rounded-md border border-state-danger-ink/30 bg-state-danger-surface p-3 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-state-danger-ink shrink-0 mt-0.5" />
+                <p className="text-xs text-state-danger-ink">{t(actionError.ar, actionError.en)}</p>
+              </div>
+            )}
+
+            {/* Lifecycle — server-governed. A step with no governed command is shown unavailable
+                WITH its reason; minutes state is never written from the browser. */}
             <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-border">
-              <Button size="sm" variant="outline" onClick={() => { setBody(minutes.body); setSummary(minutes.summary_ar || ""); setEditing(true); }}>
-                <Edit3 className="w-3.5 h-3.5" /> {t("تحرير", "Edit")}
-              </Button>
-              {minutes.status === "draft" && (
-                <Button size="sm" onClick={() => transition("in_review")} disabled={transitioning}>
-                  <Send className="w-3.5 h-3.5" /> {t("إرسال للمراجعة", "Send for review")}
+              {(minutes.status === "draft" || minutes.status === "in_review") && (
+                <Button size="sm" variant="outline" onClick={() => { setBody(minutes.body); setSummary(minutes.summary_ar || ""); setActionError(null); setEditing(true); }}>
+                  <Edit3 className="w-3.5 h-3.5" /> {t("تحرير", "Edit")}
                 </Button>
               )}
-              {minutes.status === "in_review" && (
+              {(minutes.status === "draft" || minutes.status === "in_review") && (
                 <Button size="sm" onClick={signElectronically} disabled={signing || !currentUser}>
                   <PenLine className="w-3.5 h-3.5" /> {signing ? t("جارٍ التوقيع...", "Signing...") : t("توقيع واعتماد إلكترونياً", "Sign and approve electronically")}
                 </Button>
               )}
-              {minutes.status === "approved" && (
-                <Button size="sm" onClick={() => transition("issued", { issued_date: new Date().toISOString().slice(0, 10) })} disabled={transitioning}>
-                  <Send className="w-3.5 h-3.5" /> {t("إصدار وإرسال للأعضاء", "Issue and send to members")}
-                </Button>
-              )}
-              {(minutes.status === "issued" || minutes.status === "approved") && (
-                <Button size="sm" variant="outline" onClick={() => transition("amended")} disabled={transitioning}>
-                  <Edit3 className="w-3.5 h-3.5" /> {t("تعديل لاحق", "Amend later")}
-                </Button>
-              )}
+              <span className="text-xs text-muted-foreground">
+                {t(
+                  "إرسال للمراجعة والإصدار والتعديل اللاحق معطّلة: لا يوجد أمر خادمي محكوم لهذه الخطوات بعد، ولا تُكتب حالة المحضر من المتصفح. الاعتماد يتم عبر الأمر المحكوم.",
+                  "Send for review, issuance and later amendment are disabled: no governed server command exists for these steps yet, and minutes state is never written from the browser. Approval runs through the governed command.",
+                )}
+              </span>
               {minutes.generated_by_ai && (
                 <span className="text-xs text-muted-foreground flex items-center gap-1 mr-auto">
                   <Sparkles className="w-3 h-3" /> {t("مسودة مولدة بالذكاء الاصطناعي", "AI-generated draft")}
