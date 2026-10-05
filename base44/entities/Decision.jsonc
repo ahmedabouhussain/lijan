@@ -113,6 +113,37 @@
     "status": {
       "type": "string",
       "title": "Status"
+    },
+    "issued_at": {
+      "type": "string",
+      "title": "Issued At (server-issued, written only by the issuance transition \u2014 never a client field)",
+      "format": "date-time"
+    },
+    "issued_by_user_id": {
+      "type": "string",
+      "title": "Issued By User ID"
+    },
+    "issued_by_name": {
+      "type": "string",
+      "title": "Issued By Name"
+    },
+    "issue_snapshot_id": {
+      "type": "string",
+      "title": "Issue Snapshot ID (the immutable package this issuance rests on)"
+    },
+    "issue_manifest_sha256": {
+      "type": "string",
+      "title": "Issue Manifest Digest (deterministic content fingerprint \u2014 a digest, not proof of legal validity)"
+    },
+    "issuance_state": {
+      "type": "string",
+      "title": "Issuance State (a status of 'issued' with no verified package is 'unverified', never complete)",
+      "enum": [
+        "not_issued",
+        "unverified",
+        "complete"
+      ],
+      "default": "not_issued"
     }
   },
   "required": [

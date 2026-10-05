@@ -6,6 +6,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
 import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
+import IssuanceIntegrityPanel from "@/components/raqeem/IssuanceIntegrityPanel";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -91,6 +92,9 @@ export default function DecisionDetail() {
         committeeHref={committeeHref}
         basePath={basePath}
       />
+
+      {/* Issuance integrity — verified server-side on every read (P0-01) */}
+      <IssuanceIntegrityPanel decisionId={decision.id} />
 
       {/* Immutable Proof Chain Snapshot */}
       <ProofChainSnapshot

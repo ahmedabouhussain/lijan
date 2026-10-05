@@ -9,6 +9,7 @@ import {
   refusalBody,
   refusalStatus,
 } from '../../shared/governedReadPolicy.ts';
+import { evaluateIssuanceReadiness, issuanceVerdict } from '../../shared/decisionIntegrity.ts';
 
 // GetCommitteeRecord — the SINGLE governed read path for a committee record's detail surface.
 //
@@ -105,6 +106,41 @@ async function loadRelated(sr: any, entityType: string, record: any, committee: 
   };
 }
 
+// A decision that presents as ISSUED is re-verified on every read, so a clean badge can never sit
+// over contradictory evidence (P0-01). The verdict is computed in the same scope as the record and
+// returned alongside it; the surface shows it, and the contradiction is never relabelled away.
+async function decisionIntegrity(sr: any, record: any, committee: any) {
+  const [memberships, recusals, attendance, snapshots, votes, signatures] = await Promise.all([
+    sr.entities.CommitteeMembership.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
+    sr.entities.Recusal.filter({ committee_id: committee.id, status: 'active' }).catch(() => []),
+    record.meeting_id ? sr.entities.Attendance.filter({ meeting_id: record.meeting_id }).catch(() => []) : Promise.resolve([]),
+    sr.entities.IssueSnapshot.filter({ decision_id: record.id }, { sort: '-created_date', limit: 1 }).catch(() => []),
+    sr.entities.Vote.filter({ decision_id: record.id }).catch(() => []),
+    sr.entities.Signature.filter({ document_type: 'Decision', document_id: record.id, status: 'active' }).catch(() => []),
+  ]);
+  const stored = arr(snapshots)[0] || null;
+  const readiness = evaluateIssuanceReadiness({
+    decision: record, committee, memberships, recusals, votes: arr(votes), attendance: arr(attendance),
+    signatures: arr(signatures), proof_links: [record.legal_basis],
+  });
+  const verdict = issuanceVerdict({ decision: record, stored, recomputed: readiness });
+  return {
+    ...verdict,
+    readiness: { ready: readiness.ready, blockers: readiness.blockers, completeness: readiness.completeness },
+    facts: {
+      electorate_size: readiness.electorate.size,
+      accepted_ballot_count: readiness.ballots.accepted_count,
+      rejected_ballot_count: readiness.ballots.ineligible.length + readiness.ballots.duplicates.length + readiness.ballots.malformed.length,
+      tally: readiness.ballots.tally,
+      quorum: readiness.quorum,
+      signatures: readiness.signatures,
+    },
+    stored_snapshot: stored
+      ? { id: stored.id, manifest_sha256: stored.manifest_sha256, issued_at: stored.issued_at, completeness_satisfied: stored.completeness_satisfied, completeness_required: stored.completeness_required, assurance_level: stored.assurance_level }
+      : null,
+  };
+}
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -151,9 +187,20 @@ export default async function (req) {
     const projectedRelated = projectBundle(gated.values, ctx);
     const projectedRecord = projectRecord(record, ctx);
 
+    // The organization behind the committee, so a legacy UNSCOPED link can recover its scope from
+    // verified records rather than from browser memory (P1-01).
+    const organization = decision.committee?.organization_id
+      ? await sr.entities.Organization.get(decision.committee.organization_id).catch(() => null)
+      : null;
+    const issuance = entity_type === 'Decision' && decision.committee
+      ? await decisionIntegrity(sr, record, decision.committee)
+      : null;
+
     return Response.json({
       record: projectedRecord.values,
       committee: decision.committee,
+      organization: organization ? { id: organization.id, public_id: organization.public_id || null, name_ar: organization.name_ar || null, name_en: organization.name_en || null } : null,
+      issuance,
       my_role: decision.role,
       read_rank: decision.read_rank,
       capabilities: decision.capabilities,

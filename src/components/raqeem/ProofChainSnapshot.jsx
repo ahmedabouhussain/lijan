@@ -9,30 +9,19 @@ export default function ProofChainSnapshot({ decision, committee, votes = [], si
 
   if (!decision) return null;
 
-  // Compute a content hash (not cryptographic - labeled as pilot)
-  const contentForHash = JSON.stringify({
-    title: decision.title,
-    proposal: decision.proposal,
-    vote_for: decision.vote_for,
-    vote_against: decision.vote_against,
-    vote_abstain: decision.vote_abstain,
-    status: decision.status,
-  });
-  // btoa accepts Latin-1 only, and the snapshot content is UTF-8 (Arabic titles and
-  // proposals included), so the string is encoded to bytes before base64.
-  const contentBytes = new TextEncoder().encode(contentForHash);
-  let contentBinary = "";
-  contentBytes.forEach((byte) => { contentBinary += String.fromCharCode(byte); });
-  const hash = btoa(contentBinary).slice(0, 16);
+  // The base64 "content hash" that stood here was not a digest: it was a reversible encoding of the
+  // record's own fields, refreshed on every render, so it could never verify anything. The digest
+  // now comes from the stored issuance package, computed server-side over the frozen evidence, and
+  // IssuanceIntegrityPanel reports what it does and does not prove.
 
   const snapshotFields = [
-    { icon: Hash, label: { ar: "نسخة المحتوى", en: "Content Version" }, value: `v${decision.version || 1}` },
-    { icon: Hash, label: { ar: "بصمة المحتوى", en: "Content Hash" }, value: hash, mono: true },
+    { icon: Hash, label: { ar: "حزمة الإصدار", en: "Issuance Package" }, value: decision.issue_snapshot_id ? t("محفوظة", "Stored") : t("غير محفوظة", "None stored") },
+    { icon: Hash, label: { ar: "بصمة حزمة الإصدار (SHA-256)", en: "Manifest Digest (SHA-256)" }, value: decision.issue_manifest_sha256 || "—", mono: true },
     { icon: FileText, label: { ar: "مرجع الصلاحية", en: "Mandate Reference" }, value: decision.legal_basis || "—" },
-    { icon: Users, label: { ar: "قائمة الناخبين المؤهلين", en: "Frozen Eligible Voter List" }, value: `${votes.length} ${t("ناخب", "voters")}` },
-    { icon: Gavel, label: { ar: "نتيجة التصويت المعتمدة", en: "Certified Voting Result" }, value: `${decision.vote_for || 0} / ${decision.vote_against || 0} / ${decision.vote_abstain || 0}` },
-    { icon: Pen, label: { ar: "التواقيع المطلوبة", en: "Required Signatures" }, value: `${signatures.length} / ${signatures.filter((s) => s.status === "active").length} ${t("موقّع", "signed")}` },
-    { icon: Clock, label: { ar: "تاريخ الإصدار", en: "Issuance Date" }, value: decision.issued_date || "—" },
+    { icon: Users, label: { ar: "سجلات التصويت المرتبطة", en: "Ballots Recorded" }, value: `${votes.length}` },
+    { icon: Gavel, label: { ar: "النتيجة المسجّلة على السجل", en: "Recorded Result" }, value: `${decision.vote_for || 0} / ${decision.vote_against || 0} / ${decision.vote_abstain || 0}` },
+    { icon: Pen, label: { ar: "التواقيع المسجّلة", en: "Signatures Recorded" }, value: `${(signatures || []).filter((s) => s.status === "active").length}` },
+    { icon: Clock, label: { ar: "تاريخ الإصدار", en: "Issuance Date" }, value: decision.issued_at || "—" },
     { icon: ShieldCheck, label: { ar: "الجهة المُصدِرة", en: "Issuing Authority" }, value: committee?.chair_name || "—" },
   ];
 

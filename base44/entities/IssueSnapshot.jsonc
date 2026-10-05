@@ -1,0 +1,249 @@
+{
+  "name": "IssueSnapshot",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID"
+    },
+    "decision_number": {
+      "type": "string",
+      "title": "Decision Number"
+    },
+    "snapshot_version": {
+      "type": "number",
+      "title": "Snapshot Version (1 = first issuance; a correction links to the record it corrects)",
+      "default": 1
+    },
+    "corrects_snapshot_id": {
+      "type": "string",
+      "title": "Corrects Snapshot ID (immutable history is never mutated \u2014 corrections are new linked records)"
+    },
+    "revokes_decision_id": {
+      "type": "string",
+      "title": "Revokes Decision ID"
+    },
+    "proposal_version": {
+      "type": "string",
+      "title": "Frozen Proposal Version"
+    },
+    "material_version": {
+      "type": "string",
+      "title": "Material Version at Issuance"
+    },
+    "mandate_version": {
+      "type": "string",
+      "title": "Mandate / Instrument Version"
+    },
+    "integrity_policy_version": {
+      "type": "string",
+      "title": "Integrity Policy Version in Force"
+    },
+    "authority_policy_version": {
+      "type": "string",
+      "title": "Authority Policy Version in Force"
+    },
+    "voting_rule": {
+      "type": "string",
+      "title": "Voting Rule Applied"
+    },
+    "quorum_required": {
+      "type": "number",
+      "title": "Quorum Required"
+    },
+    "quorum_present": {
+      "type": "number",
+      "title": "Quorum Present"
+    },
+    "quorum_met": {
+      "type": "boolean",
+      "title": "Quorum Met",
+      "default": false
+    },
+    "threshold_basis": {
+      "type": "string",
+      "title": "Threshold Basis (the rule text the result was tested against)"
+    },
+    "threshold_needed": {
+      "type": "number",
+      "title": "Threshold Needed (votes for)"
+    },
+    "threshold_met": {
+      "type": "boolean",
+      "title": "Threshold Met",
+      "default": false
+    },
+    "electorate_size": {
+      "type": "number",
+      "title": "Eligible Electorate Size"
+    },
+    "electorate_basis": {
+      "type": "string",
+      "title": "Electorate Basis (how the electorate was derived)"
+    },
+    "eligible_seat_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Seat IDs (committee membership ids)"
+    },
+    "excluded_seats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Seats (seat id + reason: recused / voting_right_withdrawn)"
+    },
+    "accepted_ballots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Accepted Ballots (seat + choice + method, one per eligible seat)"
+    },
+    "accepted_ballot_count": {
+      "type": "number",
+      "title": "Accepted Ballot Count"
+    },
+    "rejected_ballots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Rejected Ballots (ineligible / duplicate / malformed, with the reason)"
+    },
+    "tally_for": {
+      "type": "number",
+      "title": "Tally \u2014 For"
+    },
+    "tally_against": {
+      "type": "number",
+      "title": "Tally \u2014 Against"
+    },
+    "tally_abstain": {
+      "type": "number",
+      "title": "Tally \u2014 Abstain"
+    },
+    "completeness_required": {
+      "type": "number",
+      "title": "Mandatory Items Required"
+    },
+    "completeness_satisfied": {
+      "type": "number",
+      "title": "Mandatory Items Satisfied"
+    },
+    "signature_requirement": {
+      "type": "string",
+      "title": "Signature Requirement (explicit not_required is different from missing evidence)",
+      "enum": [
+        "required",
+        "not_required"
+      ],
+      "default": "required"
+    },
+    "signatures_present": {
+      "type": "number",
+      "title": "Signatures Present"
+    },
+    "signature_basis": {
+      "type": "string",
+      "title": "Signature Basis (the policy text the requirement rests on)"
+    },
+    "evidence_manifest": {
+      "type": "string",
+      "title": "Evidence Manifest (canonical JSON of the frozen package)"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "title": "Manifest Digest (deterministic content fingerprint \u2014 a digest, not proof of legal validity)"
+    },
+    "assurance_level": {
+      "type": "string",
+      "title": "Assurance Level",
+      "default": "content_digest"
+    },
+    "issuer_user_id": {
+      "type": "string",
+      "title": "Issuer User ID"
+    },
+    "issuer_name": {
+      "type": "string",
+      "title": "Issuer Name"
+    },
+    "issuer_capacity": {
+      "type": "string",
+      "title": "Issuer Capacity (the seat or office acted in)"
+    },
+    "issued_at": {
+      "type": "string",
+      "title": "Server Issued At",
+      "format": "date-time"
+    },
+    "source_meeting_id": {
+      "type": "string",
+      "title": "Source Meeting ID"
+    },
+    "source_agenda_item_id": {
+      "type": "string",
+      "title": "Source Agenda Item ID"
+    },
+    "execution_links": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Execution Links (actions created from this decision)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "decision_id",
+    "electorate_size",
+    "accepted_ballot_count",
+    "manifest_sha256",
+    "issued_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -37,6 +37,7 @@ import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
 import LegacyCommitteeRedirect from '@/components/routing/LegacyCommitteeRedirect';
+import LegacyRecordRedirect from '@/components/routing/LegacyRecordRedirect';
 import ParamRedirect from '@/components/routing/ParamRedirect';
 // Central institutional identity register — platform administration only.
 const OrganizationAssetsAdmin = lazy(() => import('@/pages/OrganizationAssetsAdmin'));
@@ -233,9 +234,9 @@ const AuthenticatedApp = () => {
         {/* National Committee Adoption & Impact Showcase — founder/admin only */}
         <Route path="/national-adoption-showcase" element={<NationalAdoptionShowcase />} />
 
-        {/* Legacy detail routes (still accessible) */}
-        <Route path="/meetings/:id" element={<MeetingDetail />} />
-        <Route path="/decisions/:id" element={<DecisionDetail />} />
+        {/* Legacy detail routes — scope is recovered from the record itself, server-authorized */}
+        <Route path="/meetings/:id" element={<LegacyRecordRedirect kind="meetings" />} />
+        <Route path="/decisions/:id" element={<LegacyRecordRedirect kind="decisions" />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/founder-vault" element={<FounderVault />} />
 
