@@ -3,8 +3,9 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.2.0-rc.3",
-    "supersedes": "authz-1.2.0-rc.2",
+    "version": "authz-1.2.0-rc.2",
+    "supersedes": "authz-1.2.0-rc.1",
+    "version_scope": "the version string belongs to the AUTHORITY KERNEL, and TestAuthorizationGuard reports it from the kernel itself. The command-site changes recorded below postdate this kernel freeze and therefore do NOT bump it: they change what the commands accept, not the kernel that decides authority.",
     "built_at": "2026-10-05T14:35:00Z",
     "repository_revision": {
       "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
@@ -20,7 +21,7 @@
       { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789" },
       { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "contract": "decision-integrity-1.2.0 (recorded policy version; the previous 1.1.0 evidence carries no round binding and is re-run)" },
       { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" },
-      { "path": "base44/shared/decisionLifecycle.ts", "sha256": "0e9675b13f8ca2ba50876453c978bc337f83aef6672800d7ce659ad27c62734b", "contract": "decision-lifecycle-1.0.0 (the decision state chain stated ONCE: a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and every transition names a state some command actually writes)" }
+      { "path": "base44/shared/decisionLifecycle.ts", "sha256": "0e9675b13f8ca2ba50876453c978bc337f83aef6672800d7ce659ad27c62734b", "added_after": "the authz-1.2.0-rc.2 kernel freeze — a COMMAND-SITE policy source consumed by OpenVote/CastVote/CloseVote/IssueDecision, never by the kernel itself", "contract": "decision-lifecycle-1.0.0 (the decision state chain stated ONCE: a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and every transition names a state some command actually writes)" }
     ],
     "command_site_revisions": [
       {
@@ -39,7 +40,7 @@
         "what": "the decision state chain is read from ONE contract (shared/decisionLifecycle.ts) at every material transition: open_vote accepts draft|proposed, cast_vote and close_vote accept voting only, and issue accepts approved for a FIRST issuance while issued|executing take the idempotent answer (code already_issued).",
         "why": "the chain was declared in more than one place and the declarations disagreed: CreateDecisionDraft writes 'draft' and nothing writes 'proposed', so OpenVote — which accepted only voting|proposed — made the positive cycle unreachable (D-041); and IssueDecision accepted seven states including draft|proposed while refusing with 'must be approved', so approval, issuance and effectiveness were not distinguished.",
         "policy_choice_made": "the RECOMMENDED option was applied (widen the open-vote gate to accept a governed draft) rather than adding a state no command writes. Both were policy choices; this one adds no unreachable state.",
-        "kernel_impact": "NONE — no kernel digest changed; a NEW policy source (decisionLifecycle.ts) is recorded above and the unit suites were re-run (PASS).",
+        "kernel_impact": "NONE — no kernel digest changed, so the kernel version string stays authz-1.2.0-rc.2 (which the running suite reports). A NEW command-site policy source (decisionLifecycle.ts) is recorded above, marked added_after the rc.2 freeze. What this change invalidates is evidence about the decision/vote PATHS, not about the kernel.",
         "coverage_gap": "no suite exercises the HANDLERS: TestDecisionLifecycle asserts the contract object the handlers consume, not a handler, a persisted decision or a deployment."
       }
     ],
@@ -104,15 +105,6 @@
     ]
   },
   "history": [
-    {
-      "version": "authz-1.2.0-rc.2",
-      "superseded_at": "2026-10-05T16:40:00Z",
-      "evidence_state": "SUPERSEDED for the decision/vote paths — the kernel digests did not change, but the vote-round resolution (D-039) and the decision state chain (D-041) did, so any acceptance evidence about those two paths is superseded; the unit suites were re-run and pass",
-      "recorded": {
-        "authorityKernel_sha256": "34582b1fcd6d98a485c8f8be6f601d387460a257d487121623e75b8deda10ac5",
-        "cast_vote_round_contract": "resolved through loadRoundContext, refusing multiple_active_rounds before any write"
-      }
-    },
     {
       "version": "authz-1.2.0-rc.1",
       "superseded_at": "2026-10-05T14:35:00Z",
