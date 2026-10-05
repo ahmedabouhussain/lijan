@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
+import { canCloseVote, refusalFor } from '../../shared/decisionLifecycle.ts';
 
 // CloseVote — closes voting and tallies results.
 export default async function(req) {
@@ -28,8 +29,10 @@ export default async function(req) {
       return Response.json({ error: 'Decision not found' }, { status: 404 });
     }
 
-    if (decision.status !== 'voting') {
-      return Response.json({ error: 'Voting is not open' }, { status: 400 });
+    // The result may only be certified on an open round — read from the ONE lifecycle contract, the
+    // same rule the ballot path and the surface use.
+    if (!canCloseVote(decision.status)) {
+      return Response.json(refusalFor('close_vote', decision.status), { status: 409 });
     }
 
     // Tally votes

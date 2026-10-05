@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 import { computeElectorate } from '../../shared/voteEligibility.ts';
+import { canOpenVote, refusalFor } from '../../shared/decisionLifecycle.ts';
 
 // OpenVote — opens a voting session for a decision.
 export default async function(req) {
@@ -29,8 +30,14 @@ export default async function(req) {
       return Response.json({ error: 'Decision not found' }, { status: 404 });
     }
 
-    if (decision.status !== 'voting' && decision.status !== 'proposed') {
-      return Response.json({ error: `Cannot open vote on decision with status '${decision.status}'` }, { status: 400 });
+    // D-041: this gate accepted only `voting` or `proposed`, and NOTHING in this build writes
+    // `proposed` — while the governed draft command writes `draft`. A state no command produces was
+    // therefore the only key to this transition, so a governed draft could never open a round and the
+    // positive cycle draft → voting → approved → issued was unreachable. The chain is now stated ONCE
+    // (shared/decisionLifecycle.ts, decision-lifecycle-1.0.0): a draft may be taken to a vote by the
+    // seat holding the call right, and proposing stays distinct from agenda preparation.
+    if (!canOpenVote(decision.status)) {
+      return Response.json(refusalFor('open_vote', decision.status), { status: 409 });
     }
 
     // Eligibility freeze, computed by the ONE shared rule (base44/shared/voteEligibility.ts), so the

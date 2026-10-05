@@ -8,6 +8,7 @@ import {
 } from '../../shared/decisionIntegrity.ts';
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
+import { issuanceGate, refusalFor } from '../../shared/decisionLifecycle.ts';
 
 const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
 
@@ -50,8 +51,15 @@ export default async function(req) {
       return Response.json({ error: 'Committee has no mandate — cannot issue decisions' }, { status: 400 });
     }
 
-    if (!['approved', 'voting', 'issued', 'executing', 'draft', 'proposed'].includes(decision.status)) {
-      return Response.json({ error: `Decision must be approved before issuance (current: ${decision.status})` }, { status: 400 });
+    // D-041: this gate accepted SEVEN states — including `draft` and `proposed` — while refusing with
+    // the text "Decision must be approved before issuance". The refusal described a rule the code did
+    // not enforce, so approval, issuance and effectiveness were not distinguished. The gate now comes
+    // from the shared lifecycle contract: first issuance acts on `approved` alone (a state only the
+    // vote result produces), and an already issued/executing decision takes the IDEMPOTENT answer —
+    // a re-verification of the same package, never a silent second issuance.
+    const issueGate = issuanceGate(decision.status);
+    if (!issueGate.allowed) {
+      return Response.json(refusalFor('issue', decision.status), { status: 409 });
     }
 
     // ── Facts, all read server-side ─────────────────────────────────────────────────────────────

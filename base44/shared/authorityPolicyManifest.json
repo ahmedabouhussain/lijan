@@ -3,8 +3,8 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.2.0-rc.2",
-    "supersedes": "authz-1.2.0-rc.1",
+    "version": "authz-1.2.0-rc.3",
+    "supersedes": "authz-1.2.0-rc.2",
     "built_at": "2026-10-05T14:35:00Z",
     "repository_revision": {
       "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
@@ -19,7 +19,8 @@
       { "path": "base44/shared/commandGuard.ts", "sha256": "1495412a0e4c031370673b6a0a583c93f238fbae882c5f45f80f8082c3af7f70" },
       { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789" },
       { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "contract": "decision-integrity-1.2.0 (recorded policy version; the previous 1.1.0 evidence carries no round binding and is re-run)" },
-      { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" }
+      { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" },
+      { "path": "base44/shared/decisionLifecycle.ts", "sha256": "0e9675b13f8ca2ba50876453c978bc337f83aef6672800d7ce659ad27c62734b", "contract": "decision-lifecycle-1.0.0 (the decision state chain stated ONCE: a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and every transition names a state some command actually writes)" }
     ],
     "command_site_revisions": [
       {
@@ -30,6 +31,16 @@
         "why": "with two active rounds the site bound a ballot to whichever round the sort put first, while issuance and the governed read REFUSE that same state — so a ballot could be recorded against an electorate no package may be issued from (silent orphan vote + false 'has voted' state). See D-039 / reference R-17.",
         "kernel_impact": "NONE — no module digest above changed, so this does not by itself invalidate the authority/integrity/eligibility unit evidence; the three suites were re-run anyway (PASS).",
         "coverage_gap": "no suite exercises the CastVote HANDLER: the round contract's own cases pass (incl. two active rounds => no round chosen), but the site behaviour is verified by source + build + module suites only."
+      },
+      {
+        "sites": ["OpenVote", "CastVote", "CloseVote", "IssueDecision"],
+        "at": "2026-10-05T16:40:00Z",
+        "class": "security",
+        "what": "the decision state chain is read from ONE contract (shared/decisionLifecycle.ts) at every material transition: open_vote accepts draft|proposed, cast_vote and close_vote accept voting only, and issue accepts approved for a FIRST issuance while issued|executing take the idempotent answer (code already_issued).",
+        "why": "the chain was declared in more than one place and the declarations disagreed: CreateDecisionDraft writes 'draft' and nothing writes 'proposed', so OpenVote — which accepted only voting|proposed — made the positive cycle unreachable (D-041); and IssueDecision accepted seven states including draft|proposed while refusing with 'must be approved', so approval, issuance and effectiveness were not distinguished.",
+        "policy_choice_made": "the RECOMMENDED option was applied (widen the open-vote gate to accept a governed draft) rather than adding a state no command writes. Both were policy choices; this one adds no unreachable state.",
+        "kernel_impact": "NONE — no kernel digest changed; a NEW policy source (decisionLifecycle.ts) is recorded above and the unit suites were re-run (PASS).",
+        "coverage_gap": "no suite exercises the HANDLERS: TestDecisionLifecycle asserts the contract object the handlers consume, not a handler, a persisted decision or a deployment."
       }
     ],
     "policy": {
@@ -64,6 +75,8 @@
       "round_binding_cases": "PASS DI-035…DI-040 (named round readable once superseded · supersession reported · only the round's own ballots · the same package reconciles against its issued round and NOT against the active round · the package records its round · two active rounds choose none)",
       "vote_eligibility_suite": "PASS 12/12 (policy vote-eligibility-1.0.0, writes_performed: 0)",
       "suites_rerun_after_command_site_revision": "PASS — 38/38 + 14/14 + 15/15 · 40/40 · 12/12 (2026-10-05, after the CastVote round-contract change)",
+      "decision_lifecycle_suite": "PASS 14/14 (policy decision-lifecycle-1.0.0, writes_performed: 0, records_read: 0) — includes the regression guards 'every state a transition accepts is written by some command' and 'the positive chain draft → voting → approved → issued is reachable end to end'",
+      "suites_rerun_after_lifecycle_change": "PASS — 38/38 + 14/14 + 15/15 · 40/40 · 12/12 · 14/14 (2026-10-05, after the lifecycle wiring in OpenVote/CastVote/CloseVote/IssueDecision)",
       "command_site_executed_cases": "ONE smoke case only — CastVote invoked on the edited build with no valid target refused at the authorization gate (404 target_not_found, correlation corr_muva2w0ck88pkz, zero writes). This proves the module loads and that refusal precedes the round read; it does NOT exercise the round resolution itself, so no case yet proves a ballot is refused under multiple_active_rounds",
       "frontend_build": "vite build status=0",
       "concurrency_critical_tests": "NOT ESTABLISHED",
@@ -71,9 +84,13 @@
       "browser_acceptance": "NOT TESTED",
       "scope_note": "these suites are NOT completion of A02–A10: no successful live issuance package and no persisted round have been exercised"
     },
+    "resolved_this_revision": [
+      "D-041 — the decision state chain is stated once (decisionLifecycle, decision-lifecycle-1.0.0): a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and no state that nothing writes is any longer the only key to a transition. The recommended policy option was applied.",
+      "D-040 — attendance is resolved by SEAT only; the name key and the name fallback were removed from AttendancePanel",
+      "D-042 — the decision-draft control on the meeting page is gated by decision.propose, the capability the command it calls requires",
+      "D-039 — the vote path consumes the single round contract and refuses multiple_active_rounds before any write"
+    ],
     "open_defects": [
-      "the decision STATE CHAIN is unreachable in this build: CreateDecisionDraft writes 'draft', OpenVote accepts only 'voting' | 'proposed', and nothing writes 'proposed' — so no governed draft can open a voting round (D-041). This is a policy choice (widening OpenVote's gate vs adding a submit command), not a bug to guess at, and it is why no positive cycle is evidenced",
-      "attendance in AttendancePanel still falls back to matching by member name (D-040)",
       "packages issued under decision-integrity 1.1.0 carry NO round binding, so they cannot be bound to the round they came from (reported as unbound_legacy_package, never silently rebound); no package has been issued in production, so no such record exists yet",
       "no correction path exists: re-issuance after a superseded round is refused (issuance_package_exists / correction_procedure: null) until a correction procedure is defined and policy-authorized",
       "simultaneous-run concurrency measurement is not available from the builder environment (D-009)",
@@ -87,6 +104,15 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.2.0-rc.2",
+      "superseded_at": "2026-10-05T16:40:00Z",
+      "evidence_state": "SUPERSEDED for the decision/vote paths — the kernel digests did not change, but the vote-round resolution (D-039) and the decision state chain (D-041) did, so any acceptance evidence about those two paths is superseded; the unit suites were re-run and pass",
+      "recorded": {
+        "authorityKernel_sha256": "34582b1fcd6d98a485c8f8be6f601d387460a257d487121623e75b8deda10ac5",
+        "cast_vote_round_contract": "resolved through loadRoundContext, refusing multiple_active_rounds before any write"
+      }
+    },
     {
       "version": "authz-1.2.0-rc.1",
       "superseded_at": "2026-10-05T14:35:00Z",

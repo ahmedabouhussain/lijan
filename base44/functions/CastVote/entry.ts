@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts';
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
+import { canCastVote, refusalFor } from '../../shared/decisionLifecycle.ts';
 
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
@@ -27,8 +28,10 @@ export default async function(req) {
 
     const decision = auth.target;
 
-    if (decision.status !== 'voting') {
-      return Response.json({ error: 'Voting is not open for this decision' }, { status: 400 });
+    // The open-round condition is read from the ONE lifecycle contract, so the vote path and the
+    // surface that offers the ballot cannot disagree about what "voting is open" means.
+    if (!canCastVote(decision.status)) {
+      return Response.json(refusalFor('cast_vote', decision.status), { status: 409 });
     }
 
     // A ballot belongs to a FROZEN round. Without one there is no electorate to be eligible in, so

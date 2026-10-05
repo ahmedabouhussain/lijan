@@ -22,13 +22,16 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
   const [certifying, setCertifying] = useState(false);
   const [localStatus, setLocalStatus] = useState({});
 
-  // Attendance is held against the SEAT. A record already stored carries the seat it was certified
-  // for; records certified before seats were recorded are still readable by their stored name.
+  // Attendance is held against the SEAT, and against nothing else (D-040). The previous version also
+  // keyed this map by the member's NAME and fell back to it, so two seats sharing a name shared one
+  // attendance state — a seat shown present because another seat was, and a departed or recused seat
+  // inheriting a live one. The rule is absolute: identity is never resolved by a name. A record that
+  // carries no seat is therefore NOT matched at all; it reads as unrecorded, and every row this panel
+  // certifies carries member_id.
   const attendanceMap = useMemo(() => {
     const map = {};
     (attendance || []).forEach(a => {
       if (a.member_id) map[a.member_id] = a.attendance_status;
-      if (a.member_name) map[a.member_name] = a.attendance_status;
     });
     Object.assign(map, localStatus);
     return map;
@@ -38,10 +41,9 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
     .filter(m => m.status === "active")
     .sort((a, b) => (ROLE_ORDER[a.role] ?? 99) - (ROLE_ORDER[b.role] ?? 99));
 
-  const statusOf = (member) => {
-    const name = member.full_name || member.full_name_ar;
-    return attendanceMap[member.id] || attendanceMap[name] || "absent";
-  };
+  // The seat alone. A missing record reads as "absent" — fail-safe, never an invented presence — and
+  // is never resolved through the member's name.
+  const statusOf = (member) => attendanceMap[member.id] || "absent";
 
   const presentCount = activeMembers.filter(m => {
     const s = statusOf(m);

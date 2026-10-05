@@ -13,18 +13,21 @@ import { L } from "@/lib/l10n";
 //    this record came to carry a result of 13 against an electorate of 0.
 //  • An action that has NO governed command stays unavailable and says why. There is no client-side
 //    implementation left behind the button, so no flag can re-enable a write path by accident.
+// The statuses come from the ONE lifecycle contract (base44/shared/decisionLifecycle.ts,
+// decision-lifecycle-1.0.0) so this surface cannot advertise a state the handler refuses, or hide an
+// action the handler would accept. `issue` includes the already-issued states because re-issuing an
+// issued decision is an IDEMPOTENT re-verification of the same package, not a second issuance.
 const GOVERNED_ACTIONS = {
-  open_vote: { capability: "vote.call", statuses: ["proposed", "draft", "under_review", "pending"] },
+  open_vote: { capability: "vote.call", statuses: ["draft", "proposed"] },
   cast_vote: { capability: "vote.cast", statuses: ["voting"] },
-  issue: { capability: "decision.issue", statuses: ["approved"] },
+  issue: { capability: "decision.issue", statuses: ["approved", "issued", "executing"] },
 };
 
 // Each entry names the exact gap, so the determination is readable on the surface that owns it.
 const AWAITING_COMMAND = [
   { ar: "إرسال للمراجعة", en: "Send for review", statuses: ["draft"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ الإرسال للمراجعة يُنفَّذ عبر مسار الإصدار المحكوم.", whyEn: "No governed server command exists for this transition yet." },
   { ar: "اقتراح للتصويت", en: "Propose for vote", statuses: ["in_review"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد.", whyEn: "No governed server command exists for this transition yet." },
-  { ar: "فتح التصويت", en: "Open voting", statuses: ["draft", "in_review"], whyAr: "فتح التصويت يتطلب أن يكون القرار في حالة «مقترح».", whyEn: "Opening a vote requires the decision to be in the 'proposed' state." },
-  { ar: "إصدار القرار", en: "Issue decision", statuses: ["draft", "proposed", "voting", "issued", "executing", "completed"], whyAr: "الإصدار انتقال محروس: يقتضي أن يكون القرار في حالة «معتمد» واستيفاء المتطلبات الإلزامية.", whyEn: "Issuance is a governed transition: it requires the decision to be 'approved' with its mandatory requirements complete." },
+  { ar: "إصدار القرار", en: "Issue decision", statuses: ["draft", "proposed", "voting"], whyAr: "الإصدار انتقال محروس: يقتضي أن يكون القرار «معتمدًا» — والاعتماد ينتج عن نتيجة التصويت لا بتحرير الحالة — مع استيفاء المتطلبات الإلزامية.", whyEn: "Issuance is a governed transition: it requires the decision to be 'approved' (approval follows from the vote result, never from a status edit) with its mandatory requirements complete." },
   { ar: "بدء التنفيذ", en: "Start execution", statuses: ["issued"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ التنفيذ يُدار من سجل الإجراءات.", whyEn: "No governed server command exists for this transition yet; execution is managed on the action record." },
   { ar: "إكمال", en: "Complete", statuses: ["executing"], whyAr: "الإكمال يقتضي إجراءً مُسندًا بدليل متحقق منه؛ لا يُعتمد على تغيير الحالة هنا.", whyEn: "Completion requires an assigned action with verified evidence; it is not achieved by a status change here." },
   { ar: "إلغاء بقرار لاحق", en: "Supersede", statuses: ["*"], whyAr: "الإلغاء بقرار لاحق يقتضي أمرًا محكومًا غير متوفر بعد؛ ولا يُكتب مباشرة.", whyEn: "Superseding requires a governed command that is not available yet; it is never written directly." },

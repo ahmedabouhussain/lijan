@@ -20,7 +20,7 @@
 
 ## 2. الوحدات المتغيرة والمحفوظة
 
-**تغيّر وظيفيًا**: `src/pages/MeetingDetail.jsx` — بوابة زر إنشاء القرار `agenda.propose` → `decision.propose` (D-042) · `base44/functions/CastVote/entry.ts` — حلّ الدورة انتقل إلى عقد `roundContext` الواحد مع رفض `multiple_active_rounds` قبل أي كتابة، وعدّ الأصوات من `ctx.ballots` (D-039 · R-17). **لا تغيير** في نواة السلطة ولا الحارس ولا المطالبة ولا سلامة الإصدار ولا سياق الدورة.
+**تغيّر وظيفيًا**: `src/pages/MeetingDetail.jsx` (بوابة إنشاء القرار على `decision.propose` — D-042) · `base44/functions/CastVote/entry.ts` (حلّ الدورة عبر `roundContext` ورفض `multiple_active_rounds` قبل أي كتابة، والعدّ من `ctx.ballots` — D-039) · **جديد** `base44/shared/decisionLifecycle.ts` (`decision-lifecycle-1.0.0`) تستهلكه `OpenVote`/`CastVote`/`CloseVote`/`IssueDecision` (الإصدار الأول على `approved` وحدها، و`issued/executing` جواب مُكرَّر آمن، والسلسلة صارت قابلة للوصول — D-041) · `src/components/raqeem/DecisionWorkflow.jsx` (الحالات صارت من العقد نفسه) · `src/components/raqeem/AttendancePanel.jsx` (المقعد وحده، لا مطابقة بالاسم — D-040). **لا تغيير** في نواة السلطة ولا الحارس ولا المطالبة ولا سلامة الإصدار ولا سياق الدورة.
 **أُضيف**: `src/docs/SPRINT_DELIVERY_MAP.md` · `src/docs/BASELINE_S0.md` · `src/docs/COMPETITIVE_REGISTER.md` · `src/docs/REQUIREMENT_REGISTER.md` · `src/docs/references/LIJAN_Base44_Implementation_References_EN_AR_2026-10-05.txt` (حزمة المراجع الدائمة R-01…R-17 كما وردت).
 **عُدِّل**: `src/docs/DEFECT_REGISTER.md` (D-039…D-042) · `src/docs/EVIDENCE_LEDGER.md` (§7) · هذا الملف.
 **محفوظ بلا تغيير**: `authorityKernel` · `commandGuard` · `transitionClaim` · `decisionIntegrity` · `roundContext` · `voteEligibility` · `committeeAuth` · `governedReadPolicy` · `fileAccessPolicy` · `showcaseSession` · الراوتر ومساراته · الهوية البصرية · المعرّفات · العدّ المُصالح عليه لإجراءَي QDB · السجل العام الفارغ بقصد.
@@ -29,7 +29,8 @@
 
 **حالات القبول**: **لا واحدة**. A01–A24 كلها `NOT TESTED`، وJ01–J14 كذلك.
 **المقارنة**: C-01…C-10 بلا قياس واحد؛ الحكم المعلن: «LIJAN مُدلَّل عليه (مصدر)؛ التفوّق المقارن غير مُختبَر».
-**عيوب هذه الدفعة** (كلها «غير مُسنَد»): **D-039** (P0 — **مُصلَح في S1**: عقد دورة واحد على مسار التصويت؛ الأسر الثلاث تُعيد PASS، ودخان المعالج يرفض قبل أي كتابة بـ`target_not_found`، لكن **لا حالة تُمارس مسار رفض الدورتين النشطتين**) · **D-040** (P1، مفتوح) · **D-041** (P0، **قرار مالك**) · **D-042** (مُصلَح في الكود، اختبار متصفح NOT TESTED).
+**عيوب هذه الدفعة** (كلها «غير مُسنَد»): **D-039** (P0 — **مُصلَح**: عقد دورة واحد على مسار التصويت) · **D-040** (P1 — **مُصلَح**: لا مطابقة بالاسم في الحضور) · **D-041** (P0 — **مُصلَح**: وحدة `decisionLifecycle` واحدة والسلسلة صارت قابلة للوصول؛ أسرة جديدة 14/14) · **D-042** (P1 — **مُصلَح**: بوابة إنشاء القرار على `decision.propose`).
+**لا يبقى عيب معروف في هذه الدفعة بلا إصلاح**؛ ويبقى **حدّ الأدلة** كما هو: لا حالة محفوظة مُصادَقة، ولا متصفح، ولا تزامن — لأن الفاعل المُقعد غير متوفر.
 **معلن ولم يُعَد إنتاجه**: «الحضور الناقص يظهر حاضرًا» في `AttendancePanel` (الافتراضي `absent`) — يُطلب تحديد المسار الآخر.
 
 ## 4. أثر البيانات والاسترجاع والتصريح المطلوب
