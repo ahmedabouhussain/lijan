@@ -16,7 +16,13 @@
 // legal validity, trusted time or independently verified tamper resistance, and the assurance it
 // carries is reported alongside it rather than implied.
 //
-// POLICY VERSION: decision-integrity-1.1.0 (security material — a change invalidates prior evidence).
+// POLICY VERSION: decision-integrity-1.2.0 (security material — a change invalidates prior evidence).
+// 1.2.0 (5 Oct 2026, second slice): the package RECORDS the frozen round it rests on
+//   (`manifest_input.round` / `round_binding`). Without that, a stored package was not
+//   self-describing, so re-verification could only be run against whatever round happened to be
+//   active — after a re-vote or a correction that is a DIFFERENT round, and a validly issued package
+//   read as inconsistent. Evidence produced under 1.1.0 carries NO round binding and must be re-run;
+//   it is never assumed to be bound to the right round.
 // 1.1.0 (5 Oct 2026): two corrections, both reported in the 5 October review.
 //   • QUORUM is counted over DISTINCT ELIGIBLE VOTING SEATS, not over attendance rows: a duplicated
 //     row for one seat can no longer inflate it, and a present observer or advisor — who holds no
@@ -25,7 +31,7 @@
 //     The previous comparison in issuanceVerdict was a no-op, so an altered package still read as
 //     intact. Evidence produced under 1.0.0 is INVALIDATED and must be re-run against 1.1.0.
 
-export const INTEGRITY_POLICY_VERSION = "decision-integrity-1.1.0";
+export const INTEGRITY_POLICY_VERSION = "decision-integrity-1.2.0";
 
 /** The mandatory items of an issuance package. `satisfied_when` is evaluated, never assumed. */
 export const ISSUANCE_REQUIREMENTS = [
@@ -179,6 +185,9 @@ function thresholdFor(rule, cast, eligible) {
 export function evaluateIssuanceReadiness({
   decision = {}, committee = {}, memberships = [], recusals = [], votes = [],
   attendance = [], signatures = [], proof_links = [], now = null,
+  // The frozen round the callers resolved (shared/roundContext.ts). Optional here because this
+  // evaluator only reconciles the facts it is given; recorded in the package when supplied (1.2.0).
+  round = null,
 } = {}) {
   const asOf = now || new Date().toISOString();
   const electorate = eligibleSeats({ memberships, recusals, asOf });
@@ -191,6 +200,19 @@ export function evaluateIssuanceReadiness({
   const sig = signatureRequirement({ committee, signatures });
 
   const links = (proof_links || []).filter(nonEmpty);
+
+  // What the package says about its own evidence base. Recorded IN the package so that a later
+  // re-verification can bind to the round that was actually voted, instead of to whichever round is
+  // active at reading time (1.2.0).
+  const roundBinding = round ? {
+    id: round.id || null,
+    round: round.round || 1,
+    status: round.status || "active",
+    frozen_on: dayOf(round.frozen_on) || round.frozen_on || null,
+    eligible_count: round.eligible_count ?? null,
+    eligibility_policy_version: round.eligibility_policy_version || null,
+  } : null;
+
   const satisfied = {
     proposal_frozen: nonEmpty(decision.proposal) || nonEmpty(decision.proposal_en) || nonEmpty(decision.outcome) || nonEmpty(decision.outcome_en),
     legal_basis: nonEmpty(decision.legal_basis) || nonEmpty(decision.legal_basis_en) || nonEmpty(committee.mandate) || nonEmpty(committee.mandate_id),
@@ -260,11 +282,13 @@ export function evaluateIssuanceReadiness({
     signatures: sig,
     proof_link_count: links.length,
     source_meeting_id: decision.meeting_id || null,
+    round: roundBinding,
   };
 
   return {
     policy_version: INTEGRITY_POLICY_VERSION,
     evaluated_at: asOf,
+    round_binding: roundBinding,
     ready: blockers.length === 0,
     blockers,
     completeness,

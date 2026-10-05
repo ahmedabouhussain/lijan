@@ -115,13 +115,26 @@ async function decisionIntegrity(sr: any, record: any, committee: any) {
   // reconstructs the package from the seats that were FROZEN at the event time — rechecking today's
   // authority must never rewrite the historical electorate (5 Oct review). A decision with no frozen
   // round is reported as such; it is not re-derived "live" and presented as equivalent.
-  const [attendance, snapshots, signatures, roundCtx] = await Promise.all([
+  //
+  // BINDING (round-context 1.1.0): an issued package is judged against the round it was ISSUED from.
+  // Reading today's active round instead meant that after a re-vote or a correction — the very case a
+  // superseded round represents — a validly issued decision was re-judged against the NEW round's
+  // electorate and ballots and reported as inconsistent. The stored package names its round; that
+  // round is loaded whatever its status, and the supersession is reported rather than acted upon.
+  const [attendance, snapshots, signatures, activeRoundCtx] = await Promise.all([
     record.meeting_id ? sr.entities.Attendance.filter({ meeting_id: record.meeting_id }).catch(() => []) : Promise.resolve([]),
     sr.entities.IssueSnapshot.filter({ decision_id: record.id }, { sort: '-created_date', limit: 1 }).catch(() => []),
     sr.entities.Signature.filter({ document_type: 'Decision', document_id: record.id, status: 'active' }).catch(() => []),
     loadRoundContext(sr, { decision_id: record.id, committee_id: committee.id }),
   ]);
   const stored = arr(snapshots)[0] || null;
+  const issuedRoundId = stored?.round_snapshot_id || null;
+  const roundCtx = issuedRoundId && issuedRoundId !== activeRoundCtx.round?.id
+    ? await loadRoundContext(sr, { decision_id: record.id, committee_id: committee.id, round_id: issuedRoundId })
+    : activeRoundCtx;
+  const boundTo = stored
+    ? (issuedRoundId ? (issuedRoundId === activeRoundCtx.round?.id ? 'issued_round_is_active' : 'issued_round') : 'unbound_legacy_package')
+    : 'active_round';
   const readiness = evaluateIssuanceReadiness({
     decision: record, committee,
     memberships: roundCtx.memberships,
@@ -129,6 +142,7 @@ async function decisionIntegrity(sr: any, record: any, committee: any) {
     votes: roundCtx.ballots,
     attendance: arr(attendance), signatures: arr(signatures), proof_links: [record.legal_basis],
     now: roundCtx.as_of || undefined,
+    round: roundCtx.round,
   });
   // A stored package is verified against its own digest on EVERY read, not compared with itself.
   const manifest_check = await verifyStoredManifest(stored);
@@ -139,6 +153,8 @@ async function decisionIntegrity(sr: any, record: any, committee: any) {
       ? {
         id: roundCtx.round.id,
         round: roundCtx.round.round || 1,
+        status: roundCtx.round_status,
+        superseded_by: roundCtx.superseded_by,
         frozen_on: roundCtx.round.frozen_on || null,
         eligibility_policy_version: roundCtx.round.eligibility_policy_version || null,
         proposal_version: roundCtx.round.proposal_version || null,
@@ -146,6 +162,7 @@ async function decisionIntegrity(sr: any, record: any, committee: any) {
       }
       : null,
     electorate_basis: roundCtx.basis,
+    bound_to_round: boundTo,
     manifest_verification: manifest_check,
     readiness: { ready: readiness.ready, blockers: readiness.blockers, completeness: readiness.completeness },
     facts: {

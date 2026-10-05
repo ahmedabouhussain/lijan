@@ -243,6 +243,75 @@ export default async function (req) {
     }, { decision_id: 'DEC-FIXTURE', committee_id: 'C-FIXTURE' });
     check('DI-034', 'A round naming a seat that no longer EXISTS is reported unresolved (a broken chain, not a pass)', unresolved.unresolved_seat_ids.length === 1 && unresolved.unresolved_seat_ids[0] === 'SEAT-DELETED', { unresolved: unresolved.unresolved_seat_ids });
 
+    // ── F-L: HISTORY BINDING — the round a package was issued from, after it is superseded ────────
+    // A re-vote or a correction supersedes the round it replaces. Resolving only the ACTIVE round meant
+    // that reading a validly issued decision after that point judged it against the NEW round's
+    // electorate and ballots: a false accusation against an official record, and a silent rewrite of
+    // what was frozen. These cases fix the contract: name the round, get that round; never choose one
+    // silently; record the round in the package itself.
+    const historyStub = {
+      entities: {
+        EligibleVoterSnapshot: { filter: async () => [
+          { id: 'RND-2', round: 2, status: 'active', supersedes_snapshot_id: 'RND-1', frozen_on: '2026-10-01', eligible_seat_ids: ['SEAT-1', 'SEAT-2'], eligible_count: 2, eligibility_policy_version: 'vote-eligibility-1.0.0', proposal_version: 'pv-2' },
+          { id: 'RND-1', round: 1, status: 'superseded', frozen_on: '2026-09-01', eligible_seat_ids: ['SEAT-1', 'SEAT-2'], eligible_count: 2, eligibility_policy_version: 'vote-eligibility-1.0.0', proposal_version: 'pv-1' },
+        ] },
+        CommitteeMembership: { filter: async () => [
+          { id: 'SEAT-1', user_id: 'USER-1', role: 'member', status: 'active' },
+          { id: 'SEAT-2', user_id: 'USER-2', role: 'member', status: 'active' },
+        ] },
+        Recusal: { filter: async () => [] },
+        Vote: { filter: async () => [
+          { id: 'V-R1-A', voter_membership_id: 'SEAT-1', voter_user_id: 'USER-1', vote_choice: 'for', eligible_voter_snapshot_id: 'RND-1' },
+          { id: 'V-R1-B', voter_membership_id: 'SEAT-2', voter_user_id: 'USER-2', vote_choice: 'for', eligible_voter_snapshot_id: 'RND-1' },
+          { id: 'V-R2-A', voter_membership_id: 'SEAT-1', voter_user_id: 'USER-1', vote_choice: 'against', eligible_voter_snapshot_id: 'RND-2' },
+        ] },
+      },
+    };
+    const boundCtx = await loadRoundContext(historyStub, { decision_id: 'DEC-H', committee_id: 'C-H', round_id: 'RND-1' });
+    const liveCtx = await loadRoundContext(historyStub, { decision_id: 'DEC-H', committee_id: 'C-H' });
+    check('DI-035', 'A NAMED round is read whatever its status: the round a package was issued from stays readable after it is superseded',
+      boundCtx.round?.id === 'RND-1' && boundCtx.round_status === 'superseded' && boundCtx.selection === 'named_round_id',
+      { round: boundCtx.round?.id, round_status: boundCtx.round_status, selection: boundCtx.selection });
+    check('DI-036', 'Supersession is REPORTED with the round that replaced it, and the default still resolves the active round',
+      boundCtx.superseded_by?.id === 'RND-2' && liveCtx.round?.id === 'RND-2' && liveCtx.round_status === 'active',
+      { superseded_by: boundCtx.superseded_by, active_round: liveCtx.round?.id });
+    check('DI-037', 'Each round carries ONLY its own ballots; the other round is reported, never counted',
+      boundCtx.ballots.length === 2 && boundCtx.ballots.every((b: any) => b.eligible_voter_snapshot_id === 'RND-1') && boundCtx.out_of_round_votes.length === 1 && liveCtx.ballots.length === 1,
+      { bound: boundCtx.ballots.map((b: any) => b.id), out_of_round: boundCtx.out_of_round_votes.map((v: any) => v.id), live: liveCtx.ballots.map((b: any) => b.id) });
+
+    // The SAME stored package, judged against the round it was issued from and against the round that
+    // is active today: this difference is exactly what the read path must not lose.
+    const historyFacts = {
+      decision: { id: 'DEC-H', status: 'issued', issued_at: '2026-09-05T00:00:00.000Z', proposal: 'p', legal_basis: 'lb', vote_for: 2, vote_against: 0, vote_abstain: 0, decision_number: '2026/77' },
+      committee: C({ quorum_count: 2 }),
+      attendance: attendanceFor(2), signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
+    };
+    const asBound = evaluateIssuanceReadiness({ ...historyFacts, memberships: boundCtx.memberships, recusals: boundCtx.recusals, votes: boundCtx.ballots, round: boundCtx.round, now: boundCtx.as_of || undefined });
+    const asLive = evaluateIssuanceReadiness({ ...historyFacts, memberships: liveCtx.memberships, recusals: liveCtx.recusals, votes: liveCtx.ballots, round: liveCtx.round, now: liveCtx.as_of || undefined });
+    check('DI-038', 'A package reconciles against the round it was issued from and NOT against the round active today, so a read must bind to the issued round',
+      asBound.ready === true && asLive.ready === false && codes(asLive).includes('tally_mismatch'),
+      { bound_ready: asBound.ready, live_ready: asLive.ready, live_codes: codes(asLive) });
+    check('DI-039', 'The package RECORDS the round it rests on, so re-verification can bind to it instead of guessing',
+      asBound.manifest_input.round?.id === 'RND-1' && asBound.manifest_input.round?.status === 'superseded' && asBound.manifest_input.round?.frozen_on === '2026-09-01' && asBound.round_binding?.round === 1,
+      asBound.manifest_input.round);
+
+    // Two ACTIVE rounds is a contradiction: picking one by sort order would decide the electorate by
+    // accident, so no round is chosen and the conflict is named.
+    const conflicted = await loadRoundContext({
+      entities: {
+        EligibleVoterSnapshot: { filter: async () => [
+          { id: 'RND-A', round: 1, status: 'active', frozen_on: '2026-09-01', eligible_seat_ids: ['SEAT-1'], eligible_count: 1 },
+          { id: 'RND-B', round: 2, status: 'active', frozen_on: '2026-10-01', eligible_seat_ids: ['SEAT-1', 'SEAT-2'], eligible_count: 2 },
+        ] },
+        CommitteeMembership: { filter: async () => [{ id: 'SEAT-1', user_id: 'USER-1', status: 'active' }, { id: 'SEAT-2', user_id: 'USER-2', status: 'active' }] },
+        Recusal: { filter: async () => [] },
+        Vote: { filter: async () => [] },
+      },
+    }, { decision_id: 'DEC-H', committee_id: 'C-H' });
+    check('DI-040', 'Two ACTIVE rounds choose NO round at all (fail-closed) and the conflict is named',
+      conflicted.round === null && conflicted.conflict === 'multiple_active_rounds' && conflicted.rounds_seen === 2,
+      { round: conflicted.round, conflict: conflicted.conflict, rounds_seen: conflicted.rounds_seen });
+
     const failed = results.filter((r) => r.verdict === 'FAIL');
     return Response.json({
       integrity_policy_version: INTEGRITY_POLICY_VERSION,
@@ -255,6 +324,7 @@ export default async function (req) {
         'F-I': 'stored-manifest verification: intact / altered content / altered digest / missing manifest',
         'F-J': 'quorum over distinct eligible voting seats; principal + alternate',
         'F-K': 'the round decides the seats and the ballots: ended seat preserved, other-round ballot reported',
+        'F-L': 'history binding: a superseded round stays readable with its own ballots, the package records the round it rests on, and two active rounds choose none',
       },
       writes_performed: 0,
       results,

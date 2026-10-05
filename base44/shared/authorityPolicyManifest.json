@@ -18,8 +18,8 @@
       { "path": "base44/shared/authorityKernel.ts", "sha256": "34582b1fcd6d98a485c8f8be6f601d387460a257d487121623e75b8deda10ac5" },
       { "path": "base44/shared/commandGuard.ts", "sha256": "1495412a0e4c031370673b6a0a583c93f238fbae882c5f45f80f8082c3af7f70" },
       { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789" },
-      { "path": "base44/shared/decisionIntegrity.ts", "sha256": "5540b49f1638d24601431fc59050654add7a79921d9d2d0f1fa23a802257750b" },
-      { "path": "base44/shared/roundContext.ts", "sha256": "94afb0af2d845ae68c04aaabcde4397349735aa18d4b1591a6bc7b791b76572e" }
+      { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "contract": "decision-integrity-1.2.0 (recorded policy version; the previous 1.1.0 evidence carries no round binding and is re-run)" },
+      { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" }
     ],
     "policy": {
       "delegable_capabilities": 13,
@@ -49,7 +49,8 @@
       "authority_role_tests": "PASS 38/38",
       "authority_positive_tests": "PASS 14/14",
       "fail_closed_tests": "PASS 15/15",
-      "decision_integrity_suite": "PASS 34/34 (policy decision-integrity-1.1.0, writes_performed: 0)",
+      "decision_integrity_suite": "PASS 40/40 (policy decision-integrity-1.2.0, writes_performed: 0)",
+      "round_binding_cases": "PASS DI-035…DI-040 (named round readable once superseded · supersession reported · only the round's own ballots · the same package reconciles against its issued round and NOT against the active round · the package records its round · two active rounds choose none)",
       "vote_eligibility_suite": "PASS 12/12 (policy vote-eligibility-1.0.0, writes_performed: 0)",
       "frontend_build": "vite build status=0",
       "concurrency_critical_tests": "NOT ESTABLISHED",
@@ -58,6 +59,8 @@
       "scope_note": "these suites are NOT completion of A02–A10: no successful live issuance package and no persisted round have been exercised"
     },
     "open_defects": [
+      "packages issued under decision-integrity 1.1.0 carry NO round binding, so they cannot be bound to the round they came from (reported as unbound_legacy_package, never silently rebound); no package has been issued in production, so no such record exists yet",
+      "no correction path exists: re-issuance after a superseded round is refused (issuance_package_exists / correction_procedure: null) until a correction procedure is defined and policy-authorized",
       "simultaneous-run concurrency measurement is not available from the builder environment (D-009)",
       "no authenticated SEATED test actor exists, so no persisted end-to-end cycle can be executed (blocker, unassigned owner)",
       "writing functions outside committee scope still need their own gate (see the ledger)",

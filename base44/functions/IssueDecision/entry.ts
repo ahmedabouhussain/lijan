@@ -64,7 +64,7 @@ export default async function(req) {
     // referenced without being declared — every issuance attempt that got past the guard died in a
     // ReferenceError and answered 500. The round is now resolved by ONE call that cannot drift out of
     // step with its own destructuring, and a missing round BLOCKS issuance rather than falling back.
-    const [signatures, attendance, actions, snapshots, roundCtx] = await Promise.all([
+    const [signatures, attendance, actions, snapshots, activeRoundCtx] = await Promise.all([
       sr.entities.Signature.filter({ document_type: 'Decision', document_id: decision_id, status: 'active' }).catch(() => []),
       decision.meeting_id ? sr.entities.Attendance.filter({ meeting_id: decision.meeting_id }).catch(() => []) : Promise.resolve([]),
       sr.entities.Action.filter({ decision_id }).catch(() => []),
@@ -73,10 +73,62 @@ export default async function(req) {
     ]);
     const storedSnapshot = arr(snapshots)[0] || null;
 
+    // ── HISTORY BINDING ────────────────────────────────────────────────────────────────────────
+    // When a package already exists, the evidence that counts is the evidence of the round it was
+    // issued FROM — not today's active round. Rebinding here is what stops a later round from being
+    // used to re-judge an earlier issuance: after a re-vote or a correction the active round is a
+    // DIFFERENT round, and judging the old package by it read a valid issuance as inconsistent.
+    const issuedRoundId = storedSnapshot?.round_snapshot_id || null;
+    let roundCtx = activeRoundCtx;
+    let boundTo: string = issuedRoundId ? 'issued_round' : 'active_round';
+    if (issuedRoundId && issuedRoundId !== activeRoundCtx.round?.id) {
+      roundCtx = await loadRoundContext(sr, { decision_id, committee_id: committee.id, round_id: issuedRoundId });
+    } else if (storedSnapshot && !issuedRoundId) {
+      // A package written before round binding existed names no round, so it cannot be bound to one.
+      // The limitation is REPORTED, never papered over by assuming today's round is the right one.
+      boundTo = 'unbound_legacy_package';
+    }
+
+    // An existing package is never silently replaced by a second one. Re-issuance after the round was
+    // superseded is a CORRECTION, and a correction is a NEW linked record — a procedure this build
+    // does not authorize, so the governed answer is a stop that names the reason.
+    if (storedSnapshot && !['issued', 'executing'].includes(decision.status)) {
+      return Response.json({
+        error: 'An issuance package already exists for this decision',
+        code: 'issuance_package_exists',
+        message: {
+          ar: 'توجد حزمة إصدار محفوظة لهذا القرار؛ لا تُستبدل ولا يُكتب فوقها. وإن تغيّرت الدورة أو النص، فالمسار قرار تصحيحي جديد مرتبط بالأصل.',
+          en: 'A stored issuance package already exists; it is never replaced or overwritten. If the round or the text changed, the route is a new correction record linked to the original.',
+        },
+        existing_snapshot: { id: storedSnapshot.id, issued_at: storedSnapshot.issued_at || null, round_snapshot_id: issuedRoundId },
+        current_round_id: activeRoundCtx.round?.id || null,
+        correction_procedure: null,
+        policy_authorized_alternative: null,
+        decided: 'refused_before_write',
+        correlation_id: auth.correlation_id,
+      }, { status: 409 });
+    }
+
     // A missing frozen round BLOCKS new issuance. A live recomputation of today's register is not an
     // equivalent package: it is weaker evidence, it is never substituted for a frozen round, and it is
     // never described as one. A SEPARATE, policy-authorized alternative procedure could supply
     // equivalent evidence — none is defined in this build, so the answer here is a governed stop.
+    // More than one ACTIVE round is a contradiction the caller must settle, not a choice to make by
+    // sort order: with no single frozen round named, nothing is issued or certified on this evidence.
+    if (roundCtx.conflict) {
+      return Response.json({
+        error: 'More than one active frozen voting round exists for this decision',
+        code: roundCtx.conflict,
+        message: {
+          ar: 'توجد أكثر من دورة تصويت نشطة مجمّدة لهذا القرار؛ لا تُختار دورة بالترتيب. يلزم حسم الدورة المعتمدة قبل الإصدار أو الشهادة.',
+          en: 'More than one active frozen round exists. No round is chosen by order: the governing round must be settled before issuance or certification.',
+        },
+        rounds_seen: roundCtx.rounds_seen,
+        decided: 'refused_before_write',
+        correlation_id: auth.correlation_id,
+      }, { status: 409 });
+    }
+
     if (!roundCtx.round) {
       return Response.json({
         error: 'No frozen voting round exists for this decision',
@@ -126,6 +178,8 @@ export default async function(req) {
       votes: roundCtx.ballots,
       attendance, signatures, proof_links: proofLinks,
       now: roundCtx.as_of || undefined,
+      // The package records the round it rests on (1.2.0), so re-verification can bind to it.
+      round: roundCtx.round,
     });
 
     const buildProofChain = (issuedAt) => ({
@@ -172,6 +226,12 @@ export default async function(req) {
         status: 'ok',
         decision_id,
         already_issued: true,
+        round_binding: {
+          bound_to: boundTo,
+          round_id: roundCtx.round?.id || null,
+          round_status: roundCtx.round_status,
+          superseded_by: roundCtx.superseded_by,
+        },
         issuance: verdict,
         readiness: { ready: readiness.ready, blockers: readiness.blockers, completeness: readiness.completeness },
         proof_chain: buildProofChain(storedSnapshot?.issued_at || decision.issued_at || null),
@@ -224,6 +284,9 @@ export default async function(req) {
       decision_id,
       decision_number: decision.decision_number || null,
       snapshot_version: 1,
+      round_snapshot_id: roundCtx.round.id,
+      round_number: roundCtx.round.round || 1,
+      round_frozen_on: roundCtx.round.frozen_on || null,
       proposal_version: String(decision.updated_date || decision.created_date || ''),
       material_version: String(decision.updated_date || ''),
       mandate_version: String(committee.version || 1),
@@ -347,6 +410,12 @@ export default async function(req) {
       },
       ballots_in_round: roundCtx.ballots.length,
       ballots_out_of_round: roundCtx.out_of_round_votes.length,
+      round_binding: {
+        bound_to: boundTo,
+        round_id: roundCtx.round.id,
+        round_status: roundCtx.round_status,
+        superseded_by: roundCtx.superseded_by,
+      },
       electorate_basis: electorateBasisNote,
       assurance: ASSURANCE,
       issuance: issuanceVerdict({ decision: { ...decision, status: 'issued', issued_at: issuedAt }, stored: snapshot, recomputed: readiness, manifest_check: await verifyStoredManifest(snapshot) }),

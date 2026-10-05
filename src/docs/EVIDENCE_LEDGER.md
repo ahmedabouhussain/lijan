@@ -1,7 +1,7 @@
 # سجل الأدلة | EVIDENCE LEDGER
 
 **البناء المُميَّز**: معاينة الإنتاج `https://lijan.base44.app` · قاعدة المراجعة `dd5c9530fbba708da0c0d85ee5c80e1f05c9d602` (2026-10-05T10:32:40Z) · هذه الدفعة **شجرة عمل غير مُثبَّتة** فوقها، وتُعرَّف ببصمات ملفات السياسة:
-`authorityKernel.ts 34582b1f…` · `commandGuard.ts 1495412a…` · `transitionClaim.ts b3c6bbfb…` · `decisionIntegrity.ts 5540b49f…` · `roundContext.ts 94afb0af…`
+`authorityKernel.ts 34582b1f…` · `commandGuard.ts 1495412a…` · `transitionClaim.ts b3c6bbfb…` · `decisionIntegrity.ts a3ce3c73…` (`decision-integrity-1.2.0`) · `roundContext.ts af188171…` (`round-context-1.1.0`)
 **حدّ بيانات الخادم**: التطبيق يملك قاعدتي **الإنتاج** و**الاختبار**؛ وكل أدلة هذه الدفعة صادرة من أسر اختبار **بلا أي كتابة** (`writes_performed: 0`)، أو من رفض يقع **قبل** أي كتابة. لم تُقرأ ولم تُكتب أي بيانات إنتاج، ولم يُبذر أي شيء. لا معاملات على سجلات قائمة.
 **البناء**: `npx vite build` → `status=0` وإخراج `dist/` كامل، أُعيد بعد كل تغيير.
 
@@ -18,12 +18,16 @@
 | **D-031/D-032** | إعادة بناء الهيئة من سجل اليوم · الأصوات بلا دورة · «إعادة حساب حيّة» كبديل | DI-032/033/034 · الإصدار يتوقف `409 no_frozen_round` |
 | **D-033** | D-023: الرئيس لا يستطيع إنشاء مشروع قرار | `decision.propose` في الكتالوج + في الأمر · AUTH-037/038 · POS-013/014 · **لم يُمنح `agenda.propose`** |
 | **D-034/D-035** | حضور مُلفَّق بالصمت · نصاب بالصفوف | DI-028…DI-031 |
+| **D-036** | **لا ربط تاريخي**: بعد استبدال الدورة كان قرار صادر صحيح من الدورة السابقة يُعاد الحكم عليه بالدورة النشطة فيُقرأ «غير متسق» (اتهام باطل + محو صامت لما جُمِّد)، والحزمة لم تكن تصرّح بدورتها | DI-035…DI-039: الدورة المسماة تُقرأ **بأي حالة** (`superseded`) · الاستبدال **مُعلن** بالدورة التي حلّت محلها · كل دورة تحمل **أصواتها وحدها** والباقي يُبلَّغ · **الحزمة نفسها**: `ready: true` مقابل دورة الإصدار و`ready: false` `[tally_mismatch, threshold_not_met]` مقابل الدورة النشطة — وهو الفرق الذي كان يُهدر · والحزمة **تُسجّل دورتها** |
+| **D-037** | اختيار صامت بين دورات نشطة متعددة (الهيئة تُحدَّد بترتيب الفرز) | DI-040: `round: null` + `multiple_active_rounds` + `rounds_seen: 2` · و`IssueDecision` يرفض **قبل أي كتابة** |
+| **D-038** | حزمة إصدار ثانية فوق حزمة موجودة بلا مسار تصحيح | رفض `issuance_package_exists` · `correction_procedure: null` · والحزمة القديمة بلا ربط تُعلن `unbound_legacy_package` ولا يُفترض لها دور |
 
 ## 2. اختبارات نُفِّذت — فعلية، بأرقام التشغيل
 
 | معرّف | الحالة | ما نُفِّذ | النتيجة |
 |---|---|---|---|
-| **E-A07-DI** | **PASS** | `TestDecisionIntegrity` (سلامة الإصدار + البيان + النصاب + الدورة) | **34/34** · `writes_performed: 0` · `decision-integrity-1.1.0` · التشغيل الأول 31/34 FAIL **بسبب دليل الاختبار** (`attendanceFor` بلا هوية مقعد) ⇒ أُصلح الدليل ثم PASS |
+| **E-A07-DI** | **PASS** | `TestDecisionIntegrity` (سلامة الإصدار + البيان + النصاب + الدورة) | **40/40** · `writes_performed: 0` · `decision-integrity-1.2.0` · التشغيل الأول للأسر السابقة كان 31/34 FAIL **بسبب دليل الاختبار** (`attendanceFor` بلا هوية مقعد) ⇒ أُصلح الدليل ثم PASS |
+| **E-A07-ROUND** | **PASS** | ربط الدورة بالتاريخ: `round-context-1.1.0` | **DI-035…DI-040 (6/6)** — ومقارنة الفرق: الحزمة نفسها `ready: true` مع دورة الإصدار و`ready: false` `[tally_mismatch, threshold_not_met]` مع الدورة النشطة |
 | **E-A02-GUARD** | **PASS** | `TestAuthorizationGuard` | **38/38** أدوار · **14/14** إيجابي · **15/15** إغلاق-آمن · `authz-1.2.0-rc.2` |
 | **E-A06-EL** | **PASS** | `TestVoteEligibility` | **12/12** · `failures: []` · `writes_performed: 0` |
 | **E-STATIC-002** | **PASS** | تحقق ساكن: لا اسم دورة غير معرَّف · مالك واحد للدورة | `grep` على `src` و`base44` |
@@ -69,6 +73,6 @@
 ## 6. قائمة التغييرات (للتراجع) — هذه الدفعة
 
 **أُضيف**: `base44/shared/roundContext.ts` · (سابقًا: `IssueSnapshot.jsonc` · `EligibleVoterSnapshot.jsonc` · `decisionIntegrity.ts` · `voteEligibility.ts` · `TestDecisionIntegrity` · `TestVoteEligibility` · `IssuanceIntegrityPanel.jsx` · `LegacyRecordRedirect.jsx` · `richText.js`)
-**عُدِّل هذه الدفعة**: `authorityKernel.ts` (نسخة rc.2 · تضييق · `decision.propose`) · `commandGuard.ts` (لا تغيير) · `transitionClaim.ts` · `decisionIntegrity.ts` (1.1.0 · نصاب · تحقق البيان) · `CreateDecisionDraft` · `IssueDecision` · `GetCommitteeRecord` · `CastVote` · `IssueSnapshot.jsonc` · `MinutesManager.jsx` · `TestAuthorizationGuard` · `TestDecisionIntegrity` · `authorityPolicyManifest.json` · السجلات
+**عُدِّل هذه الدفعة**: `authorityKernel.ts` (نسخة rc.2 · تضييق · `decision.propose`) · `commandGuard.ts` (لا تغيير) · `transitionClaim.ts` · `decisionIntegrity.ts` (1.2.0 · نصاب · تحقق البيان · تسجيل الدورة) · `roundContext.ts` (**1.1.0** · اختيار الدورة بالاسم · إغلاق-آمن عند التعدد) · `IssueDecision` (ربط الدورة · رفض الحزمة الثانية · رفض التعدد) · `GetCommitteeRecord` (الربط بدورة الإصدار) · `CastVote` · `IssueSnapshot.jsonc` (`round_snapshot_id` / `round_number` / `round_frozen_on`) · `MinutesManager.jsx` · `TestAuthorizationGuard` · `TestDecisionIntegrity` · `authorityPolicyManifest.json` · السجلات
 **أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل.
 **التراجع**: إعادة الملفات أعلاه إلى نسخة القاعدة `dd5c953`؛ لا حاجة لتراجع بيانات لأن هذه الدفعة لم تكتب شيئًا. ولا تُعاد الأدلة السابقة للاستخدام: كل تغيير في النواة/المُقيِّم أُبطلها بنص السياسة.

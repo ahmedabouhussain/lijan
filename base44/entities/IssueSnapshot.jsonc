@@ -31,6 +31,19 @@
       "type": "string",
       "title": "Revokes Decision ID"
     },
+    "round_snapshot_id": {
+      "type": "string",
+      "title": "Frozen Round ID this package was issued from (EligibleVoterSnapshot id \u2014 the package is never re-judged against a later round)"
+    },
+    "round_number": {
+      "type": "number",
+      "title": "Frozen Round Number"
+    },
+    "round_frozen_on": {
+      "type": "string",
+      "title": "Frozen On (the day the round's eligibility was established)",
+      "format": "date"
+    },
     "proposal_version": {
       "type": "string",
       "title": "Frozen Proposal Version (the round's own proposal version)"
