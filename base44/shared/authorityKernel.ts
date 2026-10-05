@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.2";
+export const AUTHORITY_POLICY_VERSION = "authz-1.3.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,8 +30,8 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.2.0-rc.2";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.2.0-rc.2",
-  supersedes: "authz-1.2.0-rc.1",
+  version: "authz-1.3.0",
+  supersedes: "authz-1.2.0-rc.2",
   change_class: "security",
   changes: [
     "GRANT NARROWING CORRECTED: a role-held right outside a NONEMPTY permitted_actions list is refused. The previous condition also required the capability to be absent from the role — a state the preceding branch had already returned on — so the branch was unreachable and every populated grant narrowed nothing.",
@@ -46,6 +46,9 @@ export const AUTHORITY_POLICY_BUILD = {
     "command guard: trusted target, parent-chain agreement, related-scope containment",
     "scope derived from the target record, never from the request",
     "seat-borne self-service rights separated from office capabilities",
+    "STATE LISTS SINGLE-SOURCED: the states the command guard permits are now read from the lifecycle contracts (decision-lifecycle-1.0.0, meeting-lifecycle-1.0.0) instead of being re-typed. The guard had permitted draft|proposed for decision.issue while the command refused them, and it permitted draft|under_review|pending for vote.call while the command accepted only draft|proposed — a guard that describes a rule nobody enforces.",
+    "minutes.issue named as its own OPERATIONAL and DELEGABLE right: releasing approved minutes to the members is distinct from approving them, so the issuance act is not exercised by the approval capability.",
+    "agenda.edit / agenda.approve / minutes.draft / minutes.review now carry permitted-state gates: preparing the agenda is not approving it, and minutes content is written only while the minutes can still be corrected.",
   ],
   invalidates_prior_evidence: true,
 };
@@ -60,7 +63,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "meeting.schedule", "meeting.start", "meeting.adjourn", "meeting.cancel",
   "agenda.edit", "agenda.approve", "agenda.propose", "memory.compile",
   "vote.call", "vote.certify", "vote.cast",
-  "minutes.draft", "minutes.review", "minutes.approve",
+  "minutes.draft", "minutes.review", "minutes.approve", "minutes.issue",
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
   "action.close", "escalation.approve", "review.respond", "amendment.notify", "amendment.acknowledge",
   "agenda.evaluate", "instrument.extract",
@@ -78,7 +81,7 @@ const RECUSAL_BLOCKED = [
 export const DELEGABLE_CAPABILITIES = [
   "agenda.approve", "meeting.start", "meeting.adjourn", "meeting.cancel",
   "vote.call", "vote.certify",
-  "minutes.approve", "decision.approve", "decision.issue",
+  "minutes.approve", "minutes.issue", "decision.approve", "decision.issue",
   "escalation.approve", "action.admin", "action.close", "committee.activate",
 ];
 
@@ -94,7 +97,7 @@ const ROLE_BASELINE = {
     "meeting.schedule", "meeting.start", "meeting.adjourn", "meeting.cancel",
     "memory.compile", "agenda.edit", "agenda.approve",
     "vote.call", "vote.certify", "vote.cast",
-    "minutes.draft", "minutes.review", "minutes.approve",
+    "minutes.draft", "minutes.review", "minutes.approve", "minutes.issue",
     "attendance.certify", "attendance.respond", "action.admin", "action.progress",
     "action.close",
     "escalation.approve", "amendment.notify", "agenda.evaluate", "instrument.extract",

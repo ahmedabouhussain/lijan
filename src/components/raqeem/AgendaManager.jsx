@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, X, Lock, AlertTriangle } from "lucide-react";
+import { Plus, Archive, X, Lock, AlertTriangle, Play, CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,15 +55,9 @@ export default function AgendaManager({ meetingId, committeeId, items = [], onCh
     setSaving(false);
   };
 
-  // An agenda item's status has NO governed command yet. pending → in_discussion → decided /
-  // deferred / withdrawn is a governance act, so it is NOT written from the browser: the controls
-  // below are declared unavailable with their reason (D-022).
-  const changeStatus = () => {
-    setActionError({
-      ar: "تغيير حالة بند الجدول معطّل: لا يوجد أمر خادمي محكوم لهذه الخطوة، ولا تُكتب حالة البند من المتصفح.",
-      en: "Changing an agenda item's status is disabled: no governed server command exists for this step, and item state is never written from the browser.",
-    });
-  };
+  // (The former `changeStatus` stub lived here: it declared the stage change unavailable because no
+  // governed command existed. The command exists now — TransitionAgendaItem — so the stub is gone
+  // rather than leaving a message that would tell the reader something untrue about the platform.)
 
   // Readiness is COMPUTED from the item's evidence requirements — the surface asks for the
   // evaluation instead of asserting the value itself.
@@ -78,14 +72,31 @@ export default function AgendaManager({ meetingId, committeeId, items = [], onCh
     }
   };
 
-  const remove = async (itemId) => {
+  // Taking an item off the agenda is a GOVERNED act, not a delete (D-024): a governance record that
+  // can be deleted cannot be audited, so the item is withdrawn through the command and its record is
+  // kept on the file with the actor and the correlation id.
+  const archiveItem = async (itemId) => {
     setActionError(null);
     try {
-      await base44.entities.AgendaItem.delete(itemId);
+      const res = await base44.functions.invoke("ArchiveAgendaItem", { agenda_item_id: itemId });
+      if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر سحب البند.", "The item could not be withdrawn."); return; }
       onChanged();
     } catch (e) {
-      // Removal rides on the record's own administrative rule; a refusal says so instead of nothing.
-      reportRefusal(e, "تعذّر حذف البند: الحذف إجراء إداري محكوم بقاعدة السجل.", "The item could not be removed: deletion is an administrative act governed by the record's own rule.");
+      reportRefusal(e, "تعذّر سحب البند.", "The item could not be withdrawn.");
+    }
+  };
+
+  // Stage changes run through the governed command (D-022). The right follows the ACT — preparing the
+  // agenda is not approving it — and when a right is missing the SERVER's own refusal is displayed
+  // instead of a silent no-op.
+  const advanceItem = async (itemId, transition) => {
+    setActionError(null);
+    try {
+      const res = await base44.functions.invoke("TransitionAgendaItem", { agenda_item_id: itemId, transition });
+      if (res?.data?.error) { reportRefusal({ data: res.data }, "تعذّر نقل مرحلة البند.", "The item stage could not be changed."); return; }
+      onChanged();
+    } catch (e) {
+      reportRefusal(e, "تعذّر نقل مرحلة البند.", "The item stage could not be changed.");
     }
   };
 
@@ -168,9 +179,11 @@ export default function AgendaManager({ meetingId, committeeId, items = [], onCh
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <StatusBadge label={L.label(AGENDA_ITEM_STATUS, item.status, item.status)} colorClass={AGENDA_ITEM_STATUS[item.status]?.color} />
-                  <button onClick={() => remove(item.id)} className="text-muted-foreground hover:text-destructive">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {item.status !== "withdrawn" && (
+                    <button onClick={() => archiveItem(item.id)} title={t("سحب البند من الأجندة — لا حذف", "Withdraw the item from the agenda — never a deletion")} className="text-muted-foreground hover:text-primary">
+                      <Archive className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
               {/* Evidence Readiness Gate */}
@@ -194,12 +207,27 @@ export default function AgendaManager({ meetingId, committeeId, items = [], onCh
               )}
 
               {item.status !== "decided" && item.status !== "withdrawn" && (
-                <p className="mt-2 pt-2 border-t border-border text-[10px] text-muted-foreground">
-                  {t(
-                    "بدء المناقشة · تم القرار · التأجيل · السحب: معطّلة لأن لا أمر خادمي محكوم لها بعد، ولا تُكتب حالة البند من المتصفح.",
-                    "Start discussion · Decided · Defer · Withdraw: disabled because no governed server command exists for them yet, and item state is never written from the browser.",
+                <div className="mt-2 pt-2 border-t border-border flex items-center gap-1.5 flex-wrap">
+                  {item.status === "pending" && (
+                    <button onClick={() => advanceItem(item.id, "begin_discussion")} className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded border border-border hover:bg-secondary">
+                      <Play className="w-3 h-3" /> {t("بدء المناقشة", "Start discussion")}
+                    </button>
                   )}
-                </p>
+                  <button onClick={() => advanceItem(item.id, "decide")} className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded border border-primary text-primary hover:bg-primary/5">
+                    <CheckCircle2 className="w-3 h-3" /> {t("تم القرار", "Decided")}
+                  </button>
+                  {item.status !== "deferred" && (
+                    <button onClick={() => advanceItem(item.id, "defer")} className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded border border-border hover:bg-secondary">
+                      <Clock className="w-3 h-3" /> {t("تأجيل", "Defer")}
+                    </button>
+                  )}
+                  <span className="text-[10px] text-muted-foreground">
+                    {t(
+                      "كل انتقال محكوم بالحق الذي يناسبه: التحضير لا يعتمد، والاعتماد لا يحضّر، وإغلاق البند «تم القرار» يتطلب جاهزية محسوبة من متطلبات الأدلة. والرفض يُعرض بنص الخادم.",
+                      "Each transition runs under the right that fits the act: preparing does not approve, approving does not prepare, and closing an item as Decided requires a readiness computed from the evidence requirements. A refusal is shown with the server's own reason.",
+                    )}
+                  </span>
+                </div>
               )}
             </div>
             );

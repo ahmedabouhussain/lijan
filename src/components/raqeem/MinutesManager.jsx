@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Edit3, Save, X, UserCheck, PenLine, AlertTriangle } from "lucide-react";
+import { FileText, Sparkles, Edit3, Save, X, UserCheck, PenLine, AlertTriangle, Send, CheckCircle2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import SecureFileImage from "@/components/raqeem/SecureFileImage";
@@ -22,6 +22,7 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
   const [signatures, setSignatures] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [signing, setSigning] = useState(false);
+  const [transitioning, setTransitioning] = useState(null);
   // A refusal from a governed command is REPORTED, never swallowed.
   const [actionError, setActionError] = useState(null);
 
@@ -57,17 +58,49 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
     setActionError({ ar: serverMsg || fallbackAr, en: serverMsg || fallbackEn });
   };
 
+  // Minutes CONTENT is prepared through the governed command (D-020): the SERVER applies the text
+  // policy before storing, so the authority on what enters the record is not the browser that
+  // submitted it. The command also refuses to write over approved or issued minutes.
   const saveBody = async () => {
     setSaving(true);
     setActionError(null);
     try {
-      await base44.entities.MeetingMinutes.update(minutes.id, { body: sanitizeRichText(body), summary_ar: sanitizeRichText(summary), generated_by_ai: false });
+      const res = await base44.functions.invoke("PrepareMinutes", {
+        minutes_id: minutes.id,
+        body,
+        summary_ar: summary,
+      });
+      if (res?.data?.error) {
+        reportRefusal({ data: res.data }, "تعذّر حفظ المحضر. راجع صلاحيتك ثم أعد المحاولة.", "The minutes could not be saved. Check your authority and try again.");
+        setSaving(false);
+        return;
+      }
       setEditing(false);
       onChanged();
     } catch (e) {
       reportRefusal(e, "تعذّر حفظ المحضر. راجع صلاحيتك ثم أعد المحاولة.", "The minutes could not be saved. Check your authority and try again.");
     }
     setSaving(false);
+  };
+
+  // The steps that had no command are governed now (D-019): submit for review, issue to the members,
+  // and a later amendment. Approval itself stays with ApproveMinutes, and a refusal is shown with the
+  // server's own reason rather than swallowed.
+  const advanceMinutes = async (transition) => {
+    setTransitioning(transition);
+    setActionError(null);
+    try {
+      const res = await base44.functions.invoke("TransitionMinutes", { minutes_id: minutes.id, transition });
+      if (res?.data?.error) {
+        reportRefusal({ data: res.data }, "تعذّر تنفيذ خطوة المحضر.", "The minutes step could not be performed.");
+        setTransitioning(null);
+        return;
+      }
+      onChanged();
+    } catch (e) {
+      reportRefusal(e, "تعذّر تنفيذ خطوة المحضر.", "The minutes step could not be performed.");
+    }
+    setTransitioning(null);
   };
 
   // The minutes lifecycle is advanced by GOVERNED COMMANDS only (SignRecord + ApproveMinutes).
@@ -293,10 +326,25 @@ export default function MinutesManager({ meeting, members, attendance, minutes, 
                   <PenLine className="w-3.5 h-3.5" /> {signing ? t("جارٍ التوقيع...", "Signing...") : t("توقيع واعتماد إلكترونياً", "Sign and approve electronically")}
                 </Button>
               )}
+              {minutes.status === "draft" && (
+                <Button size="sm" variant="outline" onClick={() => advanceMinutes("submit_for_review")} disabled={transitioning === "submit_for_review"}>
+                  <Send className="w-3.5 h-3.5" /> {t("إرسال للمراجعة", "Send for review")}
+                </Button>
+              )}
+              {minutes.status === "approved" && (
+                <Button size="sm" variant="outline" onClick={() => advanceMinutes("issue")} disabled={transitioning === "issue"}>
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {t("إصدار وإرسال للأعضاء", "Issue to members")}
+                </Button>
+              )}
+              {(minutes.status === "approved" || minutes.status === "issued") && (
+                <Button size="sm" variant="ghost" onClick={() => advanceMinutes("amend")} disabled={transitioning === "amend"}>
+                  <PenLine className="w-3.5 h-3.5" /> {t("تعديل لاحق", "Amend")}
+                </Button>
+              )}
               <span className="text-xs text-muted-foreground">
                 {t(
-                  "إرسال للمراجعة والإصدار والتعديل اللاحق معطّلة: لا يوجد أمر خادمي محكوم لهذه الخطوات بعد، ولا تُكتب حالة المحضر من المتصفح. الاعتماد يتم عبر الأمر المحكوم.",
-                  "Send for review, issuance and later amendment are disabled: no governed server command exists for these steps yet, and minutes state is never written from the browser. Approval runs through the governed command.",
+                  "إرسال للمراجعة والإصدار والتعديل اللاحق أوامر محكومة الآن: الإصدار حق مستقل عن الاعتماد، والتعديل يُنتج محضرًا معدّلًا ولا يُكتب فوق المعتمد، والرفض يُعرض بنص الخادم.",
+                  "Send for review, issuance and later amendment are governed commands now: issuance is a right distinct from approval, an amendment produces amended minutes rather than overwriting the approved record, and a refusal is shown with the server's own reason.",
                 )}
               </span>
               {minutes.generated_by_ai && (

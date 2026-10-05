@@ -13,6 +13,13 @@
 import { resolveAuthority, OPERATIONAL_CAPABILITIES, AUTHORITY_POLICY_VERSION } from "./authorityKernel.ts";
 
 /** How each target type reaches its committee. `self` = the record IS the committee. */
+// The state lists this guard enforces are READ FROM the lifecycle contracts rather than written a
+// second time by hand (authz-1.3.0). Two hand-written lists are exactly how the guard came to permit
+// an issuance that the command itself then refused: the guard said draft|proposed, the command said
+// approved. One declaration, consumed by both.
+import { DECISION_TRANSITIONS } from './decisionLifecycle.ts';
+import { AGENDA_TRANSITIONS, AGENDA_ARCHIVE, MINUTES_TRANSITIONS, MINUTES_EDITABLE_STATES } from './meetingLifecycle.ts';
+
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
   Meeting: { parents: [] },
@@ -42,10 +49,21 @@ const PERMITTED_STATES = {
   "agenda.evaluate": { field: "status", states: ["pending", "deferred"] },
   "meeting.adjourn": { field: "status", states: ["in_progress"] },
   "meeting.cancel": { field: "status", states: ["scheduled", "in_progress"] },
-  "vote.call": { field: "status", states: ["draft", "under_review", "proposed", "pending"] },
-  "vote.certify": { field: "status", states: ["voting"] },
+  // Read from the contracts (decision-lifecycle-1.0.0 / meeting-lifecycle-1.0.0), not re-typed.
+  // For vote.call this narrows nothing that worked: OpenVote already refused every state outside
+  // draft|proposed. For decision.issue it corrects a real disagreement — the guard used to permit
+  // draft|proposed and the command then refused them, so the guard was describing a rule that did not
+  // exist. Approval is what issuance acts on, and issued/executing are the idempotent re-verification.
+  "vote.call": { field: "status", states: [...DECISION_TRANSITIONS.open_vote.from] },
+  "vote.certify": { field: "status", states: [...DECISION_TRANSITIONS.close_vote.from] },
   "minutes.approve": { field: "status", states: ["draft", "in_review"] },
-  "decision.issue": { field: "status", states: ["approved", "draft", "proposed", "issued", "executing"] },
+  "decision.issue": { field: "status", states: [...DECISION_TRANSITIONS.issue.from, ...DECISION_TRANSITIONS.issue.idempotent_from] },
+  // Gates for the agenda/minutes commands added in this slice.
+  "agenda.edit": { field: "status", states: [...AGENDA_TRANSITIONS.begin_discussion.from, ...AGENDA_TRANSITIONS.defer.from, ...AGENDA_ARCHIVE.from] },
+  "agenda.approve": { field: "status", states: [...AGENDA_TRANSITIONS.decide.from] },
+  "minutes.draft": { field: "status", states: [...MINUTES_EDITABLE_STATES] },
+  "minutes.review": { field: "status", states: [...MINUTES_TRANSITIONS.amend.from] },
+  "minutes.issue": { field: "status", states: [...MINUTES_TRANSITIONS.issue.from] },
   "action.close": { field: "status", states: ["in_progress", "evidence_pending", "under_review"] },
   "committee.close": { field: "status", states: ["active", "closing", "temporarily_suspended", "expiring_soon"] },
   "committee.activate": { field: "status", states: ["draft", "pending_activation"] },

@@ -39,7 +39,9 @@
 
 ## 3. الشرائح المنفَّذة (المطلوب رقم 2 من الحزمة)
 
-**S1 / R-17 — الشريحة الثانية (سلسلة حالة القرار + مطابقة الاسم)**: وحدة `base44/shared/decisionLifecycle.ts` (`decision-lifecycle-1.0.0`) تصف السلسلة مرة واحدة وتستهلكها `OpenVote`/`CastVote`/`CloseVote`/`IssueDecision`؛ الإصدار الأول صار على `approved` وحدها، و`issued/executing` جواب مُكرَّر آمن؛ وسلسلة `draft → voting → approved → issued` صارت قابلة للوصول. وأُزيلت مطابقة/رجوع الاسم في `AttendancePanel` (D-040). أدلة: أسرة جديدة **14/14 PASS** + إعادة تشغيل أسرة سلامة الإصدار **40/40 PASS** + بناء `status=0`.
+**S1 / R-17 — الشريحة الثالثة (الأسطح التشغيلية للاجتماع)**: وحدة `base44/shared/meetingLifecycle.ts` (`meeting-lifecycle-1.0.0`) + `base44/shared/serverRichText.ts`، وأربعة أوامر: `TransitionAgendaItem` · `ArchiveAgendaItem` · `PrepareMinutes` · `TransitionMinutes`؛ وأُزيلت من الواجهة الكتابة المباشرة لحالة البند وحذفه ومحتوى المحضر. وقوائم الحالات في حارس الأوامر صارت تُقرأ من العقود ⇒ `authz-1.3.0` مع إبطال أدلة النسخة السابقة. أدلة: **19/19 PASS** + بناء `status=0`.
+
+### الشريحة الثانية — سلسلة حالة القرار + مطابقة الاسم (سابقة): وحدة `base44/shared/decisionLifecycle.ts` (`decision-lifecycle-1.0.0`) تصف السلسلة مرة واحدة وتستهلكها `OpenVote`/`CastVote`/`CloseVote`/`IssueDecision`؛ الإصدار الأول صار على `approved` وحدها، و`issued/executing` جواب مُكرَّر آمن؛ وسلسلة `draft → voting → approved → issued` صارت قابلة للوصول. وأُزيلت مطابقة/رجوع الاسم في `AttendancePanel` (D-040). أدلة: أسرة جديدة **14/14 PASS** + إعادة تشغيل أسرة سلامة الإصدار **40/40 PASS** + بناء `status=0`.
 
 ### الشريحة الأولى — عقد دورة واحد على مسار التصويت (سابقة)
 
