@@ -1,0 +1,161 @@
+{
+  "name": "EligibleVoterSnapshot",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID (the round this electorate belongs to)"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID (when the round is held in a meeting)"
+    },
+    "round": {
+      "type": "number",
+      "title": "Voting Round Number (a new round supersedes the previous; rounds are never reused)",
+      "default": 1
+    },
+    "proposal_version": {
+      "type": "string",
+      "title": "Proposal Version the round is bound to (the frozen package being voted on)"
+    },
+    "voting_rule": {
+      "type": "string",
+      "title": "Voting Rule in Force"
+    },
+    "quorum_required": {
+      "type": "number",
+      "title": "Quorum Required"
+    },
+    "eligibility_policy_version": {
+      "type": "string",
+      "title": "Eligibility Policy Version (the rule that produced this electorate)"
+    },
+    "frozen_on": {
+      "type": "string",
+      "title": "Frozen On (the day the appointments were tested against)",
+      "format": "date"
+    },
+    "frozen_at": {
+      "type": "string",
+      "title": "Server Frozen At",
+      "format": "date-time"
+    },
+    "eligible_seat_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Seat IDs (the frozen electorate \u2014 a vote counts only from one of these)"
+    },
+    "eligible_seats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Seats (seat_id | user_id | role)"
+    },
+    "eligible_count": {
+      "type": "number",
+      "title": "Eligible Count"
+    },
+    "excluded_seats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Seats (seat_id + reason: out_of_term / recused_by_identifier / legacy_name_match)"
+    },
+    "excluded_out_of_term": {
+      "type": "number",
+      "title": "Excluded \u2014 Out of Term",
+      "default": 0
+    },
+    "excluded_recused_by_identifier": {
+      "type": "number",
+      "title": "Excluded \u2014 Recused (by identifier)",
+      "default": 0
+    },
+    "excluded_legacy_name_match": {
+      "type": "number",
+      "title": "Excluded \u2014 Legacy Name Match (deny-only)",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "superseded"
+      ],
+      "default": "active"
+    },
+    "supersedes_snapshot_id": {
+      "type": "string",
+      "title": "Supersedes Snapshot ID (the round this one replaced)"
+    },
+    "superseded_at": {
+      "type": "string",
+      "title": "Superseded At",
+      "format": "date-time"
+    },
+    "opened_by_user_id": {
+      "type": "string",
+      "title": "Opened By User ID"
+    },
+    "opened_by_name": {
+      "type": "string",
+      "title": "Opened By Name"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "decision_id",
+    "eligibility_policy_version",
+    "eligible_seat_ids",
+    "eligible_count",
+    "frozen_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

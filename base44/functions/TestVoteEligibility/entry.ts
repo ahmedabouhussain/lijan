@@ -68,6 +68,14 @@ export default async function () {
     });
     check('EL-010', 'One person holding two seats (principal + alternate) is removed from both, so one person cannot vote twice', twoSeatsOnePerson.size === 0 && twoSeatsOnePerson.excluded.recused_by_identifier === 2, { size: twoSeatsOnePerson.size, excluded: twoSeatsOnePerson.excluded });
 
+    // EL-011 — every excluded seat is NAMED with its reason, not merely counted
+    const named = computeElectorate({
+      seats: [seat(1), seat(2, { term_end: '2026-01-01' }), seat(3)],
+      recusals: [{ id: 'R1', status: 'active', membership_id: 'SEAT-3' }],
+      day: '2026-10-05',
+    });
+    check('EL-011', 'Every excluded seat is named with its reason', named.excluded_seat_rows.includes('SEAT-2|out_of_term') && named.excluded_seat_rows.includes('SEAT-3|recused_by_identifier') && named.excluded_seat_rows.length === 2 && named.size === 1, { rows: named.excluded_seat_rows, size: named.size });
+
     const failed = results.filter((r) => r.verdict === 'FAIL');
     return Response.json({
       eligibility_policy_version: ELIGIBILITY_POLICY_VERSION,

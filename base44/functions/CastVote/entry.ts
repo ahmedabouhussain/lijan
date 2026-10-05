@@ -30,6 +30,37 @@ export default async function(req) {
       return Response.json({ error: 'Voting is not open for this decision' }, { status: 400 });
     }
 
+    // A ballot belongs to a FROZEN round. Without one there is no electorate to be eligible in, so
+    // the vote is not recorded: "no frozen round" is a governed stop, not an assumption.
+    const roundRows = await base44.asServiceRole.entities.EligibleVoterSnapshot
+      .filter({ decision_id, status: 'active' }, { sort: '-created_date', limit: 1 }).catch(() => []);
+    const round = (Array.isArray(roundRows) ? roundRows : (roundRows?.items || []))[0] || null;
+    if (!round) {
+      return Response.json({
+        error: 'No frozen voting round exists for this decision',
+        code: 'no_frozen_electorate',
+        message: {
+          ar: 'لا توجد دورة تصويت مجمّدة لهذا القرار؛ أُعيد فتح التصويت لتثبيت الهيئة الناخبة قبل تسجيل أي صوت.',
+          en: 'No frozen voting round exists for this decision; the vote must be reopened so the electorate is frozen before ballots are recorded.',
+        },
+      }, { status: 409 });
+    }
+
+    // The seat must be INSIDE the frozen electorate. A seat appointed after the round was opened is
+    // not eligible in that round, and a person with no seat has no vote at all.
+    const seatId = auth.membership?.id || null;
+    if (!seatId || !(round.eligible_seat_ids || []).includes(seatId)) {
+      return Response.json({
+        error: 'This seat is not part of the frozen electorate for this round',
+        code: 'seat_not_eligible',
+        message: {
+          ar: 'مقعدك ليس ضمن الهيئة الناخبة المجمّدة لهذه الدورة؛ لا يُسجَّل الصوت.',
+          en: 'Your seat is not part of the electorate frozen for this round; the ballot is not recorded.',
+        },
+        round: round.round || 1,
+      }, { status: 403 });
+    }
+
     // Exclusivity on the VOTE transition. Two simultaneous votes from one seat both pass a
     // read-then-write duplicate check, so the right to vote is CLAIMED first: exactly one claim wins,
     // every later claim on the same key is refused, and no second material vote is ever written.
@@ -53,7 +84,8 @@ export default async function(req) {
       meeting_id: decision.meeting_id || null,
       voter_name: auth.user.full_name || auth.user.email,
       voter_user_id: auth.user.id,
-      voter_membership_id: auth.membership?.id || null,
+      voter_membership_id: seatId,
+      eligible_voter_snapshot_id: round.id,
       voter_role: auth.effective_role,
       vote_choice,
       dissent_reason: dissent_reason || null,

@@ -60,8 +60,37 @@ export default async function(req) {
       decision.meeting_id ? sr.entities.Attendance.filter({ meeting_id: decision.meeting_id }).catch(() => []) : Promise.resolve([]),
       sr.entities.Action.filter({ decision_id }).catch(() => []),
       sr.entities.IssueSnapshot.filter({ decision_id }, { sort: '-created_date', limit: 1 }).catch(() => []),
+      sr.entities.EligibleVoterSnapshot.filter({ decision_id, status: 'active' }, { sort: '-created_date', limit: 1 }).catch(() => []),
     ]);
     const storedSnapshot = (Array.isArray(snapshots) ? snapshots : (snapshots?.items || []))[0] || null;
+
+    // The electorate is the one the VOTING ROUND froze, not whoever holds a seat today. Ballots are
+    // reconciled against those seats, so a seat appointed after the round opened cannot contribute a
+    // vote to it. When a decision carries no frozen round the live register is used, and the package
+    // SAYS so: a live recomputation is weaker evidence than a frozen round and is never described as
+    // one. A frozen round whose seats can no longer all be resolved is a broken chain, not a pass.
+    const frozenRoundRows = Array.isArray(frozenRounds) ? frozenRounds : (frozenRounds?.items || []);
+    const frozenRound = frozenRoundRows[0] || null;
+    const frozenSeatIds = frozenRound?.eligible_seat_ids || null;
+    const electorateMemberships = frozenSeatIds
+      ? (memberships || []).filter((m) => frozenSeatIds.includes(m.id))
+      : (memberships || []);
+    if (frozenSeatIds && electorateMemberships.length !== frozenSeatIds.length) {
+      return Response.json({
+        error: 'The frozen voting round can no longer be resolved',
+        code: 'frozen_round_unresolvable',
+        message: {
+          ar: 'دورة التصويت المجمّدة تشير إلى مقاعد لم تعد موجودة؛ لا يمكن الإصدار على أساس ناقص.',
+          en: 'The frozen voting round names seats that no longer exist; issuance cannot rest on an incomplete electorate.',
+        },
+        frozen_seats: frozenSeatIds.length,
+        resolved_seats: electorateMemberships.length,
+        correlation_id: auth.correlation_id,
+      }, { status: 409 });
+    }
+    const electorateBasisNote = frozenSeatIds
+      ? `frozen round ${frozenRound.round || 1} of ${frozenSeatIds.length} seat(s), frozen on ${frozenRound.frozen_on || '—'}`
+      : 'live membership recomputation — this decision carries no frozen voting round';
 
     const proofLinks = [
       ...(actions || []).map((a) => a.evidence_url),
@@ -69,7 +98,7 @@ export default async function(req) {
     ];
 
     const readiness = evaluateIssuanceReadiness({
-      decision, committee, memberships, recusals, votes, attendance, signatures, proof_links: proofLinks,
+      decision, committee, memberships: electorateMemberships, recusals, votes, attendance, signatures, proof_links: proofLinks,
     });
 
     const buildProofChain = (issuedAt) => ({
@@ -178,7 +207,7 @@ export default async function(req) {
       threshold_needed: readiness.threshold.needed,
       threshold_met: readiness.ballots.tally.for >= readiness.threshold.needed,
       electorate_size: readiness.electorate.size,
-      electorate_basis: readiness.electorate.basis,
+      electorate_basis: `${readiness.electorate.basis} — ${electorateBasisNote}`,
       eligible_seat_ids: readiness.electorate.seats.map((s) => s.seat_id),
       excluded_seats: readiness.electorate.excluded.map((e) => `${e.seat_id}:${e.reason}`),
       accepted_ballots: readiness.ballots.accepted.map((b) => `${b.seat_id || b.user_id}:${b.choice}:${b.method}`),
@@ -276,6 +305,10 @@ export default async function(req) {
       decision_id,
       snapshot_id: snapshot.id,
       manifest_sha256: digest,
+      frozen_round: frozenRound
+        ? { id: frozenRound.id, round: frozenRound.round || 1, eligible_count: frozenRound.eligible_count ?? null, frozen_on: frozenRound.frozen_on || null }
+        : null,
+      electorate_basis: electorateBasisNote,
       assurance: ASSURANCE,
       issuance: issuanceVerdict({ decision: { ...decision, status: 'issued', issued_at: issuedAt }, stored: snapshot, recomputed: readiness }),
       proof_chain: buildProofChain(issuedAt),

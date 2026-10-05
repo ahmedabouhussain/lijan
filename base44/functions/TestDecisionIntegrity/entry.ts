@@ -124,6 +124,31 @@ export default async function (req) {
     check('DI-017', 'The same package always produces the same digest', h1 === h2 && h1.startsWith('sha256:') && h1.length === 71, { digest: h1.slice(0, 20) + '…' });
     check('DI-018', 'A changed package produces a different digest', h1 !== h3);
 
+    // ── F-H: the electorate of a round is the FROZEN one, not whoever holds a seat today ──────────
+    const frozenSeats = [seat(1), seat(2), seat(3)];
+    const roundWithLateSeat = evaluateIssuanceReadiness({
+      decision: D({ vote_for: 2, vote_against: 0, vote_abstain: 0 }),
+      committee: C({ quorum_count: 3 }),
+      memberships: frozenSeats,
+      recusals: [],
+      votes: [ballot(1), ballot(2), { id: 'V-LATE', voter_membership_id: 'SEAT-9', voter_user_id: 'USER-9', vote_choice: 'for' }],
+      attendance: attendanceFor(3),
+      signatures: [{ id: 'S1', status: 'active' }],
+      proof_links: ['e'],
+    });
+    check('DI-019', 'A ballot from a seat appointed AFTER the round froze is not counted in that round', codes(roundWithLateSeat).includes('ineligible_ballot') && roundWithLateSeat.ballots.accepted_count === 2 && roundWithLateSeat.ballots.ineligible.length === 1, { accepted: roundWithLateSeat.ballots.accepted_count, ineligible: roundWithLateSeat.ballots.ineligible.length, codes: codes(roundWithLateSeat) });
+    const roundExact = evaluateIssuanceReadiness({
+      decision: D({ vote_for: 2, vote_against: 0, vote_abstain: 0 }),
+      committee: C({ quorum_count: 3 }),
+      memberships: frozenSeats,
+      recusals: [],
+      votes: [ballot(1), ballot(2)],
+      attendance: attendanceFor(3),
+      signatures: [{ id: 'S1', status: 'active' }],
+      proof_links: ['e'],
+    });
+    check('DI-020', 'The same round reconciles and becomes issuable when every ballot belongs to a frozen seat', roundExact.ready === true && roundExact.ballots.accepted_count === 2, { ready: roundExact.ready, accepted: roundExact.ballots.accepted_count, blockers: codes(roundExact) });
+
     const failed = results.filter((r) => r.verdict === 'FAIL');
     return Response.json({
       integrity_policy_version: INTEGRITY_POLICY_VERSION,

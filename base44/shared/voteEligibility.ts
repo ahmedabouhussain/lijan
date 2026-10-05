@@ -38,15 +38,18 @@ export function computeElectorate({ seats = [], recusals = [], day = new Date().
   }
 
   const eligible = [];
+  const excludedRows = outOfTerm.map((s) => `${s.id}|out_of_term`);
   let recusedByIdentifier = 0;
   let legacyNameMatch = 0;
   for (const s of inTerm) {
     if (recusedIds.has(s.id) || (s.user_id && recusedIds.has(s.user_id))) {
       recusedByIdentifier += 1;
+      excludedRows.push(`${s.id}|recused_by_identifier`);
       continue;
     }
     if (recusedNames.size > 0 && recusedNames.has(norm(s.full_name))) {
       legacyNameMatch += 1;
+      excludedRows.push(`${s.id}|legacy_name_match`);
       continue;
     }
     eligible.push(s);
@@ -58,6 +61,9 @@ export function computeElectorate({ seats = [], recusals = [], day = new Date().
     eligible,
     eligible_seat_ids: eligible.map((s) => s.id),
     eligible_seats: eligible.map((s) => ({ seat_id: s.id, user_id: s.user_id || null, role: s.role || null })),
+    // The excluded seats are NAMED with their reason, so an electorate can always be accounted for
+    // seat by seat rather than only as a total.
+    excluded_seat_rows: excludedRows,
     size: eligible.length,
     excluded: {
       out_of_term: outOfTerm.length,

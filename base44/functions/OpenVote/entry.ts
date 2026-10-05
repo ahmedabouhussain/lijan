@@ -60,6 +60,48 @@ export default async function(req) {
       }, { status: 409 });
     }
 
+    // ── Freeze the round ────────────────────────────────────────────────────────────────────────
+    // The electorate is written as its OWN record, so the round a vote belongs to outlives any later
+    // change to the committee: a seat appointed after this moment cannot vote in this round, and the
+    // issuance package reads the frozen seats rather than recomputing whoever holds a seat later.
+    const priorRows = await base44.asServiceRole.entities.EligibleVoterSnapshot
+      .filter({ decision_id, status: 'active' }, { sort: '-created_date', limit: 1 }).catch(() => []);
+    const prior = (Array.isArray(priorRows) ? priorRows : (priorRows?.items || []))[0] || null;
+    const frozenAt = new Date().toISOString();
+    const round = (prior?.round || 0) + 1;
+    const electorateSnapshot = await base44.asServiceRole.entities.EligibleVoterSnapshot.create({
+      organization_id: auth.organization_id,
+      committee_id,
+      decision_id,
+      meeting_id: decision.meeting_id || null,
+      round,
+      proposal_version: String(decision.updated_date || decision.created_date || ''),
+      voting_rule: auth.committee?.voting_rule || null,
+      quorum_required: auth.committee?.quorum_count ?? null,
+      eligibility_policy_version: electorate.policy_version,
+      frozen_on: electorate.day,
+      frozen_at: frozenAt,
+      eligible_seat_ids: electorate.eligible_seat_ids,
+      eligible_seats: electorate.eligible_seats.map((s) => `${s.seat_id}|${s.user_id || '-'}|${s.role || '-'}`),
+      eligible_count: electorate.size,
+      excluded_seats: electorate.excluded_seat_rows,
+      excluded_out_of_term: electorate.excluded.out_of_term,
+      excluded_recused_by_identifier: electorate.excluded.recused_by_identifier,
+      excluded_legacy_name_match: electorate.excluded.legacy_name_match,
+      status: 'active',
+      supersedes_snapshot_id: prior?.id || null,
+      opened_by_user_id: auth.user.id,
+      opened_by_name: auth.user.full_name || auth.user.email,
+      correlation_id: auth.correlation_id,
+    });
+    if (prior) {
+      // The previous round is superseded, never deleted: a vote already cast in it stays attributable.
+      await base44.asServiceRole.entities.EligibleVoterSnapshot.updateMany(
+        { id: prior.id, status: 'active' },
+        { $set: { status: 'superseded', superseded_at: frozenAt } },
+      );
+    }
+
     await base44.asServiceRole.entities.Decision.update(decision_id, { status: 'voting' });
 
     await base44.asServiceRole.entities.AuditEvent.create({
@@ -67,7 +109,7 @@ export default async function(req) {
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,
       action: 'vote.open', entity_type: 'Decision', entity_id: decision_id,
       entity_title: decision.title,
-      description: `Vote opened: ${electorate.size} eligible seats frozen (by seat id: ${electorate.eligible_seat_ids.join(', ')}); excluded — out of term: ${electorate.excluded.out_of_term}, recused by identifier: ${electorate.excluded.recused_by_identifier}, legacy name match: ${electorate.excluded.legacy_name_match} (eligibility policy ${electorate.policy_version})`,
+      description: `Vote opened — round ${round}: ${electorate.size} eligible seats frozen (by seat id: ${electorate.eligible_seat_ids.join(', ')}); excluded — out of term: ${electorate.excluded.out_of_term}, recused by identifier: ${electorate.excluded.recused_by_identifier}, legacy name match: ${electorate.excluded.legacy_name_match} (eligibility policy ${electorate.policy_version}); round record ${electorateSnapshot.id}${prior ? ` supersedes ${prior.id}` : ''}`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
@@ -106,6 +148,8 @@ export default async function(req) {
     return Response.json({
       status: 'ok', decision_id,
       // The frozen electorate is identified by SEAT, so a vote can later be reconciled against it.
+      electorate_snapshot_id: electorateSnapshot.id,
+      round,
       eligible_seats: electorate.eligible_seats,
       eligible_voters: eligibleVoters.map(m => ({ name: m.full_name, role: m.role })),
       eligible_count: electorate.size,
