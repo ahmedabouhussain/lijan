@@ -75,11 +75,17 @@ export default async function (req) {
       memberships: [seat(1), seat(2), seat(3)], votes: [ballot(1), ballot(2), ballot(3)], attendance: attendanceFor(2), signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
     });
     check('DI-011', 'Attendance below the committee quorum is refused', codes(noQuorum).includes('quorum_not_met'), noQuorum.quorum);
+    // The fixture is chosen so the two rules DISAGREE: 3 for of 5 cast clears a simple majority
+    // (needs 3) and fails two-thirds (needs 4). An earlier version of this case used 2 for of 3,
+    // which satisfies two-thirds exactly — the assertion was wrong there, not the evaluator, and
+    // the corrected case is the one that actually discriminates between the two rules.
     const twoThirds = evaluateIssuanceReadiness({
-      decision: D({ vote_for: 2, vote_against: 1, vote_abstain: 0 }), committee: C({ quorum_count: 3, voting_rule: 'two_thirds' }),
-      memberships: [seat(1), seat(2), seat(3)], votes: [ballot(1), ballot(2), ballot(3, 'against')], attendance: attendanceFor(3), signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
+      decision: D({ vote_for: 3, vote_against: 2, vote_abstain: 0 }), committee: C({ quorum_count: 3, voting_rule: 'two_thirds' }),
+      memberships: [seat(1), seat(2), seat(3), seat(4), seat(5)],
+      votes: [ballot(1), ballot(2), ballot(3), ballot(4, 'against'), ballot(5, 'against')],
+      attendance: attendanceFor(4), signatures: [{ id: 'S1', status: 'active' }], proof_links: ['e'],
     });
-    check('DI-012', 'A two-thirds rule is tested as two-thirds, not as a simple majority', codes(twoThirds).includes('threshold_not_met') && twoThirds.threshold.basis.includes('two-thirds'), twoThirds.threshold);
+    check('DI-012', 'A two-thirds rule fails where a simple majority would pass, and the basis says why', codes(twoThirds).includes('threshold_not_met') && twoThirds.threshold.needed === 4 && twoThirds.threshold.basis.includes('two-thirds'), twoThirds.threshold);
 
     // ── F-E: a coherent package is issued-worthy ─────────────────────────────────────────────────
     const coherent = evaluateIssuanceReadiness({
