@@ -11,6 +11,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { resolveDemoPersona, DEFAULT_DEMO_PERSONA_KEY } from '@/lib/demoPersonas';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const DEMO_SESSION_KEY = 'lijan_demo_session';
 const DEFAULT_PERSONA = 'DR_HAMAD_MAJEEGHEER';
@@ -73,6 +74,9 @@ const EffectiveActorContext = createContext();
 
 export const EffectiveActorProvider = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
+  // The demonstration identity is bilingual in the registry; the ACTIVE language's own edition
+  // is the one shown. Language is presentation only — it never touches the session or authority.
+  const { lang } = useLanguage();
   // Initialize synchronously from localStorage so isDemoMode is correct on first render.
   const [demoSession, setDemoSession] = useState(() => {
     try {
@@ -200,7 +204,7 @@ export const EffectiveActorProvider = ({ children }) => {
   const effectiveActor = isDemoMode
     ? {
         id: demoSession.actor_id,
-        full_name: demoSession.display_name_ar,
+        full_name: lang === 'ar' ? demoSession.display_name_ar : demoSession.display_name_en,
         email: demoSession.email,
         role: 'user', // Never 'admin' in exploration mode — no founder privileges
         data: {

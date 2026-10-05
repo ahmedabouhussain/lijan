@@ -8,11 +8,19 @@
     },
     "full_name": {
       "type": "string",
-      "title": "Full Name"
+      "title": "Full Name (Arabic edition)"
+    },
+    "full_name_en": {
+      "type": "string",
+      "title": "Full Name (English edition \u2014 a value never authored in a language is shown as not provided, never as the other language)"
     },
     "job_title": {
       "type": "string",
-      "title": "Job Title"
+      "title": "Job Title (Arabic edition)"
+    },
+    "job_title_en": {
+      "type": "string",
+      "title": "Job Title (English edition)"
     },
     "phone": {
       "type": "string",
@@ -20,7 +28,11 @@
     },
     "bio": {
       "type": "string",
-      "title": "Bio"
+      "title": "Bio (Arabic edition)"
+    },
+    "bio_en": {
+      "type": "string",
+      "title": "Bio (English edition)"
     },
     "governance_role": {
       "type": "string",

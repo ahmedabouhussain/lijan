@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { PenLine, Eraser, Type, Check } from "lucide-react";
 import SecureFileImage from "@/components/raqeem/SecureFileImage";
 import { uploadPrivateFile, logFileAccess } from "@/lib/secureFiles";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function SignaturePad({ value, onChange }) {
+  const { t } = useLanguage();
   const canvasRef = useRef(null);
   const [mode, setMode] = useState(value?.image_url ? "drawn" : value?.text ? "typed" : "drawn");
   const [text, setText] = useState(value?.text || "");
@@ -96,7 +98,7 @@ export default function SignaturePad({ value, onChange }) {
             mode === "drawn" ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground"
           }`}
         >
-          <PenLine className="w-3.5 h-3.5" /> رسم
+          <PenLine className="w-3.5 h-3.5" /> {t("رسم", "Draw")}
         </button>
         <button
           onClick={() => setMode("typed")}
@@ -104,7 +106,7 @@ export default function SignaturePad({ value, onChange }) {
             mode === "typed" ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground"
           }`}
         >
-          <Type className="w-3.5 h-3.5" /> كتابة
+          <Type className="w-3.5 h-3.5" /> {t("كتابة", "Type")}
         </button>
       </div>
 
@@ -125,10 +127,10 @@ export default function SignaturePad({ value, onChange }) {
           />
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={clear}>
-              <Eraser className="w-3.5 h-3.5" /> مسح
+              <Eraser className="w-3.5 h-3.5" /> {t("مسح", "Clear")}
             </Button>
             <Button size="sm" onClick={saveDrawn} disabled={!hasDrawn || uploading}>
-              {uploading ? "جارٍ الحفظ..." : "حفظ التوقيع المرسوم"}
+              {uploading ? t("جارٍ الحفظ...", "Saving...") : t("حفظ التوقيع المرسوم", "Save Drawn Signature")}
             </Button>
           </div>
         </div>
@@ -138,12 +140,12 @@ export default function SignaturePad({ value, onChange }) {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="اكتب اسمك للتوقيع"
+            placeholder={t("اكتب اسمك للتوقيع", "Type your name to sign")}
             className="w-full px-3 py-2 text-2xl border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring"
             style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}
           />
           <Button size="sm" onClick={applyTyped} disabled={!text.trim()}>
-            <Check className="w-3.5 h-3.5" /> اعتماد التوقيع المكتوب
+            <Check className="w-3.5 h-3.5" /> {t("اعتماد التوقيع المكتوب", "Apply Typed Signature")}
           </Button>
         </div>
       )}
@@ -151,7 +153,7 @@ export default function SignaturePad({ value, onChange }) {
       {/* Preview */}
       {(value?.image_url || value?.text) && (
         <div className="flex items-center justify-between gap-3 p-3 bg-secondary/40 rounded-md border border-border">
-          <div className="text-xs text-muted-foreground">التوقيع الحالي:</div>
+          <div className="text-xs text-muted-foreground">{t("التوقيع الحالي:", "Current signature:")}</div>
           {value?.image_url ? (
             <SecureFileImage fileRef={value.image_url} entityType="Signature" entityId={value.id} alt="signature" className="h-12 object-contain" />
           ) : (

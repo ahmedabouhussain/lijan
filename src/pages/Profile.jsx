@@ -20,6 +20,7 @@ import PageNav from "@/components/raqeem/PageNav";
 import { findEntity } from "@/lib/qatariEntities";
 import EntitySearchSelect from "@/components/raqeem/EntitySearchSelect";
 import { resolveDemoPersona } from "@/lib/demoPersonas";
+import MissingValue from "@/components/raqeem/MissingValue";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -43,6 +44,7 @@ export default function Profile() {
   const [institutionId, setInstitutionId] = useState("");
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [department, setDepartment] = useState("");
+  const [personaProfile, setPersonaProfile] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -62,16 +64,27 @@ export default function Profile() {
         } catch {
           // No saved exploration profile yet — the registry values stand on their own.
         }
-        setUser({ ...effectiveActor, full_name: profile?.full_name || persona.name_ar });
-        setFullName(profile?.full_name || persona.name_ar);
-        setTitle(profile?.job_title || persona.job_title_ar);
+        setPersonaProfile(profile);
+        // The governed demonstration identity is bilingual: the ACTIVE language's own edition is
+        // shown (the registry carries both), and the other language is never substituted for a
+        // value that was not authored in this one.
+        const isAr = lang === "ar";
+        const displayName = isAr
+          ? (profile?.full_name || persona.name_ar)
+          : (profile?.full_name_en || persona.name_en);
+        const jobTitle = isAr
+          ? (profile?.job_title || persona.job_title_ar)
+          : (profile?.job_title_en || persona.job_title_en);
+        setUser({ ...effectiveActor, full_name: displayName });
+        setFullName(displayName);
+        setTitle(jobTitle);
         setInstitutionEmail(profile?.institution_email || persona.email);
         // A demonstration persona carries its own approved photo — part of the governed demo
         // identity, so a public asset renders directly and a private reference stays signed.
         setAvatarUrl(profile?.avatar_url || persona.avatar_url || "");
         setGovernanceRole(profile?.governance_role || "member"); // Demo users are never admin
         setPhone(profile?.phone || "");
-        setBio(profile?.bio || "");
+        setBio(isAr ? (profile?.bio || "") : (profile?.bio_en || ""));
         setSigText(profile?.signature_text || "");
         setSigImage(profile?.signature_image_url || "");
         setInstitutionId(profile?.institution_id || "");
@@ -99,7 +112,7 @@ export default function Profile() {
         .catch(() => {})
         .finally(() => setLoading(false));
     }
-  }, [isDemoMode, effectiveActor, demoPersonaKey]);
+  }, [isDemoMode, effectiveActor, demoPersonaKey, lang]);
 
   const handleAvatar = async (e) => {
     const file = e.target.files?.[0];
@@ -129,12 +142,20 @@ export default function Profile() {
         // real user account, never production data. This record is what makes the edits made
         // inside the session permanent; the registry stays the default when none exists yet.
         const persona = resolveDemoPersona(demoPersonaKey);
+        const stored = personaProfile || {};
         await base44.entities.DemoPersonaProfile.upsert(
           [
             {
               persona_key: persona.key,
-              full_name: fullName,
-              job_title: title,
+              // The edited values are written to the ACTIVE language's own fields; the other
+              // language's stored edition is carried over untouched — never overwritten by the
+              // language being edited, and never invented.
+              full_name: isAr ? fullName : (stored.full_name || ""),
+              job_title: isAr ? title : (stored.job_title || ""),
+              bio: isAr ? bio : (stored.bio || ""),
+              full_name_en: isAr ? (stored.full_name_en || "") : fullName,
+              job_title_en: isAr ? (stored.job_title_en || "") : title,
+              bio_en: isAr ? (stored.bio_en || "") : bio,
               phone,
               bio,
               governance_role: governanceRole,
@@ -195,6 +216,12 @@ export default function Profile() {
 
   const initials = (user.full_name || "؟").split(" ").map((w) => w[0]).slice(0, 2).join("");
   const demoPersona = isDemoMode ? resolveDemoPersona(demoPersonaKey) : null;
+  // A field the active language has no edition of is reported as such — the other language is
+  // never displayed in its place (see MissingValue).
+  const isAr = lang === "ar";
+  const otherLangBio = isDemoMode
+    ? (isAr ? (personaProfile?.bio_en || "") : (personaProfile?.bio || ""))
+    : "";
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -407,6 +434,17 @@ export default function Profile() {
 
         <div>
           <Label className="text-xs mb-1.5 block">{t("نبذة تعريفية", "Bio")}</Label>
+          {isDemoMode && !bio && otherLangBio && (
+            <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+              <MissingValue entity="DemoPersonaProfile" record={{ ...personaProfile, bio_ar: personaProfile?.bio || "" }} fieldKey="bio" />
+              <span className="text-xs text-muted-foreground">
+                {t(
+                  "— أضفها بالعربية لتظهر هنا.",
+                  "— add it in English for it to appear here."
+                )}
+              </span>
+            </div>
+          )}
           <Textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
