@@ -27,6 +27,9 @@ export const SEATED_READINESS_VERSION = "seated-readiness-1.0.0";
 /** The Committee.quorum_count default, declared once: the assessor never invents a threshold. */
 export const DEFAULT_QUORUM = 3;
 
+/** The label used when the account directory itself could not be read. */
+export const USER_DIRECTORY_LABEL = "User (دليل حسابات المستخدمين)";
+
 export const READINESS_VERDICTS: Record<string, { ar: string; en: string }> = {
   executable: {
     ar: "قابلة للتشغيل: المقاعد المؤهلة المربوطة بحسابات تبلغ النصاب",
@@ -174,8 +177,11 @@ export function declaredRight(command: string) {
  * Does any seat bound to an account hold the right this run needs? The right comes from the register,
  * the role baseline comes from the kernel (`capabilitiesForRole`) — neither is re-typed here.
  */
-export function assessOfficerRight({ command, bound_seats = [] }: { command: string; bound_seats?: any[] }) {
-  const { surface, capability, source } = declaredRight(command);
+export function assessOfficerRight({ command, bound_seats = [], surface_override = null }: { command: string; bound_seats?: any[]; surface_override?: any }) {
+  const declared = declaredRight(command);
+  const surface = surface_override || declared.surface;
+  const capability = surface_override ? (surface_override.capability || null) : declared.capability;
+  const source = surface_override ? (surface_override.capability_source || null) : declared.source;
   if (!surface || !capability) return { ok: false, code: "officer_right_undeclared", capability: null, surface_id: surface ? surface.id : null };
   if (source === "unverified") return { ok: false, code: "officer_right_unverified", capability, surface_id: surface.id };
   const officers = bound_seats.filter((s) => capabilitiesForRole(s.role || "member").includes(capability));
@@ -218,7 +224,7 @@ export function assessSeatedReadiness({
   const quorum_source = Number.isFinite(quorum_count) && quorum_count > 0 ? "committee.quorum_count" : "readiness_default";
 
   const bound = (rows: any[]) => (users_known ? rows.filter((s) => s.user_id && users_known.has(s.user_id) && s.is_demonstration_role !== true) : []);
-  const bound_seats = users_known ? bound(eligible) : null;
+  const bound_seats = users_known ? bound(eligible).length : null;
   const bound_officer_pool = users_known ? bound(officer_pool) : [];
   const binding_state = !users_known ? "unverified" : (bound_seats >= quorum_required ? "quorum_met" : "below_quorum");
 
@@ -228,20 +234,35 @@ export function assessSeatedReadiness({
   let verdict = "executable";
   let reason = null;
   let enabler = null;
+  let reason_code = null;
+  // A source that failed to load is NEVER zero (rule 3): the committee reads unmeasurable and no run is
+  // reported ready. Only what was actually read may produce a number.
   if (unread_sources.length > 0) {
     verdict = "unreadable";
-    reason = BLOCKING_CODES.binding_unverified;
+    reason_code = "readiness_unverifiable";
+    reason = BLOCKING_CODES.readiness_unverifiable;
     enabler = ENABLERS.read_sources;
   } else if (eligible.length === 0) {
     verdict = "insufficient_seated_voters";
+    reason_code = "zero_electorate";
     reason = BLOCKING_CODES.zero_electorate;
     enabler = ENABLERS.appoint_voting_seats;
   } else if (eligible.length < quorum_required) {
     verdict = "insufficient_seated_voters";
+    reason_code = "quorum_above_electorate";
     reason = BLOCKING_CODES.quorum_above_electorate;
     enabler = ENABLERS.appoint_voting_seats;
+  } else if (!users_known) {
+    // The seats were read; the ACCOUNTS were not. That is a different fact from "nobody holds a seat",
+    // and it is reported as such — the directory is named as the source that was not read.
+    if (!unread_sources.includes(USER_DIRECTORY_LABEL)) unread_sources.push(USER_DIRECTORY_LABEL);
+    verdict = "unreadable";
+    reason_code = "binding_unverified";
+    reason = BLOCKING_CODES.binding_unverified;
+    enabler = ENABLERS.read_sources;
   } else if (bound_seats < quorum_required) {
     verdict = "insufficient_seated_voters";
+    reason_code = "binding_below_quorum";
     reason = BLOCKING_CODES.binding_below_quorum;
     enabler = ENABLERS.bind_accounts;
   }
@@ -305,7 +326,7 @@ export function assessSeatedReadiness({
     electorate_policy_version: electorate.policy_version,
     verdict,
     verdict_text: READINESS_VERDICTS[verdict],
-    reason_code: verdict === "executable" ? null : (unread_sources.length > 0 ? "binding_unverified" : seatsBlockingCode()),
+    reason_code: verdict === "executable" ? null : reason_code,
     reason_text: reason,
     enabling_action_text: enabler,
     unread_sources,
