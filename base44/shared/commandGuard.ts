@@ -26,6 +26,8 @@ import { EVIDENCE_STATE_GATES, EVIDENCE_ACTOR_EXCLUDED, EVIDENCE_REFUSALS } from
 // bound to the actor's OWN identity for every role. Read from the continuity contract so the guard
 // and the commands can never disagree about which field carries that identity.
 import { IDENTITY_BOUND_ACTIONS, CONTINUITY_REFUSALS } from './continuityContract.ts';
+// A note is its author's: carrying it forward or resolving it is identity-bound (authz-1.7.0).
+import { ANNOTATION_IDENTITY_BOUND } from './annotationContinuity.ts';
 
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
@@ -36,6 +38,7 @@ const SCOPE_CHAIN = {
   Action: { parents: [["decision_id", "Decision"], ["meeting_id", "Meeting"]] },
   Document: { parents: [["decision_id", "Decision"]] },
   DocumentVersion: { parents: [["document_id", "Document"]] },
+  Annotation: { parents: [["document_version_id", "DocumentVersion"], ["document_id", "Document"]] },
   ReviewRequest: { parents: [["document_id", "Document"]] },
   CommitteeMembership: { parents: [] },
   CommitteeAmendment: { parents: [] },
@@ -100,7 +103,7 @@ export const PERMITTED_STATES = {
  * mirror of ACTOR_BOUND (which binds plain member seats to their own records): here the binding is a
  * fact about the person, not a privilege of rank.
  */
-export const ACTOR_IDENTITY_REQUIRED = { ...IDENTITY_BOUND_ACTIONS };
+export const ACTOR_IDENTITY_REQUIRED = { ...IDENTITY_BOUND_ACTIONS, ...ANNOTATION_IDENTITY_BOUND };
 
 /** Seats that may act only on a record bound to themselves. */
 export const ACTOR_BOUND = {

@@ -75,7 +75,7 @@ export const versionLabel = (digest: string | null) => (digest ? `pc:${digest.re
 
 // ── Material-change detection ───────────────────────────────────────────────────────────────────
 
-const toAsciiDigits = (s: string) => s
+export const toAsciiDigits = (s: string) => s
   .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
   .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
   .replace(/\u066B/g, ".")   // Arabic decimal separator

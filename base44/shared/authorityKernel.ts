@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.6.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.7.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,12 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.6.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.6.0",
-  supersedes: "authz-1.5.0",
+  version: "authz-1.7.0",
+  supersedes: "authz-1.6.0",
   change_class: "security",
   changes: [
+    "document.annotate named as an OPERATIONAL and SELF-SERVICE right: a seated person writes their OWN note on the version in force of a committee document, scoped through DocumentVersion -> Document -> committee. It is derived from the seat's read right; administration alone grants nothing.",
+    "annotation.own named as an OPERATIONAL, SELF-SERVICE and IDENTITY-BOUND right: only the author carries a note forward to a newer version or resolves it (annotation-continuity-1.0.0). The guard reads the identity field from the annotation contract, never a second hand-typed list.",
     "seat.resign named as an OPERATIONAL and SELF-SERVICE right: a seated person resigns their OWN appointment, and no office may resign another person's seat. Identity is enforced in the command guard for EVERY role (a chair cannot resign a member's seat either).",
     "seat.handover_accept named as an OPERATIONAL and SELF-SERVICE right: the NAMED successor accepts the handover of institutional obligations under their own identity, and only for themselves. An institution cannot accept on the successor's behalf, and an unaccepted obligation stays visibly unresolved.",
     "IDENTITY-BOUND ACTIONS enforced structurally in the command guard (read from the continuity contract, never re-typed): an act listed there is refused unless the record's own identity field equals the actor's, for every role.",
@@ -78,6 +80,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "decision.propose", "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute", "decision.submit",
   "seat.resign", "seat.handover_accept",
+  "document.annotate", "annotation.own",
 ];
 
 /** Capabilities blocked for a member who is recused from the committee. */
@@ -159,6 +162,7 @@ const ROLE_BASELINE = {
 const SELF_SERVICE_CAPABILITIES = [
   "conflict.declare", "recusal.record", "amendment.acknowledge",
   "seat.resign", "seat.handover_accept",
+  "document.annotate", "annotation.own",
 ];
 
 export function capabilitiesForRole(role, { delegationActive = false } = {}) {

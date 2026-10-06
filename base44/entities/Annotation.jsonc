@@ -16,28 +16,36 @@
     },
     "document_version_id": {
       "type": "string",
-      "title": "Document Version ID"
+      "title": "Document Version ID (the version the note was written on \u2014 a newer version never moves it)"
+    },
+    "version_number": {
+      "type": "number",
+      "title": "Version Number at Writing"
     },
     "author_user_id": {
       "type": "string",
-      "title": "Author User ID"
+      "title": "Author User ID (identity of record \u2014 only the author carries forward or resolves)"
     },
     "author_name": {
       "type": "string",
-      "title": "Author Name"
+      "title": "Author Name (display only)"
     },
     "author_role": {
       "type": "string",
-      "title": "Author Role"
+      "title": "Author Capacity at Writing"
     },
     "is_private": {
       "type": "boolean",
-      "title": "Private (visible only to author)",
+      "title": "Private (visible only to author \u2014 never in official records, exports or handover)",
       "default": true
     },
     "anchor_text": {
       "type": "string",
       "title": "Anchored Text Selection"
+    },
+    "anchor_sha256": {
+      "type": "string",
+      "title": "Anchor Fingerprint (SHA-256 of the normalised quoted passage)"
     },
     "body": {
       "type": "string",
@@ -47,6 +55,28 @@
       "type": "number",
       "title": "Page Number"
     },
+    "carried_from_annotation_id": {
+      "type": "string",
+      "title": "Carried From Note (the original stays on its own version, unchanged)"
+    },
+    "carried_from_version_id": {
+      "type": "string",
+      "title": "Carried From Version"
+    },
+    "reanchor_state": {
+      "type": "string",
+      "title": "Re-anchor State (unverified = the file changed and the passage could not be checked)",
+      "enum": [
+        "original",
+        "identical_content",
+        "unverified"
+      ],
+      "default": "original"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Annotation Contract Version in Force"
+    },
     "created_at": {
       "type": "string",
       "title": "Created At",
@@ -55,6 +85,11 @@
     "updated_at": {
       "type": "string",
       "title": "Updated At",
+      "format": "date-time"
+    },
+    "resolved_at": {
+      "type": "string",
+      "title": "Resolved At",
       "format": "date-time"
     },
     "status": {
@@ -72,6 +107,7 @@
     "organization_id",
     "committee_id",
     "document_id",
+    "author_user_id",
     "author_name",
     "body",
     "created_at",
@@ -79,22 +115,31 @@
   ],
   "rls": {
     "read": {
-      "data.organization_id": "{{user.data.active_org_id}}"
-    },
-    "create": {
-      "data.organization_id": "{{user.data.active_org_id}}"
-    },
-    "update": {
       "$or": [
         {
-          "data.organization_id": "{{user.data.active_org_id}}"
+          "data.author_user_id": "{{user.id}}"
         },
         {
-          "user_condition": {
-            "role": "admin"
-          }
+          "$and": [
+            {
+              "data.is_private": false
+            },
+            {
+              "data.organization_id": "{{user.data.active_org_id}}"
+            }
+          ]
         }
       ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
     },
     "delete": {
       "user_condition": {
