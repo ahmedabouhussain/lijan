@@ -363,6 +363,12 @@ export const GOVERNANCE_SURFACES: Surface[] = [
     unavailable: "authority", evidence: "contract_verified", suite: "TestMaterialChange", recorded_path: false, recorded_path_evidence: null,
     note_ar: "اللوحة لا تقرّر شيئًا: الرفض يقع على الخادم (`stale_content`)، وهي تعرض النص المجمّد وما تحرّك في معناه لا في صياغته — قبل المحاولة لا بعدها.",
     note_en: "The panel decides nothing: the refusal happens server-side (`stale_content`), and it shows the frozen text and what moved in its MEANING rather than its wording — before the attempt, not after it." },
+  { id: "check_record_consistency", ar: "اتساق السجلات بين الكيانات", en: "Cross-record consistency", stage: "oversight", kind: "view",
+    capability: "read", capability_source: "verified", command: "CheckRecordConsistency", contract: "record-consistency-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/c/:committeeRef/audit", route_file: "src/components/raqeem/ConsistencyCheckPanel.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestRecordConsistency", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "فحص لا تصحيح: يقابل السجلات بقواعد تمتد بينها (إغلاق بلا حكم مقبول · حجز قائم · حزمة بلا بصمة · صوت بلا دورة مجمّدة · حضور بلا مقعد · تسليم لا يجمع). ومصدر لم يُقرأ تُسمّى قواعده **غير مُقيَّمة** ولا تُحسب نظيفة، ونطاق القراءة مُعلن بالحدّ المقيَّد.",
+    note_en: "A check, not a correction: it matches records against rules that span them (closure without an accepted verdict · a standing hold · a package without a fingerprint · a ballot without a frozen round · presence without a seat · a handover whose arithmetic fails). A source that was not read has its rules reported NOT evaluated and never counted clean, and the read scope is declared with its cap." },
 ];
 
 export const SURFACE_IDS = GOVERNANCE_SURFACES.map((s) => s.id);

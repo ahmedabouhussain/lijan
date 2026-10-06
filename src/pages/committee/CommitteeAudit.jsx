@@ -11,6 +11,7 @@ import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import CompletionLedger from "@/components/raqeem/CompletionLedger";
 import TraceabilityMatrix from "@/components/raqeem/TraceabilityMatrix";
 import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import ConsistencyCheckPanel from "@/components/raqeem/ConsistencyCheckPanel";
 import { SURFACE_STATE } from "@/lib/governedState";
 
 export default function CommitteeAudit() {
@@ -77,6 +78,9 @@ export default function CommitteeAudit() {
   return (
     <div className="space-y-4">
       <PageHeader icon={ShieldCheck} title={getTitle("التدقيق وإعادة البناء", "Audit & Reconstruction", lang)} />
+
+      {/* Cross-record consistency — a checker, never a corrector: it reports and writes nothing. */}
+      <ConsistencyCheckPanel committeeId={data?.committee?.id} />
 
       {/* Change Tracker */}
       <div className="raqeem-card p-4">
