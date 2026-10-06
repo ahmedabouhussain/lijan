@@ -106,6 +106,20 @@ export default async function (req) {
         policy_unread = true;
       }
 
+      // The institution's own voting basis (the row SetPrincipalBasis writes, the one every round reads).
+      // No basis recorded is NOT an error here: it becomes an answer only where a dual-seat holder is
+      // actually bound — otherwise it changes nothing (D-083).
+      let basis = null;
+      let basis_reference = null;
+      try {
+        const rows = asArray(await sr.entities.GovernanceConfig.filter({ config_key: `principal_basis:${id}` }, { limit: 1 }));
+        const row = rows[0] || null;
+        basis = row && row.payload ? row.payload.basis || null : null;
+        basis_reference = row && row.payload ? row.payload.basis_reference || null : null;
+      } catch (_e) {
+        unread_sources.push('GovernanceConfig (أساس التصويت)');
+      }
+
       // One open obligation is enough for the extract run; the count is never invented.
       let open_obligations = null;
       let obligations_unread = false;
@@ -118,6 +132,7 @@ export default async function (req) {
       const assessed = assessSeatedReadiness({
         committee, seats, recusals, users_known, users_unread,
         policy_present, policy_unread, open_obligations, obligations_unread,
+        basis, basis_reference,
         sources_unread: unread_sources, day,
       });
 

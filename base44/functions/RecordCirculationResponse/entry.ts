@@ -3,6 +3,11 @@ import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts'
 import {
   evaluateResponse, RESPONSE_STATES, CIRCULATION_REFUSALS, CIRCULATION_CONTRACT_VERSION, COLLECTING_STATES,
 } from '../../shared/circulationApproval.ts';
+import { PRINCIPAL_BASES } from '../../shared/principalRepresentation.ts';
+
+// The options form of filter/list returns a PAGE ({items, …}), never an array: every read here is
+// normalised once, so an answer can never be counted against a page object (D-086).
+const asArray = (v: any) => (Array.isArray(v) ? v : (v && Array.isArray(v.items) ? v.items : []));
 
 // RecordCirculationResponse — ONE recipient answers on their OWN row.
 //
@@ -45,10 +50,14 @@ export default async function(req) {
       }, { status: 409 });
     }
 
-    // One person, one response — a principal and a proxy for the same seat never both count.
-    if (RESPONSE_STATES.includes(action)) {
-      const siblings = await sr.entities.CirculationResponse.filter({ round_id: round.id }, { limit: 200 }).catch(() => []);
-      const answeredElsewhere = (siblings || []).find((r: any) =>
+    // One person, one response — under the basis the round was dispatched with (D-083,
+    // principal-representation-1.0.0). Under `per_seat` each voting seat carries its own answer, so a
+    // second seat held by the same person is a legitimate answer; a round frozen before this contract
+    // carries no basis and is read as `per_person`, exactly as it behaved.
+    const roundBasis = round.voter_basis || PRINCIPAL_BASES.PER_PERSON;
+    if (RESPONSE_STATES.includes(action) && roundBasis !== PRINCIPAL_BASES.PER_SEAT) {
+      const siblings = asArray(await sr.entities.CirculationResponse.filter({ round_id: round.id }, { limit: 200 }).catch(() => []));
+      const answeredElsewhere = siblings.find((r: any) =>
         r.user_id === auth.user.id && r.id !== row.id && RESPONSE_STATES.includes(r.response) && !r.invalidated_at);
       if (answeredElsewhere) {
         return Response.json({
@@ -112,8 +121,8 @@ export default async function(req) {
     }
 
     // The round's counters are recomputed from the ROWS, never incremented from the request.
-    const all = await sr.entities.CirculationResponse.filter({ round_id: round.id }, { limit: 200 }).catch(() => []);
-    const live = (all || []).filter((r: any) => !r.invalidated_at);
+    const all = asArray(await sr.entities.CirculationResponse.filter({ round_id: round.id }, { limit: 200 }).catch(() => []));
+    const live = all.filter((r: any) => !r.invalidated_at);
     const count = (s: string) => live.filter((r: any) => r.response === s).length;
     await sr.entities.CirculationRound.update(round.id, {
       tally_approve: count('approve'),

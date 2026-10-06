@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import PrincipalBasisPanel from "@/components/raqeem/PrincipalBasisPanel";
 
 const VOTING_RULES = [
   { value: "simple_majority", label_ar: "أغلبية بسيطة", label_en: "Simple Majority" },
@@ -146,6 +147,11 @@ export default function CommitteeGovernanceRules() {
           ))}
         </div>
       )}
+
+      {/* Who votes when one person holds more than one seat — the one fact the platform refuses to
+          assume. The choice is recorded on the committee's own record under its management right,
+          never inline in a round. */}
+      <PrincipalBasisPanel committeeId={committee.id} />
     </div>
   );
 }

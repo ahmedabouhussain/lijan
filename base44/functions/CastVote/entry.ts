@@ -4,6 +4,7 @@ import { claimTransition, completeTransition, duplicateResponse } from '../../sh
 import { loadRoundContext } from '../../shared/roundContext.ts';
 import { canCastVote, refusalFor } from '../../shared/decisionLifecycle.ts';
 import { contentBinding, bindingRefusal } from '../../shared/proposalContent.ts';
+import { PRINCIPAL_BASES } from '../../shared/principalRepresentation.ts';
 
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
@@ -107,16 +108,23 @@ export default async function(req) {
     // and ballot reconciliation at issuance, where a seat or person counted twice is a BLOCKER.
     // The ballots of THIS round come from the same round context that resolved it: one contract, one
     // read path, so a ballot is never judged against a differently-resolved electorate.
+    // WHO VOTES is the institution's recorded basis, never an assumption (D-083,
+    // principal-representation-1.0.0). Under `per_person` one person carries one ballot however many
+    // seats they hold; under `per_seat` each voting seat carries its own, so a second seat held by the
+    // same person is a legitimate second ballot. A round frozen before this contract carries no basis
+    // and is read as `per_person` — exactly the behaviour it was opened with.
+    const roundBasis = round.voter_basis || PRINCIPAL_BASES.PER_PERSON;
     const roundVotes = ctx.ballots;
-    if (roundVotes.some((v) => v.voter_user_id === auth.user.id)) {
+    if (roundBasis !== PRINCIPAL_BASES.PER_SEAT && roundVotes.some((v) => v.voter_user_id === auth.user.id)) {
       return Response.json({
         error: 'This person has already voted in this round',
         code: 'already_voted_in_round',
         message: {
-          ar: 'سُجّل صوت لهذا الشخص في هذه الدورة بالفعل؛ لا يُسجَّل صوت ثانٍ، ويشمل ذلك الجمع بين مقعد أصيل ومقعد بديل.',
-          en: 'A ballot for this person is already recorded in this round; no second ballot is recorded. This includes holding a principal seat and an alternate seat.',
+          ar: 'سُجّل صوت لهذا الشخص في هذه الدورة بالفعل؛ لا يُسجَّل صوت ثانٍ على أساس «صوت واحد للشخص» — وهو الأساس المسجَّل لهذه اللجنة، ويشمل ذلك الجمع بين مقعد أصيل ومقعد بديل.',
+          en: 'A ballot for this person is already recorded in this round; no second ballot is recorded under the recorded basis “one vote per person”, which includes holding a principal seat and an alternate seat.',
         },
         round: round.round || 1,
+        voter_basis: roundBasis,
       }, { status: 409 });
     }
     const seatTaken = roundVotes.find((v) => v.voter_membership_id === seatId);

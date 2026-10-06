@@ -57,11 +57,30 @@
     },
     "quorum_required": {
       "type": "number",
-      "title": "Quorum Required"
+      "title": "Quorum Required (tested against VOTERS, so a round whose quorum the committee can never produce is refused before it opens)"
     },
     "eligibility_policy_version": {
       "type": "string",
       "title": "Eligibility Policy Version (the rule that produced this electorate)"
+    },
+    "voter_basis": {
+      "type": "string",
+      "title": "Voting Basis in Force (per_seat \u00b7 per_person \u2014 the institution's own recorded choice; a legacy round with none is read as per_person, exactly as it behaved)"
+    },
+    "eligible_seat_count": {
+      "type": "number",
+      "title": "Eligible Seat Count (all seats eligible to act in this round \u2014 the unit of eligibility)"
+    },
+    "eligible_count": {
+      "type": "number",
+      "title": "Voting Count (distinct voters under the recorded basis \u2014 the unit of capacity, never a silent seat count)"
+    },
+    "non_voting_seat_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Seats Carrying No Separate Vote (each names the voting seat of the same person under per_person \u2014 an electorate is never reduced silently)"
     },
     "frozen_on": {
       "type": "string",
@@ -78,7 +97,7 @@
       "items": {
         "type": "string"
       },
-      "title": "Eligible Seat IDs (the frozen electorate \u2014 a vote counts only from one of these)"
+      "title": "Eligible Seat IDs (the frozen electorate \u2014 a ballot counts only from one of these)"
     },
     "eligible_seats": {
       "type": "array",
@@ -87,16 +106,12 @@
       },
       "title": "Eligible Seats (seat_id | user_id | role)"
     },
-    "eligible_count": {
-      "type": "number",
-      "title": "Eligible Count"
-    },
     "excluded_seats": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "title": "Excluded Seats (seat_id + reason: out_of_term / recused_by_identifier / legacy_name_match)"
+      "title": "Excluded Seats (seat id + reason: out_of_term / recused_by_identifier / legacy_name_match)"
     },
     "excluded_out_of_term": {
       "type": "number",

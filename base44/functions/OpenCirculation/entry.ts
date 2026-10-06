@@ -6,6 +6,13 @@ import {
   CIRCULATION_STATES, CIRCULATION_REFUSALS, CIRCULATION_CONTRACT_VERSION, COLLECTING_STATES,
   policyRefusal, THRESHOLD_RULES, PERMITTED_MATTER_TYPES,
 } from '../../shared/circulationApproval.ts';
+import {
+  assessRepresentation, representationRefusal, readRecordedBasis, principalBasisKey,
+} from '../../shared/principalRepresentation.ts';
+
+// The options form of filter/list returns a PAGE ({items, …}), never an array. Every read in this
+// command is normalised once, so no route can iterate a page object as if it were its rows (D-086).
+const asArray = (v: any) => (Array.isArray(v) ? v : (v && Array.isArray(v.items) ? v.items : []));
 
 // OpenCirculation — dispatch a written resolution (decision by circulation) on a frozen text.
 //
@@ -84,7 +91,7 @@ export default async function(req) {
     }
 
     // 3 · One open round at a time. A second dispatch over a live round is not a silent replacement.
-    const existingRounds = (await sr.entities.CirculationRound
+    const existingRounds = asArray(await sr.entities.CirculationRound
       .filter({ decision_id }, { sort: '-created_date', limit: 20 }).catch(() => []))
       .filter((r: any) => COLLECTING_STATES.includes(r.state) || r.state === CIRCULATION_STATES.READY);
     if (existingRounds.length > 0) {
@@ -100,9 +107,9 @@ export default async function(req) {
 
     // 4 · The frozen electorate: the same computation a vote uses, so a written resolution cannot
     //    widen who counts. Recused and out-of-term seats are excluded with their reason.
-    const seats = (await sr.entities.CommitteeMembership
+    const seats = asArray(await sr.entities.CommitteeMembership
       .filter({ committee_id, status: 'active', voting_right: true }, { limit: 200 }).catch(() => []));
-    const recusals = (await sr.entities.Recusal.filter({ committee_id, status: 'active' }).catch(() => []));
+    const recusals = asArray(await sr.entities.Recusal.filter({ committee_id, status: 'active' }).catch(() => []));
     const electorate = computeElectorate({ seats, recusals });
     if (electorate.size === 0) {
       return Response.json({
@@ -112,17 +119,41 @@ export default async function(req) {
       }, { status: 409 });
     }
 
+    // 4b · WHO VOTES — D-083 (principal-representation-1.0.0). Eligibility is counted in seats, the
+    //      round's capacity in voters. This route was the worst case of the defect: a round required a
+    //      response on EVERY eligible seat while the same person's second seat was refused by contract,
+    //      so a committee with one dual-seat member could never reach `ready` — it could only expire
+    //      into `not_carried` with every person having approved. The basis is the institution's own
+    //      recorded choice; while it is unwritten and such a holder is actually in this electorate, the
+    //      round is refused before anything is written, with the choice named.
+    const basisRows = asArray(await sr.entities.GovernanceConfig.filter({ config_key: principalBasisKey(committee_id) }, { limit: 1 }).catch(() => []));
+    const recordedBasis = readRecordedBasis(basisRows[0] || null);
+    const quorumProbe = quorum_required !== null && quorum_required !== undefined
+      ? Number(quorum_required)
+      : Number(policy.quorum_participation || 1);
+    const representation = assessRepresentation({
+      eligibleSeats: electorate.eligible,
+      basis: recordedBasis?.basis || null,
+      basisReference: recordedBasis?.basis_reference || null,
+      quorumRequired: quorumProbe,
+    });
+    if (representation.refusal) {
+      return Response.json(representationRefusal(representation, auth.correlation_id), { status: 409 });
+    }
+    // Rows are dispatched to the VOTING seats (capacity), while every seat that carries no separate
+    // vote is named with its reason: a person is still notified once, through the seat that votes.
+    const votingSet = new Set(representation.voting_seat_ids);
+    const votingSeats = electorate.eligible.filter((s: any) => votingSet.has(s.id));
+
     // 5 · The frozen text. What the recipients answer on is what issuance later verifies.
     const canonical = canonicalProposal(decision);
     const digest = await proposalDigest(canonical);
 
-    const prevRounds = await sr.entities.CirculationRound
-      .filter({ decision_id }, { sort: '-round_number', limit: 1 }).catch(() => []);
-    const roundNumber = Number(((prevRounds && prevRounds[0]) || {}).round_number || 0) + 1;
+    const prevRounds = asArray(await sr.entities.CirculationRound
+      .filter({ decision_id }, { sort: '-round_number', limit: 1 }).catch(() => []));
+    const roundNumber = Number((prevRounds[0] || {}).round_number || 0) + 1;
 
-    const quorum = quorum_required !== null && quorum_required !== undefined
-      ? Number(quorum_required)
-      : Number(policy.quorum_participation || 1);
+    const quorum = quorumProbe;
 
     const round = await sr.entities.CirculationRound.create({
       organization_id: auth.organization_id,
@@ -145,10 +176,18 @@ export default async function(req) {
       deadline_at: new Date(deadline).toISOString(),
       extension_count: 0,
       extension_history: [],
-      eligible_seat_ids: electorate.eligible_seat_ids,
-      eligible_snapshot: electorate.eligible_seats.map((s: any) => `${s.seat_id}|${s.user_id || '—'}|${s.role || '—'}`),
-      eligible_count: electorate.size,
-      excluded_seats: electorate.excluded_seat_rows,
+      eligible_seat_ids: representation.voting_seat_ids,
+      eligible_snapshot: votingSeats.map((s: any) => `${s.id}|${s.user_id || '—'}|${s.role || '—'}`),
+      // Seats are the unit of eligibility, voters the unit of capacity: both are stored, and the quorum
+      // is tested against `eligible_count` (voters) exactly as it is counted from responses.
+      voter_basis: representation.basis,
+      eligible_seat_count: electorate.size,
+      eligible_count: representation.voter_count,
+      non_voting_seat_ids: representation.non_voting_seats.map((n) => n.seat_id),
+      excluded_seats: [
+        ...electorate.excluded_seat_rows,
+        ...representation.non_voting_seats.map((n) => `${n.seat_id}|${n.reason}->${n.voting_seat_id}`),
+      ],
       invitation_recipients: [],
       dispatch_authorized_by_user_id: auth.user.id,
       dispatch_authorized_by_name: auth.user.full_name || auth.user.email,
@@ -159,7 +198,7 @@ export default async function(req) {
     });
 
     // 6 · One row per eligible recipient. DISPATCH is recorded; nothing else is assumed.
-    const rows = electorate.eligible.map((seat: any) => ({
+    const rows = votingSeats.map((seat: any) => ({
       organization_id: auth.organization_id,
       committee_id,
       decision_id,
@@ -194,7 +233,7 @@ export default async function(req) {
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,
       action: 'circulation.dispatch', entity_type: 'CirculationRound', entity_id: round.id,
       entity_title: decision.title_ar || decision.title || 'قرار',
-      description: `Written resolution round ${roundNumber} dispatched (${matter_type}, rule ${chosenRule}, ${electorate.size} eligible seat(s), deadline ${new Date(deadline).toISOString()}) — dispatch is not receipt and not approval`,
+      description: `Written resolution round ${roundNumber} dispatched (${matter_type}, rule ${chosenRule}, ${representation.voter_count} voter(s) under the ${representation.basis} basis from ${electorate.size} eligible seat(s); seats carrying no separate vote: ${representation.non_voting_seats.map((n) => n.seat_id).join(', ') || 'none'}; deadline ${new Date(deadline).toISOString()}) — dispatch is not receipt and not approval`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
@@ -204,6 +243,16 @@ export default async function(req) {
       recipients: rows.length,
       responses_created: (responses && responses.length) || rows.length,
       electorate: { size: electorate.size, excluded: electorate.excluded },
+      representation: {
+        contract_version: representation.contract_version,
+        basis: representation.basis,
+        basis_source: representation.basis_source,
+        eligible_seat_count: representation.eligible_seat_count,
+        voter_count: representation.voter_count,
+        non_voting_seats: representation.non_voting_seats,
+        quorum_required: representation.quorum_required,
+        quorum_reachable: representation.quorum_reachable,
+      },
       ready_is_not_a_decision: true,
       next_step: 'issue_stays_separate',
       contract_version: CIRCULATION_CONTRACT_VERSION,

@@ -19,6 +19,7 @@
 // instead of being assumed to work.
 
 import { computeElectorate } from "./voteEligibility.ts";
+import { assessRepresentation } from "./principalRepresentation.ts";
 import { capabilitiesForRole } from "./authorityKernel.ts";
 import { GOVERNANCE_SURFACES } from "./governanceSurfaceRegistry.ts";
 
@@ -59,6 +60,8 @@ export const BLOCKING_CODES: Record<string, { ar: string; en: string }> = {
   no_open_obligation: { ar: "لا التزام مفتوح ليشمل هذه الرحلة", en: "There is no open obligation for this run to cover" },
   obligation_state_unread: { ar: "تعذّر قراءة التزامات اللجنة", en: "The committee's obligations could not be read" },
   readiness_unverifiable: { ar: "مصدر لازم للقياس لم يُقرأ ⇒ لا يُعلن أن الرحلة جاهزة", en: "A source the measure needs could not be read, so the run is never reported ready" },
+  principal_basis_unresolved: { ar: "شخص واحد يحمل أكثر من مقعد مربوط، ولم تسجّل المؤسسة بعد هل يحمل صوتين أم صوتًا واحدًا ⇒ لا تُفتح دورة", en: "One person holds more than one bound seat and the institution has not recorded whether the seats carry two votes or one, so no round is opened" },
+  quorum_unreachable: { ar: "النصاب المطلوب يتجاوز ما يمكن أن تنتجه المقاعد المربوطة على الأساس المسجَّل ⇒ الدورة لا يمكن أن تُقفل", en: "The required quorum exceeds what the bound seats can produce under the recorded basis, so the round could never conclude" },
 };
 
 /** What would actually unblock a committee. An enabler, not a complaint. */
@@ -86,6 +89,10 @@ export const ENABLERS: Record<string, { ar: string; en: string }> = {
   read_sources: {
     ar: "أعد المحاولة بعد توفّر المصدر الذي لم يُقرأ",
     en: "Retry once the source that could not be read is available",
+  },
+  record_principal_basis: {
+    ar: "سجّل أساس التصويت عند تعدد المقاعد في هذه اللجنة (صوت واحد للشخص أو صوت لكل مقعد)",
+    en: "Record this committee's voting basis where a person holds more than one seat (one vote per person, or one per seat)",
   },
 };
 
@@ -202,6 +209,7 @@ export function assessOfficerRight({ command, bound_seats = [], surface_override
 export function assessSeatedReadiness({
   committee = {}, seats = [], recusals = [], users_known = null, users_unread = null,
   policy_present = null, policy_unread = false, open_obligations = null, obligations_unread = false,
+  basis = null, basis_reference = null,
   sources_unread = [],
   day = new Date().toISOString().slice(0, 10),
 }: any = {}) {
@@ -226,7 +234,21 @@ export function assessSeatedReadiness({
   const bound = (rows: any[]) => (users_known ? rows.filter((s) => s.user_id && users_known.has(s.user_id) && s.is_demonstration_role !== true) : []);
   const bound_seats = users_known ? bound(eligible).length : null;
   const bound_officer_pool = users_known ? bound(officer_pool) : [];
-  const binding_state = !users_known ? "unverified" : (bound_seats >= quorum_required ? "quorum_met" : "below_quorum");
+
+  // D-083: a bound seat is not always a vote. Where one person holds two bound seats the committee's real
+  // CAPACITY is smaller than its seat count, and under an unrecorded basis nothing may be assumed.
+  // Representation is computed over the BOUND eligible seats — the ones a person can actually vote from —
+  // against the quorum this committee would be tested by.
+  // Two scopes, because they answer two different questions (D-083 · D-084):
+  //   • structural — over EVERY eligible seat: can this committee EVER reach its quorum, and has the
+  //     institution recorded its choice about a dual-seat holder at all? Neither can be fixed by binding.
+  //   • capacity — over the BOUND eligible seats: how many votes can be produced today.
+  const structural = assessRepresentation({ eligibleSeats: eligible, basis, basisReference: basis_reference, quorumRequired: quorum_required });
+  const representation = users_known
+    ? assessRepresentation({ eligibleSeats: bound(eligible), basis, basisReference: basis_reference, quorumRequired: quorum_required })
+    : null;
+  const bound_voters = representation ? representation.voter_count : null;
+  const binding_state = !users_known ? "unverified" : (bound_voters >= quorum_required ? "quorum_met" : "below_quorum");
 
   const with_user_id = eligible.filter((s) => !!s.user_id).length;
   const demonstration_seats = eligible.filter((s) => s.is_demonstration_role === true).length;
@@ -260,7 +282,14 @@ export function assessSeatedReadiness({
     reason_code = "binding_unverified";
     reason = BLOCKING_CODES.binding_unverified;
     enabler = ENABLERS.read_sources;
-  } else if (bound_seats < quorum_required) {
+  } else if (structural.refusal) {
+    // The RULE question comes before the capacity question: without the institution's recorded basis the
+    // capacity cannot be judged at all, and an unreachable quorum must never hide behind a seat count.
+    verdict = "insufficient_seated_voters";
+    reason_code = structural.refusal.code;
+    reason = BLOCKING_CODES[structural.refusal.code] || null;
+    enabler = ENABLERS.record_principal_basis;
+  } else if (bound_voters < quorum_required) {
     verdict = "insufficient_seated_voters";
     reason_code = "binding_below_quorum";
     reason = BLOCKING_CODES.binding_below_quorum;
@@ -271,7 +300,8 @@ export function assessSeatedReadiness({
     if (!users_known) return "binding_unverified";
     if (eligible.length === 0) return "zero_electorate";
     if (eligible.length < quorum_required) return "quorum_above_electorate";
-    if (bound_seats < quorum_required) return "binding_below_quorum";
+    if (structural.refusal) return structural.refusal.code;
+    if (bound_voters < quorum_required) return "binding_below_quorum";
     return null;
   };
 
@@ -318,6 +348,13 @@ export function assessSeatedReadiness({
     eligible_seat_ids: electorate.eligible_seat_ids,
     excluded: electorate.excluded,
     bound_seats,
+    bound_voters,
+    principal_basis: structural.basis,
+    principal_basis_source: structural.basis_source,
+    multi_seat_principals: structural.multi_seat_principals,
+    non_voting_seat_count: structural.non_voting_seats.length,
+    structural_capacity: structural.max_voters,
+    quorum_reachable: structural.quorum_reachable,
     seats_with_user_id: with_user_id,
     demonstration_seats,
     quorum_required,
@@ -338,12 +375,14 @@ export function assessSeatedReadiness({
 
 /** Counts for the surface: never a total without its parts. */
 export function summarizeReadiness(rows: any[] = []) {
-  const out: any = { committees: rows.length, executable: 0, insufficient_seated_voters: 0, unreadable: 0, not_readable: 0, eligible_seats: 0, bound_seats: 0, ready_runs: [] };
+  const out: any = { committees: rows.length, executable: 0, insufficient_seated_voters: 0, unreadable: 0, not_readable: 0, eligible_seats: 0, bound_seats: 0, bound_voters: 0, multi_seat_principals: 0, ready_runs: [] };
   for (const r of rows) {
     if (r.readable === false && r.verdict === undefined) { out.not_readable += 1; continue; }
     out[r.verdict] = (out[r.verdict] || 0) + 1;
     out.eligible_seats += r.eligible_seats || 0;
     out.bound_seats += typeof r.bound_seats === "number" ? r.bound_seats : 0;
+    out.bound_voters += typeof r.bound_voters === "number" ? r.bound_voters : 0;
+    out.multi_seat_principals += (r.multi_seat_principals || []).length;
     for (const id of r.ready_runs || []) if (!out.ready_runs.includes(id)) out.ready_runs.push(id);
     if ((r.unread_sources || []).length > 0) out.unread_sources = (out.unread_sources || []).concat(r.unread_sources);
   }

@@ -108,12 +108,20 @@
       },
       "title": "Extension History (from, to, by, reason, at \u2014 an extension is an auditable notice, not a silent edit)"
     },
+    "voter_basis": {
+      "type": "string",
+      "title": "Voting Basis in Force (per_seat \u00b7 per_person \u2014 the institution's own recorded choice; a legacy round with none is read as per_person, exactly as it behaved)"
+    },
+    "eligible_seat_count": {
+      "type": "number",
+      "title": "Eligible Seat Count (all seats the institution's rule admitted to this round)"
+    },
     "eligible_seat_ids": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "title": "Eligible Seat IDs (frozen at dispatch; a response counts only from one of these)"
+      "title": "Voting Seat IDs (frozen at dispatch; a response counts only from one of these \u2014 a seat that carries no separate vote under the basis is named in excluded_seats, never dropped silently)"
     },
     "eligible_snapshot": {
       "type": "array",
@@ -124,14 +132,21 @@
     },
     "eligible_count": {
       "type": "number",
-      "title": "Eligible Count"
+      "title": "Voting Count (distinct voters under the recorded basis \u2014 the number the quorum is tested against)"
+    },
+    "non_voting_seat_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Seats Carrying No Separate Vote (each names the voting seat of the same person under per_person)"
     },
     "excluded_seats": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "title": "Excluded Seats (seat_id + reason: out_of_term / recused_by_identifier / legacy_name_match)"
+      "title": "Excluded Seats (seat id + reason: out_of_term / recused_by_identifier / duplicate_principal_seat)"
     },
     "invitation_recipients": {
       "type": "array",

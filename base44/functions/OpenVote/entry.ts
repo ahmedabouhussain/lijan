@@ -7,6 +7,9 @@ import {
   canonicalProposal, proposalDigest, serializeProposal, compareProposals, summarizeChanges, versionLabel,
   PROPOSAL_CONTENT_VERSION,
 } from '../../shared/proposalContent.ts';
+import {
+  assessRepresentation, representationRefusal, readRecordedBasis, principalBasisKey,
+} from '../../shared/principalRepresentation.ts';
 
 // OpenVote — opens a voting session for a decision.
 export default async function(req) {
@@ -71,6 +74,25 @@ export default async function(req) {
       }, { status: 409 });
     }
 
+    // ── Representation: who votes, when one person holds more than one seat ──────────────────────
+    // D-083 (principal-representation-1.0.0): the electorate above is counted in SEATS while ballots
+    // are admitted PER PERSON, so a dual-seat holder reduced the real capacity without anything saying
+    // so — and the committee could be required to reach a quorum it can never produce. Whether those
+    // seats carry two votes or one is the INSTITUTION'S choice: it is read from its own record, and
+    // while it is unwritten this act stops HERE, before anything is frozen, with the choice named.
+    const basisRows = await base44.asServiceRole.entities.GovernanceConfig
+      .filter({ config_key: principalBasisKey(committee_id) }, { limit: 1 }).catch(() => []);
+    const recordedBasis = readRecordedBasis((Array.isArray(basisRows) ? basisRows : (basisRows?.items || []))[0] || null);
+    const representation = assessRepresentation({
+      eligibleSeats: eligibleVoters,
+      basis: recordedBasis?.basis || null,
+      basisReference: recordedBasis?.basis_reference || null,
+      quorumRequired: auth.committee?.quorum_count ?? null,
+    });
+    if (representation.refusal) {
+      return Response.json(representationRefusal(representation, auth.correlation_id), { status: 409 });
+    }
+
     // ── Freeze the round ────────────────────────────────────────────────────────────────────────
     // The electorate is written as its OWN record, so the round a vote belongs to outlives any later
     // change to the committee: a seat appointed after this moment cannot vote in this round, and the
@@ -113,8 +135,18 @@ export default async function(req) {
       frozen_at: frozenAt,
       eligible_seat_ids: electorate.eligible_seat_ids,
       eligible_seats: electorate.eligible_seats.map((s) => `${s.seat_id}|${s.user_id || '-'}|${s.role || '-'}`),
-      eligible_count: electorate.size,
-      excluded_seats: electorate.excluded_seat_rows,
+      // Eligibility is counted in SEATS; the round's capacity — and the quorum it is tested against —
+      // is counted in VOTERS under the basis in force. Both are stored, and every seat carrying no
+      // separate vote is named with the voting seat of the same person AND given its reason in
+      // excluded_seats: an electorate is never reduced silently.
+      voter_basis: representation.basis,
+      eligible_seat_count: electorate.size,
+      eligible_count: representation.voter_count,
+      non_voting_seat_ids: representation.non_voting_seats.map((n) => n.seat_id),
+      excluded_seats: [
+        ...electorate.excluded_seat_rows,
+        ...representation.non_voting_seats.map((n) => `${n.seat_id}|${n.reason}->${n.voting_seat_id}`),
+      ],
       excluded_out_of_term: electorate.excluded.out_of_term,
       excluded_recused_by_identifier: electorate.excluded.recused_by_identifier,
       excluded_legacy_name_match: electorate.excluded.legacy_name_match,
@@ -139,7 +171,7 @@ export default async function(req) {
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,
       action: 'vote.open', entity_type: 'Decision', entity_id: decision_id,
       entity_title: decision.title,
-      description: `Vote opened — round ${round}: ${electorate.size} eligible seats frozen (by seat id: ${electorate.eligible_seat_ids.join(', ')}); excluded — out of term: ${electorate.excluded.out_of_term}, recused by identifier: ${electorate.excluded.recused_by_identifier}, legacy name match: ${electorate.excluded.legacy_name_match} (eligibility policy ${electorate.policy_version}); round record ${electorateSnapshot.id}${prior ? ` supersedes ${prior.id}` : ''}`,
+      description: `Vote opened — round ${round}: ${electorate.size} eligible seats frozen, ${representation.voter_count} voter(s) under the ${representation.basis} basis (by seat id: ${electorate.eligible_seat_ids.join(', ')}; seats carrying no separate vote: ${representation.non_voting_seats.map((n) => n.seat_id).join(', ') || 'none'}); excluded — out of term: ${electorate.excluded.out_of_term}, recused by identifier: ${electorate.excluded.recused_by_identifier}, legacy name match: ${electorate.excluded.legacy_name_match} (eligibility policy ${electorate.policy_version}); round record ${electorateSnapshot.id}${prior ? ` supersedes ${prior.id}` : ''}`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
@@ -182,10 +214,20 @@ export default async function(req) {
       round,
       eligible_seats: electorate.eligible_seats,
       eligible_voters: eligibleVoters.map(m => ({ name: m.full_name, role: m.role })),
-      eligible_count: electorate.size,
+      eligible_count: representation.voter_count,
       eligible_seat_ids: electorate.eligible_seat_ids,
       excluded: electorate.excluded,
       eligibility_policy_version: electorate.policy_version,
+      representation: {
+        contract_version: representation.contract_version,
+        basis: representation.basis,
+        basis_source: representation.basis_source,
+        eligible_seat_count: representation.eligible_seat_count,
+        voter_count: representation.voter_count,
+        non_voting_seats: representation.non_voting_seats,
+        quorum_required: representation.quorum_required,
+        quorum_reachable: representation.quorum_reachable,
+      },
       proposal: {
         version: versionLabel(proposalSha),
         sha256: proposalSha,
