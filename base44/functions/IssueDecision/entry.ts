@@ -9,6 +9,7 @@ import {
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
 import { issuanceGate, refusalFor } from '../../shared/decisionLifecycle.ts';
+import { contentBinding, bindingRefusal, PROPOSAL_CONTENT_VERSION } from '../../shared/proposalContent.ts';
 
 const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
 
@@ -169,6 +170,17 @@ export default async function(req) {
       }, { status: 409 });
     }
 
+    // D-061 (proposal-content-1.0.0): a NEW issuance rests on the text the round froze. If the
+    // proposal was edited after the vote opened, what would be issued is not what was voted; a round
+    // opened before content freezing names no text at all. Both stop here, before any claim or write.
+    let contentBound: any = null;
+    if (!storedSnapshot) {
+      contentBound = await contentBinding({ round: roundCtx.round, decision });
+      if (contentBound.state !== 'bound') {
+        return Response.json(bindingRefusal(contentBound, auth.correlation_id), { status: 409 });
+      }
+    }
+
     const electorateBasisNote = roundCtx.basis;
 
     const proofLinks = [
@@ -283,7 +295,13 @@ export default async function(req) {
     if (!claim.won) return duplicateResponse(claim, 'This decision issuance is already in progress or complete');
 
     const issuedAt = new Date().toISOString();
-    const canonical = canonicalManifest({ ...readiness.manifest_input, issued_at: issuedAt });
+    // The package names the FROZEN proposal fingerprint, so re-hashing the manifest also proves which
+    // text was issued — not only which seats and ballots.
+    const canonical = canonicalManifest({
+      ...readiness.manifest_input,
+      issued_at: issuedAt,
+      proposal: contentBound ? { sha256: contentBound.frozen_sha256, contract_version: PROPOSAL_CONTENT_VERSION } : null,
+    });
     const digest = await manifestDigest(canonical);
 
     const snapshot = await sr.entities.IssueSnapshot.create({
@@ -295,7 +313,10 @@ export default async function(req) {
       round_snapshot_id: roundCtx.round.id,
       round_number: roundCtx.round.round || 1,
       round_frozen_on: roundCtx.round.frozen_on || null,
-      proposal_version: String(decision.updated_date || decision.created_date || ''),
+      // Bound to the ROUND's frozen content (D-061), not to whatever timestamp the record carries now.
+      proposal_version: roundCtx.round.proposal_version || null,
+      proposal_sha256: contentBound?.frozen_sha256 || null,
+      proposal_contract_version: PROPOSAL_CONTENT_VERSION,
       material_version: String(decision.updated_date || ''),
       mandate_version: String(committee.version || 1),
       integrity_policy_version: INTEGRITY_POLICY_VERSION,

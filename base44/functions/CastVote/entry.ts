@@ -3,6 +3,7 @@ import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts'
 import { claimTransition, completeTransition, duplicateResponse } from '../../shared/transitionClaim.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
 import { canCastVote, refusalFor } from '../../shared/decisionLifecycle.ts';
+import { contentBinding, bindingRefusal } from '../../shared/proposalContent.ts';
 
 // CastVote — a member casts a vote on a decision.
 export default async function(req) {
@@ -69,6 +70,15 @@ export default async function(req) {
           en: 'No frozen voting round exists for this decision; the vote must be reopened so the electorate is frozen before ballots are recorded.',
         },
       }, { status: 409 });
+    }
+
+    // D-061 (proposal-content-1.0.0): a ballot is recorded only against the text the round FROZE.
+    // A proposal edited after the round opened is stale — the member would be voting on words the
+    // round never froze — and a round that predates content freezing names no text at all. Both are
+    // governed stops with the material changes named, never a silent vote on a moved text.
+    const binding = await contentBinding({ round, decision });
+    if (binding.state !== 'bound') {
+      return Response.json(bindingRefusal(binding, auth.correlation_id), { status: 409 });
     }
 
     // The seat must be INSIDE the frozen electorate. A seat appointed after the round was opened is

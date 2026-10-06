@@ -46,7 +46,15 @@
     },
     "proposal_version": {
       "type": "string",
-      "title": "Frozen Proposal Version (the round's own proposal version)"
+      "title": "Frozen Proposal Version (the ROUND's own frozen version \u2014 never a timestamp read off the record at issuance)"
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "title": "Frozen Proposal Fingerprint (the digest of the text that was voted on and issued; re-hashed from the frozen content, so the package proves WHICH text was issued)"
+    },
+    "proposal_contract_version": {
+      "type": "string",
+      "title": "Proposal Content Contract Version in Force"
     },
     "material_version": {
       "type": "string",

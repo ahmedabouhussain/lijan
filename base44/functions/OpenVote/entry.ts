@@ -3,6 +3,10 @@ import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts'
 import { dispatchBatch } from '../../shared/notificationEngine.ts';
 import { computeElectorate } from '../../shared/voteEligibility.ts';
 import { canOpenVote, refusalFor } from '../../shared/decisionLifecycle.ts';
+import {
+  canonicalProposal, proposalDigest, serializeProposal, compareProposals, summarizeChanges, versionLabel,
+  PROPOSAL_CONTENT_VERSION,
+} from '../../shared/proposalContent.ts';
 
 // OpenVote — opens a voting session for a decision.
 export default async function(req) {
@@ -76,13 +80,32 @@ export default async function(req) {
     const prior = (Array.isArray(priorRows) ? priorRows : (priorRows?.items || []))[0] || null;
     const frozenAt = new Date().toISOString();
     const round = (prior?.round || 0) + 1;
+
+    // D-061 (proposal-content-1.0.0): the round now freezes the proposal CONTENT, not a timestamp.
+    // The version used to be `decision.updated_date`, which this very command rewrites a few lines
+    // below — so the round named a version nothing could reproduce, and an edit made after the vote
+    // opened was undetectable. The canonical voted text and its SHA-256 fingerprint are stored on the
+    // round; CastVote and IssueDecision refuse when the text no longer matches. A change against the
+    // PREVIOUS round's frozen text is recorded with its material findings, so a re-vote names what moved.
+    const proposalNow = canonicalProposal(decision);
+    const proposalSha = await proposalDigest(proposalNow);
+    let changesFromPrevious: any = null;
+    if (prior?.proposal_content) {
+      try { changesFromPrevious = compareProposals(JSON.parse(prior.proposal_content), proposalNow); } catch { changesFromPrevious = null; }
+    }
+
     const electorateSnapshot = await base44.asServiceRole.entities.EligibleVoterSnapshot.create({
       organization_id: auth.organization_id,
       committee_id,
       decision_id,
       meeting_id: decision.meeting_id || null,
       round,
-      proposal_version: String(decision.updated_date || decision.created_date || ''),
+      proposal_version: versionLabel(proposalSha),
+      proposal_content: serializeProposal(proposalNow),
+      proposal_sha256: proposalSha,
+      proposal_contract_version: PROPOSAL_CONTENT_VERSION,
+      material_changes_from_previous: changesFromPrevious ? summarizeChanges(changesFromPrevious) : [],
+      material_change_count: changesFromPrevious?.material_count ?? 0,
       voting_rule: auth.committee?.voting_rule || null,
       quorum_required: auth.committee?.quorum_count ?? null,
       eligibility_policy_version: electorate.policy_version,
@@ -163,6 +186,12 @@ export default async function(req) {
       eligible_seat_ids: electorate.eligible_seat_ids,
       excluded: electorate.excluded,
       eligibility_policy_version: electorate.policy_version,
+      proposal: {
+        version: versionLabel(proposalSha),
+        sha256: proposalSha,
+        contract_version: PROPOSAL_CONTENT_VERSION,
+        changes_from_previous_round: changesFromPrevious,
+      },
       correlation_id: auth.correlation_id,
     });
   } catch (error) {

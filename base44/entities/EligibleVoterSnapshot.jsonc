@@ -25,7 +25,31 @@
     },
     "proposal_version": {
       "type": "string",
-      "title": "Proposal Version the round is bound to (the frozen package being voted on)"
+      "title": "Proposal Version the round is bound to (a readable label derived from the frozen content fingerprint, never a timestamp)"
+    },
+    "proposal_content": {
+      "type": "string",
+      "title": "Frozen Proposal Content (canonical JSON of the voted text fields \u2014 the ONLY text a ballot or an issuance may rest on; re-hashed on every read and every ballot)"
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "title": "Frozen Proposal Fingerprint (deterministic content digest, verified by RE-HASHING the stored content \u2014 a digest, not proof of legal validity or trusted time)"
+    },
+    "proposal_contract_version": {
+      "type": "string",
+      "title": "Proposal Content Contract Version in Force"
+    },
+    "material_changes_from_previous": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Material Changes Since the Previous Round (field:findings codes \u2014 a re-vote names what moved instead of reopening silently)"
+    },
+    "material_change_count": {
+      "type": "number",
+      "title": "Material Change Count",
+      "default": 0
     },
     "voting_rule": {
       "type": "string",
