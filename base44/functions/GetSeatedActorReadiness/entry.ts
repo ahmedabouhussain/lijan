@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { authorizeCommand, refusalResponse, requestClaims } from '../../shared/commandGuard.ts';
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
-import { assessSeatedReadiness, summarizeReadiness, SEATED_RUNS, SEATED_READINESS_VERSION } from '../../shared/seatedReadiness.ts';
+import { assessSeatedReadiness, summarizeReadiness, SEATED_RUNS, SEATED_READINESS_VERSION, USER_DIRECTORY_LABEL } from '../../shared/seatedReadiness.ts';
 
 // GetSeatedActorReadiness — S22: the blocker, MEASURED instead of asserted.
 //
@@ -40,10 +40,18 @@ export default async function (req) {
     let users_known = null;
     let users_unread = null;
     try {
-      const list = asArray(await sr.entities.User.list());
+      const rawDirectory = await sr.entities.User.list();
+      const list = asArray(rawDirectory);
       users_known = new Set(list.map((u) => u.id).filter(Boolean));
+      // A PARTIAL page is not an empty directory: if the read did not exhaust the directory, the binding
+      // test cannot be established, so it is declared unread rather than reporting "nobody holds a seat"
+      // — the false-zero class this measure exists to prevent.
+      if (!Array.isArray(rawDirectory) && rawDirectory && rawDirectory.has_more === true) {
+        users_known = null;
+        users_unread = USER_DIRECTORY_LABEL;
+      }
     } catch (_e) {
-      users_unread = 'User (دليل حسابات المستخدمين)';
+      users_unread = USER_DIRECTORY_LABEL;
     }
 
     const claims = requestClaims(body);
