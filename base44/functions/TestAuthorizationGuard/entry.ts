@@ -70,6 +70,8 @@ const ROLE_CASES = [
   { id: 'AUTH-040', role: 'secretary', capability: 'decision.submit', delegation: false, expect: true, note: 'the office that drafts also submits — drafting is not approving' },
   { id: 'AUTH-041', role: 'member', capability: 'decision.submit', delegation: false, expect: false, note: 'a member PROPOSES a draft (decision.propose); submitting it is not a member right' },
   { id: 'AUTH-042', role: 'vice_chair', capability: 'decision.execute', delegation: false, expect: false, note: 'starting execution is not inherited with the office; it needs the right or a delegation' },
+  { id: 'AUTH-043', role: 'observer', capability: 'document.annotate', delegation: false, expect: true, note: 'a personal note is derived from the seat\u2019s read right (self-service), whatever the office' },
+  { id: 'AUTH-044', role: null, capability: 'document.annotate', delegation: false, isPlatformAdmin: true, expect: false, note: 'platform administration is not a seat: it writes no notes' },
 ];
 
 // ── Isolated data-layer stub (no real record is read; no write can land) ────
@@ -131,6 +133,9 @@ const PACK_OTHER = { ...PACK_OWN, id: 'HOP-2', successor_user_id: 'USR-OTHER' };
 const PACK_CLOSED = { ...PACK_OWN, id: 'HOP-3', status: 'accepted' };
 const DECISION = { id: 'DEC-T1', committee_id: COM, organization_id: ORG, status: 'approved' };
 const DOCUMENT = { id: 'DOC-T1', committee_id: COM, organization_id: ORG };
+const VERSION = { id: 'DV-T1', document_id: 'DOC-T1', committee_id: COM, organization_id: ORG, version_number: 1, status: 'current' };
+const NOTE_OWN = { id: 'ANN-OWN', committee_id: COM, organization_id: ORG, document_id: 'DOC-T1', document_version_id: 'DV-T1', author_user_id: USER.id, is_private: true, status: 'active' };
+const NOTE_OTHER = { ...NOTE_OWN, id: 'ANN-OTHER', author_user_id: 'USR-OTHER' };
 const COMMITTEE = { id: COM, organization_id: ORG };
 
 const seat = (role) => ({ id: 'SEAT-T1', committee_id: COM, user_id: USER.id, role, status: 'active' });
@@ -202,6 +207,12 @@ const POSITIVE_CASES = [
   { id: 'POS-019', label: 'the NAMED successor accepts the handover addressed to them', role: 'member', expect: true,
     opts: { capability: 'seat.handover_accept', target_type: 'HandoverPack', target_id: 'HOP-1' },
     records: () => baseRecords('member', { HandoverPack: { 'HOP-1': PACK_OWN } }) },
+  { id: 'POS-020', label: 'a seated member writes a note on a document version (scope: version -> document -> committee)', role: 'member', expect: true,
+    opts: { capability: 'document.annotate', target_type: 'DocumentVersion', target_id: 'DV-T1' },
+    records: () => baseRecords('member', { Document: { 'DOC-T1': DOCUMENT }, DocumentVersion: { 'DV-T1': VERSION } }) },
+  { id: 'POS-021', label: 'the AUTHOR carries forward / resolves their own note', role: 'member', expect: true,
+    opts: { capability: 'annotation.own', target_type: 'Annotation', target_id: 'ANN-OWN' },
+    records: () => baseRecords('member', { Document: { 'DOC-T1': DOCUMENT }, DocumentVersion: { 'DV-T1': VERSION }, Annotation: { 'ANN-OWN': NOTE_OWN } }) },
 ];
 
 // ── Suite 3 · Fail-Closed Tests (a fact that cannot be read is not an absent fact) ─
@@ -272,6 +283,9 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-022', label: 'a handover already decided is not reopened (state gate)', expectCode: 'state_not_permitted',
     opts: { capability: 'seat.handover_accept', target_type: 'HandoverPack', target_id: 'HOP-3' },
     stub: () => stubClient({ records: baseRecords('member', { HandoverPack: { 'HOP-3': PACK_CLOSED } }) }) },
+  { id: 'FCL-023', label: 'even the CHAIR cannot carry forward or resolve another person\u2019s note', expectCode: 'identity_mismatch',
+    opts: { capability: 'annotation.own', target_type: 'Annotation', target_id: 'ANN-OTHER' },
+    stub: () => stubClient({ records: baseRecords('chair', { Document: { 'DOC-T1': DOCUMENT }, DocumentVersion: { 'DV-T1': VERSION }, Annotation: { 'ANN-OTHER': NOTE_OTHER } }) }) },
 ];
 
 function verdictOf(rows) {
