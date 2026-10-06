@@ -11,6 +11,7 @@ import {
   describeCommittee,
 } from '../../shared/ameenScopeResolver.ts';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
+import { assessScopeInForce, assessSeatStanding, assessShowcaseSession, assessRetrieval } from '../../shared/ameenRetrievalGuard.ts';
 import { DR_HAMAD_COMMITTEES, DR_HAMAD_AMEEN_GENERAL, DR_HAMAD_PERSONA } from '../../shared/drHamadDataset.ts';
 import { drHamadContextPath } from '../../shared/drHamadExperience.ts';
 
@@ -106,6 +107,36 @@ export default async function (req) {
       });
     }
 
+    // ── The authority must still be ALIVE before «أمين» reads (ameen-retrieval-guard-1.0.0, D-092) ──
+    // A seat is only required where the retrieval RESTS on a seat: platform and organization oversight
+    // are not seat-rested, and are never denied by a seat check. Unknown standing is a refusal, not an
+    // assumption — and the exploration session, when one is presented, is verified here too.
+    const seatRested = !!committee && !!role && !isPlatformAdmin && !isOrgAdmin;
+    const scopeInForce = committee ? assessScopeInForce(committee) : null;
+    const standing = seatRested
+      ? await assessSeatStanding(base44.asServiceRole, {
+          committee_id: committee.id,
+          user_id: user.id,
+          at: new Date().toISOString(),
+        })
+      : null;
+    const session = await assessShowcaseSession(base44.asServiceRole, body?.showcase_token, committee?.id || null);
+    const retrieval = assessRetrieval({ scope: scopeInForce, standing, session });
+    if (!retrieval.ok) {
+      return Response.json({
+        verified: true,
+        access_denied: true,
+        reason: 'retrieval_not_in_force',
+        retrieval,
+        demo: false,
+        context_key: context_key || 'general',
+        role: null,
+        capabilities: null,
+        allowed_sources: [],
+        classification_ceiling: null,
+      });
+    }
+
     const scopeRole = committee ? role : (isOrgAdmin ? 'org_admin' : role);
 
     return Response.json({
@@ -162,6 +193,28 @@ async function resolveSandboxContext({ base44, organization, committee, context_
 
   if (committee) {
     if (!isSandboxCommittee(committee, persona)) return denied();
+
+    // ── A demonstration scope must also still be LIVE (ameen-retrieval-guard-1.0.0, D-092): a revoked
+    // exploration session stops reading immediately, and a closed committee is history, not a scope.
+    // The persona's own standing is resolved from its governed persona contract, so only these two
+    // live facts are checked here — and they are named, not silent.
+    const scopeInForce = assessScopeInForce(committee);
+    const session = await assessShowcaseSession(base44.asServiceRole, showcase_token, committee?.id || null);
+    const retrieval = assessRetrieval({ scope: scopeInForce, standing: null, session });
+    if (!retrieval.ok) {
+      return Response.json({
+        verified: true,
+        access_denied: true,
+        reason: 'retrieval_not_in_force',
+        retrieval,
+        demo: true,
+        context_key: context_key || 'committee',
+        role: null,
+        capabilities: null,
+        allowed_sources: [],
+        classification_ceiling: null,
+      });
+    }
 
     const resolved = await resolvePersonaCapabilities(base44, persona, committee);
     const def = isDrHamad

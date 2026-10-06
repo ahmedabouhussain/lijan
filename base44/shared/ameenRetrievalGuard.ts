@@ -75,23 +75,30 @@ export async function assessSeatStanding(sr: any, { committee_id, user_id, at }:
   }
   if (!seats.length) return { state: 'unknown', code: 'standing_unknown', seats: [], events_read: 0, reason: 'no seat found for this person in this committee' };
 
-  let events: any[] = [];
+  // The kernel's reader returns `{ events, unreadable }` — an unreadable history is NOT an empty one.
+  let eventsResult: any = null;
   try {
-    events = await loadAppointmentEvents(sr, seats.map((s: any) => s.id));
+    eventsResult = await loadAppointmentEvents(sr, seats.map((s: any) => s.id));
   } catch (e) {
-    return { state: 'unknown', code: 'standing_unknown', seats: seats.map((s: any) => s.id), events_read: 0, reason: (e as Error)?.message || 'appointment events unreadable' };
+    return { state: 'unknown', code: 'standing_unknown', seats: seats.map((s: any) => s.id), events_read: 0, reason: (e as Error)?.message || 'appointment history unreadable' };
   }
+  if (eventsResult?.unreadable === true) {
+    return { state: 'unknown', code: 'standing_unknown', seats: seats.map((s: any) => s.id), events_read: 0, reason: 'the appointment history could not be read' };
+  }
+  const events: any[] = Array.isArray(eventsResult) ? eventsResult : (eventsResult?.events || []);
 
   const atInstant = at || new Date().toISOString();
   const states: string[] = [];
   for (const seat of seats) {
     let s: any = null;
     try {
-      s = standingAt({ seat, events: events.filter((e: any) => e.membership_id === seat.id), at: atInstant });
+      // The authority kernel's own rule. The field it answers with is `standing`, and its four values
+      // are the contract's (standing · ended · not_yet_started · unknown).
+      s = standingAt({ seat, events: events.filter((e: any) => !e.membership_id || e.membership_id === seat.id), at: atInstant });
     } catch (e) {
       s = null;
     }
-    const state = s?.state && STANDING_STATES.includes(s.state) ? s.state : 'unknown';
+    const state = s?.standing && STANDING_STATES.includes(s.standing) ? s.standing : 'unknown';
     states.push(state);
     if (state === 'standing') {
       return { state: 'standing', code: null, seats: seats.map((x: any) => x.id), seat_id: seat.id, events_read: events.length, at: atInstant };
