@@ -16,6 +16,8 @@
 //
 // A fingerprint is a deterministic content digest — not proof of legal validity or trusted time.
 
+import { MATERIAL_CHANGE_VERSION, scanProposal, summarizeScan } from './materialChange.ts';
+
 export const PROPOSAL_CONTENT_VERSION = "proposal-content-1.0.0";
 
 /** The voted content, in a FIXED order. Status, tallies, outcome and issuance fields are not proposal. */
@@ -159,20 +161,35 @@ export function compareProposals(before: Record<string, any> | null, after: Reco
     const findings = fieldFindings(f, b, a);
     fields.push({ field: f, label: FIELD_LABELS[f] || { ar: f, en: f }, before: b, after: a, material: findings.some((x) => x.material), findings });
   }
+  // The field diff says WHICH field moved; the materiality scan (material-change-1.0.0) says whether the
+  // change is material in meaning — a unit change with the same number, a value moved to another subject,
+  // a modality or scope shift, or a changed normative reference (D-087). Both travel together, so the
+  // pre-vote screen, the round's stored findings and an export can never disagree.
+  const semantic = scanProposal({ before, after, fields: PROPOSAL_FIELDS });
+  for (const f of fields) {
+    const found = (semantic.fields || []).find((s: any) => s.field === f.field);
+    const materialFindings = (found?.findings || []).filter((x: any) => x.material);
+    f.semantic_findings = found?.findings || [];
+    if (materialFindings.length) f.material = true;
+  }
   const material = fields.filter((x) => x.material).length;
   return {
     contract_version: PROPOSAL_CONTENT_VERSION,
+    materiality_contract_version: MATERIAL_CHANGE_VERSION,
     changed: fields.length > 0,
-    material: material > 0,
+    material: material > 0 || (semantic.cross_field_findings || []).length > 0,
     material_count: material,
     textual_count: fields.length - material,
+    semantic,
+    cross_field_findings: semantic.cross_field_findings || [],
     fields,
   };
 }
 
 /** Compact one-line strings for storage on a round record (no prose, codes only). */
 export function summarizeChanges(diff: any) {
-  return (diff?.fields || []).map((f: any) => `${f.field}:${f.findings.map((x: any) => x.type).join("+")}`);
+  const fieldCodes = (diff?.fields || []).map((f: any) => `${f.field}:${f.findings.map((x: any) => x.type).join("+")}`);
+  return [...fieldCodes, ...summarizeScan(diff?.semantic)];
 }
 
 export const CONTENT_REFUSALS: Record<string, any> = {
