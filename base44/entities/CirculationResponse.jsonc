@@ -1,0 +1,187 @@
+{
+  "name": "CirculationResponse",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID"
+    },
+    "round_id": {
+      "type": "string",
+      "title": "Circulation Round ID"
+    },
+    "seat_id": {
+      "type": "string",
+      "title": "Seat (committee membership id) \u2014 the seat is not the person"
+    },
+    "membership_id": {
+      "type": "string",
+      "title": "Membership ID (same seat, explicit)"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "Person (user id) \u2014 identity of record: only this person may answer on this row"
+    },
+    "person_name": {
+      "type": "string",
+      "title": "Person Name (display only, never an identity)"
+    },
+    "seat_role": {
+      "type": "string",
+      "title": "Seat Role at Dispatch"
+    },
+    "capacity_at_response": {
+      "type": "string",
+      "title": "Capacity the Response Was Given In"
+    },
+    "authority_basis": {
+      "type": "string",
+      "title": "Authority Basis at Response (role baseline or the delegation that was active)"
+    },
+    "proxy_for_seat_id": {
+      "type": "string",
+      "title": "Proxy / Alternate For (set only when the policy permits a proxy; one person never carries two responses)"
+    },
+    "proxy_basis": {
+      "type": "string",
+      "title": "Proxy Basis (the policy clause the proxy rests on)"
+    },
+    "dispatch_state": {
+      "type": "string",
+      "title": "Delivery State (dispatch is not receipt)",
+      "enum": [
+        "queued",
+        "dispatched",
+        "failed"
+      ],
+      "default": "queued"
+    },
+    "dispatched_at": {
+      "type": "string",
+      "title": "Dispatched At",
+      "format": "date-time"
+    },
+    "delivery_note": {
+      "type": "string",
+      "title": "Delivery Note (a failed delivery is never reported as delivered)"
+    },
+    "opened_at": {
+      "type": "string",
+      "title": "Opened At (opening is not acknowledgment and not approval)",
+      "format": "date-time"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "title": "Acknowledged At (acknowledgment is not approval)",
+      "format": "date-time"
+    },
+    "response": {
+      "type": "string",
+      "title": "Response (pending until the recipient answers; silence is never an approval)",
+      "enum": [
+        "pending",
+        "approve",
+        "reject",
+        "abstain",
+        "recuse"
+      ],
+      "default": "pending"
+    },
+    "responded_at": {
+      "type": "string",
+      "title": "Responded At",
+      "format": "date-time"
+    },
+    "response_reason": {
+      "type": "string",
+      "title": "Reason Stated With the Response"
+    },
+    "effective_at": {
+      "type": "string",
+      "title": "Effective At (when the response takes effect \u2014 distinct from when it was recorded)",
+      "format": "date-time"
+    },
+    "invalidated_at": {
+      "type": "string",
+      "title": "Invalidated At (a material amendment invalidates approvals; the row is preserved as evidence)",
+      "format": "date-time"
+    },
+    "invalidated_reason": {
+      "type": "string",
+      "title": "Invalidation Reason (names the material change)"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Circulation Contract Version in Force"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "decision_id",
+    "round_id",
+    "seat_id",
+    "user_id",
+    "response",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

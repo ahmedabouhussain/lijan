@@ -28,6 +28,9 @@ import { EVIDENCE_STATE_GATES, EVIDENCE_ACTOR_EXCLUDED, EVIDENCE_REFUSALS } from
 import { IDENTITY_BOUND_ACTIONS, CONTINUITY_REFUSALS } from './continuityContract.ts';
 // A note is its author's: carrying it forward or resolving it is identity-bound (authz-1.7.0).
 import { ANNOTATION_IDENTITY_BOUND } from './annotationContinuity.ts';
+// A written-resolution response belongs to ONE eligible seat, and its state gates come from the same
+// contract the circulation commands consume (circulation-approval-1.0.0, authz-1.8.0).
+import { CIRCULATION_IDENTITY_BOUND, CIRCULATION_TRANSITIONS } from './circulationApproval.ts';
 
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
@@ -54,6 +57,10 @@ const SCOPE_CHAIN = {
   SeatAppointmentEvent: { parents: [["membership_id", "CommitteeMembership"]] },
   HandoverPack: { parents: [] },
   HandoverItem: { parents: [["pack_id", "HandoverPack"]] },
+  // A written resolution reaches its committee through the decision it decides; a response reaches it
+  // through the round it belongs to.
+  CirculationRound: { parents: [["decision_id", "Decision"]] },
+  CirculationResponse: { parents: [["round_id", "CirculationRound"]] },
 };
 
 export const TRUSTED_TARGET_TYPES = Object.keys(SCOPE_CHAIN);
@@ -94,6 +101,10 @@ export const PERMITTED_STATES = {
   "committee.activate": { field: "status", states: ["draft", "pending_activation"] },
   // Continuity acts act on a live record only: a seat that is still active may be resigned, and a
   // handover that is still open may be accepted or returned.
+  // The written-resolution route: dispatching acts on the decision's own open states, and the
+  // finalizer acts while the round can still be finalized. Both lists are the contract's own.
+  "circulation.open": { field: "status", states: [...CIRCULATION_TRANSITIONS.dispatch.from] },
+  "circulation.finalize": { field: "state", states: [...CIRCULATION_TRANSITIONS.ready.from, ...CIRCULATION_TRANSITIONS.finalize.from] },
   "seat.resign": { field: "status", states: ["active"] },
   "seat.handover_accept": { field: "status", states: ["pending_acceptance", "partially_accepted", "returned"] },
 };
@@ -103,7 +114,7 @@ export const PERMITTED_STATES = {
  * mirror of ACTOR_BOUND (which binds plain member seats to their own records): here the binding is a
  * fact about the person, not a privilege of rank.
  */
-export const ACTOR_IDENTITY_REQUIRED = { ...IDENTITY_BOUND_ACTIONS, ...ANNOTATION_IDENTITY_BOUND };
+export const ACTOR_IDENTITY_REQUIRED = { ...IDENTITY_BOUND_ACTIONS, ...ANNOTATION_IDENTITY_BOUND, ...CIRCULATION_IDENTITY_BOUND };
 
 /** Seats that may act only on a record bound to themselves. */
 export const ACTOR_BOUND = {

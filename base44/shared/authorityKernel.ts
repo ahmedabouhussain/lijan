@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.7.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.8.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,15 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.7.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.7.0",
-  supersedes: "authz-1.6.0",
+  version: "authz-1.8.0",
+  supersedes: "authz-1.7.0",
   change_class: "security",
   changes: [
+    "circulation.open named as an OPERATIONAL and DELEGABLE right: dispatching a written resolution (decision by circulation, brief rev 5 §4C) is the drafting office's act (chair, secretary). It also carries the administrative acts on a live round — extend, cancel, withdraw — none of which can produce an outcome.",
+    "circulation.finalize named as its own OPERATIONAL right, granted to the CHAIR and NOT to the secretary: producing a round's outcome approves the committee's decision, and the office that prepares, checks, routes and records does not approve it because it sent it. The guard refuses a finalize by the seat that dispatched the round even when it holds the right, unless the institution's policy explicitly authorizes it.",
+    "circulation.respond named as an OPERATIONAL, SELF-SERVICE and IDENTITY-BOUND right: a written-resolution recipient answers on their OWN row (circulation-approval-1.0.0, CIRCULATION_IDENTITY_BOUND), and the guard enforces that identity binding for EVERY role — no chair answers for a member.",
+    "commandGuard scope chain extended with CirculationRound (parent: Decision) and CirculationResponse (parent: CirculationRound), and the two circulation gates read their state lists from circulation-approval-1.0.0 instead of being re-typed.",
+    "DELIVERY, OPENING, ACKNOWLEDGMENT and the RESPONSE are kept as four separate facts on a response row: dispatch is recorded by the dispatcher, opening and acknowledgment by the recipient, and only an eligible recipient's own authenticated act writes a response. Silence is never approval, and a policy declaring otherwise is refused outright.",
     "document.annotate named as an OPERATIONAL and SELF-SERVICE right: a seated person writes their OWN note on the version in force of a committee document, scoped through DocumentVersion -> Document -> committee. It is derived from the seat's read right; administration alone grants nothing.",
     "annotation.own named as an OPERATIONAL, SELF-SERVICE and IDENTITY-BOUND right: only the author carries a note forward to a newer version or resolves it (annotation-continuity-1.0.0). The guard reads the identity field from the annotation contract, never a second hand-typed list.",
     "seat.resign named as an OPERATIONAL and SELF-SERVICE right: a seated person resigns their OWN appointment, and no office may resign another person's seat. Identity is enforced in the command guard for EVERY role (a chair cannot resign a member's seat either).",
@@ -81,6 +86,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "decision.sign_image", "decision.digital_sign", "decision.execute", "decision.submit",
   "seat.resign", "seat.handover_accept",
   "document.annotate", "annotation.own",
+  "circulation.open", "circulation.finalize", "circulation.respond",
 ];
 
 /** Capabilities blocked for a member who is recused from the committee. */
@@ -95,6 +101,10 @@ export const DELEGABLE_CAPABILITIES = [
   "vote.call", "vote.certify",
   "minutes.approve", "minutes.issue", "decision.approve", "decision.issue",
   "escalation.approve", "action.admin", "action.close", "action.verify", "committee.activate",
+  // A written resolution is an alternative route to the SAME approval a vote produces, so a bounded
+  // chair delegation must be able to use it — otherwise a delegated chair could call a vote but not
+  // dispatch a round. Dispatch and finalize transfer, and both stay inside the delegation's dates.
+  "circulation.open", "circulation.finalize",
 ];
 
 /**
@@ -116,6 +126,9 @@ const ROLE_BASELINE = {
     "decision.view", "decision.comment", "decision.propose", "decision.review",
     "decision.approve", "decision.issue", "decision.vote", "decision.acknowledge",
     "decision.sign_image", "decision.execute", "decision.submit", "review.respond",
+    // The chair dispatches a written resolution and is the policy's default FINALIZER: producing the
+    // outcome is approving the committee's decision, which the drafting office never does.
+    "circulation.open", "circulation.finalize",
     "comment.shared", "read", "audit.read", "report.export",
   ],
   vice_chair: [
@@ -126,6 +139,9 @@ const ROLE_BASELINE = {
   ],
   secretary: [
     "meeting.schedule", "meeting.cancel", "memory.compile",
+    // Dispatch authority for a written resolution — deliberately WITHOUT circulation.finalize: the
+    // office that prepares, checks, routes and records does not approve because it sent the round.
+    "circulation.open",
     "agenda.edit", "agenda.propose", "agenda.evaluate",
     "minutes.draft", "minutes.review", "attendance.certify", "attendance.respond",
     "action.admin", "action.progress", "action.verify", "amendment.notify", "instrument.extract",
@@ -163,6 +179,9 @@ const SELF_SERVICE_CAPABILITIES = [
   "conflict.declare", "recusal.record", "amendment.acknowledge",
   "seat.resign", "seat.handover_accept",
   "document.annotate", "annotation.own",
+  // A written-resolution recipient answers on their OWN row: a personal act derived from the seat's
+  // read right, never a right over another person's record.
+  "circulation.respond",
 ];
 
 export function capabilitiesForRole(role, { delegationActive = false } = {}) {

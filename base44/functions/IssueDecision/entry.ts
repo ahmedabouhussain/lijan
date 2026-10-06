@@ -8,6 +8,8 @@ import {
 } from '../../shared/decisionIntegrity.ts';
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
+// A written resolution freezes its own evidence, so issuance can read it through the same evaluation.
+import { circulationAsFrozenRound } from '../../shared/circulationRoundContext.ts';
 import { issuanceGate, refusalFor } from '../../shared/decisionLifecycle.ts';
 import { contentBinding, bindingRefusal, PROPOSAL_CONTENT_VERSION } from '../../shared/proposalContent.ts';
 
@@ -136,6 +138,28 @@ export default async function(req) {
         decided: 'refused_before_write',
         correlation_id: auth.correlation_id,
       }, { status: 409 });
+    }
+
+    // A decision approved by WRITTEN RESOLUTION carries its own frozen evidence: the eligible seats at
+    // dispatch, the frozen text and every authenticated response. It is read through the SAME
+    // evaluation as a vote round, and the basis names the route — so a package never pretends a ballot
+    // round existed. Without this the circulation route would approve decisions that nothing could
+    // officialise: a dead end of the D-041 class.
+    if (!roundCtx.round) {
+      const circ = await circulationAsFrozenRound(sr, { decision_id, committee_id: committee.id });
+      if (circ.conflict) {
+        return Response.json({
+          error: 'The circulation evidence for this decision cannot support an issuance',
+          code: circ.conflict,
+          message: {
+            ar: 'أدلة القرار بالتمرير غير صالحة للإصدار: لا يصدر قرار على موافقات أُبطلت بتعديل مادي، ولا على أكثر من دورة معتمدة.',
+            en: 'The circulation evidence cannot support issuance: no issuance rests on approvals invalidated by a material amendment, nor on more than one approved round.',
+          },
+          decided: 'refused_before_write',
+          correlation_id: auth.correlation_id,
+        }, { status: 409 });
+      }
+      if (circ.round) roundCtx = circ;
     }
 
     if (!roundCtx.round) {

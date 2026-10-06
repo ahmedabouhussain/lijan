@@ -1,0 +1,322 @@
+{
+  "name": "CirculationRound",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID (the record this written resolution decides)"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID (when the round is attached to a meeting)"
+    },
+    "round_number": {
+      "type": "number",
+      "title": "Circulation Round Number (a new round supersedes the previous; rounds are never reused)",
+      "default": 1
+    },
+    "state": {
+      "type": "string",
+      "title": "Round State (ready is NOT a decision; approved still requires a separate issuance step)",
+      "enum": [
+        "draft",
+        "dispatched",
+        "collecting",
+        "ready",
+        "approved",
+        "rejected",
+        "not_carried",
+        "expired",
+        "withdrawn",
+        "cancelled",
+        "superseded"
+      ],
+      "default": "collecting"
+    },
+    "matter_type": {
+      "type": "string",
+      "title": "Matter Type (must be among those the committee policy permits by circulation)"
+    },
+    "policy_config_key": {
+      "type": "string",
+      "title": "Policy Record Key (GovernanceConfig row this round rests on)"
+    },
+    "policy_version": {
+      "type": "string",
+      "title": "Policy Revision Stated by the Institution"
+    },
+    "policy_source": {
+      "type": "string",
+      "title": "Policy Source (committee_instrument when read from the institution's own policy record)"
+    },
+    "policy_snapshot": {
+      "type": "string",
+      "title": "Policy Snapshot (canonical JSON of the policy in force at dispatch \u2014 a later policy edit never rewrites this round)"
+    },
+    "proposal_version": {
+      "type": "string",
+      "title": "Frozen Proposal Version (readable label derived from the fingerprint, never a timestamp)"
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "title": "Frozen Proposal Fingerprint (re-hashed on every read; a changed text invalidates approvals and is never silently carried)"
+    },
+    "proposal_content": {
+      "type": "string",
+      "title": "Frozen Proposal Content (canonical JSON of the voted text fields \u2014 the ONLY text a response may rest on)"
+    },
+    "rule": {
+      "type": "string",
+      "title": "Threshold Rule Applied",
+      "enum": [
+        "unanimous",
+        "simple_majority_of_eligible",
+        "two_thirds_of_eligible",
+        "majority_of_responses"
+      ]
+    },
+    "quorum_required": {
+      "type": "number",
+      "title": "Quorum / Participation Required (counted from responses received, never from dispatch)"
+    },
+    "time_zone": {
+      "type": "string",
+      "title": "Time Zone the Deadline is Stated In"
+    },
+    "deadline_at": {
+      "type": "string",
+      "title": "Deadline (responses after it are refused by this contract)",
+      "format": "date-time"
+    },
+    "extension_count": {
+      "type": "number",
+      "title": "Deadline Extensions Granted",
+      "default": 0
+    },
+    "extension_history": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Extension History (from, to, by, reason, at \u2014 an extension is an auditable notice, not a silent edit)"
+    },
+    "eligible_seat_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Seat IDs (frozen at dispatch; a response counts only from one of these)"
+    },
+    "eligible_snapshot": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Eligible Seats (seat_id | user_id | role)"
+    },
+    "eligible_count": {
+      "type": "number",
+      "title": "Eligible Count"
+    },
+    "excluded_seats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Seats (seat_id + reason: out_of_term / recused_by_identifier / legacy_name_match)"
+    },
+    "invitation_recipients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Invitation / Acknowledgment Recipients (recipients are NOT automatically voters)"
+    },
+    "dispatch_authorized_by_user_id": {
+      "type": "string",
+      "title": "Dispatch Authorized By (user id \u2014 the seat that routes and records, never the approver)"
+    },
+    "dispatch_authorized_by_name": {
+      "type": "string",
+      "title": "Dispatch Authorized By (display only)"
+    },
+    "dispatch_capacity": {
+      "type": "string",
+      "title": "Dispatch Capacity"
+    },
+    "dispatched_at": {
+      "type": "string",
+      "title": "Dispatched At (dispatch is not receipt and not approval)",
+      "format": "date-time"
+    },
+    "ready_at": {
+      "type": "string",
+      "title": "Ready At (enough participation to finalize \u2014 still no decision)",
+      "format": "date-time"
+    },
+    "ready_by_user_id": {
+      "type": "string",
+      "title": "Marked Ready By (user id)"
+    },
+    "finalized_at": {
+      "type": "string",
+      "title": "Finalized At",
+      "format": "date-time"
+    },
+    "finalized_by_user_id": {
+      "type": "string",
+      "title": "Finalized By (user id \u2014 the authorized finalizer, never the dispatcher by default)"
+    },
+    "finalized_by_name": {
+      "type": "string",
+      "title": "Finalized By (display only)"
+    },
+    "finalized_capacity": {
+      "type": "string",
+      "title": "Finalizer Capacity"
+    },
+    "outcome": {
+      "type": "string",
+      "title": "Outcome (approved / rejected / not_carried / expired \u2014 issued is NOT an outcome of this round)"
+    },
+    "outcome_basis": {
+      "type": "string",
+      "title": "Outcome Basis (the rule text the result was tested against)"
+    },
+    "tally_approve": {
+      "type": "number",
+      "title": "Tally \u2014 Approve"
+    },
+    "tally_reject": {
+      "type": "number",
+      "title": "Tally \u2014 Reject"
+    },
+    "tally_abstain": {
+      "type": "number",
+      "title": "Tally \u2014 Abstain"
+    },
+    "tally_recuse": {
+      "type": "number",
+      "title": "Tally \u2014 Recuse"
+    },
+    "tally_silent": {
+      "type": "number",
+      "title": "Tally \u2014 No Response (silence is never counted as approval)"
+    },
+    "participation_count": {
+      "type": "number",
+      "title": "Participation Count (authenticated responses, not deliveries)"
+    },
+    "quorum_met": {
+      "type": "boolean",
+      "title": "Quorum Met",
+      "default": false
+    },
+    "threshold_met": {
+      "type": "boolean",
+      "title": "Threshold Met",
+      "default": false
+    },
+    "invalidated_at": {
+      "type": "string",
+      "title": "Invalidated At (a material amendment invalidates affected approvals)",
+      "format": "date-time"
+    },
+    "invalidated_reason": {
+      "type": "string",
+      "title": "Invalidation Reason"
+    },
+    "invalidated_response_count": {
+      "type": "number",
+      "title": "Responses Invalidated (preserved as evidence, never carried onto new wording)",
+      "default": 0
+    },
+    "supersedes_round_id": {
+      "type": "string",
+      "title": "Supersedes Round ID (the round this one replaced; the previous round keeps its own record)"
+    },
+    "superseded_by_round_id": {
+      "type": "string",
+      "title": "Superseded By Round ID"
+    },
+    "supersede_reason": {
+      "type": "string",
+      "title": "Supersede / Cancellation Reason"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Circulation Contract Version in Force"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "decision_id",
+    "state",
+    "matter_type",
+    "rule",
+    "deadline_at",
+    "eligible_seat_ids",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

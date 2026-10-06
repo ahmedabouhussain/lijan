@@ -52,6 +52,17 @@ const ROLE_CASES = [
   { id: 'AUTH-028', role: null, capability: 'read', delegation: false, expect: false, note: 'no seat means no authority' },
   { id: 'AUTH-029', role: 'chair', capability: 'decision.issue', delegation: false, isPlatformAdmin: true, expect: false, note: 'is_admin is NOT operational authority' },
   { id: 'AUTH-030', role: null, capability: 'audit.read', delegation: false, isPlatformAdmin: true, expect: true, note: 'administration keeps a read-only ceiling' },
+  // ── The written-resolution route (authz-1.8.0 · circulation-approval-1.0.0) ──────────────────
+  // The separation these cases protect: the office that DISPATCHES a round does not produce its
+  // outcome. Preparing, routing and recording is not approving the committee's decision.
+  { id: 'AUTH-045', role: 'chair', capability: 'circulation.open', delegation: false, expect: true, note: 'the chair dispatches a written resolution' },
+  { id: 'AUTH-046', role: 'chair', capability: 'circulation.finalize', delegation: false, expect: true, note: 'the chair is the policy’s default finalizer' },
+  { id: 'AUTH-047', role: 'secretary', capability: 'circulation.open', delegation: false, expect: true, note: 'the secretary prepares, routes and records a written resolution' },
+  { id: 'AUTH-048', role: 'secretary', capability: 'circulation.finalize', delegation: false, expect: false, note: 'the secretary does NOT approve because they sent it' },
+  { id: 'AUTH-049', role: 'member', capability: 'circulation.respond', delegation: false, expect: true, note: 'an eligible recipient answers on their OWN row' },
+  { id: 'AUTH-050', role: 'member', capability: 'circulation.finalize', delegation: false, expect: false, note: 'a recipient does not finalize the round they answered' },
+  { id: 'AUTH-051', role: 'vice_chair', capability: 'circulation.finalize', delegation: true, expect: true, note: 'a bounded delegation from the chair carries the dispatch and finalize acts' },
+  { id: 'AUTH-052', role: 'vice_chair', capability: 'circulation.finalize', delegation: false, expect: false, note: 'without a delegation the vice-chair finalizes nothing' },
   // ── Grant NARROWING (defect corrected in authz-1.2.0-rc.2) ─────────────────
   // The narrowing branch used to require the capability to be ABSENT from the role as well, which the
   // preceding branch had already returned on — so the branch was unreachable and a populated
