@@ -198,3 +198,22 @@
 **بصمات هذه الشريحة (SHA-256، أول 12 خانة)**: `proposalContent 7be216d1dcc3` (جديد) · `GetProposalChanges ce144b582d07` (جديد) · `TestProposalContent 4f5cf6e122ab` (جديد) · `OpenVote 5c7a9352386a` · `CastVote 2c7fb8bd5ce0` · `IssueDecision 56118e777e07` · `ProposalIntegrityPanel 5e43be9f3851` · `LiveVotingWidget 3c22380eb682` · `DecisionWorkflow 3624d00b9d0e`.
 **ما لم يُلمس**: `authorityKernel` · `commandGuard` · `transitionClaim` · `decisionIntegrity` · `roundContext` · `decisionLifecycle` · `voteEligibility` — لا ارتفاع نسخة سياسة، ولا إبطال أدلة سابقة (التغيير عقد محتوى، لا قدرة جديدة).
 **أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل.
+
+## دفعة S15 — ثبات الملاحظات وربطها بالإصدار (D-062 · D-063)
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S15-001** | عقد `annotation-continuity-1.0.0`: بصمة المقطع، الإصدار النافذ، حالة الملاحظة، النقل، والاستثناء من المخارج الرسمية | اختبار مُنفَّذ (26 حالة) | وحدة مشتركة | **26/26 PASS** · `writes_performed: 0` · `records_read: 0` | `TestAnnotationContinuity` | **PASS** |
+| **E-S15-002** | النواة بعد الترقية: القدرتان الجديدتان وقيد الهوية | اختبار مُنفَّذ | نواة السلطة | **88/88 PASS** (44 + 21 + 23) · `authz-1.7.0` · `failures: []` | `TestAuthorizationGuard` | **PASS** |
+| **E-S15-003** | تحميل معالج الكتابة وأن الرفض يسبق كل قراءة وكتابة | نداء خادم مباشر على أهداف غير موجودة | `AnnotateDocument` (create · carry_forward) | **404 `target_not_found` · `authz-1.7.0` · صفر كتابة** | `corr_muwgh4k18nc0c7` · `corr_muwgh4k5xnh7v0` | **PASS** |
+| **E-S15-004** | القراءة المحكومة على مستند حقيقي: الرفض لمن لا مقعد له | نداء خادم مباشر | `GetDocumentAnnotations` | **403 `showcase_scope`** — لا قراءة ولا كتابة | نداء على مستند حقيقي بجلسة الباني | **PASS** |
+| **E-S15-005** | بناء الواجهة بعد السطح الجديد | بناء | شجرة العمل | `npx vite build` → **status=0** | سجل البناء | **PASS** |
+| **E-S15-006** | ملاحظة محفوظة على إصدار، ونقل مُنفَّذ بين إصدارين حقيقيين، ورحلة متصفح | فاعل مُقعد | — | **NOT TESTED** — لا فاعل مُقعد (الحاجز نفسه) | — | **BLOCKED** |
+| **E-S15-007** | قياس التزامن | — | — | **NOT ESTABLISHED** (كما في كل الدفعات) | — | **NOT MEASURED** |
+
+**حدّ الأدلة**: E-S15-001 يُثبت العقد المشترك الذي يستهلكه `AnnotateDocument`/`GetDocumentAnnotations` — لا معالجًا ولا ملاحظة محفوظة. وE-S15-003/004 يُثبتان التحميل وسبق الرفض والقراءة المحكومة، **لا** نقلًا مُنفَّذًا بين إصدارين.
+
+**التغييرات (للتراجع) — S15**: أُضيف `base44/entities/Annotation.jsonc` · `base44/shared/annotationContinuity.ts` · `base44/functions/AnnotateDocument/entry.ts` · `base44/functions/GetDocumentAnnotations/entry.ts` · `base44/functions/TestAnnotationContinuity/entry.ts` · `src/hooks/useDocumentAnnotations.js` · `src/components/raqeem/annotations/{annotationLabels.js, AnnotationComposer.jsx, AnnotationRow.jsx, VersionChangeStrip.jsx, DocumentAnnotationsPanel.jsx}`. وعُدِّل `authorityKernel.ts` (authz-1.7.0: قدرتان + خط أساس) · `commandGuard.ts` (سلسلة النطاق + قيد الهوية) · `authorityPolicyManifest.json` · `TestAuthorizationGuard` (AUTH-043/044 · POS-020/021 · FCL-023) · `DocumentDetail.jsx` (عرض اللوحة).
+**بصمات هذه الشريحة (SHA-256، أول 12 خانة)**: `annotationContinuity a4ad569f74f4` (جديد) · `Annotation 8690d5653fba` (جديد) · `AnnotateDocument 23677fd94da7` (جديد) · `GetDocumentAnnotations d73d21c63358` (جديد) · `TestAnnotationContinuity 46ccd819671d` (جديد) · `useDocumentAnnotations e83352c3039d` (جديد) · `annotationLabels 23c0afc005ba` (جديد) · `AnnotationComposer a595493a2110` (جديد) · `AnnotationRow 5a804195c51b` (جديد) · `VersionChangeStrip dbc2ed06a354` (جديد) · `DocumentAnnotationsPanel 35a9419856b9` (جديد) · `authorityKernel 081af6cd5325` · `commandGuard 3b8fdd2d108c` · `DocumentDetail beed9b5c4d62`.
+**وحدات لم تُلمس**: `proposalContent d792bf69a4d1` · `decisionLifecycle 923bf3c971a8` · `meetingLifecycle 2302a3180bcf` · `evidenceAcceptance 6a7078b15b15` · `continuityContract 2b7f42948c4f` · `transitionClaim b3c6bbfb9a33` · `roundContext af1881717433` · `decisionIntegrity a3ce3c732189`.
+**أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل (سجلات `Annotation` في قاعدة الإنتاج: **0**).

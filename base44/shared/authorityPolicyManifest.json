@@ -3,8 +3,8 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.6.0",
-    "supersedes": "authz-1.5.0",
+    "version": "authz-1.7.0",
+    "supersedes": "authz-1.6.0",
     "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.5.0 IS a kernel revision: verification of execution evidence was named as its OWN operational right (action.verify — presenting performance and judging it are different acts by different seats), closure stopped being decidable from a field the performer writes (compliance_verified is no longer a closure condition; it is derived from an ACCEPTED verdict), and the guard gained two structural gates plus an actor-independence exclusion. All three are security material, so the previous evidence is invalidated and every suite is re-run against this revision.",
     "built_at": "2026-10-06T07:10:00Z",
     "repository_revision": {
@@ -13,6 +13,11 @@
     },
     "change_class": "security",
     "changes_this_revision": [
+      "document.annotate — a seated person's OWN note on the version in force of a committee document. SELF-SERVICE: derived from the seat's read right; platform administration alone grants nothing. Scope: DocumentVersion -> Document -> committee, derived by the guard.",
+      "annotation.own — only the AUTHOR carries a note forward to a newer version or resolves it. IDENTITY-BOUND for every role: the guard reads author_user_id from annotation-continuity-1.0.0 (ANNOTATION_IDENTITY_BOUND), never a second hand-typed list.",
+      "commandGuard scope chain extended with Annotation (parents: DocumentVersion, Document)."
+    ],
+    "changes_in_authz_1_6_0": [
       "seat.resign — the seat holder's own-act right (resignation, a reported absence, acceptance of one's own appointment). SELF-SERVICE: derived from the seat's read right and bound to the actor's OWN identity by the command guard for EVERY role.",
       "seat.handover_accept — the NAMED successor accepts institutional obligations under their own identity and only for themselves. An institution cannot accept on their behalf, and an unaccepted obligation stays visible as unresolved.",
       "IDENTITY-BOUND ACTIONS enforced structurally in commandGuard (read from continuityContract.ts, never re-typed): a listed act is refused unless the record's own identity field equals the actor's, whatever role the actor holds.",
@@ -78,7 +83,12 @@
       "open_resolution": "a stuck 'claimed' row still blocks its key and needs releaseTransition (governed maintenance) or a stale-claim policy that is not yet defined"
     },
     "tests": {
-      "authority_suites_re_run": "PASS — TestAuthorizationGuard 42/42 (roles) + 19/19 (positive) + 22/22 (fail-closed) = 83/83 with failures: [] and policy_version authz-1.6.0 (re-run after the kernel revision; the authz-1.5.0 run of 78/78 is INVALIDATED)",
+      "authority_suites_re_run": "PASS — TestAuthorizationGuard 44/44 (roles) + 21/21 (positive) + 23/23 (fail-closed) = 88/88 with failures: [] and policy_version authz-1.7.0 (re-run after the kernel revision; the authz-1.6.0 run of 83/83 is INVALIDATED)",
+      "new_cases_in_1_7_0": "AUTH-043 (an observer's personal note is derived from read) · AUTH-044 (platform administration writes no notes) · POS-020 (a member annotates a document version, scope derived through the version) · POS-021 (the author acts on their own note) · FCL-023 (even the chair cannot carry forward or resolve another person's note — identity_mismatch)",
+      "annotation_continuity_suite": "PASS 26/26 (annotation-continuity-1.0.0, writes_performed: 0, records_read: 0)",
+      "policy_suites_re_run_under_1_7_0": "PASS — decision integrity 40/40 · vote eligibility 12/12 · meeting lifecycle 19/19 · decision lifecycle 22/22 · evidence acceptance 20/20 · continuity 60/60 · guest access 22/22 · proposal content 18/18",
+      "command_site_smoke_1_7_0": "AnnotateDocument create → 404 target_not_found (authz-1.7.0, corr_muwgh4k18nc0c7) · AnnotateDocument carry_forward → 404 target_not_found (authz-1.7.0, corr_muwgh4k5xnh7v0) · GetDocumentAnnotations on a real showcase document by an unseated builder → 403 showcase_scope. Zero writes. Proves load and refusal order, not a persisted note.",
+      "authority_suites_under_1_6_0_INVALIDATED": "83/83 (42 + 19 + 22) — superseded by the 1.7.0 run above",
       "new_cases_in_1_6_0": "POS-018 (a seated person resigns their OWN appointment) · POS-019 (the NAMED successor accepts the handover addressed to them) · FCL-020 (even the chair cannot resign another person's seat — identity_mismatch) · FCL-021 (a handover addressed to somebody else is not accepted by this caller) · FCL-022 (a handover already decided is not reopened — state_not_permitted)",
       "continuity_contract_suite": "PASS 60/60 (structure 24 + continuity 36; committee-structure-1.0.0, continuity-1.0.0; writes_performed: 0, records_read: 0) — includes 'a reporting recipient never conveys approval', 'a permitted reporting network may loop — it carries no authority', 'a ratification loop is refused', 'a parent cannot delegate a power it does not itself hold', 'a private reason is never surfaced through registers', 'no office succeeds another automatically', 'a valid cast vote is never reassigned to a successor'",
       "evidence_acceptance_re_run_under_1_6_0": "PASS 20/20 (contract evidence-acceptance-1.0.0, writes_performed: 0)",
@@ -118,6 +128,15 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.6.0",
+      "superseded_at": "2026-10-06T09:30:00Z",
+      "evidence_state": "INVALIDATED by the authz-1.7.0 kernel revision — two personal capabilities were named (document.annotate, annotation.own), annotation.own is identity-bound in the guard, and Annotation joined the scope chain; every suite was re-run against 1.7.0 (88/88 authority, 26/26 annotation continuity, 60/60 continuity, 40/40 integrity, 22/22 decision lifecycle, 19/19 meeting lifecycle, 12/12 vote eligibility, 20/20 acceptance, 22/22 guest access, 18/18 proposal content)",
+      "recorded": {
+        "evidence_that_ran_under_it": "authority 42/42 + 19/19 + 22/22 = 83/83 · continuity 60/60 · acceptance 20/20 · integrity 40/40 · decision lifecycle 22/22 · meeting lifecycle 19/19 · vote eligibility 12/12 · guest access 22/22 · proposal content 18/18",
+        "command_sites_under_it": ["RecordAppointmentEvent", "InitiateHandover", "CreateCommitteeRelationship", "InviteAgendaItemGuest", "OpenVote", "CastVote", "IssueDecision"]
+      }
+    },
     {
       "version": "authz-1.5.0",
       "superseded_at": "2026-10-06T08:20:00Z",
