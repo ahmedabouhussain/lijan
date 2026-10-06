@@ -3,12 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Inbox, RefreshCw, AlertTriangle, ShieldCheck, BadgeCheck, Vote, Gavel,
   ScrollText, Handshake, FileSearch, CalendarClock, ClipboardList, ChevronLeft, Ban, Building2,
+  Download, Printer,
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { cn } from "@/lib/utils";
+import { workExportCsv, downloadCsv, openWorkPrintView } from "@/lib/workExport";
 
 // MyWorkInbox — «مساحتي»: what is required of ME now.
 //
@@ -103,6 +105,16 @@ export default function MyWorkInbox() {
   const excluded = data?.scope?.excluded || [];
   const committees = data?.scope?.committees || [];
 
+  // The readable export carries the SAME numbers as the screen: it is built from this response, and it
+  // states which filter was applied — so a printed page can never disagree with what the person saw.
+  const filtered = activeGroups.length > 0 || committeeFilter !== "all" || overdueOnly;
+  const exportScopeLabel = filtered
+    ? t("المعروض بالتصفية الحالية", "The rows shown under the current filter")
+    : t("كل ما هو مطلوب مني", "Everything required of me");
+  const exportFilename = `lijan-my-work-${new Date().toISOString().slice(0, 10)}.csv`;
+  const handleExportCsv = () => downloadCsv(exportFilename, workExportCsv({ data, items: visible, scopeLabel: exportScopeLabel, lang }));
+  const handlePrint = () => openWorkPrintView({ data, items: visible, scopeLabel: exportScopeLabel, lang });
+
   if (loading) {
     return (
       <div className="raqeem-card p-5">
@@ -149,14 +161,32 @@ export default function MyWorkInbox() {
             </p>
           </div>
         </div>
-        <button
-          onClick={load}
-          className="shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary"
-          title={t("تحديث", "Refresh")}
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">{t("تحديث", "Refresh")}</span>
-        </button>
+        <div className="shrink-0 flex items-center gap-2">
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary"
+            title={t("تحديث", "Refresh")}
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t("تحديث", "Refresh")}</span>
+          </button>
+          <button
+            onClick={handleExportCsv}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary"
+            title={t("تصدير CSV بالأرقام المعروضة", "Export CSV with the numbers shown")}
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t("تصدير", "Export")}</span>
+          </button>
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary"
+            title={t("عرض للطباعة أو الحفظ PDF", "Print view or save as PDF")}
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t("طباعة", "Print")}</span>
+          </button>
+        </div>
       </div>
 
       {/* A notice the server had to make: exploration identity, or oversight that creates no obligation. */}

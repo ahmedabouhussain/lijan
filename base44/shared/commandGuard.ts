@@ -64,6 +64,10 @@ const SCOPE_CHAIN = {
   // through the round it belongs to.
   CirculationRound: { parents: [["decision_id", "Decision"]] },
   CirculationResponse: { parents: [["round_id", "CirculationRound"]] },
+  // The execution-extract route: a link and a question both hang off the ONE obligation they name, so
+  // the committee is derived from that obligation's chain rather than from the request (authz-1.10.0).
+  ActionExtractGrant: { parents: [["action_id", "Action"]] },
+  ActionClarification: { parents: [["action_id", "Action"]] },
 };
 
 export const TRUSTED_TARGET_TYPES = Object.keys(SCOPE_CHAIN);

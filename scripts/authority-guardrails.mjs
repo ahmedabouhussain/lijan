@@ -22,6 +22,12 @@ const FIXTURE_ALLOWLIST = /(Provision|Seed|Repair|demoDataset|drHamadDataset|dem
 // The policy modules ARE the authority implementation: they name capabilities by value and write
 // only their own tamper audit, so the write-gated rule does not apply to them.
 const POLICY_MODULES = /(shared\/authorityKernel\.ts|shared\/commandGuard\.ts)$/;
+// CAPABILITY-TOKEN ACTS are NOT command sites. The caller is a party OUTSIDE the committee (a guest
+// reading one agenda item, an executing party acknowledging one obligation): there is no seat to
+// authorize, so the TOKEN is the authority — issued by a governed command, item-scoped, time-bounded
+// and revocable — and the act is bounded to the token's own row. They are reported as their own set so
+// they can neither be counted as migrated nor hide inside the migration backlog.
+const CAPABILITY_TOKEN_ACTS = /(GetGuestItemView|GetActionExtractView|RespondToActionExtract)$/;
 
 const ERRORS = [
   { id: "client-role-authority", re: /\b(body|payload|req\.body)\.(role|is_admin|can_sign|can_approve)\b/, why: "client-supplied role/flag used as authority" },
@@ -69,6 +75,7 @@ for (const file of files) {
   const rel = relative(ROOT, file);
   const fixture = FIXTURE_ALLOWLIST.test(rel);
   const policyModule = POLICY_MODULES.test(rel);
+  const tokenAct = CAPABILITY_TOKEN_ACTS.test(rel);
   const writes = WRITE_CALL.test(src);
   const guarded = GUARDED_CALL.test(src);
   // A command site is on the guarded path only when it names a TRUSTED TARGET through the guard.
@@ -87,7 +94,7 @@ for (const file of files) {
     if (rule.requiresWrite && (policyModule || fixture)) continue;
     if (rule.re.test(src) && !fixture) errors.push({ rel, id: rule.id, why: rule.why });
   }
-  if (hintOnly) warnings.push({ rel, id: "scope-hint-only", why: "authority asked with a committee lookup hint and no trusted target — migrate to authorizeCommand" });
+  if (hintOnly && !tokenAct) warnings.push({ rel, id: "scope-hint-only", why: "authority asked with a committee lookup hint and no trusted target — migrate to authorizeCommand" });
   // The completion gate: with --strict, a WRITE still authorized on a lookup hint is a blocking error.
   if (STRICT && writes && hintOnly && !fixture && !policyModule) {
     errors.push({ rel, id: "untrusted-target-write", why: "a write is authorized on a committee lookup hint instead of a trusted target" });
@@ -99,7 +106,7 @@ for (const file of files) {
   if (policyModule) continue;
   if (!writes && !guarded && !hintOnly) continue;
   const needs = [];
-  if (hintOnly) needs.push("مرِّر السجل المستهدف عبر authorizeCommand");
+  if (hintOnly && !tokenAct) needs.push("مرِّر السجل المستهدف عبر authorizeCommand");
   if (readGate && writes) needs.push("استبدل حق القراءة بفعل دقيق");
   if (nameMatch) needs.push("استبدل المطابقة بالاسم بمعرّف");
   rows.push({
@@ -108,7 +115,7 @@ for (const file of files) {
     writes, trusted: trustedTarget && !hintOnly ? "سجل مستهدف" : "تلميح لجنة",
     needs: needs.length ? needs.join(" · ") : "—",
     guarded, trustedTarget, hintOnly, nameMatch, readGate,
-    status: trustedTarget && !hintOnly && !(readGate && writes) && !nameMatch ? "مهاجر" : "قيد الترحيل",
+    status: tokenAct ? "رمز قدرة" : (trustedTarget && !hintOnly && !(readGate && writes) && !nameMatch ? "مهاجر" : "قيد الترحيل"),
   });
 }
 
@@ -117,7 +124,8 @@ rows.sort((a, b) => a.risk - b.risk || shortName(a.rel).localeCompare(shortName(
 // Coverage is reported as sets. Overlaps are shown explicitly, never summed as if unique.
 const setOf = (pred) => new Set(rows.filter(pred).map((r) => r.rel));
 const migrated = setOf((r) => r.status === "مهاجر");
-const pending = setOf((r) => r.status !== "مهاجر");
+const tokenActs = setOf((r) => r.status === "رمز قدرة");
+const pending = setOf((r) => r.status !== "مهاجر" && r.status !== "رمز قدرة");
 const readGated = setOf((r) => r.readGate && r.writes);
 const nameBased = setOf((r) => r.nameMatch);
 const unionNeedingWork = new Set([...pending, ...readGated, ...nameBased]);
@@ -135,6 +143,7 @@ const ledger = [
   `- تلميح لجنة فقط (بدون سجل مستهدف): **${pending.size}**`,
   `-كتابة محكومة بحق قراءة: **${readGated.size}**`,
   `- مطابقة بالاسم: **${nameBased.size}**`,
+  `- أفعال برمز قدرة (خارج مسار الأوامر بالتصميم: الرمز هو السلطة، والفعل محدود بصفّه): **${tokenActs.size}**`,
   "",
   "### التداخل (لا تُجمع القوائم كأنها مواضع فريدة)",
   "",
@@ -159,6 +168,7 @@ for (const e of errors) console.log(`ERROR [${e.id}] ${e.rel} — ${e.why}`);
 for (const w of warnings) console.log(`WARN  [${w.id}] ${w.rel} — ${w.why}`);
 console.log(`\nmigration ledger — command sites: ${sites}, guarded: ${migrated.size}, hint-only: ${pending.size}`);
 console.log(`read-authorized writes: ${readGated.size}, name-based identity: ${nameBased.size}, union needing work: ${unionNeedingWork.size}`);
+console.log(`capability-token acts (the token is the authority, by design): ${tokenActs.size}`);
 console.log(`ledger written → docs/AUTHORITY_COMMAND_LEDGER.md`);
 console.log(`${errors.length} error(s), ${warnings.length} warning(s)`);
 process.exit(errors.length > 0 ? 1 : 0);

@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.9.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.10.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,8 +30,8 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.9.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.9.0",
-  supersedes: "authz-1.8.0",
+  version: "authz-1.10.0",
+  supersedes: "authz-1.9.0",
   change_class: "security",
   changes: [
     "EFFECTIVE TIME (material D of the committee/membership lifecycle contract; contract membership-effect-1.0.0): the command guard refuses a mandate-bearing act by a seat whose appointment had EFFECTIVELY ended at that instant — by term end, by a bounded acting expiry, or by a recorded ending event (resignation, removal, end of term, representation transfer, incapacity).",
@@ -71,6 +71,11 @@ export const AUTHORITY_POLICY_BUILD = {
     "action.verify named as its own OPERATIONAL and DELEGABLE right, and evidence acceptance made a contract (evidence-acceptance-1.0.0): verifying submitted evidence is an independent act, distinct from closure. Until now a closure right could write compliance_verified:true on the owner's own word, so 'verified' proved only belief (D-046).",
     "action.close now carries a REQUIRED state read from that contract — the record must hold a verdict ACCEPTED by an independent verifier — so a percentage together with an attachment can no longer pass for verification, and a refusal names the requirement.",
     "separation of duty made structural in the command guard: EVIDENCE_ACTOR_EXCLUDED refuses a verdict from the seat that submitted the evidence or owns the action, for EVERY role (the mirror of the owner binding, which binds plain member seats only).",
+    "EXECUTION EXTRACT (stream D of the product brief, contract execution-extract-1.0.0): the guard's scope chain gained the two records the new route writes, ActionExtractGrant and ActionClarification, each reaching its committee through the ONE obligation it names (action_id to Action). A scope is therefore derived from the record as always: a link can never be issued against an obligation in another committee, and a question can never be answered against one.",
+    "NO NEW RIGHT was named. Issuing and revoking a link, and answering a question asked through one, are exercised through the existing administrative right action.admin, which the chair, the secretary and the committee administrator already hold and which was already delegable. The baselines do NOT move, which is the expected shape of a route that adds surface without adding authority.",
+    "The receiving party holds a capability TOKEN and no account. The two public acts (acknowledging receipt, asking a question) are bounded to the grant's own row and to a new question row on the same obligation, and neither may touch the obligation's status, its progress, its deadline or its evidence.",
+    "DELIVERY, OPENING, ACKNOWLEDGEMENT and ANSWER are kept as FOUR separate facts, exactly as dispatch, opening, acknowledgment and response are on a written resolution. An acknowledgement is a receipt: it is not approval, it is not completion, it is not verification, and it moves no obligation and extends no deadline — stated as data on the contract and shown on both surfaces.",
+    "WHAT AN EXTRACT MAY CARRY IS AN ALLOWLIST, and the boundary is stated to the recipient rather than implied: the verifier's identity, internal identifiers, the committee register, deliberation, private notes, escalation internals, the document library and internal provenance can never travel, and a section outside the contract is REFUSED rather than dropped quietly.",
   ],
   invalidates_prior_evidence: true,
 };

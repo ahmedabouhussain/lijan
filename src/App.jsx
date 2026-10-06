@@ -32,6 +32,7 @@ import MinutesArchive from '@/pages/MinutesArchive';
 import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
 import GuestItemView from '@/pages/GuestItemView';
+import ActionExtractView from '@/pages/ActionExtractView';
 import GovernancePolicies from '@/pages/GovernancePolicies';
 import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
@@ -143,6 +144,8 @@ const AuthenticatedApp = () => {
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       {/* Item-scoped guest invitation link — no account, no app role: the token is the capability. */}
       <Route path="/guest/:token" element={<GuestItemView />} />
+      {/* Obligation-scoped execution extract — one act of execution, reached by a capability link. */}
+      <Route path="/extract/:token" element={<ActionExtractView />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

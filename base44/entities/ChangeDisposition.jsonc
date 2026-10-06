@@ -1,0 +1,186 @@
+{
+  "name": "ChangeDisposition",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "change_kind": {
+      "type": "string",
+      "title": "Change Kind (rename \u00b7 merge \u00b7 split \u00b7 reconstitute \u00b7 suspend \u00b7 close \u00b7 archive)"
+    },
+    "change_reference": {
+      "type": "string",
+      "title": "Change Reference (the instrument, decision or request the change rests on)"
+    },
+    "obligation_type": {
+      "type": "string",
+      "title": "Obligation Category (from institutional-change-1.0.0)"
+    },
+    "source_entity_type": {
+      "type": "string",
+      "title": "Source Entity Type"
+    },
+    "source_entity_id": {
+      "type": "string",
+      "title": "Source Entity ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Obligation Title"
+    },
+    "due_date": {
+      "type": "string",
+      "title": "Due Date",
+      "format": "date"
+    },
+    "source_status": {
+      "type": "string",
+      "title": "Status of the Source Record at the Change"
+    },
+    "proposed_disposition": {
+      "type": "string",
+      "title": "System-Proposed Disposition (a human decides)"
+    },
+    "disposition": {
+      "type": "string",
+      "title": "Decided Disposition (each obligation is dispositioned exactly once per change)"
+    },
+    "legal_hold": {
+      "type": "boolean",
+      "title": "Legal Hold (state, not a note: it stops closure, transfer, expiry and deletion)",
+      "default": false
+    },
+    "legal_hold_reason": {
+      "type": "string",
+      "title": "Legal Hold Reason (required: a hold states why it stands)"
+    },
+    "legal_hold_authority_user_id": {
+      "type": "string",
+      "title": "Hold Placed By (user id of the competent authority)"
+    },
+    "legal_hold_authority_name": {
+      "type": "string",
+      "title": "Hold Placed By (display only)"
+    },
+    "legal_hold_at": {
+      "type": "string",
+      "title": "Hold Placed At",
+      "format": "date-time"
+    },
+    "hold_released_at": {
+      "type": "string",
+      "title": "Hold Released At (a hold never lapses by itself and never expires silently)"
+    },
+    "hold_released_by_user_id": {
+      "type": "string",
+      "title": "Hold Released By (user id)"
+    },
+    "hold_released_by_name": {
+      "type": "string",
+      "title": "Hold Released By (display only)"
+    },
+    "hold_release_reason": {
+      "type": "string",
+      "title": "Hold Release Reason (required; releasing does not close the obligation)"
+    },
+    "decided_by_user_id": {
+      "type": "string",
+      "title": "Decided By (user id)"
+    },
+    "decided_by_name": {
+      "type": "string",
+      "title": "Decided By (display only)"
+    },
+    "decided_capacity": {
+      "type": "string",
+      "title": "Decided In What Capacity"
+    },
+    "decided_at": {
+      "type": "string",
+      "title": "Decided At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Disposition Status (open until a disposition is recorded)",
+      "enum": [
+        "open",
+        "decided",
+        "hold_released"
+      ],
+      "default": "open"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Institutional Change Contract Version in Force"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "change_kind",
+    "obligation_type",
+    "source_entity_type",
+    "source_entity_id",
+    "title",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

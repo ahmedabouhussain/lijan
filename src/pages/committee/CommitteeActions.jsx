@@ -6,6 +6,7 @@ import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
 import ActionEvidencePanel from "@/components/raqeem/ActionEvidencePanel";
+import ActionExtractPanel from "@/components/raqeem/ActionExtractPanel";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
@@ -120,6 +121,11 @@ export default function CommitteeActions() {
                     closure follows the accepted verdict. The server decides who may do each; every
                     refusal is shown on the record rather than swallowed. */}
                 <ActionEvidencePanel action={a} onChanged={reload} allowVerify={!is_oversight && !is_recused} />
+
+                {/* The executing party receives ONE obligation through its own link — never the
+                    committee register. Issuing, revoking and answering all go through governed
+                    commands; the panel writes nothing from the browser. */}
+                {!is_oversight && !is_recused && <ActionExtractPanel action={a} onChanged={reload} />}
 
                 {/* Update controls */}
                 {!is_oversight && !is_recused && (

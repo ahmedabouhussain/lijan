@@ -1,0 +1,203 @@
+{
+  "name": "ActionExtractGrant",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "action_id": {
+      "type": "string",
+      "title": "Action ID (the ONE obligation this link opens)"
+    },
+    "decision_id": {
+      "type": "string",
+      "title": "Decision ID (origin of the obligation, when it comes from one)"
+    },
+    "recipient_name": {
+      "type": "string",
+      "title": "Receiving Party (Arabic edition)"
+    },
+    "recipient_name_en": {
+      "type": "string",
+      "title": "Receiving Party (English edition \u2014 a value never authored in a language is shown as not provided, never as the other language)"
+    },
+    "recipient_organization": {
+      "type": "string",
+      "title": "Receiving Organization (Arabic edition)"
+    },
+    "recipient_organization_en": {
+      "type": "string",
+      "title": "Receiving Organization (English edition)"
+    },
+    "recipient_email": {
+      "type": "string",
+      "title": "Contact Email (contact only \u2014 never an account, never authority)"
+    },
+    "purpose": {
+      "type": "string",
+      "title": "Purpose (why this party receives this obligation's extract)"
+    },
+    "access_token": {
+      "type": "string",
+      "title": "Access Token (the ONLY capability the recipient holds \u2014 unguessable, expires, revocable)"
+    },
+    "access_scope": {
+      "type": "string",
+      "title": "Access Scope (one obligation's extract; the scope never widens)",
+      "enum": [
+        "action_extract_only"
+      ],
+      "default": "action_extract_only"
+    },
+    "permitted_sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Permitted Sections (explicit list from execution-extract-1.0.0; a section outside the contract is refused, never dropped quietly)"
+    },
+    "valid_from": {
+      "type": "string",
+      "title": "Valid From (optional; a link is never valid before this)",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At (required, bounded \u2014 expiry closes old server-side links)",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Delivery State (sent \u00b7 opened \u00b7 acknowledged are three different facts; acknowledged is a receipt, never an approval)",
+      "enum": [
+        "sent",
+        "opened",
+        "acknowledged",
+        "expired",
+        "revoked"
+      ],
+      "default": "sent"
+    },
+    "shared_by_user_id": {
+      "type": "string",
+      "title": "Shared By User ID (the seat that issued the link \u2014 never the accepting authority)"
+    },
+    "shared_by_name": {
+      "type": "string",
+      "title": "Shared By (display only)"
+    },
+    "shared_at": {
+      "type": "string",
+      "title": "Shared At",
+      "format": "date-time"
+    },
+    "opened_at": {
+      "type": "string",
+      "title": "Opened At (server-written on the first permitted read)",
+      "format": "date-time"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "title": "Acknowledged At",
+      "format": "date-time"
+    },
+    "acknowledged_by_name": {
+      "type": "string",
+      "title": "Acknowledged By (stated by the recipient \u2014 a receipt, not an identity claim)"
+    },
+    "acknowledgement_note": {
+      "type": "string",
+      "title": "Acknowledgement Note"
+    },
+    "last_viewed_at": {
+      "type": "string",
+      "title": "Last Viewed At (server-written on each permitted read)",
+      "format": "date-time"
+    },
+    "view_count": {
+      "type": "number",
+      "title": "View Count (a record of reads, never proof of what was read)",
+      "default": 0
+    },
+    "revoked_at": {
+      "type": "string",
+      "title": "Revoked At",
+      "format": "date-time"
+    },
+    "revoked_by_user_id": {
+      "type": "string",
+      "title": "Revoked By User ID"
+    },
+    "revoke_reason": {
+      "type": "string",
+      "title": "Revoke Reason"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Execution Extract Contract Version in Force"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "action_id",
+    "recipient_name",
+    "access_token",
+    "access_scope",
+    "expires_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -5,9 +5,9 @@
   "current": {
     "version": "authz-1.8.0",
     "supersedes": "authz-1.7.0",
-    "version": "authz-1.9.0",
-    "supersedes": "authz-1.8.0",
-    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.9.0 IS a kernel revision: the command guard gained an EFFECTIVE-TIME standing gate (material D of the committee/membership lifecycle contract) — a mandate-bearing act by a seat whose appointment had effectively ended is refused, evaluated at the instant from the seat's own effective facts (term end, bounded acting expiry, recorded ending event). It names NO new right and moves no baseline: it NARROWS what an already-ended appointment may do. It is security material, so prior evidence is invalidated and every suite is re-run against this revision.",
+    "version": "authz-1.10.0",
+    "supersedes": "authz-1.9.0",
+    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.10.0 IS a kernel revision: the command guard's scope chain gained the two records the EXECUTION EXTRACT route writes (ActionExtractGrant and ActionClarification), each reaching its committee through the one obligation it names, and the route's own contract (execution-extract-1.0.0) decides what may travel to a party outside the committee. It names NO new right and moves no baseline: the existing administrative right action.admin carries issuing, revoking and answering. It is security material, so prior evidence is invalidated and every suite is re-run against this revision.",
     "built_at": "2026-10-06T07:10:00Z",
     "repository_revision": {
       "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
@@ -15,6 +15,11 @@
     },
     "change_class": "security",
     "changes_this_revision": [
+      "EXECUTION EXTRACT (stream D of the product brief, contract execution-extract-1.0.0): the guard's scope chain gained the two records this route writes — ActionExtractGrant and ActionClarification — each reaching its committee through the ONE obligation it names (action_id → Action). Scope is derived from the record as always, so a link can never be issued against an obligation in another committee, and a question can never be answered against one.",
+      "NO NEW RIGHT was named: issuing and revoking a link, and answering a question asked through one, are exercised through the existing administrative right action.admin, which the chair, the secretary and the committee administrator already hold and which was already delegable. Baselines are unchanged — the expected shape of a route that adds surface without adding authority.",
+      "The receiving party holds a capability TOKEN and no account. The two public acts (acknowledging receipt, asking a question) are bounded to the grant's own row and to a new question row on the same obligation, and neither may touch the obligation's status, its progress, its deadline or its evidence.",
+      "DELIVERY, OPENING, ACKNOWLEDGEMENT and ANSWER are kept as FOUR separate facts, exactly as dispatch, opening, acknowledgment and response are on a written resolution. An acknowledgement is a receipt: it is not approval, it is not completion, it is not verification, and it moves no obligation and extends no deadline.",
+      "WHAT AN EXTRACT MAY CARRY is an ALLOWLIST, and the boundary is stated TO THE RECIPIENT rather than implied: the verifier's identity, internal identifiers, the committee register, deliberation, private notes, escalation internals, the document library and internal provenance can never travel, and a requested section outside the contract is refused rather than dropped quietly.",
       "EFFECTIVE-TIME STANDING GATE in the command guard (contract membership-effect-1.0.0): the mandate-bearing acts — vote.cast, vote.call, vote.certify, decision.approve, decision.issue, decision.submit, decision.execute, minutes.approve, minutes.issue, minutes.review, circulation.open, circulation.finalize, circulation.respond, attendance.certify — are refused for a seat whose appointment had EFFECTIVELY ended at the instant of the act.",
       "The defect this closes (D-069): the authority path asked only whether a row with status active existed, so a membership whose term had ended, or whose bounded acting appointment had expired, carried every right of its seat. The seat's own effective date did not exist for the command path, while the appointment records already carried it.",
       "Standing is decided AT THE INSTANT from effective facts — a term end, a bounded acting expiry, a recorded ending event — over ALL of the person's seats in the committee: a person whose first row has ended still acts on a seat that is standing, and only when NO seat is standing is the act refused. An act outside the appointment period is refused in BOTH directions, which is what makes a retrospective signature or a fabricated past attendance impossible rather than merely discouraged.",
@@ -65,6 +70,7 @@
       "delegable_capabilities": 15,
       "operational_capabilities_note": "the catalogue is OPERATIONAL_CAPABILITIES in authorityKernel.ts; its size is NOT asserted here because it cannot be machine-read from this environment. The derived role baselines reported by the guard at this revision are authoritative for what a seat actually holds.",
       "capabilities_added_this_round": [],
+      "capabilities_added_in_1_9_0": [],
       "capabilities_added_in_1_8_0": ["circulation.open", "circulation.finalize", "circulation.respond"],
       "capabilities_added_in_1_7_0": ["document.annotate", "annotation.own"],
       "capabilities_added_in_1_5_0": ["action.verify"],
@@ -95,7 +101,10 @@
       "open_resolution": "a stuck 'claimed' row still blocks its key and needs releaseTransition (governed maintenance) or a stale-claim policy that is not yet defined"
     },
     "tests": {
-      "authority_suites_re_run": "PASS — TestAuthorizationGuard 52/52 (roles) + 21/21 (positive) + 23/23 (fail-closed) = 96/96 with failures: [] and policy_version authz-1.9.0 (re-run after the kernel revision; the authz-1.8.0 run of 96/96 is INVALIDATED). Baselines UNCHANGED (chair 53 · vice_chair 22 · vice_chair_delegated 39 · delegable 17), which is the expected shape of a narrowing gate: no right was named.",
+      "authority_suites_re_run": "PASS — TestAuthorizationGuard 52/52 (roles) + 21/21 (positive) + 23/23 (fail-closed) = 96/96 with failures: [] and policy_version authz-1.10.0 (re-run after the kernel revision; the authz-1.9.0 run of 96/96 is INVALIDATED). Baselines UNCHANGED (chair 53 · vice_chair 22 · vice_chair_delegated 39 · delegable 17), which is the expected shape of a route that names no new right.",
+      "execution_extract_suite": "PASS 31/31 (execution-extract-1.0.0, writes_performed: 0, records_read: 0) — the verifier's identity and every internal identifier are provably absent from the shaped extract; the boundary travels as data; an unknown / revoked / expired / not-yet-valid link is refused with its own code; opening moves sent to opened and never moves a later state back; an acknowledgement states who acknowledges, is idempotent and is not approval; a question is bounded in text, category and count and changes no state and no deadline; the window defaults and is capped; a section outside the contract is refused rather than dropped.",
+      "command_site_smoke_1_10_0": "ShareActionExtract on an unknown obligation → 404 target_not_found (corr_muwm4w6osg1euq) · ListActionExtracts → 404 target_not_found (corr_muwm57r8uo9fny) · AnswerActionClarification → 404 target_not_found (corr_muwm4w6rpgusbj), each with policy_version authz-1.10.0 and ZERO writes; and the two public token acts on an unknown token → 404 token_unknown with the contract's own bilingual wording. These prove the new modules load at runtime and that refusal precedes every read — they do NOT prove a persisted link.",
+      "policy_suites_re_run_under_1_10_0": "PASS — integrity 40/40 · acceptance 20/20 · continuity 60/60 · circulation 24/24 · decision lifecycle 22/22 · meeting lifecycle 19/19 · vote eligibility 12/12 · guest access 22/22 · proposal content 18/18 · annotation continuity 26/26 · membership effect 39/39 (all re-run after the revision; the authz-1.9.0 runs are INVALIDATED)",
       "membership_effect_suite": "PASS 39/39 (membership-effect-1.0.0, writes_performed: 0, records_read: 0) — standing by instant in BOTH directions; a term end, a bounded acting expiry and a recorded ending event each end standing; a change effective later removes nothing today; a retroactively recorded change is honoured and FLAGGED; a past act is judged as standing stood then; a status with no instant is UNKNOWN rather than standing; no change inside the round → nothing is decided and issuance is unaffected; a change inside the round with a silent instrument → the affected act stops with the choice shown; the three institution policies each behave as stated; re-measurement can leave a round below its requirement and says so; an unreadable history stops the act; the automatic-cancellation rule is refused; every authorized choice maps to a defined remedy and only the round-closing one supersedes; the round window comes from the freeze instant.",
       "new_cases_in_1_8_0": "AUTH-045 (the chair dispatches) · AUTH-046 (the chair is the policy's default finalizer) · AUTH-047 (the secretary dispatches) · AUTH-048 (the secretary does NOT finalize) · AUTH-049 (a member responds on their own row) · AUTH-050 (a recipient does not finalize) · AUTH-051 (a bounded chair delegation carries dispatch and finalize) · AUTH-052 (without a delegation the vice-chair finalizes nothing)",
       "circulation_approval_suite": "PASS 24/24 (circulation-approval-1.0.0, writes_performed: 0, records_read: 0) — policy refuses a missing, incomplete, disabled or silence-based policy; excluded matters stay excluded even when listed; a response after the deadline, from another person, from a non-eligible seat, or twice is refused; silence never approves; unanimous/two-thirds/quorum rules hold; a recused seat leaves the threshold; READY IS NOT A DECISION (full participation with no threshold produces no outcome); invalidated approvals never count; every state has a named writer; ISSUED is not an outcome of a round; the administrative acts can never produce one",
@@ -127,6 +136,9 @@
       "scope_note": "these suites are NOT completion of A02–A10 or J01–J14: no successful live issuance package, no persisted round and no persisted evidence verdict have been exercised"
     },
     "resolved_this_revision": [
+      "D-072 — an executing party outside the committee had no bounded way to receive its own obligation: the only paths were a committee account or a full committee view. It now receives ONE obligation's extract through a revocable, time-bounded link, and the boundary of what that extract does not include is stated on the page it reads",
+      "D-073 — a receipt had nowhere to be recorded: a committee could not tell 'sent' from 'received', and the only delivery field on an action records the committee's own notice. Sent, opened and acknowledged are now three separate facts on the link, with acknowledgement stated as a receipt and never as approval",
+      "D-074 — the personal queue had no readable export, and an export computed separately from the screen would be the same defect class as a second tally. The CSV and the print view are built from the SAME response the screen renders, and they carry the contract version, the filter actually applied, and every source that could not be read",
       "D-069 — a seat whose appointment had effectively ended can no longer act: standing is decided at the instant from the seat's own effective facts (term end, bounded acting expiry, recorded ending event), so the last day of a term is still in office and the day after is not, and a change recorded later but effective earlier is honoured while being flagged rather than silently backdated",
       "D-070 — a change inside an OPEN round is no longer unhandled: the institution's own recorded policy decides whether the round holds its frozen participation, re-measures participation at the close, or applies the change from the next round only; where the instrument is silent the affected official action stops and shows the choice instead of a rule being assumed, and the facts are recorded in the issuance package",
       "D-066 — the circulation route no longer leads to a dead end: an APPROVED written resolution is read by IssueDecision through the same frozen-round evaluation a vote uses (circulationRoundContext.ts), the basis names the route, and two approved rounds or invalidated approvals are a refusal rather than a pick",
@@ -150,6 +162,15 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.9.0",
+      "superseded_at": "2026-10-06T15:05:00Z",
+      "evidence_state": "INVALIDATED by the authz-1.10.0 kernel revision — the guard's scope chain gained the execution-extract records; every suite was re-run against 1.10.0 (authority 96/96 · execution extract 31/31)",
+      "recorded": {
+        "evidence_that_ran_under_it": "authority 96/96 · membership effect 39/39 · integrity 40/40 · acceptance 20/20 · continuity 60/60 · circulation 24/24 · decision lifecycle 22/22 · meeting lifecycle 19/19 · vote eligibility 12/12 · guest access 22/22 · proposal content 18/18 · annotation continuity 26/26",
+        "command_sites_under_it": ["SetMembershipEffectPolicy", "GetDecisionEffectState"]
+      }
+    },
     {
       "version": "authz-1.8.0",
       "superseded_at": "2026-10-06T14:20:00Z",

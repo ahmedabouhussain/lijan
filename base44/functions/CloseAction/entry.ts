@@ -26,6 +26,45 @@ export default async function(req) {
     if (!auth.allowed) return refusalResponse(auth);
 
     const action = auth.target;
+
+    // MATERIAL هـ: A LEGAL HOLD STOPS CLOSURE. A hold — a dispute, an investigation, a court order, an
+    // audit — is STATE, not a note: it is read here, before anything is written, and it is read
+    // fail-closed. A hold state that cannot be established is NOT an absent hold, so closure is refused
+    // rather than performed on an assumption.
+    const holdRows = await base44.asServiceRole.entities.ChangeDisposition
+      .filter({
+        committee_id: action.committee_id,
+        source_entity_type: 'Action',
+        source_entity_id: action.id,
+        legal_hold: true,
+        status: { $ne: 'hold_released' },
+      }, { limit: 10 })
+      .catch(() => null);
+    if (holdRows === null) {
+      return Response.json({
+        error: 'The legal-hold state of this obligation could not be established, so closure was not performed',
+        error_ar: 'تعذّر التحقق من الحجز القانوني على هذا الالتزام، ولم يُنفَّذ الإغلاق',
+        code: 'hold_state_unverifiable',
+      }, { status: 503 });
+    }
+    const activeHold = (Array.isArray(holdRows) ? holdRows : holdRows?.items || [])[0] || null;
+    if (activeHold && !activeHold.hold_released_at) {
+      return Response.json({
+        error: 'This obligation is under a legal hold and cannot be closed while the hold stands',
+        error_ar: 'هذا الالتزام تحت حجز قانوني ولا يُغلق ما دام الحجز قائمًا',
+        code: 'legal_hold_active',
+        hold: {
+          reason: activeHold.legal_hold_reason || null,
+          placed_at: activeHold.legal_hold_at || null,
+          placed_by: activeHold.legal_hold_authority_name || null,
+          change_kind: activeHold.change_kind || null,
+        },
+        remedy: {
+          ar: 'رفع الحجز فعل محكوم من الجهة المختصة بسببه، ولا يسقط بمرور الوقت؛ والرفع يعيد الالتزام إلى المعالجة العادية ولا يغلقه.',
+          en: 'Releasing the hold is a governed act by the competent authority with its reason; it never lapses by time, and releasing it returns the obligation to ordinary treatment rather than closing it.',
+        },
+      }, { status: 409 });
+    }
     // The gate that makes closure mean something is STRUCTURAL, not advisory: `action.close` now
     // carries a required state read from evidence-acceptance-1.0.0 — the record must hold a verdict
     // ACCEPTED by an independent verifier. A reported percentage together with an attachment can no

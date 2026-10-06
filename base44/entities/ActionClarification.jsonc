@@ -1,0 +1,135 @@
+{
+  "name": "ActionClarification",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "action_id": {
+      "type": "string",
+      "title": "Action ID (the obligation this question is about)"
+    },
+    "grant_id": {
+      "type": "string",
+      "title": "Grant ID (the link the question arrived through \u2014 the capability it rests on)"
+    },
+    "category": {
+      "type": "string",
+      "title": "Question Category (from execution-extract-1.0.0)"
+    },
+    "question": {
+      "type": "string",
+      "title": "The Question (as the recipient asked it)"
+    },
+    "raised_by_name": {
+      "type": "string",
+      "title": "Raised By (stated by the recipient \u2014 display only, never an identity)"
+    },
+    "raised_by_organization": {
+      "type": "string",
+      "title": "Raised By Organization"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (a question changes no state, no deadline and no obligation)",
+      "enum": [
+        "raised",
+        "answered",
+        "closed"
+      ],
+      "default": "raised"
+    },
+    "raised_at": {
+      "type": "string",
+      "title": "Raised At",
+      "format": "date-time"
+    },
+    "answered_at": {
+      "type": "string",
+      "title": "Answered At",
+      "format": "date-time"
+    },
+    "answered_by_user_id": {
+      "type": "string",
+      "title": "Answered By User ID (the seat that answered)"
+    },
+    "answered_by_name": {
+      "type": "string",
+      "title": "Answered By (display only)"
+    },
+    "answered_by_capacity": {
+      "type": "string",
+      "title": "Answered In What Capacity"
+    },
+    "answer": {
+      "type": "string",
+      "title": "The Answer"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Execution Extract Contract Version in Force"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "action_id",
+    "grant_id",
+    "category",
+    "question",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
