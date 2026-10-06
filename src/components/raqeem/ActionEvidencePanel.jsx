@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { VERIFICATION_LABELS, verificationStateOf } from "@/lib/actionState";
 import { formatDate } from "@/lib/raqeemUtils";
 import { ShieldCheck, Upload, Undo2, Loader2, ExternalLink } from "lucide-react";
+import AuditChainPanel from "@/components/raqeem/AuditChainPanel";
 
 // ActionEvidencePanel — the evidence trail of ONE execution action, in the order the acts happen:
 // the owner submits a revision → an independent verifier accepts it or returns it with a reason →
@@ -144,6 +145,10 @@ export default function ActionEvidencePanel({ action, onChanged, allowVerify = f
       {error && (
         <p className="text-[11px] text-state-danger-ink bg-state-danger-surface rounded-md px-2 py-1">{error}</p>
       )}
+
+      {/* G-5: the evidence trail as a chain — an absent required step (submission, independent verdict,
+          closure) is a named gap, and the hold state is shown as a gate rather than a note. */}
+      <AuditChainPanel committeeId={action.committee_id} entityType="Action" entityId={action.id} chain="evidence" title={action.title_ar || action.title} />
     </div>
   );
 }
