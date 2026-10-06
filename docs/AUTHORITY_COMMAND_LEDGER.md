@@ -3,8 +3,8 @@
 > ملف مُولَّد آليًا — لا يُحرَّر يدويًا. المصدر: `scripts/authority-guardrails.mjs`.
 > يُعاد توليده عند كل تشغيل للفحص الثابت، ويطابق النسخة `authz-1.1.0`.
 
-- مواضع الأوامر المكتشفة: **125**
-- على المسار المحروس (`authorizeCommand` + سجل مستهدف): **80**
+- مواضع الأوامر المكتشفة: **126**
+- على المسار المحروس (`authorizeCommand` + سجل مستهدف): **81**
 - تلميح لجنة فقط (بدون سجل مستهدف): **42**
 -كتابة محكومة بحق قراءة: **0**
 - مطابقة بالاسم: **0**
@@ -116,34 +116,35 @@
 | CMD-92 | `GetGovernanceSurfaces` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-93 | `GetGuestItemView` | read (تلميح فقط) | نعم | تلميح لجنة | — | — | لا | لا | رمز قدرة |
 | CMD-94 | `GetRecordAuditTrail` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-95 | `InitiateHandover` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-96 | `InviteAgendaItemGuest` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-97 | `NotifyAffectedMembers` | amendment.notify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-98 | `OpenCirculation` | circulation.open | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-99 | `ProvisionDrHamadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-100 | `ProvisionFahadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-101 | `RecordAppointmentEvent` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-102 | `RecordChangeDisposition` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-103 | `RecordCirculationResponse` | circulation.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-104 | `RepairDrHamadDemoExperienceV3` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-105 | `ResolveAmeenContext` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-106 | `RespondToInvitation` | attendance.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-107 | `RevokeShowcaseSession` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-108 | `RunAmeenExecutionFollowUp` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-109 | `RunExecutionReminders` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-110 | `SeedNSDCShowcase` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-111 | `SetCirculationPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-112 | `SetMembershipEffectPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-113 | `shared/amendmentApplier.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-114 | `shared/emailEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-115 | `shared/formationVersioner.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-116 | `shared/notificationEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-117 | `shared/recordGovernance.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-118 | `shared/showcaseSession.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-119 | `shared/signatureEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-120 | `shared/transitionClaim.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-121 | `SubmitAgendaItem` | agenda.propose | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-122 | `TestAuthorizationGuard` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-123 | `TestShowcaseIsolation` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
-| CMD-124 | `TransitionAgendaItem` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-125 | `TransitionAmendmentStatus` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-95 | `GetSeatedActorReadiness` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-96 | `InitiateHandover` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-97 | `InviteAgendaItemGuest` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-98 | `NotifyAffectedMembers` | amendment.notify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-99 | `OpenCirculation` | circulation.open | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-100 | `ProvisionDrHamadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-101 | `ProvisionFahadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-102 | `RecordAppointmentEvent` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-103 | `RecordChangeDisposition` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-104 | `RecordCirculationResponse` | circulation.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-105 | `RepairDrHamadDemoExperienceV3` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-106 | `ResolveAmeenContext` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-107 | `RespondToInvitation` | attendance.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-108 | `RevokeShowcaseSession` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-109 | `RunAmeenExecutionFollowUp` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-110 | `RunExecutionReminders` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-111 | `SeedNSDCShowcase` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-112 | `SetCirculationPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-113 | `SetMembershipEffectPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-114 | `shared/amendmentApplier.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-115 | `shared/emailEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-116 | `shared/formationVersioner.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-117 | `shared/notificationEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-118 | `shared/recordGovernance.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-119 | `shared/showcaseSession.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-120 | `shared/signatureEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-121 | `shared/transitionClaim.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-122 | `SubmitAgendaItem` | agenda.propose | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-123 | `TestAuthorizationGuard` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-124 | `TestShowcaseIsolation` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-125 | `TransitionAgendaItem` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-126 | `TransitionAmendmentStatus` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
