@@ -1,71 +1,147 @@
 # سجل مواضع الأوامر — ليان™ | AUTHORITY COMMAND LEDGER
 
-> مُولَّد من المصدر. الإصدار المجمّد: **`authz-1.2.0-rc.1`** · بصمة النواة `db0bb981…aa17` · البصمة المجمّعة `37adfedc…9113` · البناء `2026-10-04T12:35:37Z`.
-> طريقة التوليد هذه الجولة: تعداد ثابت على `base44/functions` (كل ملف يستدعي الحارس أو يكتب) + فحص الاستدعاء المباشر للنواة.
-> **ملاحظة تنفيذية**: سكربتات `scripts/*.mjs` لا تُنفَّذ من بيئة البناء الحالية، لذلك أُنتج الجرد بهذا التعداد وأُدرج هنا — لا ادّعاء بتشغيل السكربت.
+> ملف مُولَّد آليًا — لا يُحرَّر يدويًا. المصدر: `scripts/authority-guardrails.mjs`.
+> يُعاد توليده عند كل تشغيل للفحص الثابت، ويطابق النسخة `authz-1.1.0`.
 
-## الأرقام
+- مواضع الأوامر المكتشفة: **123**
+- على المسار المحروس (`authorizeCommand` + سجل مستهدف): **78**
+- تلميح لجنة فقط (بدون سجل مستهدف): **45**
+-كتابة محكومة بحق قراءة: **0**
+- مطابقة بالاسم: **0**
+- أفعال برمز قدرة (خارج مسار الأوامر بالتصميم: الرمز هو السلطة، والفعل محدود بصفّه): **0**
 
-| المقياس | القيمة |
-|---|---:|
-| مواضع أوامر اللجان المكتشفة (تستدعي الحارس) | **54** |
-| على المسار المحروس (سجل مستهدف عبر `authorizeCommand`) | **54** |
-| تلميح لجنة فقط (بدون سجل مستهدف) | **0** |
-| كتابة محكومة بحق قراءة | **0** |
-| مطابقة بالهوية بالاسم | **0** |
-| مطالبات حصرية (مطالبة قبل الكتابة) | **10 مواضع** |
-| قارن-وبدّل على مراجعة الحالة | `ProcessEscalation` (`escalation_revision`) |
-| مواضع قراءة/اختبار تستدعي النواة مباشرة ولا تكتب | `AuthorizeCommitteeAction` · `TestAuthorizationGuard` |
-| اتحاد مواضع أوامر اللجان التي تحتاج عملًا | **0** |
+### التداخل (لا تُجمع القوائم كأنها مواضع فريدة)
 
-## مواضع أوامر اللجان (54/54)
+- اتحاد المواضع التي تحتاج عملًا: **45** موضعًا فريدًا
+- «تلميح فقط» ∩ «محكوم بقراءة»: 0 — —
+- «تلميح فقط» ∩ «مطابقة بالاسم»: 0 — —
+- «محكوم بقراءة» ∩ «مطابقة بالاسم»: 0 — —
+- الثلاثة معًا: 0
 
-### A1 — القرارات والتصويت والتوقيع
-`CreateDecisionDraft` (Meeting/Committee) · `OpenVote` → Decision `vote.call` (بوابة: draft/proposed/in_review — تُقرأ من العقد) · `CastVote` → Decision `vote.cast` + مطالبة `vote.cast:<decision>:<round>:<seat>` · `CloseVote` → Decision `vote.certify` (بوابة: voting) + مطالبة `vote.certify:<decision>` · `IssueDecision` → Decision `decision.issue` (approved للإصدار الأول؛ issued/executing جواب مُكرَّر) + مطالبة `decision.issue:<decision>` · `TransitionDecision` → Decision `decision.submit` (بوابة: draft) ثم `decision.execute` (بوابة: issued) — الخطوتان اللتان كانتا معروضتين معطّلتين بلا أمر (D-043) · `SignRecord` → Document/Decision/MeetingMinutes/Action `decision.sign_image` + مطالبة `decision.sign_image:<doc>:<actor>:<intent>` · `AcknowledgeCommitteeChange` → CommitteeAmendment `amendment.acknowledge` (حق ذاتي على المقعد).
+### الجرد
 
-### A2 — الاجتماعات والحضور والنصاب والمحاضر
-`CreateMeeting` (Committee، إنشاء) · `GenerateMeetingInstances` → Meeting · `StartMeeting` → Meeting `meeting.start` (scheduled) · `AdjournMeeting` → Meeting `meeting.adjourn` (in_progress) · `CancelMeeting` → Meeting `meeting.cancel` (scheduled/in_progress) · `PublishMeetingPack` (Committee، إنشاء) · `SubmitAgendaItem` (Meeting/Committee، إنشاء) · `EvaluateAgendaReadiness` → AgendaItem (pending/deferred) · `RespondToInvitation` → Meeting `attendance.respond` · `CertifyAttendance` → Meeting `attendance.certify` · `DeclareConflict` → Committee · `RecordRecusal` → Committee · `ApproveMinutes` → MeetingMinutes `minutes.approve` (draft/in_review) + مطالبة `minutes.approve:<minutes>` · `RequestReview` → Document `minutes.draft` (إنشاء + احتواء نسخة) · `GenerateMeetingMinutes` → Meeting `minutes.draft`.
-
-### A3 — المستندات والمراجعة والإصدارات
-`UploadDocumentVersion` → Document/Committee `agenda.edit` + مطالبة `document.version:<doc>` · `UploadFoundingInstrument` (Committee، إنشاء) · `ExtractInstrumentData` → FoundingInstrument `instrument.extract` · `ConfirmExtractedInstrumentFields` → FoundingInstrument · `CreateCommitteeDraftFromInstrument` → FoundingInstrument · `RespondToReview` → ReviewRequest `review.respond` + مطالبة `review.respond:<request>:<actor>` · `ReviewMemoryRecord` → AIOutputLedger `minutes.review`/`minutes.approve`.
-
-### A4 — الإجراءات والتنفيذ والتصعيد
-`UpdateActionProgress` → Action `action.progress` (مقيّد بالفاعل) · `RequestActionExtension` → Action · `ReviewActionExtension` → Action `action.admin` · `CloseAction` → Action `action.close` (بوابة الحالة) + مطالبة `action.close:<action>` · `ProcessEscalation` → Action `action.admin` + قارن-وبدّل · `RetryEscalationNotice` → Action · `NotifyAffectedMembers` → CommitteeAmendment `amendment.notify`.
-
-### A5 — المنتجات والتقارير والذاكرة
-`GenerateProduct` (Committee، إنشاء) + مطالبة `product.generate:<committee>:<type>:<source>` · `CompileCommitteeMemory` → Committee `memory.compile` · `GenerateInstitutionalMemory` → Committee `memory.compile` · `GeneratePolicyScenarioAI` → Committee `agenda.propose`.
-
-### A6 — الإدارة والعمليات
-`ActivateCommittee` (draft/pending_activation) · `SuspendCommittee` `committee.manage` · `TransitionCommitteeStatus` `committee.manage` · `CloseCommittee` (active/closing/suspended/expiring) · `RenewCommittee` · `ExtendTerm` · `DelegateAuthority` (إنشاء) · `ActivateAlternate` → Seat · `EndCommitteeMembership` → Seat · `InviteCommitteeMember` (إنشاء) · `ProposeCommitteeAmendment` (إنشاء) · `ApproveCommitteeAmendment` → Amendment · `TransitionAmendmentStatus` → Amendment.
-
-## كتابات خارج نطاق اللجنة (24) — كل واحدة بوابتها الخاصة، لا نواة اللجنة
-
-هذه ملفات تكتب ولا تستدعي حارس اللجنة. لا شيء منها يأخذ دورًا أو صلاحية من العميل؛ وهي ليست مواضع أوامر لجان، لكنها **مفتوحة كديون تصنيف** حتى تُغلق كل واحدة ببوابتها الصحيحة.
-
-| الحدود | الوظائف | الحالة |
-|---|---|---|
-| نظام/مجدول (بلا فاعل تفاعلي) | `ApplyScheduledAmendments` · `RunExecutionReminders` · `RunAmeenExecutionFollowUp` | تُستدعى من سير عمل — تحتاج بوابة منشأ التشغيل |
-| خدمة ذاتية على سجلات المتصل نفسه | `JoinOrganization` · `RequestOrganizationAccess` · `RequestFileAccess` · `EnterExploration` · `LogFileAccess` · `LogAmeenAction` · `LogDocumentationDownload` · `GetMyOrganizations` · `ResolveAmeenContext` | تحتاج تقييدًا صريحًا بالفاعل (actor-bound) |
-| إدارة المنصة (إعداد الصفحات والنشر) | `SavePageConfigurationDraft` · `PublishPageConfiguration` · `RestorePageConfigurationVersion` · `ResetPageConfigurationToOrganization` · `PublishDocumentationRelease` | نطاق منصة، لا نطاق لجنة |
-| تكامل خارجي (مزامنة تقويم) | `SyncMeetingToCalendar` · `SyncMeetingToOutlook` | بوابة تكامل + منشأ |
-| جلسة عرض تجريبية | `IssueShowcaseSession` · `RevokeShowcaseSession` | `write_scope` مغلق |
-| تأسيس على مستوى المؤسسة | `CreateCommittee` | **أقرب فجوة**: يتحقق من ملكية المؤسسة على الخادم (عضوية owner/admin) لكنه لا يمر بالنواة بعد — نطاق مؤسسة لا نطاق لجنة |
-| مساعدات صياغة (لا تُنتج سجلًا مؤسسيًّا) | `ExtractCommitteeCharter` · `GenerateCommitteeGovernance` | مخرجات صياغة + قيد سجل الذكاء الاصطناعي |
-
-## غير مغلق
-- **اختبار التزامن الفعلي**: لم تُقَس طلبات متزامنة حقيقية من بيئة البناء. الآلية مُنفَّذة (10 مطالبات + قارن-وبدّل)، لكنها **NOT ESTABLISHED** حتى تُقاس.
-- **الكتابة التجريبية**: مغلقة — بوابة المرحلة D تشترط بند التزامن.
-- **قبول المتصفح**: غير مُختبر من بيئة البناء.
-- **الديون أعلاه (24)**: تصنيف بوابات خارج نطاق اللجنة.
-
-### A7 — قبول الأدلة التنفيذية (S10 · `evidence-acceptance-1.0.0` · `authz-1.5.0`)
-
-ثلاثة مواضع تُغلق الفصل بين من **ينفّذ** ومن **يشهد** على الإجراء (`Action`):
-
-| الموضع | الحق | البوابة | ما يُكتب |
-|---|---|---|---|
-| `SubmitActionEvidence` | `action.progress` (المنفّذ/المكلَّف) | حالة الإجراء تسمح بالتقديم + مطالبة انتقال على (الإجراء، الإصدار) | يرفع `evidence_revision` ويُثبت **هوية مُقدِّم الإصدار** (التي لا يجوز أن تحكم عليه) |
-| `ReviewActionEvidence` | **`action.verify`** (جديد: الرئيس والسكرتير، ومفوَّض بتفويض نشط) | **بوابتان**: الحالة المطلوبة `submitted` (لا حكم إلا على إصدار ينتظر حكمًا) · **استقلال الفاعل**: يُرفض إن كان هو مُقدِّم الإصدار — **لكل دور** | القرار (مقبول/مُرجَع) + سببه + **بصمة الإصدار المحكوم عليه**؛ وهو **الكاتب الوحيد** لـ`compliance_verified` |
-| `CloseAction` | `action.close` (الرئيس؛ ومفوَّض) | **بنية لا توصية**: `verification_state: accepted` وإلا `closure_requires_acceptance` (وقبلها بوابة الحالة والربط بالفاعل) | سجل الإغلاق: من، ومتى، وعن أي إصدار مقبول |
-
-**ملاحظتان للتدقيق**: (1) `action.verify` **داخل قائمة الحقوق القابلة للتفويض** — التحقق يجوز أن يُفوَّض إلى مقعد، والاستقلال يبقى مفروضًا **بالهوية** لا بالصفة (المُقدِّم لا يحكم على إصداره ولو كان رئيسًا). (2) `compliance_verified` لم يبقَ شرطًا للإغلاق — صار مُشتقًّا من الحكم المقبول؛ والحقل القديم يُقرأ للتقارير ويُعلن انحرافه في `SilentFailureRadar` بدل أن يُقبل دليلًا.
+| ID | الوظيفة | العملية | يكتب؟ | الأصل الموثوق | الفعل المطلوب | الحارس | تطابق بالاسم؟ | محكوم بقراءة؟ | الحالة |
+|---|---|---|---|---|---|---|---|---|---|
+| CMD-01 | `CastVote` | vote.cast | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-02 | `CloseVote` | vote.certify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-03 | `CreateDecisionDraft` | decision.propose | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-04 | `IssueDecision` | decision.issue | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-05 | `IssueShowcaseSession` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-06 | `OpenVote` | vote.call | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-07 | `SignRecord` | decision.sign_image | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-08 | `TransitionDecision` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-09 | `AdjournMeeting` | meeting.adjourn | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-10 | `ApproveCommitteeAmendment` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-11 | `ApproveMinutes` | minutes.approve | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-12 | `CancelMeeting` | meeting.cancel | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-13 | `CertifyAttendance` | attendance.certify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-14 | `CreateMeeting` | meeting.schedule | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-15 | `GenerateMeetingInstances` | meeting.schedule | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-16 | `GenerateMeetingMinutes` | minutes.draft | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-17 | `PrepareMinutes` | minutes.draft | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-18 | `PublishMeetingPack` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-19 | `StartMeeting` | meeting.start | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-20 | `SyncMeetingToCalendar` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-21 | `SyncMeetingToOutlook` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-22 | `TransitionMinutes` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-23 | `AnnotateDocument` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-24 | `ConfirmExtractedInstrumentFields` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-25 | `CreateCommitteeDraftFromInstrument` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-26 | `ExtractInstrumentData` | instrument.extract | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-27 | `LogDocumentationDownload` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-28 | `PublishDocumentationRelease` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-29 | `RequestReview` | minutes.draft | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-30 | `RespondToReview` | review.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-31 | `ReviewActionEvidence` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-32 | `ReviewActionExtension` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-33 | `ReviewMemoryRecord` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-34 | `UploadDocumentVersion` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-35 | `UploadFoundingInstrument` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-36 | `ActivateAlternate` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-37 | `AnswerActionClarification` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-38 | `CloseAction` | action.close | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-39 | `DeclareConflict` | conflict.declare | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-40 | `DelegateAuthority` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-41 | `ExtendTerm` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-42 | `GetActionExtractView` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-43 | `ListActionExtracts` | action.admin | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-44 | `LogAmeenAction` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-45 | `ProcessEscalation` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-46 | `RecordRecusal` | recusal.record | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-47 | `RequestActionExtension` | action.progress | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-48 | `RespondToActionExtract` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-49 | `RetryEscalationNotice` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-50 | `ShareActionExtract` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-51 | `SubmitActionEvidence` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-52 | `UpdateActionProgress` | action.progress | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-53 | `CompileCommitteeMemory` | memory.compile | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-54 | `GenerateCommitteeGovernance` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-55 | `GenerateInstitutionalMemory` | memory.compile | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-56 | `GeneratePolicyScenarioAI` | agenda.propose | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-57 | `GenerateProduct` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-58 | `AcknowledgeCommitteeChange` | amendment.acknowledge | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-59 | `ActivateCommittee` | committee.activate | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-60 | `CloseCommittee` | committee.close | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-61 | `CreateCommittee` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-62 | `CreateCommitteeRelationship` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-63 | `EndCommitteeMembership` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-64 | `ExtractCommitteeCharter` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-65 | `GetMyOrganizations` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-66 | `ImportOrganizationAsset` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-67 | `ImportOrganizationAssetPack` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-68 | `InviteCommitteeMember` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-69 | `JoinOrganization` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-70 | `LogFileAccess` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-71 | `MergeDuplicateOrganizations` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-72 | `PreviewGuestAccess` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-73 | `ProposeCommitteeAmendment` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-74 | `ProvisionCommitteeOperationalData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-75 | `ProvisionOrganizationPortal` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-76 | `PublishPageConfiguration` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-77 | `RenewCommittee` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-78 | `RequestFileAccess` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-79 | `RequestOrganizationAccess` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-80 | `ResetPageConfigurationToOrganization` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-81 | `RestorePageConfigurationVersion` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-82 | `SavePageConfigurationDraft` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-83 | `SuspendCommittee` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-84 | `TransitionCommitteeStatus` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-85 | `AcceptHandover` | seat.handover_accept | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-86 | `ApplyScheduledAmendments` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-87 | `ArchiveAgendaItem` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-88 | `CompileChangeInventory` | committee.manage | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-89 | `EnterExploration` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-90 | `EvaluateAgendaReadiness` | agenda.evaluate | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-91 | `FinalizeCirculation` | circulation.finalize | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-92 | `GetGuestItemView` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-93 | `InitiateHandover` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-94 | `InviteAgendaItemGuest` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-95 | `NotifyAffectedMembers` | amendment.notify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-96 | `OpenCirculation` | circulation.open | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-97 | `ProvisionDrHamadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-98 | `ProvisionFahadDemoData` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-99 | `RecordAppointmentEvent` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-100 | `RecordChangeDisposition` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-101 | `RecordCirculationResponse` | circulation.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-102 | `RepairDrHamadDemoExperienceV3` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-103 | `ResolveAmeenContext` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-104 | `RespondToInvitation` | attendance.respond | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-105 | `RevokeShowcaseSession` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-106 | `RunAmeenExecutionFollowUp` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-107 | `RunExecutionReminders` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-108 | `SeedNSDCShowcase` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-109 | `SetCirculationPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-110 | `SetMembershipEffectPolicy` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-111 | `shared/amendmentApplier.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-112 | `shared/emailEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-113 | `shared/formationVersioner.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-114 | `shared/notificationEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-115 | `shared/recordGovernance.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-116 | `shared/showcaseSession.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-117 | `shared/signatureEngine.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-118 | `shared/transitionClaim.ts` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-119 | `SubmitAgendaItem` | agenda.propose | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-120 | `TestAuthorizationGuard` | read | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-121 | `TestShowcaseIsolation` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-122 | `TransitionAgendaItem` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
+| CMD-123 | `TransitionAmendmentStatus` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |

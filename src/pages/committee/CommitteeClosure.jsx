@@ -3,6 +3,7 @@ import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
+import ChangeInventoryPanel from "@/components/raqeem/ChangeInventoryPanel";
 import { base44 } from "@/api/base44Client";
 import { Lock, Loader2, X } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
@@ -69,6 +70,11 @@ export default function CommitteeClosure() {
               <p className="text-xs text-amber-700">{t("لا يمكن إغلاق اللجنة بينما توجد سجلات غير محلولة. أكمل أو أغلق جميع الإجراءات والقرارات أولاً.", "Cannot close the committee while unresolved records exist. Complete or close all actions and decisions first.")}</p>
             </div>
           )}
+
+          {/* MATERIAL هـ: the enumeration that must exist BEFORE the change, with the disposition of
+              every open obligation and the legal holds — read from the committee's own records, and
+              reporting what could not be read instead of rounding it away. */}
+          <ChangeInventoryPanel committeeId={committee.id} canManage={canClose} />
           {canClose && !hasOpenActions && !hasOpenDecisions && !showClose && (
             <Button onClick={() => setShowClose(true)} className="w-full">
               <Lock className="w-4 h-4" />
