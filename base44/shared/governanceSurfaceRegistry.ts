@@ -314,6 +314,11 @@ export const GOVERNANCE_SURFACES: Surface[] = [
     actor_binding: "none", route: null, route_file: "src/hooks/useCommitteeRecord.js",
     unavailable: "authority", evidence: "contract_verified", suite: "TestAuthorizationGuard", recorded_path: false, recorded_path_evidence: null,
     note_ar: "مصدر واحد للقراءة المحكومة: النطاق يُشتق من السجل المستهدف لا من الطلب.", note_en: "The single governed read: scope is derived from the trusted target, never from the request." },
+  { id: "view_seated_readiness", ar: "قياس جاهزية الفاعل المُقعد لكل لجنة", en: "Measure seated-actor readiness per committee", stage: "oversight", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetSeatedActorReadiness", contract: "seated-readiness-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/committees", route_file: "src/pages/OrgCommittees.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestSeatedReadiness", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "الحاجز (D-064) صار مقيسًا لا مُدَّعى: المقاعد المؤهلة تُحتسب بقاعدة التصويت نفسها، والقدرة على العمل تستلزم ارتباطًا بحساب مستخدم، وكل مصدر لم يُقرأ يُعلن ⇒ «غير قابل للقياس» لا صفر.", note_en: "The blocker (D-064) is measured instead of asserted: eligible seats come from the voting rule itself, ability to act requires a bound user account, and every source that could not be read is named, so an unreadable committee reads 'unverifiable' rather than zero." },
 ];
 
 export const SURFACE_IDS = GOVERNANCE_SURFACES.map((s) => s.id);

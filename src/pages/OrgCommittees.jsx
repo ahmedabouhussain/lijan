@@ -6,6 +6,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { COMMITTEE_STATUS, COMMITTEE_TYPES } from "@/lib/raqeemUtils";
 import { Gavel, ChevronLeft, Users } from "lucide-react";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import SeatedReadinessPanel from "@/components/raqeem/SeatedReadinessPanel";
 import { L } from "@/lib/l10n";
 
 export default function OrgCommittees() {
@@ -24,6 +25,8 @@ export default function OrgCommittees() {
         <h1 className="text-lg font-bold">{t("محفظة اللجان", "Committee Portfolio")}</h1>
         <span className="text-sm text-muted-foreground">({all.length})</span>
       </div>
+
+      <SeatedReadinessPanel committeeIds={all.map((c) => c.id)} />
 
       {all.length === 0 ? (
         <div className="raqeem-card p-8 text-center">
