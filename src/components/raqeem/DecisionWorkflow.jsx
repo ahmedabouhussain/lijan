@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, ArrowUp } from "lucide-react";
+import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, ArrowUp, Send, Play } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -14,21 +14,20 @@ import { L } from "@/lib/l10n";
 //  • An action that has NO governed command stays unavailable and says why. There is no client-side
 //    implementation left behind the button, so no flag can re-enable a write path by accident.
 // The statuses come from the ONE lifecycle contract (base44/shared/decisionLifecycle.ts,
-// decision-lifecycle-1.0.0) so this surface cannot advertise a state the handler refuses, or hide an
+// decision-lifecycle-1.1.0) so this surface cannot advertise a state the handler refuses, or hide an
 // action the handler would accept. `issue` includes the already-issued states because re-issuing an
 // issued decision is an IDEMPOTENT re-verification of the same package, not a second issuance.
 const GOVERNED_ACTIONS = {
-  open_vote: { capability: "vote.call", statuses: ["draft", "proposed"] },
+  open_vote: { capability: "vote.call", statuses: ["draft", "proposed", "in_review"] },
   cast_vote: { capability: "vote.cast", statuses: ["voting"] },
   issue: { capability: "decision.issue", statuses: ["approved", "issued", "executing"] },
+  submit_for_review: { capability: "decision.submit", statuses: ["draft"] },
+  start_execution: { capability: "decision.execute", statuses: ["issued"] },
 };
 
 // Each entry names the exact gap, so the determination is readable on the surface that owns it.
 const AWAITING_COMMAND = [
-  { ar: "إرسال للمراجعة", en: "Send for review", statuses: ["draft"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ الإرسال للمراجعة يُنفَّذ عبر مسار الإصدار المحكوم.", whyEn: "No governed server command exists for this transition yet." },
-  { ar: "اقتراح للتصويت", en: "Propose for vote", statuses: ["in_review"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد.", whyEn: "No governed server command exists for this transition yet." },
   { ar: "إصدار القرار", en: "Issue decision", statuses: ["draft", "proposed", "voting"], whyAr: "الإصدار انتقال محروس: يقتضي أن يكون القرار «معتمدًا» — والاعتماد ينتج عن نتيجة التصويت لا بتحرير الحالة — مع استيفاء المتطلبات الإلزامية.", whyEn: "Issuance is a governed transition: it requires the decision to be 'approved' (approval follows from the vote result, never from a status edit) with its mandatory requirements complete." },
-  { ar: "بدء التنفيذ", en: "Start execution", statuses: ["issued"], whyAr: "لا يوجد أمر خادمي محكوم لهذا الانتقال بعد؛ التنفيذ يُدار من سجل الإجراءات.", whyEn: "No governed server command exists for this transition yet; execution is managed on the action record." },
   { ar: "إكمال", en: "Complete", statuses: ["executing"], whyAr: "الإكمال يقتضي إجراءً مُسندًا بدليل متحقق منه؛ لا يُعتمد على تغيير الحالة هنا.", whyEn: "Completion requires an assigned action with verified evidence; it is not achieved by a status change here." },
   { ar: "إلغاء بقرار لاحق", en: "Supersede", statuses: ["*"], whyAr: "الإلغاء بقرار لاحق يقتضي أمرًا محكومًا غير متوفر بعد؛ ولا يُكتب مباشرة.", whyEn: "Superseding requires a governed command that is not available yet; it is never written directly." },
   { ar: "تصعيد القرار", en: "Escalate the decision", statuses: ["*"], whyAr: "التصعيد محكوم على سجل الإجراء، لا على القرار — صعِّد الإجراء المرتبط من «التنفيذ والمتابعة».", whyEn: "Escalation is governed on the action record, not on the decision — escalate the linked action from Execution." },
@@ -182,6 +181,21 @@ export default function DecisionWorkflow({ decision, onChanged }) {
             variant="approve"
             disabled={!canDo("issue") || busy === "issue"}
             busyKey={busy === "issue"}
+          />
+          <ActionBtn
+            onClick={() => run("submit_for_review", t("إرسال للمراجعة", "Send for review"), () => base44.functions.invoke("TransitionDecision", { committee_id: decision.committee_id, decision_id: decision.id, transition: "submit_for_review" }))}
+            icon={Send}
+            label={t("إرسال للمراجعة", "Send for review")}
+            disabled={!canDo("submit_for_review") || !!busy}
+            busyKey={busy === "submit_for_review"}
+          />
+          <ActionBtn
+            onClick={() => run("start_execution", t("بدء التنفيذ", "Start execution"), () => base44.functions.invoke("TransitionDecision", { committee_id: decision.committee_id, decision_id: decision.id, transition: "start_execution" }))}
+            icon={Play}
+            label={t("بدء التنفيذ", "Start execution")}
+            variant="approve"
+            disabled={!canDo("start_execution") || !!busy}
+            busyKey={busy === "start_execution"}
           />
         </div>
       )}

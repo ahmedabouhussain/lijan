@@ -65,6 +65,11 @@ const ROLE_CASES = [
   // ── D-023 alignment: the NARROW decision-proposal contract ─────────────────
   { id: 'AUTH-037', role: 'chair', capability: 'decision.propose', delegation: false, expect: true, note: 'the chair HOLDS decision.propose (the right the draft command now requires)' },
   { id: 'AUTH-038', role: 'secretary', capability: 'decision.propose', delegation: false, expect: false, note: 'preparation is not proposal: the secretary does NOT propose a decision' },
+  // ── The two decision steps that had NO command (authz-1.4.0) ────────────────
+  { id: 'AUTH-039', role: 'chair', capability: 'decision.submit', delegation: false, expect: true, note: 'the chair holds the right to send a draft decision for review' },
+  { id: 'AUTH-040', role: 'secretary', capability: 'decision.submit', delegation: false, expect: true, note: 'the office that drafts also submits — drafting is not approving' },
+  { id: 'AUTH-041', role: 'member', capability: 'decision.submit', delegation: false, expect: false, note: 'a member PROPOSES a draft (decision.propose); submitting it is not a member right' },
+  { id: 'AUTH-042', role: 'vice_chair', capability: 'decision.execute', delegation: false, expect: false, note: 'starting execution is not inherited with the office; it needs the right or a delegation' },
 ];
 
 // ── Isolated data-layer stub (no real record is read; no write can land) ────
@@ -160,6 +165,12 @@ const POSITIVE_CASES = [
   { id: 'POS-014', label: 'member proposes a decision draft (members hold decision.propose)', role: 'member', expect: true,
     opts: { capability: 'decision.propose', target_type: 'Committee', target_id: COM, mode: 'create' },
     records: () => baseRecords('member') },
+  { id: 'POS-015', label: 'chair sends a DRAFT decision for review (the step that had no command)', role: 'chair', expect: true,
+    opts: { capability: 'decision.submit', target_type: 'Decision', target_id: 'DEC-DRAFT' },
+    records: () => baseRecords('chair', { Decision: { 'DEC-DRAFT': { ...DECISION, id: 'DEC-DRAFT', status: 'draft' } } }) },
+  { id: 'POS-016', label: 'chair starts execution of an ISSUED decision (decision.execute now has a command)', role: 'chair', expect: true,
+    opts: { capability: 'decision.execute', target_type: 'Decision', target_id: 'DEC-ISSUED' },
+    records: () => baseRecords('chair', { Decision: { 'DEC-ISSUED': { ...DECISION, id: 'DEC-ISSUED', status: 'issued' } } }) },
 ];
 
 // ── Suite 3 · Fail-Closed Tests (a fact that cannot be read is not an absent fact) ─
@@ -209,6 +220,12 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-015', label: 'an action already verified cannot be closed a second time (no duplicate closure)', expectCode: 'state_not_permitted',
     opts: { capability: 'action.close', target_type: 'Action', target_id: 'ACT-T3' },
     stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T3': ACTION_CLOSED } }) }) },
+  { id: 'FCL-016', label: 'execution cannot start on a decision that is not issued yet', expectCode: 'state_not_permitted',
+    opts: { capability: 'decision.execute', target_type: 'Decision', target_id: 'DEC-DRAFT' },
+    stub: () => stubClient({ records: baseRecords('chair', { Decision: { 'DEC-DRAFT': { ...DECISION, id: 'DEC-DRAFT', status: 'draft' } } }) }) },
+  { id: 'FCL-017', label: 'an APPROVED decision is not sent back for review (no step reopens a reviewed draft)', expectCode: 'state_not_permitted',
+    opts: { capability: 'decision.submit', target_type: 'Decision', target_id: 'DEC-T1' },
+    stub: () => stubClient({ records: baseRecords('chair', { Decision: { 'DEC-T1': DECISION } }) }) },
 ];
 
 function verdictOf(rows) {
@@ -221,6 +238,12 @@ export default async function (req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me().catch(() => null);
     if (!user) return Response.json({ error: 'Unauthorized', code: 'unauthenticated' }, { status: 401 });
+
+    // `{ "summary": true }` returns the verdicts WITHOUT the policy-build block and the per-case rows.
+    // The full response is longer than a builder session can display, which made the three suite totals
+    // unreadable — the one number a reviewer needs first. Summary mode changes no case and no assertion.
+    const body = await req.json().catch(() => ({}));
+    const summaryOnly = body?.summary === true;
 
     // Suite 1 — pure policy table
     const roleResults = ROLE_CASES.map((c) => {
@@ -276,7 +299,7 @@ export default async function (req) {
 
     return Response.json({
       policy_version: AUTHORITY_POLICY_VERSION,
-      policy_build: AUTHORITY_POLICY_BUILD,
+      ...(summaryOnly ? {} : { policy_build: AUTHORITY_POLICY_BUILD }),
       suites: {
         authority_role_tests: role,
         authority_positive_tests: positive,
@@ -297,7 +320,8 @@ export default async function (req) {
         vice_chair_delegated: capabilitiesForRole('vice_chair', { delegationActive: true }).length,
         delegable_capabilities: DELEGABLE_CAPABILITIES.length,
       },
-      results: [...roleResults, ...positiveResults, ...failClosedResults],
+      ...(summaryOnly ? {} : { results: [...roleResults, ...positiveResults, ...failClosedResults] }),
+      failures: summaryOnly ? [...roleResults, ...positiveResults, ...failClosedResults].filter((r) => !r.passed) : undefined,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

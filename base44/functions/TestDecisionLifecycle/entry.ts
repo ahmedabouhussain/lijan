@@ -9,6 +9,7 @@ import {
   issuanceGate,
   refusalFor,
   decisionChain,
+  canAdvanceDecision,
 } from '../../shared/decisionLifecycle.ts';
 
 // TestDecisionLifecycle — read-only suite for the decision state chain (D-041, mandate §2, R-17).
@@ -113,7 +114,7 @@ export default async function(req) {
     });
 
     check('LC-013', 'Every refusal carries a code plus Arabic and English text', () => {
-      const missing = ['open_vote', 'cast_vote', 'close_vote', 'issue'].filter((t) => {
+      const missing = ['open_vote', 'cast_vote', 'close_vote', 'issue', 'submit_for_review', 'start_execution'].filter((t) => {
         const r: any = refusalFor(t, 'x');
         return !r.code || !r.message?.ar || !r.message?.en;
       });
@@ -123,10 +124,65 @@ export default async function(req) {
     check('LC-014', 'The lifecycle contract version is pinned and named in every refusal', () => {
       const r: any = refusalFor('issue', 'draft');
       return {
-        passed: DECISION_LIFECYCLE_VERSION === 'decision-lifecycle-1.0.0'
+        passed: DECISION_LIFECYCLE_VERSION === 'decision-lifecycle-1.1.0'
           && r.lifecycle_policy_version === DECISION_LIFECYCLE_VERSION,
         version: DECISION_LIFECYCLE_VERSION,
       };
+    });
+
+    // ── The two steps that had NO command (decision-lifecycle-1.1.0) ──────────────────────────────
+    check('LC-015', 'A DRAFT is sent for review, and a draft is the only state it may be sent from', () => {
+      const t: any = DECISION_TRANSITIONS.submit_for_review;
+      return {
+        passed: t.to === DECISION_STATE.IN_REVIEW
+          && canAdvanceDecision(DECISION_STATE.DRAFT, 'submit_for_review') === true
+          && canAdvanceDecision(DECISION_STATE.APPROVED, 'submit_for_review') === false,
+        capability: t.capability,
+      };
+    });
+
+    check('LC-016', 'Sending for review is its OWN right — neither proposing nor reviewing', () => ({
+      passed: (DECISION_TRANSITIONS as any).submit_for_review.capability === 'decision.submit'
+        && (DECISION_TRANSITIONS as any).submit_for_review.capability !== 'decision.propose'
+        && (DECISION_TRANSITIONS as any).submit_for_review.capability !== 'decision.review',
+    }));
+
+    check('LC-017', 'A REVIEWED draft may still be taken to a vote — the new state is not a dead end', () => ({
+      passed: canOpenVote(DECISION_STATE.IN_REVIEW) === true,
+      in_review_opens_vote: canOpenVote(DECISION_STATE.IN_REVIEW),
+    }));
+
+    check('LC-018', 'A REVIEWED draft cannot be issued — review is not approval', () => {
+      const g = issuanceGate(DECISION_STATE.IN_REVIEW);
+      return { passed: g.allowed === false && g.code === 'decision_not_approved', gate: g };
+    });
+
+    check('LC-019', 'Execution starts from ISSUED only, and only once', () => ({
+      passed: (DECISION_TRANSITIONS as any).start_execution.to === DECISION_STATE.EXECUTING
+        && canAdvanceDecision(DECISION_STATE.ISSUED, 'start_execution') === true
+        && canAdvanceDecision(DECISION_STATE.APPROVED, 'start_execution') === false
+        && canAdvanceDecision(DECISION_STATE.EXECUTING, 'start_execution') === false,
+      capability: (DECISION_TRANSITIONS as any).start_execution.capability,
+    }));
+
+    check('LC-020', 'Starting execution uses the right that was declared but never exercised', () => ({
+      passed: (DECISION_TRANSITIONS as any).start_execution.capability === 'decision.execute',
+    }));
+
+    check('LC-021', 'Every state in this chain is written by a named command (no state without a writer)', () => {
+      const chain = decisionChain();
+      const unwritten = chain.filter((c: any) => c.reachable && !c.writable_by).map((c: any) => c.state);
+      const missing = [DECISION_STATE.IN_REVIEW, DECISION_STATE.EXECUTING]
+        .filter((s) => !chain.some((c: any) => c.state === s && c.reachable));
+      return { passed: unwritten.length === 0 && missing.length === 0, unwritten, states_missing_from_chain: missing };
+    });
+
+    check('LC-022', 'Both new steps refuse with a code plus Arabic and English text', () => {
+      const incomplete = ['submit_for_review', 'start_execution'].filter((t) => {
+        const r: any = refusalFor(t, 'x');
+        return !r.code || !r.message?.ar || !r.message?.en;
+      });
+      return { passed: incomplete.length === 0, incomplete };
     });
 
     const passed = results.filter((r) => r.verdict === 'PASS').length;

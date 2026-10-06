@@ -3,10 +3,10 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.3.0",
-    "supersedes": "authz-1.2.0-rc.2",
-    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.3.0 IS a kernel revision, unlike the rc.2 command-site slices: the guard's permitted-state lists are now READ FROM the lifecycle contracts instead of being re-typed, and minutes.issue was named as its own operational and delegable right. Both are security material, so the previous evidence is invalidated and the suites are re-run against this revision.",
-    "built_at": "2026-10-05T20:55:00Z",
+    "version": "authz-1.4.0",
+    "supersedes": "authz-1.3.0",
+    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.4.0 IS a kernel revision: decision.submit was named as its own operational right (sending a draft for review is neither proposing nor reviewing), and decision.execute — a right already granted to the chair but exercised by NO command — now has one, so 'executing' is a state a governed transition can produce. Both are security material, so the previous evidence is invalidated and every suite is re-run against this revision.",
+    "built_at": "2026-10-06T06:10:00Z",
     "repository_revision": {
       "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
       "note": "this slice is an uncommitted working tree on top of that commit; the revision is identified by the per-file digests below"
@@ -16,14 +16,14 @@
     "invalidates_prior_evidence": true,
     "combined_sha256": null,
     "source_files": [
-      { "path": "base44/shared/authorityKernel.ts", "sha256": "7d4e3ad85992c8d40c0c35be5abe66923ec3c49caac0f2b3f61ccbaa74a5bd26" },
-      { "path": "base44/shared/commandGuard.ts", "sha256": "353237e59bcacb81a3eff6df46aaf9f9b385c03a65d5ac0cb087d3ebbcf77f4c", "contract": "authz-1.3.0 — the permitted-state lists are read from the lifecycle contracts (single declaration)" },
+      { "path": "base44/shared/authorityKernel.ts", "sha256": "099856cfff4970d1ae468986b5125ff6bf72ccce441d55319d9ccc2c4d198e91" },
+      { "path": "base44/shared/commandGuard.ts", "sha256": "e2ad6292b6432a7eabaa313c524d9dcffb1dc70bb734d9d8bab56c5c762ce20e", "contract": "authz-1.4.0 — the permitted-state lists are read from the lifecycle contracts (single declaration); decision.submit and decision.execute take their gates from decision-lifecycle-1.1.0" },
       { "path": "base44/shared/meetingLifecycle.ts", "sha256": "2302a3180bcf5f4d9e1a5b0ee8417fa31fe1041816b9598395d7b4628012593d", "added_after": "the authz-1.3.0 kernel revision — consumed by the guard AND by four commands", "contract": "meeting-lifecycle-1.0.0 (agenda stages and minutes states stated ONCE: the right follows the ACT — agenda.edit prepares, agenda.approve closes; minutes.draft prepares content, minutes.issue releases approved minutes, minutes.review amends; an item is WITHDRAWN, never deleted)" },
       { "path": "base44/shared/serverRichText.ts", "sha256": "beb9587393d8b7fb35095946a5bd10363ce0123423972e7f6a0c30f5ac18674e", "contract": "the server side of the record-text policy (the same four rules as the client's richText.js): markup entered a governance record because the browser was the authority on stored text" },
       { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789" },
       { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "contract": "decision-integrity-1.2.0 (recorded policy version; the previous 1.1.0 evidence carries no round binding and is re-run)" },
       { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "contract": "round-context-1.1.0 (named-round selection + fail-closed on multiple active rounds)" },
-      { "path": "base44/shared/decisionLifecycle.ts", "sha256": "0e9675b13f8ca2ba50876453c978bc337f83aef6672800d7ce659ad27c62734b", "added_after": "the authz-1.2.0-rc.2 kernel freeze — a COMMAND-SITE policy source consumed by OpenVote/CastVote/CloseVote/IssueDecision, never by the kernel itself", "contract": "decision-lifecycle-1.0.0 (the decision state chain stated ONCE: a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and every transition names a state some command actually writes)" }
+      { "path": "base44/shared/decisionLifecycle.ts", "sha256": "923bf3c971a8df4ebaa4049e871a7e5bd631429da365dd9e850da8e8bf3d56f9", "added_after": "the authz-1.2.0-rc.2 kernel freeze — a COMMAND-SITE policy source consumed by OpenVote/CastVote/CloseVote/IssueDecision/TransitionDecision and READ BY THE GUARD for its four decision gates", "contract": "decision-lifecycle-1.1.0 (draft → in_review → voting → approved → issued → executing stated ONCE: a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, sending for review is its own right, execution begins by governed transition, and every state is written by a named command)" }
     ],
     "command_site_revisions": [
       {
@@ -53,12 +53,22 @@
         "why": "the agenda stage, the removal of an item and the minutes text were written straight from the browser with no command: a surface could assert a decision the committee never took, a record could be DELETED (a governance record that can be deleted cannot be audited), and the authority on what entered a governance document was the browser. The three minutes steps and the governed content write did not exist at all (D-019, D-020, D-022, D-024).",
         "kernel_impact": "SECURITY — this is the revision that moved the guard's state lists into the contracts and named minutes.issue, so the kernel version moved to authz-1.3.0 and prior evidence is invalidated. The suites were re-run against it.",
         "coverage_gap": "no suite exercises these HANDLERS: TestMeetingLifecycle asserts the contract and the text policy they consume, not a handler, a meeting or a deployment. The repository's own static checker (scripts/authority-guardrails.mjs) could NOT be executed from the builder environment; its six rules were applied to the new files by inspection instead (no client-supplied role, no client organisation in the guard, no name-based identity match, no fail-open authority, no read capability gating a write, trusted target on every write)."
+      },
+      {
+        "sites": ["TransitionDecision"],
+        "at": "2026-10-06T06:10:00Z",
+        "class": "security",
+        "what": "ONE governed command supplies the two decision steps that had NO command: submit_for_review (decision.submit, draft → in_review) and start_execution (decision.execute, issued → executing). The permitted state AND the right are read from decision-lifecycle-1.1.0, the guard reads the same contract for its state gates, every refusal carries a bilingual code, and the transition is written to the audit trail with the capability actually exercised.",
+        "why": "the decision surface displayed both steps as unavailable-WITH-A-REASON because no governed command existed, so reviewing a draft and starting execution of an issued decision were unreachable by any route; `in_review` was a state NO command wrote, and `executing` was displayed by every register (counts, follow-up automation, reports) while no transition in the build could produce it — the same class as D-023 and D-041.",
+        "guard_against_a_dead_end": "in_review was added to open_vote.from in the same revision: introducing a state a decision could enter but never leave would have re-created the unreachability defect. A reviewed draft may therefore be taken to a vote, and an approved decision may NOT be sent back for review (FCL-017).",
+        "kernel_impact": "SECURITY — decision.submit was named as its own operational right (chair, secretary) and decision.execute gained its first exerciser, so the kernel moved to authz-1.4.0 and prior evidence is invalidated. Every suite was re-run against it.",
+        "coverage_gap": "no suite exercises the HANDLER: TestDecisionLifecycle asserts the contract and TestAuthorizationGuard asserts the target/state/right gate through an isolated stub. A persisted transition needs a seated authenticated actor, which does not exist (blocker)."
       }
     ],
     "policy": {
-      "delegable_capabilities": 13,
-      "operational_capabilities": 38,
-      "operational_additions_this_round": ["decision.propose", "minutes.issue"],
+      "delegable_capabilities": 14,
+      "operational_capabilities": 40,
+      "operational_additions_this_round": ["decision.submit"],
       "state_gates_source": "PERMITTED_STATES in commandGuard.ts now READS the lifecycle contracts (decision-lifecycle-1.0.0, meeting-lifecycle-1.0.0) instead of re-typing the states: two hand-written lists were exactly how the guard came to permit an issuance its own command refused (draft|proposed) and to permit opening a vote from a state the command rejects.",
       "self_service_capabilities": ["conflict.declare", "recusal.record", "amendment.acknowledge"],
       "admin_read_ceiling": ["read", "audit.read", "report.export", "committee.view", "decision.view"],
@@ -92,6 +102,9 @@
       "suites_rerun_after_lifecycle_change": "PASS — 38/38 + 14/14 + 15/15 · 40/40 · 12/12 · 14/14 (2026-10-05, after the lifecycle wiring in OpenVote/CastVote/CloseVote/IssueDecision)",
       "meeting_lifecycle_suite": "PASS 19/19 (policy meeting-lifecycle-1.0.0, writes_performed: 0, records_read: 0) — includes 'every agenda stage is written by SOME command', 'every minutes state is written by SOME command', 'PREPARING the agenda and APPROVING an item are different rights', 'an item is WITHDRAWN, not deleted', and the server text policy",
       "suites_rerun_on_authz_1_3_0": "PASS — 40/40 · 12/12 · 19/19 · 14/14 re-run against authz-1.3.0 (decision integrity, vote eligibility, meeting lifecycle, decision lifecycle). TestAuthorizationGuard was re-invoked live and reports policy_version authz-1.3.0 from the kernel; its three suite totals could NOT be read back (the response exceeds the builder's display budget and the function has no summary mode), so no case count is claimed for it here. Its cases assert (role x capability) grants plus delegation and grant narrowing only — none references the state lists this revision moved into the contracts, and none references the new minutes.issue right (verified by reading the case table), so this revision alters no assertion it makes.",
+      "suites_rerun_on_authz_1_4_0": "PASS — TestAuthorizationGuard 42/42 + 16/16 + 17/17 = 75/75 with failures: [] (read with { summary: true }, a mode added in this revision precisely because the full response exceeds what the builder can display) · TestDecisionIntegrity 40/40 · TestVoteEligibility 12/12 · TestMeetingLifecycle 19/19 · TestDecisionLifecycle 22/22 — all re-run against authz-1.4.0",
+      "new_cases_this_revision": "AUTH-039…AUTH-042 (chair and secretary hold decision.submit; a member does not; a vice-chair does not inherit decision.execute) · POS-015/POS-016 (the guard lets a chair send a draft for review and start execution of an issued decision) · FCL-016/FCL-017 (execution on a non-issued decision, and re-submitting an approved one, are refused on state) · LC-015…LC-022 (both new steps, their rights, no dead end, no state without a writer, bilingual refusals)",
+      "command_site_smoke_this_revision": "TransitionDecision invoked with a non-existent target: refused at the authorization gate (404 target_not_found, policy_version authz-1.4.0, correlation corr_muw9o85kl5tvd5, ZERO writes). This proves the new command loads with its contract at runtime and that refusal precedes every read and write; it does NOT exercise a persisted transition.",
       "governed_surfaces_suite_last_invocation": "NO VERDICT READ — the invocation timed out (504 after ~300s, two attempts canceled). It is not recorded as pass or fail. It references none of the state lists this revision changed (verified by source scan), so the timeout is not attributed to this revision, but that is an inference and not a measurement.",
       "frontend_build_after_meeting_slice": "vite build status=0",
       "command_site_executed_cases": "ONE smoke case only — CastVote invoked on the edited build with no valid target refused at the authorization gate (404 target_not_found, correlation corr_muva2w0ck88pkz, zero writes). This proves the module loads and that refusal precedes the round read; it does NOT exercise the round resolution itself, so no case yet proves a ballot is refused under multiple_active_rounds",
@@ -105,7 +118,10 @@
       "D-041 — the decision state chain is stated once (decisionLifecycle, decision-lifecycle-1.0.0): a governed draft may open a round, issuance requires 'approved', re-issuance is idempotent, and no state that nothing writes is any longer the only key to a transition. The recommended policy option was applied.",
       "D-040 — attendance is resolved by SEAT only; the name key and the name fallback were removed from AttendancePanel",
       "D-042 — the decision-draft control on the meeting page is gated by decision.propose, the capability the command it calls requires",
-      "D-039 — the vote path consumes the single round contract and refuses multiple_active_rounds before any write"
+      "D-039 — the vote path consumes the single round contract and refuses multiple_active_rounds before any write",
+      "D-043 — the two decision steps that had no command now have one (TransitionDecision): a draft is sent for review under decision.submit, and in_review is a state a command writes and a vote may follow",
+      "D-044 — decision.execute, declared in the catalogue and granted to the chair but exercised by NO command, now produces `executing`: the state the registers displayed and nothing could write",
+      "D-045 — introducing in_review without widening the vote gate would have created a state with no exit; open_vote.from now includes in_review (LC-017) and an approved decision may not return to review (FCL-017)"
     ],
     "open_defects": [
       "packages issued under decision-integrity 1.1.0 carry NO round binding, so they cannot be bound to the round they came from (reported as unbound_legacy_package, never silently rebound); no package has been issued in production, so no such record exists yet",
@@ -121,6 +137,18 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.3.0",
+      "superseded_at": "2026-10-06T06:10:00Z",
+      "evidence_state": "INVALIDATED by the authz-1.4.0 kernel revision — decision.submit was named as an operational right and decision.execute gained its first command, which changes authority material; every suite was re-run against 1.4.0",
+      "recorded": {
+        "authorityKernel_sha256": "7d4e3ad85992c8d40c0c35be5abe66923ec3c49caac0f2b3f61ccbaa74a5bd26",
+        "commandGuard_sha256": "353237e59bcacb81a3eff6df46aaf9f9b385c03a65d5ac0cb087d3ebbcf77f4c",
+        "meetingLifecycle_sha256": "2302a3180bcf5f4d9e1a5b0ee8417fa31fe1041816b9598395d7b4628012593d",
+        "evidence_that_ran_under_it": "40/40 · 12/12 · 19/19 · 14/14 (unit/policy suites only; the authority suite reported authz-1.3.0 from the kernel but its three totals could NOT be read back, so no case count was ever claimed for it under that revision)",
+        "command_site_changes_under_it": ["TransitionAgendaItem / ArchiveAgendaItem / PrepareMinutes / TransitionMinutes"]
+      }
+    },
     {
       "version": "authz-1.2.0-rc.2",
       "superseded_at": "2026-10-05T20:55:00Z",

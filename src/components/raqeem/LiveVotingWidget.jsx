@@ -21,7 +21,9 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
 
   const base = { committee_id: decision.committee_id, decision_id: decision.id };
   const total = (decision.vote_for || 0) + (decision.vote_against || 0) + (decision.vote_abstain || 0);
-  const showControls = decision.status === "proposed" || decision.status === "voting";
+  // States a round may be opened from — mirrors decision-lifecycle-1.1.0 (a reviewed draft is votable).
+  const votableStates = ["draft", "proposed", "in_review"];
+  const showControls = votableStates.includes(decision.status) || decision.status === "voting";
 
   if (!showControls && total === 0) return null;
 
@@ -50,7 +52,7 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
       )}
 
       {/* Controls */}
-      {decision.status === "proposed" && canCallVote && (
+      {votableStates.includes(decision.status) && canCallVote && (
         <Button size="sm" disabled={voting} onClick={() => handle("OpenVote", base)}>
           {voting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5" />}
           {t("فتح التصويت", "Open vote")}

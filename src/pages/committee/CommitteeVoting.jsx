@@ -24,7 +24,13 @@ export default function CommitteeVoting() {
   if (!data) return <TableSkeleton rows={4} />;
   const { my_role, is_oversight, is_recused, committee } = data;
   const base = `/o/${orgRef}/c/${committeeRef}`;
-  const votingDecisions = (data.registers.decisions || []).filter((d) => d.status === "voting" || d.status === "proposed");
+  // The states a round may be OPENED from, mirroring base44/shared/decisionLifecycle.ts
+  // (decision-lifecycle-1.1.0): draft · proposed (legacy) · in_review — a reviewed draft is votable,
+  // so the new state is listed everywhere the states it sits between already are.
+  const votableStates = ["draft", "proposed", "in_review"];
+  const votingDecisions = (data.registers.decisions || []).filter(
+    (d) => d.status === "voting" || votableStates.includes(d.status),
+  );
   const canCallVote = !is_oversight && !is_recused && ["chair", "vice_chair"].includes(my_role);
   const canCastVote = !is_oversight && !is_recused && ["chair", "vice_chair", "secretary", "member"].includes(my_role);
 
@@ -80,7 +86,7 @@ export default function CommitteeVoting() {
               )}
               {/* Voting controls */}
               <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 flex-wrap">
-                {d.status === "proposed" && canCallVote && (
+                {votableStates.includes(d.status) && canCallVote && (
                   <Button size="sm" disabled={voting} onClick={() => handleVoteAction("OpenVote", { committee_id: committee.id, decision_id: d.id })}>
                     {voting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5" />}
                     {t("فتح التصويت", "Open Vote")}

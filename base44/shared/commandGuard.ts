@@ -58,6 +58,10 @@ const PERMITTED_STATES = {
   "vote.certify": { field: "status", states: [...DECISION_TRANSITIONS.close_vote.from] },
   "minutes.approve": { field: "status", states: ["draft", "in_review"] },
   "decision.issue": { field: "status", states: [...DECISION_TRANSITIONS.issue.from, ...DECISION_TRANSITIONS.issue.idempotent_from] },
+  // The two decision steps added with decision-lifecycle-1.1.0: a draft may be sent for review, and
+  // execution may begin on an issued decision. Both lists are the contract's own, never re-typed here.
+  "decision.submit": { field: "status", states: [...DECISION_TRANSITIONS.submit_for_review.from] },
+  "decision.execute": { field: "status", states: [...DECISION_TRANSITIONS.start_execution.from] },
   // Gates for the agenda/minutes commands added in this slice.
   "agenda.edit": { field: "status", states: [...AGENDA_TRANSITIONS.begin_discussion.from, ...AGENDA_TRANSITIONS.defer.from, ...AGENDA_ARCHIVE.from] },
   "agenda.approve": { field: "status", states: [...AGENDA_TRANSITIONS.decide.from] },
