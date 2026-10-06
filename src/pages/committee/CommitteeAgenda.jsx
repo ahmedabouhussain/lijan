@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { L } from "@/lib/l10n";
+import AgendaGuestPanel from "@/components/raqeem/AgendaGuestPanel";
 
 const READINESS = {
   ready: { ar: "جاهز", en: "Ready", color: "bg-emerald-100 text-emerald-700" },
@@ -132,6 +133,7 @@ export default function CommitteeAgenda() {
                 </div>
                 {a.objective && <p className="text-xs text-muted-foreground">{a.objective}</p>}
                 {presenter && <p className="text-xs text-muted-foreground mt-1">{t("المقدم", "Presenter")}: {presenter}</p>}
+                <AgendaGuestPanel agendaItem={a} committeeId={committeeId} canManage={["chair", "secretary", "committee_administrator"].includes(myRole)} />
               </div>
             );
           })}

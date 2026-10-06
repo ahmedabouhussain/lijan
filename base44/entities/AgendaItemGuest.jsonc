@@ -1,0 +1,180 @@
+{
+  "name": "AgendaItemGuest",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID"
+    },
+    "agenda_item_id": {
+      "type": "string",
+      "title": "Agenda Item ID (the ONE item this guest may read)"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name (Arabic edition)"
+    },
+    "guest_name_en": {
+      "type": "string",
+      "title": "Guest Name (English edition)"
+    },
+    "guest_email": {
+      "type": "string",
+      "title": "Guest Email (contact only \u2014 never an account, never authority)"
+    },
+    "guest_organization": {
+      "type": "string",
+      "title": "Represented Body / Institution"
+    },
+    "purpose": {
+      "type": "string",
+      "title": "Purpose of the Invitation (why this item needs this guest)"
+    },
+    "access_token": {
+      "type": "string",
+      "title": "Access Token (the ONLY capability the guest holds \u2014 unguessable, expires, revocable)"
+    },
+    "access_scope": {
+      "type": "string",
+      "title": "Access Scope (a guest is item-scoped; the scope never widens)",
+      "enum": [
+        "item_only"
+      ],
+      "default": "item_only"
+    },
+    "permitted_document_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Permitted Attachments (explicit list; minutes and restricted material are refused even when listed)"
+    },
+    "valid_from": {
+      "type": "string",
+      "title": "Valid From (optional; a guest link is never valid before this)",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expires At (required, bounded \u2014 expiry blocks old server-side links)",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "invited",
+        "active",
+        "expired",
+        "revoked"
+      ],
+      "default": "invited"
+    },
+    "invited_by_user_id": {
+      "type": "string",
+      "title": "Invited By User ID"
+    },
+    "invited_by_name": {
+      "type": "string",
+      "title": "Invited By (display only)"
+    },
+    "invited_at": {
+      "type": "string",
+      "title": "Invited At",
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": "string",
+      "title": "Revoked At",
+      "format": "date-time"
+    },
+    "revoked_by_user_id": {
+      "type": "string",
+      "title": "Revoked By User ID"
+    },
+    "revoke_reason": {
+      "type": "string",
+      "title": "Revoke Reason"
+    },
+    "last_viewed_at": {
+      "type": "string",
+      "title": "Last Viewed At (server-written on each permitted read)",
+      "format": "date-time"
+    },
+    "view_count": {
+      "type": "number",
+      "title": "View Count (server-written; a record of reads, never proof of what was read)",
+      "default": 0
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Guest Access Contract Version in Force"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "agenda_item_id",
+    "guest_name",
+    "access_token",
+    "access_scope",
+    "expires_at",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

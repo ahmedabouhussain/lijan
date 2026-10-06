@@ -31,6 +31,7 @@ const DecisionDetail = lazy(() => import('@/pages/DecisionDetail'));
 import MinutesArchive from '@/pages/MinutesArchive';
 import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
+import GuestItemView from '@/pages/GuestItemView';
 import GovernancePolicies from '@/pages/GovernancePolicies';
 import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
@@ -140,6 +141,8 @@ const AuthenticatedApp = () => {
       <Route path="/governance-policies" element={<GovernancePolicies />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
+      {/* Item-scoped guest invitation link — no account, no app role: the token is the capability. */}
+      <Route path="/guest/:token" element={<GuestItemView />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
