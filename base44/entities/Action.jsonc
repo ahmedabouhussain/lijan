@@ -180,6 +180,14 @@
       "type": "string",
       "title": "Evidence Correlation ID"
     },
+    "handover_pack_id": {
+      "type": "string",
+      "title": "Handover Pack (the approved handover that moved FUTURE responsibility for this action)"
+    },
+    "handover_from_user_id": {
+      "type": "string",
+      "title": "Handover From (the predecessor whose open obligation moved \u2014 the predecessor's own completed actions keep their own attribution)"
+    },
     "closed_at": {
       "type": "string",
       "title": "Closed At",

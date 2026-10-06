@@ -12,7 +12,7 @@
     },
     "user_id": {
       "type": "string",
-      "title": "User ID"
+      "title": "Person (user id) occupying the seat \u2014 the seat is not the person"
     },
     "user_email": {
       "type": "string",
@@ -94,12 +94,13 @@
     },
     "status": {
       "type": "string",
-      "title": "Status",
+      "title": "Status (an ended seat keeps its history; the vacancy belongs to the institution)",
       "enum": [
         "active",
         "inactive",
         "recused",
         "resigned",
+        "removed",
         "pending"
       ],
       "default": "active"
@@ -108,6 +109,37 @@
       "type": "boolean",
       "title": "Alternate Activated",
       "default": false
+    },
+    "appointment_type": {
+      "type": "string",
+      "title": "Appointment Type (a bounded appointment never becomes permanent by remaining in force)",
+      "enum": [
+        "permanent",
+        "acting",
+        "substitute",
+        "ex_officio"
+      ],
+      "default": "permanent"
+    },
+    "acting_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Bounded Scope of an Acting Appointment (the powers it carries \u2014 never a blanket office permission set)"
+    },
+    "acting_expires_at": {
+      "type": "string",
+      "title": "Acting Expiry (a bounded appointment ends by time)",
+      "format": "date-time"
+    },
+    "predecessor_membership_id": {
+      "type": "string",
+      "title": "Predecessor Seat (the seat this assignment follows \u2014 never the predecessor's account or grants)"
+    },
+    "appointment_event_id": {
+      "type": "string",
+      "title": "Appointment Event that created or changed this seat"
     },
     "term_start": {
       "type": "string",

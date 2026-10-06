@@ -122,6 +122,13 @@ const ACTION_SELF_SUBMITTED = {
 };
 const ACTION_CLOSED = { ...ACTION_ACCEPT, id: 'ACT-T3', status: 'closed' };
 const REVIEW = { id: 'RRV-T1', committee_id: COM, organization_id: ORG, document_id: 'DOC-T1', reviewer_user_id: USER.id, status: 'pending' };
+// Continuity fixtures: a seat is not a person. SEAT-OWN is occupied by the acting user, SEAT-OTHER is
+// occupied by somebody else; the two handover packs name different successors.
+const SEAT_OWN = { id: 'SEAT-OWN', committee_id: COM, organization_id: ORG, user_id: USER.id, role: 'chair', status: 'active' };
+const SEAT_OTHER = { ...SEAT_OWN, id: 'SEAT-OTHER', user_id: 'USR-OTHER' };
+const PACK_OWN = { id: 'HOP-1', committee_id: COM, organization_id: ORG, successor_user_id: USER.id, predecessor_user_id: 'USR-OTHER', status: 'pending_acceptance' };
+const PACK_OTHER = { ...PACK_OWN, id: 'HOP-2', successor_user_id: 'USR-OTHER' };
+const PACK_CLOSED = { ...PACK_OWN, id: 'HOP-3', status: 'accepted' };
 const DECISION = { id: 'DEC-T1', committee_id: COM, organization_id: ORG, status: 'approved' };
 const DOCUMENT = { id: 'DOC-T1', committee_id: COM, organization_id: ORG };
 const COMMITTEE = { id: COM, organization_id: ORG };
@@ -189,6 +196,12 @@ const POSITIVE_CASES = [
   { id: 'POS-017', label: 'an INDEPENDENT seat accepts submitted evidence (action.verify is its own right)', role: 'chair', expect: true,
     opts: { capability: 'action.verify', target_type: 'Action', target_id: 'ACT-T4' },
     records: () => baseRecords('chair', { Action: { 'ACT-T4': ACTION_AWAITING_VERDICT } }) },
+  { id: 'POS-018', label: 'a seated person resigns their OWN appointment (seat.resign is a personal act)', role: 'member', expect: true,
+    opts: { capability: 'seat.resign', target_type: 'CommitteeMembership', target_id: 'SEAT-OWN' },
+    records: () => baseRecords('member', { CommitteeMembership: { 'SEAT-OWN': SEAT_OWN } }) },
+  { id: 'POS-019', label: 'the NAMED successor accepts the handover addressed to them', role: 'member', expect: true,
+    opts: { capability: 'seat.handover_accept', target_type: 'HandoverPack', target_id: 'HOP-1' },
+    records: () => baseRecords('member', { HandoverPack: { 'HOP-1': PACK_OWN } }) },
 ];
 
 // ── Suite 3 · Fail-Closed Tests (a fact that cannot be read is not an absent fact) ─
@@ -250,6 +263,15 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-019', label: 'the seat that submitted the evidence cannot judge it (separation of duty, every role)', expectCode: 'actor_not_independent',
     opts: { capability: 'action.verify', target_type: 'Action', target_id: 'ACT-T5' },
     stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T5': ACTION_SELF_SUBMITTED } }) }) },
+  { id: 'FCL-020', label: 'even the CHAIR cannot resign another person\u2019s seat (identity is not a privilege of rank)', expectCode: 'identity_mismatch',
+    opts: { capability: 'seat.resign', target_type: 'CommitteeMembership', target_id: 'SEAT-OTHER' },
+    stub: () => stubClient({ records: baseRecords('chair', { CommitteeMembership: { 'SEAT-OTHER': SEAT_OTHER } }) }) },
+  { id: 'FCL-021', label: 'a handover addressed to somebody else is not accepted by this caller', expectCode: 'identity_mismatch',
+    opts: { capability: 'seat.handover_accept', target_type: 'HandoverPack', target_id: 'HOP-2' },
+    stub: () => stubClient({ records: baseRecords('chair', { HandoverPack: { 'HOP-2': PACK_OTHER } }) }) },
+  { id: 'FCL-022', label: 'a handover already decided is not reopened (state gate)', expectCode: 'state_not_permitted',
+    opts: { capability: 'seat.handover_accept', target_type: 'HandoverPack', target_id: 'HOP-3' },
+    stub: () => stubClient({ records: baseRecords('member', { HandoverPack: { 'HOP-3': PACK_CLOSED } }) }) },
 ];
 
 function verdictOf(rows) {

@@ -71,6 +71,20 @@
       "title": "Personal Items Revoked, Never Transferred",
       "default": 0
     },
+    "inventory_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Inventory Sources Actually Read (the boundary of this handover must be visible, not implied)"
+    },
+    "inventory_not_read": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Sources NOT Read (named as unresolved \u2014 a failed or absent read is never an empty success)"
+    },
     "reassessed_delegations": {
       "type": "array",
       "items": {

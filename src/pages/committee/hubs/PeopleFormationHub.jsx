@@ -8,7 +8,10 @@ import CommitteeRecusals from "@/pages/committee/CommitteeRecusals";
 import FormationAndAmendments from "@/components/raqeem/FormationAndAmendments";
 import CommitteeEstablishment from "@/pages/committee/CommitteeEstablishment";
 import FormationHistory from "@/pages/committee/FormationHistory";
-import { Users, Award, ArrowLeftRight, Users2, ShieldOff, GitBranch, ScrollText, History } from "lucide-react";
+import CommitteeStructure from "@/pages/committee/CommitteeStructure";
+import CommitteeAppointments from "@/pages/committee/CommitteeAppointments";
+import CommitteeHandover from "@/pages/committee/CommitteeHandover";
+import { Users, Award, ArrowLeftRight, Users2, ShieldOff, GitBranch, ScrollText, History, Network, UserCog, Handshake } from "lucide-react";
 
 const ADMIN_ROLES = ["chair", "vice_chair", "secretary", "committee_administrator"];
 
@@ -24,6 +27,9 @@ export default function PeopleFormationHub() {
         { key: "delegations", label: "التفويضات", labelEn: "Delegations", icon: ArrowLeftRight, component: CommitteeDelegations, roles: ADMIN_ROLES },
         { key: "alternates", label: "البدلاء", labelEn: "Alternates", icon: Users2, component: CommitteeAlternates, roles: ADMIN_ROLES },
         { key: "recusals", label: "التنحي والتعارض", labelEn: "Conflicts & Recusals", icon: ShieldOff, component: CommitteeRecusals },
+        { key: "structure", label: "الهيكل والعلاقات", labelEn: "Structure & Relationships", icon: Network, component: CommitteeStructure },
+        { key: "appointments", label: "التعيينات والاستمرارية", labelEn: "Appointments & Continuity", icon: UserCog, component: CommitteeAppointments },
+        { key: "handover", label: "التسليم للخلف", labelEn: "Handover & Succession", icon: Handshake, component: CommitteeHandover },
         { key: "formation-amendments", label: "التشكيل والتعديلات", labelEn: "Formation & Amendments", icon: GitBranch, component: FormationAndAmendments, roles: ADMIN_ROLES },
         { key: "establishment", label: "سندات التأسيس", labelEn: "Establishment", icon: ScrollText, component: CommitteeEstablishment, roles: ADMIN_ROLES },
         { key: "formation-history", label: "سجل التشكيل", labelEn: "Formation History", icon: History, component: FormationHistory, roles: ADMIN_ROLES },
