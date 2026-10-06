@@ -61,10 +61,21 @@ export default async function (req: Request): Promise<Response> {
   check('GS-010', 'no governed surface performs a deletion',
     GOVERNANCE_SURFACES.every((s) => !/Delete|Remove/.test(s.command)), null);
 
-  check('GS-011', 'the register DECLARES the capabilities it could not re-derive instead of implying completeness',
-    summary.unverified_capabilities.length > 0
-    && summary.unverified_capabilities.every((u: any) => !!u.command && !!u.id)
-    && audit.declared_work.length === summary.unverified_capabilities.length, summary.unverified_capabilities.length);
+  // The property is that the register CAN declare a capability it did not re-derive, and never implies
+  // completeness — not that such a gap must exist. Requiring a non-empty work list made the honest end
+  // state ("every declared right re-derived from the command that enforces it") a FAILURE, which is a
+  // stale premise in the test rather than a rule of the register (the same class as D-047's POS-009).
+  check('GS-011', 'the register DECLARES any capability it could not re-derive, instead of implying completeness',
+    summary.unverified_capabilities.every((u: any) => !!u.command && !!u.id)
+    && audit.declared_work.length === summary.unverified_capabilities.length
+    && summary.unverified_capabilities.length === GOVERNANCE_SURFACES.filter((s) => s.capability_source === 'unverified').length,
+    summary.unverified_capabilities.length);
+
+  check('GS-023', 'the register states its REMAINING gap: every surface without a recorded path is named as awaiting an authorized seated actor',
+    summary.blocked_awaiting_seated_actor.length === GOVERNANCE_SURFACES.length - summary.recorded_paths
+    && summary.blocked_awaiting_seated_actor.length > 0
+    && summary.recorded_paths === GOVERNANCE_SURFACES.filter((s) => s.recorded_path === true).length,
+    { awaiting_seated_actor: summary.blocked_awaiting_seated_actor.length, recorded_paths: summary.recorded_paths });
 
   check('GS-012', 'every stage carries at least one surface',
     Object.keys(SURFACE_STAGES).every((k) => (byStage[k] || []).length > 0), Object.keys(SURFACE_STAGES).map((k) => `${k}:${(byStage[k] || []).length}`));

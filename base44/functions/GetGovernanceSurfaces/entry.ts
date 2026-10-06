@@ -70,8 +70,8 @@ export default async function (req) {
       // instead of the register deciding availability itself.
       declared_capabilities: declaredCapabilities(),
       honesty_note: {
-        ar: "هذا السجل يعلن نقصه: كل سطح لا يحمل دليلًا محفوظًا (بمرجع ارتباط) موسوم بأنه بانتظار فاعل مُقعد مُصادَق، والحقوق التي لم يُعد اشتقاقها في هذه الجولة مُسمّاة في قائمة العمل.",
-        en: "This register declares its own gaps: every surface without a recorded path (with a correlation reference) is flagged as awaiting an authorized seated actor, and the capabilities not re-derived in this pass are named in the work list.",
+        ar: "هذا السجل يعلن نقصه من جهتين: (١) كل سطح لا يحمل دليلًا محفوظًا (بمرجع ارتباط) موسوم بأنه بانتظار فاعل مُقعد مُصادَق — وهذا نقص لا يمكن إخفاؤه؛ (٢) وقائمة الحقوق التي لم يُعد اشتقاقها في هذه الجولة مُسمّاة صراحةً، وهي قد تكون فارغة حين يُشتقّ الكل — والقائمة تبقى لأن السجل يجب أن يستطيع الإعلان لا أن يُلزم بنقص.",
+        en: "This register declares two kinds of gap: (1) every surface without a recorded path (with a correlation reference) is flagged as awaiting an authorized seated actor, which is a gap that cannot be hidden; and (2) the capabilities not re-derived in this pass are named outright — a list that may legitimately be EMPTY when every right has been re-derived. The field stays because a register must be able to declare a gap, not because it must have one.",
       },
       no_surface_acts_alone: {
         ar: "لا سطح ينفّذ فعلًا بنفسه: كل فعل يسمّي أمرًا خادميًا محكومًا، وما لا أمر له يُعلن معطّلًا بسببه بدل أن يُنفَّذ من المتصفح.",
