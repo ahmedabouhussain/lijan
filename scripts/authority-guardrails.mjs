@@ -27,7 +27,7 @@ const POLICY_MODULES = /(shared\/authorityKernel\.ts|shared\/commandGuard\.ts)$/
 // authorize, so the TOKEN is the authority — issued by a governed command, item-scoped, time-bounded
 // and revocable — and the act is bounded to the token's own row. They are reported as their own set so
 // they can neither be counted as migrated nor hide inside the migration backlog.
-const CAPABILITY_TOKEN_ACTS = /(GetGuestItemView|GetActionExtractView|RespondToActionExtract)$/;
+const CAPABILITY_TOKEN_ACTS = /functions\/(GetGuestItemView|GetActionExtractView|RespondToActionExtract)\/entry\.ts$/;
 
 const ERRORS = [
   { id: "client-role-authority", re: /\b(body|payload|req\.body)\.(role|is_admin|can_sign|can_approve)\b/, why: "client-supplied role/flag used as authority" },

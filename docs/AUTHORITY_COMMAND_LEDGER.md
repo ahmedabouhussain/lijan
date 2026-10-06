@@ -5,14 +5,14 @@
 
 - مواضع الأوامر المكتشفة: **123**
 - على المسار المحروس (`authorizeCommand` + سجل مستهدف): **78**
-- تلميح لجنة فقط (بدون سجل مستهدف): **45**
+- تلميح لجنة فقط (بدون سجل مستهدف): **42**
 -كتابة محكومة بحق قراءة: **0**
 - مطابقة بالاسم: **0**
-- أفعال برمز قدرة (خارج مسار الأوامر بالتصميم: الرمز هو السلطة، والفعل محدود بصفّه): **0**
+- أفعال برمز قدرة (خارج مسار الأوامر بالتصميم: الرمز هو السلطة، والفعل محدود بصفّه): **3**
 
 ### التداخل (لا تُجمع القوائم كأنها مواضع فريدة)
 
-- اتحاد المواضع التي تحتاج عملًا: **45** موضعًا فريدًا
+- اتحاد المواضع التي تحتاج عملًا: **42** موضعًا فريدًا
 - «تلميح فقط» ∩ «محكوم بقراءة»: 0 — —
 - «تلميح فقط» ∩ «مطابقة بالاسم»: 0 — —
 - «محكوم بقراءة» ∩ «مطابقة بالاسم»: 0 — —
@@ -63,13 +63,13 @@
 | CMD-39 | `DeclareConflict` | conflict.declare | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-40 | `DelegateAuthority` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-41 | `ExtendTerm` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-42 | `GetActionExtractView` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-42 | `GetActionExtractView` | read (تلميح فقط) | نعم | تلميح لجنة | — | — | لا | لا | رمز قدرة |
 | CMD-43 | `ListActionExtracts` | action.admin | لا | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-44 | `LogAmeenAction` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
 | CMD-45 | `ProcessEscalation` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-46 | `RecordRecusal` | recusal.record | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-47 | `RequestActionExtension` | action.progress | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-48 | `RespondToActionExtract` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-48 | `RespondToActionExtract` | read (تلميح فقط) | نعم | تلميح لجنة | — | — | لا | لا | رمز قدرة |
 | CMD-49 | `RetryEscalationNotice` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-50 | `ShareActionExtract` | action.admin | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-51 | `SubmitActionEvidence` | — | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
@@ -113,7 +113,7 @@
 | CMD-89 | `EnterExploration` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
 | CMD-90 | `EvaluateAgendaReadiness` | agenda.evaluate | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-91 | `FinalizeCirculation` | circulation.finalize | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
-| CMD-92 | `GetGuestItemView` | read (تلميح فقط) | نعم | تلميح لجنة | مرِّر السجل المستهدف عبر authorizeCommand | — | لا | لا | قيد الترحيل |
+| CMD-92 | `GetGuestItemView` | read (تلميح فقط) | نعم | تلميح لجنة | — | — | لا | لا | رمز قدرة |
 | CMD-93 | `InitiateHandover` | committee.manage | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-94 | `InviteAgendaItemGuest` | agenda.edit | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
 | CMD-95 | `NotifyAffectedMembers` | amendment.notify | نعم | سجل مستهدف | — | authorizeCommand | لا | لا | مهاجر |
