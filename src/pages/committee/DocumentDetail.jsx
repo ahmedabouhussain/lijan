@@ -12,6 +12,7 @@ import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
 import { SURFACE_STATE } from "@/lib/governedState";
 import { formatDate, DOCUMENT_STATUS, CLASSIFICATION } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
+import DocumentAnnotationsPanel from "@/components/raqeem/annotations/DocumentAnnotationsPanel";
 
 // DocumentDetail — ONE document, opened from wherever it was listed: the review task, the
 // documents register, a decision or a meeting. It shows the record's own metadata, its stored
@@ -225,6 +226,9 @@ export default function DocumentDetail() {
           </div>
         )}
       </div>
+
+      {/* Notes — bound to the version they were written on; private notes stay with their author */}
+      <DocumentAnnotationsPanel documentId={document.id} isExploration={isExploration} />
 
       {/* Review trail — requests and the verdicts recorded against them */}
       <div className="raqeem-card p-5">
