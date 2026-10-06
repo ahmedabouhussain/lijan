@@ -15,6 +15,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import { WorkspaceSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { cn } from "@/lib/utils";
 import DrHamadExperience from "@/components/demo/DrHamadExperience";
+import MyWorkInbox from "@/components/raqeem/MyWorkInbox";
 
 const ROLE_ICONS = {
   chair: Crown,
@@ -156,6 +157,9 @@ export default function UnifiedWorkspace() {
           </button>
         )}
       </div>
+
+      {/* My Workspace — the person's own queue, above navigation: what is required of ME now. */}
+      <MyWorkInbox />
 
       {/* Organizations + Committees */}
       <div className="space-y-4">

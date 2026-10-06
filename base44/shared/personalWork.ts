@@ -239,7 +239,7 @@ function makeItem(kind: string, opts: any) {
 //   placeFor(committeeId)        → { committee:{id,ref,name{ar,en}}, organization:{ref,name{ar,en}} }
 //   linkFor(committeeId, kind, recordId) → route string
 
-export function actionWorkItems({ actions = [], actorId, can, placeFor, linkFor }: any) {
+export function actionWorkItems({ actions = [], actorId, can, capacityFor, placeFor, linkFor }: any) {
   const items: any[] = [];
   for (const a of actions) {
     const done = DONE_STATUSES.includes(a.status);
@@ -272,9 +272,9 @@ export function actionWorkItems({ actions = [], actorId, can, placeFor, linkFor 
         recordId: a.id, entity: 'Action', rawState: a.verification_state,
         title: { ar: a.title_ar || a.title, en: a.title_en || a.title },
         subtitle: a.evidence_notes || null,
-        place, capacity: can.capacityFor ? can.capacityFor(a.committee_id) : null, deadline: a.deadline,
+        place, capacity: capacityFor(a.committee_id), deadline: a.deadline,
         state: stateLabel('verification', 'submitted'),
-        why: capacityBasis(can.capacityFor ? can.capacityFor(a.committee_id) : null,
+        why: capacityBasis(capacityFor(a.committee_id),
           'لأنك تحمل حق التحقق المستقل في هذه اللجنة، ولم تُقدِّم هذه المراجعة',
           'Because you hold the independent-verification right here and did not submit this revision'),
         route: linkFor(a.committee_id, 'action_verify', a.id),
@@ -288,10 +288,10 @@ export function actionWorkItems({ actions = [], actorId, can, placeFor, linkFor 
       items.push(makeItem('action_close', {
         recordId: a.id, entity: 'Action', rawState: a.status,
         title: { ar: a.title_ar || a.title, en: a.title_en || a.title },
-        place, capacity: can.capacityFor ? can.capacityFor(a.committee_id) : null, deadline: a.deadline,
+        place, capacity: capacityFor(a.committee_id), deadline: a.deadline,
         state: stateLabel('action', a.status),
         secondary_state: stateLabel('verification', 'accepted'),
-        why: capacityBasis(can.capacityFor ? can.capacityFor(a.committee_id) : null),
+        why: capacityBasis(capacityFor(a.committee_id)),
         route: linkFor(a.committee_id, 'action_close', a.id),
       }));
     }
@@ -299,13 +299,13 @@ export function actionWorkItems({ actions = [], actorId, can, placeFor, linkFor 
   return items;
 }
 
-export function decisionWorkItems({ decisions = [], votedDecisionIds = [], can, placeFor, linkFor }: any) {
+export function decisionWorkItems({ decisions = [], votedDecisionIds = [], can, capacityFor, placeFor, linkFor }: any) {
   const items: any[] = [];
   for (const d of decisions) {
     const place = placeFor(d.committee_id);
     if (!place) continue;
     const title = { ar: d.title_ar || d.title, en: d.title_en || d.title };
-    const capacity = can.capacityFor ? can.capacityFor(d.committee_id) : null;
+    const capacity = capacityFor(d.committee_id);
     let kind: string | null = null;
     if (d.status === 'draft') kind = 'decision_submit';
     else if (d.status === 'voting') kind = 'vote_cast';
@@ -330,7 +330,7 @@ export function decisionWorkItems({ decisions = [], votedDecisionIds = [], can, 
   return items;
 }
 
-export function minutesWorkItems({ minutes = [], can, placeFor, linkFor }: any) {
+export function minutesWorkItems({ minutes = [], can, capacityFor, placeFor, linkFor }: any) {
   const items: any[] = [];
   for (const m of minutes) {
     const place = placeFor(m.committee_id);
@@ -342,7 +342,7 @@ export function minutesWorkItems({ minutes = [], can, placeFor, linkFor }: any) 
     if (!kind) continue;
     const def = WORK_ITEM_KINDS[kind];
     if (!can(m.committee_id, def.capability)) continue;
-    const capacity = can.capacityFor ? can.capacityFor(m.committee_id) : null;
+    const capacity = capacityFor(m.committee_id);
     items.push(makeItem(kind, {
       recordId: m.id, entity: 'MeetingMinutes', rawState: m.status,
       title: {
@@ -385,7 +385,7 @@ export function handoverWorkItems({ packs = [], actorId, placeFor, linkFor }: an
   return items;
 }
 
-export function reviewWorkItems({ requests = [], actorId, can, placeFor, linkFor }: any) {
+export function reviewWorkItems({ requests = [], actorId, can, capacityFor, placeFor, linkFor }: any) {
   const items: any[] = [];
   for (const r of requests) {
     if (r.reviewer_user_id !== actorId) continue;
@@ -393,7 +393,7 @@ export function reviewWorkItems({ requests = [], actorId, can, placeFor, linkFor
     const place = placeFor(r.committee_id);
     if (!place) continue;
     if (!can(r.committee_id, 'review.respond')) continue;
-    const capacity = can.capacityFor ? can.capacityFor(r.committee_id) : null;
+    const capacity = capacityFor(r.committee_id);
     items.push(makeItem('review_respond', {
       recordId: r.id, entity: 'ReviewRequest', rawState: r.status,
       title: {
