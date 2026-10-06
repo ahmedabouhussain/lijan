@@ -81,12 +81,12 @@ export default async function () {
     pairing.length === 2 && pairing[0].number === '50' && pairing[0].unit === '%'
     && pairing[1].number === '30' && pairing[1].unit === 'يوم', pairing);
 
-  check('MC-022', 'the unit is recognised through Arabic spelling (يومًا · أسبوعًا · أيام)',
-    asUnit('يوما') === 'يوما' && asUnit('اسبوعا') === 'اسبوع' && asUnit('ايام') === 'ايام' && asUnit('ريال') === 'ريال' && asUnit('المادة') === null,
+  check('MC-022', 'the unit is recognised through Arabic spelling and returned in ONE canonical form (يومًا · أسبوعًا · أيام)',
+    asUnit('يوما') === 'يوم' && asUnit('اسبوعا') === 'اسبوع' && asUnit('ايام') === 'ايام' && asUnit('ريال') === 'ريال' && asUnit('المادة') === null,
     [asUnit('اسبوعا'), asUnit('ايام')]);
 
-  check('MC-023', 'normalisation unifies alef/yeh and strips diacritics before any comparison',
-    normalizeText('إلى  الالتزامَ') === 'الي التزام', normalizeText('إلى  الالتزامَ'));
+  check('MC-023', 'normalisation unifies alef/yeh, strips diacritics and collapses spaces before any comparison',
+    normalizeText('إلى  الالتزامَ') === 'الي الالتزام', normalizeText('إلى  الالتزامَ'));
 
   const acrossFields = scanProposal({
     before: { a: 'الكمية 30', b: 'يومًا' },

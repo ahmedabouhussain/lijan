@@ -7,6 +7,7 @@ import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
 import ProofChain from "@/components/raqeem/ProofChain";
 import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 import IssuanceIntegrityPanel from "@/components/raqeem/IssuanceIntegrityPanel";
+import DossierExportPanel from "@/components/raqeem/DossierExportPanel";
 import AuditChainPanel from "@/components/raqeem/AuditChainPanel";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
@@ -96,6 +97,9 @@ export default function DecisionDetail() {
 
       {/* Issuance integrity — verified server-side on every read (P0-01) */}
       <IssuanceIntegrityPanel decisionId={decision.id} />
+
+      {/* The whole trail as ONE readable document, assembled on the server from the records themselves. */}
+      <DossierExportPanel decision={decision} />
 
       {/* G-5: the decision's audit trail as a chain — absent required steps are named, never inferred. */}
       <AuditChainPanel committeeId={committee?.id} entityType="Decision" entityId={decision.id} chain="decision" title={L.title(decision)} />

@@ -89,10 +89,10 @@ export function asUnit(token: string | null) {
   return null;
 }
 
-const SKIP_WORDS = new Set([
-  ...BINDING_WORDS, ...NEGATIONS_AR, ...NEGATIONS_EN, ...STRONG, ...PERMISSIVE,
-  "يقل", "تقل", "يزيد", "تزيد", "اقل", "اكثر", "بما", "بحد", "كحد", "مدة", "رقم",
-]);
+// Read at CALL time, so the pairing never depends on the declaration order of the lexicons below.
+const SKIP_WORDS_EXTRA = ["يقل", "تقل", "يزيد", "تزيد", "اقل", "اكثر", "بما", "بحد", "كحد", "مدة", "رقم"];
+const isSkipWord = (t: string) => BINDING_WORDS.has(t) || NEGATIONS_AR.has(t) || NEGATIONS_EN.has(t)
+  || STRONG.has(t) || PERMISSIVE.has(t) || SKIP_WORDS_EXTRA.includes(t);
 
 /** Numbers paired with the unit that follows and the subject that precedes — the pairing IS the meaning. */
 export function numberPairs(text: any) {
@@ -108,7 +108,7 @@ export function numberPairs(text: any) {
     const prev: string[] = [];
     for (let j = i - 1; j >= 0 && prev.length < 2; j--) {
       const t = toks[j];
-      if (/[0-9]/.test(t) || UNIT_CANON[t] || SKIP_WORDS.has(t) || t.length < 2) continue;
+      if (/[0-9]/.test(t) || UNIT_CANON[t] || isSkipWord(t) || t.length < 2) continue;
       prev.unshift(t);
     }
     pairs.push({ number, unit, subject: prev.join(" ") });
@@ -152,15 +152,22 @@ export function modalityStrength(text: any) {
   return score;
 }
 
-const SCOPE_PHRASES: Array<{ code: string; re: RegExp }> = [
-  { code: "all", re: /\b(كل|جميع|كافة|الكل|every|all)\b/ },
-  { code: "some", re: /\b(بعض|عددا|عددا من|several|some|certain|a number of)\b/ },
-  { code: "floor", re: /(لا يقل عن|بما لا يقل عن|على الاقل|كحد ادنى|at least|no less than|not less than)/ },
-  { code: "ceiling", re: /(لا يزيد عن|بما لا يزيد عن|على الاكثر|بحد اقصى|at most|no more than|not more than|up to)/ },
-];
+// Scope markers are read as TOKENS and PHRASES, never with \b: an Arabic letter is not a word character
+// in JavaScript, so a word-boundary pattern silently matches nothing (D-089).
+const SCOPE_UNIVERSAL = new Set(["كل", "جميع", "كافة", "الكل", "every", "all"]);
+const SCOPE_PARTIAL = new Set(["بعض", "عددا", "several", "some", "certain"]);
+const FLOOR_RE = /لا (?:ي|ت)قل عن|بما لا (?:ي|ت)قل|على الاقل|كحد ادنى|at least|no less than|not less than/;
+const CEILING_RE = /لا (?:ي|ت)زيد عن|بما لا (?:ي|ت)زيد|على الاكثر|بحد اقصى|at most|no more than|not more than|up to/;
+
 export function scopeMarkers(text: any) {
   const t = normalizeText(text);
-  return SCOPE_PHRASES.filter((p) => p.re.test(t)).map((p) => p.code).sort();
+  const toks = tokenize(text);
+  const out: string[] = [];
+  if (toks.some((x) => SCOPE_UNIVERSAL.has(x))) out.push("all");
+  if (toks.some((x) => SCOPE_PARTIAL.has(x)) || /عدد من|a number of/.test(t)) out.push("some");
+  if (FLOOR_RE.test(t)) out.push("floor");
+  if (CEILING_RE.test(t)) out.push("ceiling");
+  return out.sort();
 }
 
 // A normative reference, named precisely: a body of law (نظام/قانون/لائحة…) with its name, or an
@@ -196,25 +203,30 @@ export function pairFindings(before: any, after: any) {
   const findings: any[] = [];
   if (!B.length && !A.length) return findings;
 
-  const amounts = listDiff(B.map((p) => `${p.number}${p.unit || ""}`), A.map((p) => `${p.number}${p.unit || ""}`));
+  // A NUMBER that changed (the unit is compared separately, so the two findings never collide).
+  const amounts = listDiff(B.map((p) => p.number), A.map((p) => p.number));
   if (amounts.added.length || amounts.removed.length) {
     findings.push(material("amount_changed", { before: amounts.removed, after: amounts.added }));
   }
 
-  // Same numbers, different unit — «٣٠ يومًا» → «٣٠ أسبوعًا».
-  const unitMoved = B.some((b) => A.some((a) => a.number === b.number && (a.unit || null) !== (b.unit || null)
-    && (!b.unit || !a.unit || a.subject === b.subject || UNIT_WORDS.has(a.unit) || UNIT_WORDS.has(b.unit))));
+  // The same number whose UNIT moved — «٣٠ يومًا» → «٣٠ أسبوعًا»: identical number, different obligation.
+  const unitMoved = B.some((b) => A.some((a) => a.number === b.number
+    && a.unit !== b.unit && (!!b.unit !== !!a.unit || (b.unit && a.unit))));
   if (unitMoved) {
     findings.push(material("unit_changed", {
-      before: B.map((p) => `${p.subject ? p.subject + " " : ""}${p.number}${p.unit ? " " + p.unit : ""}`),
-      after: A.map((p) => `${p.subject ? p.subject + " " : ""}${p.number}${p.unit ? " " + p.unit : ""}`),
+      before: B.map((p) => `${p.number}${p.unit ? " " + p.unit : ""}`),
+      after: A.map((p) => `${p.number}${p.unit ? " " + p.unit : ""}`),
     }));
   }
 
-  // Same numbers and units, but attached to different subjects — a swap.
-  const key = (p: any) => `${p.subject}#${p.number}${p.unit || ""}`;
+  // The same number and unit attached to a DIFFERENT subject — a value that moved between parties.
+  const tag = (p: any) => `${p.number}${p.unit || ""}`;
+  const sameNumbers = B.length === A.length && B.map(tag).sort().join("|") === A.map(tag).sort().join("|");
+  const substantive = (p: any) => (p.subject || "").length >= 3;
+  const key = (p: any) => `${p.subject}#${tag(p)}`;
   const kB = B.map(key).sort(), kA = A.map(key).sort();
-  if (!findings.length && kB.join("|") !== kA.join("|") && kB.length === kA.length) {
+  if (sameNumbers && !unitMoved && kB.join("|") !== kA.join("|")
+    && B.every(substantive) && A.every(substantive)) {
     findings.push(material("value_subject_swap", { before: kB, after: kA }));
   }
   return findings;
