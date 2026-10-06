@@ -180,3 +180,21 @@
 **التغييرات (للتراجع) — S10**: أُضيف `base44/shared/evidenceAcceptance.ts` · `base44/functions/SubmitActionEvidence/entry.ts` · `base44/functions/ReviewActionEvidence/entry.ts` · `base44/functions/TestEvidenceAcceptance/entry.ts` · `src/components/raqeem/ActionEvidencePanel.jsx` · `src/lib/actionState.js` · `src/docs/PRODUCT_DELIVERY_MAP.md` · `src/docs/CLOSURE_PROTOCOL.md`. وعُدِّل `authorityKernel.ts` (1.5.0) · `commandGuard.ts` (بوابة الحالة المطلوبة + استقلال الفاعل) · `CloseAction` · `CommitteeActions.jsx` · `ActionEvidencePanel` (ربط العرض بالحقيقة) · `SilentFailureRadar.jsx` · `TestAuthorizationGuard` + `TestEvidenceAcceptance` · `authorityPolicyManifest.json` · السجلات.
 **بصمات هذه الشريحة**: `authorityKernel 608c2337…` · `commandGuard 021bdf67…` · `evidenceAcceptance 6a7078b1…` (جديد) · `SubmitActionEvidence 44fcccf5…` · `ReviewActionEvidence fa3ed77a…` · `CloseAction cf22e62e…` · وحدات لم تُلمس: `transitionClaim b3c6bbfb…` · `decisionIntegrity a3ce3c73…` · `roundContext af188171…` · `decisionLifecycle 923bf3c9…` · `meetingLifecycle 2302a318…` · `serverRichText beb95873…`.
 **أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل.
+
+## دفعة S14 — عقد محتوى المقترح (D-061)
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S14-001** | عقد `proposal-content-1.0.0`: البصمة، الربط، وكشف التغيير الجوهري | اختبار مُنفَّذ (18 حالة) | وحدة مشتركة | **18/18 PASS** · `writes_performed: 0` · `records_read: 0` | `TestProposalContent` | **PASS** |
+| **E-S14-002** | تحميل المعالجات وقت التشغيل وأن الرفض يسبق كل قراءة وكتابة | نداء خادم مباشر على أهداف غير موجودة | `CastVote` · `IssueDecision` · `OpenVote` | **404 `target_not_found` · `authz-1.6.0` · صفر كتابة** | `corr_muwg28lvo5hdo5` · `corr_muwg29m0r47hrn` · `corr_muwfzba05tnfwu` | **PASS** |
+| **E-S14-003** | القراءة المحكومة للنص: سبق السلطة على مسار القراءة الواحد | نداء خادم مباشر | `GetProposalChanges` | **404 `not_found`** لقرار غير موجود | نداء على قرار غير موجود | **PASS** |
+| **E-S14-004** | بناء الواجهة بعد السطح الجديد | بناء | شجرة العمل | `npx vite build` → **status=0** | سجل البناء | **PASS** |
+| **E-S14-005** | صوت مرفوض على نص متغيّر، وإصدار على دورة مجمَّدة، في المعاينة على سجل محفوظ | فاعل مُقعد | — | **NOT TESTED** — لا فاعل مُقعد (الحاجز نفسه) | — | **BLOCKED** |
+| **E-S14-006** | قياس التزامن | — | — | **NOT ESTABLISHED** (كما في كل الدفعات) | — | **NOT MEASURED** |
+
+**حدّ الأدلة**: E-S14-001 يُثبت العقد المشترك الذي يستهلكه `OpenVote`/`CastVote`/`IssueDecision`/`GetProposalChanges` — لا معالجًا ولا دورة محفوظة. وE-S14-002 يُثبت التحميل وسبق الرفض، لا رفضًا تحت `stale_content` على سجل حقيقي.
+
+**التغييرات (للتراجع) — S14**: أُضيف `base44/shared/proposalContent.ts` · `base44/functions/GetProposalChanges/entry.ts` · `base44/functions/TestProposalContent/entry.ts` · `src/components/raqeem/ProposalIntegrityPanel.jsx`. وعُدِّل `OpenVote` · `CastVote` · `IssueDecision` · `EligibleVoterSnapshot.jsonc` (تجميد المحتوى + تغيّرات الدورة السابقة) · `IssueSnapshot.jsonc` (بصمة النص ونسخته) · `DecisionWorkflow.jsx` (عرض اللوحة) · `LiveVotingWidget.jsx` (رفض يُعرض لا يُبتلع).
+**بصمات هذه الشريحة (SHA-256، أول 12 خانة)**: `proposalContent 7be216d1dcc3` (جديد) · `GetProposalChanges ce144b582d07` (جديد) · `TestProposalContent 4f5cf6e122ab` (جديد) · `OpenVote 5c7a9352386a` · `CastVote 2c7fb8bd5ce0` · `IssueDecision 56118e777e07` · `ProposalIntegrityPanel 5e43be9f3851` · `LiveVotingWidget 3c22380eb682` · `DecisionWorkflow 3624d00b9d0e`.
+**ما لم يُلمس**: `authorityKernel` · `commandGuard` · `transitionClaim` · `decisionIntegrity` · `roundContext` · `decisionLifecycle` · `voteEligibility` — لا ارتفاع نسخة سياسة، ولا إبطال أدلة سابقة (التغيير عقد محتوى، لا قدرة جديدة).
+**أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل.
