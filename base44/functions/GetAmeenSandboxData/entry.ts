@@ -6,6 +6,7 @@ import {
   resolveSandboxCommitteeRole,
   isSandboxCommittee,
 } from '../../shared/ameenScopeResolver.ts';
+import { assessScopeInForce } from '../../shared/ameenRetrievalGuard.ts';
 
 // GetAmeenSandboxData — the only data source for «أمين» inside the exploration experience.
 //
@@ -51,21 +52,44 @@ export default async function (req) {
       if (!isSandboxCommittee(committee)) {
         return Response.json({ error: 'Sandbox committee not found' }, { status: 403 });
       }
+      // A demonstration scope must still be LIVE before «أمين» reads it (ameen-retrieval-guard-1.0.0,
+      // D-092): a closed or archived committee is history, not a scope — and the refusal is named.
+      const scope = assessScopeInForce(committee);
+      if (scope.live !== true) {
+        return Response.json({
+          error: 'Scope not in force',
+          code: scope.code || 'scope_closed',
+          scope_status: scope.status || null,
+          reason_ar: 'هذه اللجنة ليست نطاقًا سارٍ الآن (مغلقة أو مؤرشفة)، فلا تُقرأ بياناتها.',
+          reason_en: 'This committee is not a scope in force right now (closed or archived), so its data is not read.',
+        }, { status: 403 });
+      }
       return Response.json(await committeeDetail(base44, sr, committee));
     }
 
-    return Response.json(await portfolio(sr, demoScope));
+    // The portfolio is assembled from the LIVE sandbox scopes only, and every scope left out is named in
+    // the same answer — never dropped silently (an unreadable or closed scope is not an empty one).
+    const sandboxScopes = await sr.entities.Committee.filter(demoScope).catch(() => []);
+    const liveScopes = (sandboxScopes || []).filter((c) => assessScopeInForce(c).live === true);
+    const withdrawnScopes = (sandboxScopes || [])
+      .filter((c) => assessScopeInForce(c).live !== true)
+      .map((c) => {
+        const s = assessScopeInForce(c);
+        return { committee_ref: c.public_id || c.id, code: s.code || 'scope_closed', status: s.status || null };
+      });
+
+    return Response.json({ ...(await portfolio(sr, demoScope, liveScopes)), withdrawn_scopes: withdrawnScopes });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
 /** Every sandbox committee the exploration persona holds an office in, with workload counts. */
-async function portfolio(sr, demoScope) {
+async function portfolio(sr, demoScope, committees) {
   // Child records inherit their scope from the committee they belong to: a record is
   // sandbox data exactly when its committee is a sandbox committee. Governed records
-  // stay unreachable because their committee is never part of this set.
-  const committees = await sr.entities.Committee.filter(demoScope).catch(() => []);
+  // stay unreachable because their committee is never part of this set. The caller passes the
+  // LIVE sandbox scopes in, so a closed one is excluded and named rather than counted here.
   const committeeScope = { committee_id: { $in: (committees || []).map((c) => c.id) } };
 
   const [memberships, organizations, meetings, minutes, decisions, actions] = await Promise.all([

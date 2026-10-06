@@ -159,6 +159,16 @@ export default function MyWorkInbox() {
                   `${counts.total} item(s) need an act from you${counts.overdue ? `, ${counts.overdue} overdue` : ""}${counts.due_soon ? `, ${counts.due_soon} due within three days` : ""}`
                 )}
             </p>
+            {/* The reach is a DECLARED measure (work-reach-1.0.0), not a claim: every item beyond the
+                two-interaction limit is counted here and named on its own row. */}
+            {data?.reach && (
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {t(
+                  `الوصول إلى المهمة: تفاعلان كحدّ أقصى (فتح «مساحتي» ثم السجل نفسه)${data.reach.beyond_max ? ` — و${data.reach.beyond_max} بندًا يحتاج تفاعلًا ثالثًا` : ""}`,
+                  `Task reach: two interactions at most (opening «مساحتي», then the record itself)${data.reach.beyond_max ? ` — ${data.reach.beyond_max} item(s) need a third` : ""}`
+                )}
+              </p>
+            )}
           </div>
         </div>
         <div className="shrink-0 flex items-center gap-2">

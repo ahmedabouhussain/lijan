@@ -27,6 +27,7 @@ export const WORK_EXPORT_COLUMNS = [
   { key: "why", ar: "سبب ظهوره لي", en: "Why it appears to me" },
   { key: "next", ar: "الإجراء التالي", en: "Next act" },
   { key: "route", ar: "المسار", en: "Route" },
+  { key: "reach", ar: "الوصول إلى المهمة", en: "Task reach" },
 ];
 
 const pick = (lang, pair) => (pair ? (lang === "ar" ? pair.ar : pair.en) || "" : "");
@@ -54,6 +55,7 @@ export function buildWorkExportRows(items, lang = "ar") {
     why: pick(lang, it.why),
     next: pick(lang, it.next?.label) || "",
     route: it.route || "",
+    reach: it.reach ? pick(lang, it.reach.label) : "",
   }));
 }
 

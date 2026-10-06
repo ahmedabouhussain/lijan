@@ -4,7 +4,7 @@ import { resolvePersonaCapabilities } from '../../shared/committeeAuth.ts';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 import { DEMO_DATASET } from '../../shared/demoDataset.ts';
 import { DONE_STATUSES } from '../../shared/actionState.ts';
-import { assemblePersonalWork, PERSONAL_WORK_VERSION } from '../../shared/personalWork.ts';
+import { assemblePersonalWork, auditReach, PERSONAL_WORK_VERSION } from '../../shared/personalWork.ts';
 
 // GetMyWork — «مساحتي»: the person's OWN queue, derived from governed records.
 //
@@ -94,6 +94,7 @@ export default async function (req) {
         actor, is_demo_mode: demoMode,
         scope: { committees: [], excluded: [], unread_sources: unread },
         items: [], counts: { total: 0, overdue: 0, due_soon: 0, by_group: {} },
+        reach: auditReach([]),
         authority_checks: { performed: 0, capped: false },
         notice: {
           code: 'no_seat',
@@ -334,6 +335,8 @@ export default async function (req) {
       scope: { committees: scopeCommittees, excluded: scopeExcludedOut, unread_sources: unread },
       items: result.items,
       counts: result.counts,
+      // The reach travels with the queue: one measurement, from the same assembly the rows come from.
+      reach: result.reach,
       authority_checks: { performed: checksPerformed, capped: checksCapped, budget: MAX_AUTHORITY_CHECKS },
       notice,
     });

@@ -335,6 +335,34 @@ export const GOVERNANCE_SURFACES: Surface[] = [
     actor_binding: "none", route: "/o/:orgRef/committees", route_file: "src/pages/OrgCommittees.jsx",
     unavailable: "authority", evidence: "contract_verified", suite: "TestSeatedReadiness", recorded_path: false, recorded_path_evidence: null,
     note_ar: "الحاجز (D-064) صار مقيسًا لا مُدَّعى: المقاعد المؤهلة تُحتسب بقاعدة التصويت نفسها، والقدرة على العمل تستلزم ارتباطًا بحساب مستخدم، وكل مصدر لم يُقرأ يُعلن ⇒ «غير قابل للقياس» لا صفر.", note_en: "The blocker (D-064) is measured instead of asserted: eligible seats come from the voting rule itself, ability to act requires a bound user account, and every source that could not be read is named, so an unreadable committee reads 'unverifiable' rather than zero." },
+  // ── S28 — the surfaces the person's own row and the assistant read through ───────────────────────
+  // A live surface outside the register is how a surface comes to advertise what no command performs
+  // (D-082 class). Each of these is a READ: it grants nothing, and every act it names is re-authorized
+  // by its own command afterwards.
+  { id: "view_personal_work", ar: "صف العمل الشخصي «مساحتي»", en: "The personal work row «My Workspace»", stage: "execution", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetMyWork", contract: "personal-work-1.0.0",
+    actor_binding: "none", route: "/", route_file: "src/components/raqeem/MyWorkInbox.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestWorkReach", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "قراءة تمنح سلطة: كل فعل يسمّيه الصف يُعاد التحقق منه في أمره المحكوم. والوصول إلى المهمة مُقاس بعقد `work-reach-1.0.0`: تفاعلان كحدّ أقصى، وكل بند يتجاوز الحدّ يُسمّى بسببه وبالسطح الناقص.",
+    note_en: "A read that grants no authority: every act it names is re-authorized by its own command. Task reach is measured under `work-reach-1.0.0`: two interactions at most, and every item beyond the limit is named with its reason and the missing surface." },
+  { id: "view_metric_definitions", ar: "قراءة المؤشرات المعرَّفة", en: "Read the defined metrics", stage: "oversight", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetCommitteeMetrics", contract: "metric-definitions-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/c/:committeeRef/reports", route_file: "src/pages/committee/CommitteeReports.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestMetricDefinitions", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "كل رقم يحمل مالكه وفترته وبسطه ومقامه ومصدره وحداثته؛ وما دون حد الإفصاح يُحجب، والمصدر غير المقروء «غير مقروء» لا صفر. والقراءة الحيّة جُرِّبت على لجنة تجريبية موسومة فقط، فلا يُدَّعى مسار محفوظ.",
+    note_en: "Every figure carries its owner, period, numerator, denominator, source and freshness; anything under the disclosure floor is withheld, and an unreadable source reads 'unreadable', never zero. The live read ran on a flagged demonstration committee only, so no persisted path is claimed." },
+  { id: "view_decision_dossier", ar: "تجميع ملف أدلة القرار", en: "Assemble the decision evidence dossier", stage: "decisions", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetDecisionDossier", contract: "evidence-dossier-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/c/:committeeRef/decisions/:id", route_file: "src/components/raqeem/DossierExportPanel.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestEvidenceDossier", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "الملف يُبوَّب على قراءة السجل المحكوم نفسه؛ والقسم الفارغ يُقال بلفظه، والمصدر غير المقروء يُسمّى؛ وغياب واقعة ليس إثباتًا لعدم وقوعها.",
+    note_en: "The file is gated behind the governed record read itself; an empty section is stated in words and an unreadable source is named; and an absent event is not proof that it did not happen." },
+  { id: "view_proposal_material_change", ar: "عرض التغيير الجوهري في النص المُصوَّت عليه", en: "Show material change in the voted text", stage: "decisions", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetProposalChanges", contract: "material-change-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/c/:committeeRef/decisions/:id", route_file: "src/components/raqeem/ProposalIntegrityPanel.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestMaterialChange", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "اللوحة لا تقرّر شيئًا: الرفض يقع على الخادم (`stale_content`)، وهي تعرض النص المجمّد وما تحرّك في معناه لا في صياغته — قبل المحاولة لا بعدها.",
+    note_en: "The panel decides nothing: the refusal happens server-side (`stale_content`), and it shows the frozen text and what moved in its MEANING rather than its wording — before the attempt, not after it." },
 ];
 
 export const SURFACE_IDS = GOVERNANCE_SURFACES.map((s) => s.id);

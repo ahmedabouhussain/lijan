@@ -30,7 +30,7 @@ export default async function (req) {
     const base44 = createClientFromRequest(req);
 
     const body = await req.json().catch(() => ({}));
-    const { org_ref, committee_ref, context_key, demo_mode, demo_persona_key } = body || {};
+    const { org_ref, committee_ref, context_key, demo_mode, demo_persona_key, showcase_token } = body || {};
 
     const { organization, committee } = await resolveScope(base44, {
       orgRef: org_ref,

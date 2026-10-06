@@ -462,7 +462,71 @@ export function seatContinuityItems({ seats = [], actorId, today = todayIso(), h
   return items;
 }
 
-/** One assembly, so the queue, its counts and the export can never disagree. */
+// ── Reach: «تفاعلان للوصول إلى المهمة» (work-reach-1.0.0) ─────────────────────
+// A DECLARED measure, never a claim. The queue lives on the page the person lands on, so the first
+// interaction is opening «مساحتي»; reaching the ONE task may cost a second interaction only if the route
+// the item carries opens the RECORD ITSELF. A route that lands on a committee segment costs a third —
+// and that is named, with the segment, instead of being reported as two.
+export const WORK_REACH_VERSION = 'work-reach-1.0.0';
+export const REACH_MAX_INTERACTIONS = 2;
+
+export const REACH_CODES: Record<string, { ar: string; en: string }> = {
+  record_route: {
+    ar: 'تفاعلان: تُفتح «مساحتي» ثم يُفتح السجل نفسه مباشرةً.',
+    en: 'Two interactions: «مساحتي» opens, then the record itself opens directly.',
+  },
+  segment_route: {
+    ar: 'ثلاثة تفاعلات: يُفتح قسم اللجنة أولًا ثم يُبحث عن السجل داخله — ولا صفحة سجل مستقلة لهذا النوع بعد.',
+    en: 'Three interactions: the committee segment opens first, then the record is found inside it — no standalone record page exists for this kind yet.',
+  },
+  no_route: {
+    ar: 'لا مسار مباشر من الصف: لا يُقاس، ويُعلن بدل أن يُدَّعى تفاعلان.',
+    en: 'No direct route from the row: it is not measured, and it is declared instead of claimed as two interactions.',
+  },
+};
+
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** The record's own id as a PATH SEGMENT of the route — never a substring (a1 must not match a10). */
+function routeOpensRecord(route: string, recordId: any) {
+  if (!recordId) return false;
+  const pattern = new RegExp(`(^|/)${escapeRegex(String(recordId))}(/|$|\\?|#)`);
+  return pattern.test(String(route));
+}
+
+/** One item's reach, measured from the route it carries. It carries no capability: the act is its command's. */
+export function measureReach(item: any) {
+  const route = item?.route || null;
+  const recordId = item?.source?.id || null;
+  const base = { item_id: item?.id || null, kind: item?.kind || null, segment: item?.next?.segment || null };
+  if (!route) {
+    return { ...base, interactions: null, within_max: false, code: 'no_route', label: REACH_CODES.no_route };
+  }
+  if (routeOpensRecord(route, recordId)) {
+    return { ...base, interactions: REACH_MAX_INTERACTIONS, within_max: true, code: 'record_route', label: REACH_CODES.record_route };
+  }
+  return { ...base, interactions: REACH_MAX_INTERACTIONS + 1, within_max: false, code: 'segment_route', label: REACH_CODES.segment_route };
+}
+
+/** The queue's reach as ONE measure: what is within the limit, and every item that exceeds it, by name. */
+export function auditReach(items: any[]) {
+  const rows: any[] = (items || []).map(measureReach);
+  const beyond = rows.filter((r) => !r.within_max);
+  return {
+    contract_version: WORK_REACH_VERSION,
+    max_interactions: REACH_MAX_INTERACTIONS,
+    measured: rows.length,
+    within_max: rows.length - beyond.length,
+    beyond_max: beyond.length,
+    ok: beyond.length === 0,
+    items_beyond_max: beyond,
+    codes: REACH_CODES,
+    note_ar: 'القياس معلن لا مدَّعى: «مساحتي» تُفتح بتفاعل واحد، والوصول إلى المهمة يجب ألا يزيد على تفاعل ثانٍ يفتح السجل نفسه؛ وكل بند يتجاوز الحدّ يُسمّى بسببه وبالسطح الناقص.',
+    note_en: 'A declared measure, not a claim: «مساحتي» opens in one interaction, and reaching the task must not exceed a second that opens the record itself; every item beyond the limit is named with its reason and the missing surface.',
+  };
+}
+
+/** One assembly, so the queue, its counts, its reach and the export can never disagree. */
 export function assemblePersonalWork(input: any) {
   const items = rankItems([
     ...actionWorkItems(input),
@@ -471,6 +535,11 @@ export function assemblePersonalWork(input: any) {
     ...handoverWorkItems(input),
     ...reviewWorkItems(input),
     ...seatContinuityItems(input),
-  ]);
-  return { contract_version: PERSONAL_WORK_VERSION, items, counts: summarizeItems(items) };
+  ]).map((it) => ({ ...it, reach: measureReach(it) }));
+  return {
+    contract_version: PERSONAL_WORK_VERSION,
+    items,
+    counts: summarizeItems(items),
+    reach: auditReach(items),
+  };
 }

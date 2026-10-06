@@ -386,3 +386,25 @@
 **التغييرات (للتراجع) — S24–S27**: أُضيف `base44/shared/materialChange.ts` (`material-change-1.0.0`) · `metricDefinitions.ts` (`metric-definitions-1.0.0`) · `evidenceDossier.ts` (`evidence-dossier-1.0.0`) · `ameenRetrievalGuard.ts` (`ameen-retrieval-guard-1.0.0`) · `src/components/raqeem/MetricsPanel.jsx` · `DossierExportPanel.jsx` · `base44/functions/GetCommitteeMetrics` · `GetDecisionDossier` · `base44/functions/TestMaterialChange` · `TestMetricDefinitions` · `TestEvidenceDossier` · `TestAmeenRetrievalGuard`. وعُدِّل: `proposalContent.ts` · `ProposalIntegrityPanel.jsx` · `CommitteeReports.jsx` · `DecisionDetail.jsx` · `ResolveAmeenContext/entry.ts` · هذا الملف · `DEFECT_REGISTER.md` · `CONTINUATION_CHECKPOINT.md` · `PLAN_R3_PHASE0_MAP.md`.
 
 **أثر البيانات**: **صفر كتابة · صفر حذف · لا إعادة بذر · لا ترحيل**. ولم تُلمس بيانات إنتاج.
+
+---
+
+## S28 — إغلاق بنود المرحلة 1 الثلاثة (القياس · السجل · ربط «أمين»)
+
+| # | ما أُدلَّ عليه | النتيجة | التفصيل |
+|---|---|---|---|
+| **E-S28-001** | عقد الوصول إلى المهمة `work-reach-1.0.0` | **PASS 12/12** | الحدّ **تفاعلان** معلنان مرة واحدة · مسار يفتح السجل ⇒ 2 (داخل الحدّ) · مسار يفتح قطاع اللجنة ⇒ 3 (خارج الحدّ، والقطاع مُسمّى) · بند بلا مسار ⇒ **لا يُقاس** (لا يُدَّعى تفاعلان) · معرّف السجل يُطابق مقطع مسار لا نصًّا فرعيًا (`a1` لا يمرّ على `a10`) · كل كود يُعلن بجملته بالعربية والإنجليزية · القياس **يمكن أن ينجح ويمكن أن يخفق** (صف نظيف `ok: true` · صف مختلط `beyond_max: 2` بأسمائهم وأسبابهم) · القياس **لا يحمل قدرة** · وكل بند في التجميعة يحمل قياسه من **نفس** الدالة التي يستعملها التدقيق |
+| **E-S28-002** | سجل الأسطح المحكومة بعد إدراج الأسطح الأربعة | **PASS 23/23 · 54 سطحًا · blocking = 0 · declared_work = 0** | الأسطح الأربعة: «مساحتي» (`GetMyWork` · `personal-work-1.0.0`) · قراءة المؤشرات (`GetCommitteeMetrics` · `metric-definitions-1.0.0`) · ملف أدلة القرار (`GetDecisionDossier` · `evidence-dossier-1.0.0`) · عرض التغيير الجوهري (`GetProposalChanges` · `material-change-1.0.0`) — كلها بحق `read` وعقدها وسنتها وما تُعرضه عند التعذّر، وبلا حذف ولا ادعاء مسار محفوظ |
+| **E-S28-003** | `GetAmeenSandboxData` — بوابة قيام النطاق | **PASS (نداء حيّ 200)** | نداء المجموع ⇒ **200** مع `withdrawn_scopes: []` (لا نطاق مُستبعَد في المجموعة الحالية، فالقائمة تُعلن الفراغ بلفظها) · ونداء لجنة بعينها بمرجع نطاق استكشافي ⇒ **200** (المسار الجديد يُحمَّل ويُجيب، ورفض النطاق غير الساري مُعلن 403 بجملته) |
+| **E-S28-004** | `ResolveAmeenContext` في نمط الاستكشاف بعد فكّ `showcase_token` | **PASS (نداء حيّ 200)** | `demo_mode: true` بنمط استكشافي ⇒ **200** بمنع مُسمّى (`access_denied`) لا خطأ خادم (كان المسار يموت بـ500 قبل الإصلاح — D-094) |
+| **E-S28-005** | `GetMyWork` — القياس يسافر مع الصف | **PASS (نداء حيّ 200)** | الاستجابة تحمل `reach: { contract_version: "work-reach-1.0.0", max_interactions: 2, measured: 0, within_max: 0, beyond_max: 0, ok: true }` مع مسار «لا مقعد» مُعلنًا — أي **قياس صفر معلن** لا صفرًا مفترضًا |
+
+**بناء الواجهة**: `BUILD_EXIT=0`.
+
+**حدود الدليل المعلن (S28)**: القياس والأسر تُثبت **العقد**؛ والنداءات الحيّة تُثبت أن الوحدات تُحمَّل وأن المسارات تُجيب — **ولا واحد منها** يُثبت صفًّا محفوظًا لمستخدم مُقعد، ولا نطاقًا مُستبعَدًا محفوظًا، ولا رحلة متصفح. والسبب واحد: **لا فاعل مُقعد مُصادَق (D-064)**.
+
+**لا ارتفاع نسخة سياسة في S28**: لا قدرة جديدة، ولا سجل جديد في سلسلة النطاق، ولم تُمسّ `authorityKernel` ولا `commandGuard`. وما تغيّر: عقد قياس واحد (`work-reach-1.0.0`)، وأربعة أسطح في السجل، وبوابتا قيام نطاق في مسارات «أمين».
+
+**التغييرات (للتراجع) — S28**: أُضيف `base44/functions/TestWorkReach` · وعقد `work-reach-1.0.0` في `personalWork.ts`. وعُدِّل: `GetMyWork` · `src/components/raqeem/MyWorkInbox.jsx` · `src/lib/workExport.js` · `governanceSurfaceRegistry.ts` · `ResolveAmeenContext/entry.ts` · `GetAmeenSandboxData/entry.ts` · `DEFECT_REGISTER.md` · `CONTINUATION_CHECKPOINT.md` · `PLAN_R3_PHASE0_MAP.md`.
+
+**أثر البيانات**: **صفر كتابة · صفر حذف**.
