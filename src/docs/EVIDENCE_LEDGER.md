@@ -236,3 +236,22 @@
 **حدّ الأدلة**: E-S16-001 يُثبت مسارًا **محفوظًا** كاملًا لكنه **مسار عام بالرمز** لا أمر مقعدي؛ E-S16-002/003 يُثبتان الرفض على أهداف محفوظة (لا استنتاج من وحدة)؛ E-S16-004 مسار تحقق عام. و**لا انتقال مقعدي محفوظ** تحقّق في هذه الدفعة، والسبب مدلَّل لا مُفترض (E-S16-002 + E-S16-005).
 
 **أثر البيانات (S16)**: سجل `AgendaItemGuest` اختباري واحد (موسوم `synthetic_presentational`، منتهٍ ومُلغى) · ثلاثة أسطر `AuditEvent` من نوع `guest.view` (كتبها الخادم في مساره) · صفر حذف · صفر تعديل على بيانات اللجان أو القرارات.
+
+## دفعة S17 — القرار بالتمرير: القرار الكتابي من السياسة إلى الإصدار
+
+**المرجع الحاكم**: الموجز `docs/references/LIJAN_Full_Product_Base44_Brief_2026-10-06.txt` (مراجعة 5) §4C — دور الأمين، وإجراء القرار بالتمرير.
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S17-001** | عقد `circulation-approval-1.0.0`: السياسة والموضوعات المستثناة، فصل الإرسال/الفتح/الإقرار/الردّ، المهلة، الهيئة المجمّدة، القواعد والنصاب، إبطال الموافقات، وأن «الجاهزية ليست قرارًا» | اختبار مُنفَّذ (24 حالة) | وحدة مشتركة | **24/24 PASS** · `writes_performed: 0` · `records_read: 0` | `TestCirculationApproval` (CA-001…CA-024) | **PASS** |
+| **E-S17-002** | النواة بعد الترقية: ثلاثة حقوق جديدة وقيد الهوية عليها | اختبار مُنفَّذ | نواة السلطة | **96/96 PASS** (52 + 21 + 23) · `authz-1.8.0` · `failures: []` · خط الأساس: الرئيس 53 · نائبه 22 · المفوَّض 39 · القابل للتفويض 17 | `TestAuthorizationGuard` | **PASS** |
+| **E-S17-003** | تحميل أوامر التمرير وقت التشغيل وأن الرفض يسبق كل قراءة وكتابة | نداء خادم مباشر على أهداف غير موجودة | `OpenCirculation` · `SetCirculationPolicy` · `RecordCirculationResponse` · `FinalizeCirculation` | **404 `target_not_found` · `authz-1.8.0` · صفر كتابة** (أربعة نداءات مُقروءة) | `corr_muwjc6u9owj5ra` · `corr_muwjc6ta58wt5e` · `corr_muwjc6tnar00it` · `corr_muwkz1ks6unhcb` | **PASS** |
+| **E-S17-004** | القراءة المحكومة لحالة التمرير: سبق السلطة على مسار القراءة الواحد | نداء خادم مباشر | `GetCirculationState` | **404 `not_found`** على قرار غير موجود · والملف بعد تصحيحه يستعمل نمط القراءة المحكومة القائم (`resolvePrincipal` + `authorizeRead`) لا `authorizeCommand` | نداء على قرار غير موجود | **PASS** |
+| **E-S17-005** | بناء الواجهة بعد السطح الجديد | بناء | شجرة العمل | `npx vite build` → **status=0** | سجل البناء | **PASS** |
+| **E-S17-006** | دورة تمرير محفوظة: سياسة مكتوبة، إرسال، ردود موثّقة الهوية، مصادقة، ثم إصدار القرار | فاعل مُقعد | — | **NOT TESTED** — لا فاعل مُقعد (الحاجز نفسه)؛ والقائمة التشغيلية جاهزة: `src/docs/SEATED_E2E_RUNSHEET.md` | D-064 | **BLOCKED** |
+| **E-S17-007** | قياس التزامن | — | — | **NOT ESTABLISHED** (كما في كل الدفعات) | D-009 | **NOT MEASURED** |
+
+**حدّ الأدلة**: E-S17-001 يُثبت **العقد** الذي تستهلكه الأوامر الأربعة والقراءة — ولا يُمارس معالجًا ولا يفتح دورة. وE-S17-003 يُثبت التحميل وسبق الرفض، **لا** إرسال دورة محفوظ. وE-S17-004 يُثبت القراءة المحكومة لا قراءة دورة قائمة.
+
+**التغييرات (للتراجع) — S17**: أُضيف `base44/shared/circulationRoundContext.ts` · `base44/functions/{SetCirculationPolicy,OpenCirculation,RecordCirculationResponse,FinalizeCirculation,GetCirculationState,TestCirculationApproval}/entry.ts` · `src/components/raqeem/CirculationPanel.jsx`. وتمّ توسيع `base44/shared/circulationApproval.ts` (سابقًا في هذه الموجة) وحُوِّل إلى **العقد المُستهلك**: `base44/shared/authorityKernel.ts` (authz-1.8.0: ثلاثة حقوق + خط أساس + كتالوج التفويض) · `base44/shared/commandGuard.ts` (سلسلة النطاق + بوابتا الحالة من العقد + قيد الهوية) · `base44/functions/IssueDecision` (يقرأ الدورة المعتمدة بالتمرير عبر التقييم نفسه) · `base44/functions/TestAuthorizationGuard` (AUTH-045…052) · `base44/shared/authorityPolicyManifest.json` · `DecisionWorkflow.jsx` (عرض اللوحة).
+**أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل (سجلات `CirculationRound` و`CirculationResponse` في قاعدة الإنتاج: **0**).

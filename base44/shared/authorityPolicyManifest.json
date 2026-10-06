@@ -3,9 +3,9 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.7.0",
-    "supersedes": "authz-1.6.0",
-    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.5.0 IS a kernel revision: verification of execution evidence was named as its OWN operational right (action.verify — presenting performance and judging it are different acts by different seats), closure stopped being decidable from a field the performer writes (compliance_verified is no longer a closure condition; it is derived from an ACCEPTED verdict), and the guard gained two structural gates plus an actor-independence exclusion. All three are security material, so the previous evidence is invalidated and every suite is re-run against this revision.",
+    "version": "authz-1.8.0",
+    "supersedes": "authz-1.7.0",
+    "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.8.0 IS a kernel revision: the DECISION-BY-CIRCULATION route (brief rev 5 §4C) named three operational rights (circulation.open, circulation.finalize, circulation.respond), bound one of them to the actor's own identity in the guard, moved the dispatch and finalize state gates into a new contract, and extended the guard's scope chain with two records. All of it is security material, so prior evidence is invalidated and every suite is re-run against this revision.",
     "built_at": "2026-10-06T07:10:00Z",
     "repository_revision": {
       "base_commit": "dd5c9530fbba708da0c0d85ee5c80e1f05c9d602 (2026-10-05T10:32:40Z)",
@@ -13,9 +13,12 @@
     },
     "change_class": "security",
     "changes_this_revision": [
-      "document.annotate — a seated person's OWN note on the version in force of a committee document. SELF-SERVICE: derived from the seat's read right; platform administration alone grants nothing. Scope: DocumentVersion -> Document -> committee, derived by the guard.",
-      "annotation.own — only the AUTHOR carries a note forward to a newer version or resolves it. IDENTITY-BOUND for every role: the guard reads author_user_id from annotation-continuity-1.0.0 (ANNOTATION_IDENTITY_BOUND), never a second hand-typed list.",
-      "commandGuard scope chain extended with Annotation (parents: DocumentVersion, Document)."
+      "circulation.open — dispatching a decision by written resolution, plus the ADMINISTRATIVE acts on a live round (extend, cancel, withdraw) which can never produce an outcome. OPERATIONAL and DELEGABLE. Held by chair and secretary.",
+      "circulation.finalize — producing a round's outcome. OPERATIONAL and DELEGABLE, granted to the CHAIR and deliberately NOT to the secretary: the office that prepares, checks, routes and records does not approve the committee's decision because it sent it. The guard additionally refuses a finalize by the seat that dispatched the round unless the committee's policy explicitly authorizes it.",
+      "circulation.respond — a recipient's own answer on their OWN row. OPERATIONAL, SELF-SERVICE (derived from the seat's read right) and IDENTITY-BOUND for every role (circulation-approval-1.0.0, CIRCULATION_IDENTITY_BOUND): no chair answers for a member.",
+      "delivery, opening, acknowledgment and the response kept as four separate facts on a response row: dispatch is written by the dispatcher, opening and acknowledgment by the recipient, and only an eligible recipient's own authenticated act writes a response. Silence is never approval, and a policy declaring silence-based approval is refused outright.",
+      "the route exists only where the committee's own policy record permits it, names the matter types, and names the finalizer; the eligible electorate is computed by the SAME rule a vote uses (voteEligibility), so a written resolution cannot widen who counts.",
+      "AN APPROVED WRITTEN RESOLUTION IS NOW ISSUABLE: IssueDecision reads an approved circulation round through the same frozen-round evaluation a vote round uses (base44/shared/circulationRoundContext.ts), so the route no longer approves decisions that nothing can officialise. The basis names the route, the package never pretends a ballot round existed, and one approved round is required — two is a refusal, not a pick by sort order."
     ],
     "changes_in_authz_1_6_0": [
       "seat.resign — the seat holder's own-act right (resignation, a reported absence, acceptance of one's own appointment). SELF-SERVICE: derived from the seat's read right and bound to the actor's OWN identity by the command guard for EVERY role.",
@@ -54,10 +57,11 @@
     "policy": {
       "delegable_capabilities": 15,
       "operational_capabilities_note": "the catalogue is OPERATIONAL_CAPABILITIES in authorityKernel.ts; its size is NOT asserted here because it cannot be machine-read from this environment. The derived role baselines reported by the guard at this revision are authoritative for what a seat actually holds.",
-      "capabilities_added_this_round": ["seat.resign", "seat.handover_accept"],
+      "capabilities_added_this_round": ["circulation.open", "circulation.finalize", "circulation.respond"],
+      "capabilities_added_in_1_7_0": ["document.annotate", "annotation.own"],
       "capabilities_added_in_1_5_0": ["action.verify"],
-      "baselines_reported_by_guard": { "chair": 48, "vice_chair": 19, "vice_chair_delegated": 34, "delegable": 15 },
-      "baseline_growth_explained": "chair 46→48 and vice_chair 17→19: two SELF-SERVICE rights (seat.resign, seat.handover_accept) are derived from the seat's read right, so every seated person gains the right to resign their OWN appointment and to accept a handover addressed to them — and nobody gains a right over another person's record. The delegable envelope is unchanged at 15.",
+      "baselines_reported_by_guard": { "chair": 53, "vice_chair": 22, "vice_chair_delegated": 39, "delegable": 17 },
+      "baseline_growth_explained": "chair 50→53 (dispatch + finalize + respond) and vice_chair 21→22 (respond only, a self-service right); the delegable envelope moved 15→17 because a written resolution is an ALTERNATIVE ROUTE to the same approval a vote produces, so a bounded chair delegation must be able to use it, and it now carries circulation.open and circulation.finalize. Nobody gained a right over another person's record: the only new personal right is answering one's own row.",
       "action_verify_is_delegable": true,
       "state_gates_source": "PERMITTED_STATES reads the lifecycle contracts; REQUIRED_STATES (added in this revision) reads evidence-acceptance-1.0.0 — closure requires verification_state 'accepted', verification requires 'submitted'",
       "actor_exclusion_source": "evidence-acceptance-1.0.0 — the seat that submitted a revision is excluded from judging it, for EVERY role (actor_not_independent)",
@@ -83,7 +87,12 @@
       "open_resolution": "a stuck 'claimed' row still blocks its key and needs releaseTransition (governed maintenance) or a stale-claim policy that is not yet defined"
     },
     "tests": {
-      "authority_suites_re_run": "PASS — TestAuthorizationGuard 44/44 (roles) + 21/21 (positive) + 23/23 (fail-closed) = 88/88 with failures: [] and policy_version authz-1.7.0 (re-run after the kernel revision; the authz-1.6.0 run of 83/83 is INVALIDATED)",
+      "authority_suites_re_run": "PASS — TestAuthorizationGuard 52/52 (roles) + 21/21 (positive) + 23/23 (fail-closed) = 96/96 with failures: [] and policy_version authz-1.8.0 (re-run after the kernel revision; the authz-1.7.0 run of 88/88 is INVALIDATED)",
+      "new_cases_in_1_8_0": "AUTH-045 (the chair dispatches) · AUTH-046 (the chair is the policy's default finalizer) · AUTH-047 (the secretary dispatches) · AUTH-048 (the secretary does NOT finalize) · AUTH-049 (a member responds on their own row) · AUTH-050 (a recipient does not finalize) · AUTH-051 (a bounded chair delegation carries dispatch and finalize) · AUTH-052 (without a delegation the vice-chair finalizes nothing)",
+      "circulation_approval_suite": "PASS 24/24 (circulation-approval-1.0.0, writes_performed: 0, records_read: 0) — policy refuses a missing, incomplete, disabled or silence-based policy; excluded matters stay excluded even when listed; a response after the deadline, from another person, from a non-eligible seat, or twice is refused; silence never approves; unanimous/two-thirds/quorum rules hold; a recused seat leaves the threshold; READY IS NOT A DECISION (full participation with no threshold produces no outcome); invalidated approvals never count; every state has a named writer; ISSUED is not an outcome of a round; the administrative acts can never produce one",
+      "command_site_smoke_1_8_0": "four invocations with a non-existent target, each refused at the authorization gate BEFORE any read or write: OpenCirculation → 404 target_not_found (corr_muwjc6u9owj5ra) · SetCirculationPolicy → 404 target_not_found (corr_muwjc6ta58wt5e) · RecordCirculationResponse → 404 target_not_found (corr_muwjc6tnar00it) · FinalizeCirculation → 404 target_not_found (corr_muwkz1ks6unhcb). All reported authz-1.8.0 with zero writes. This proves the new modules and their contract load at runtime and that refusal precedes every read and write; it does NOT exercise a persisted round.",
+      "governed_read_smoke": "GetCirculationState was first written against authorizeCommand('read') and the kernel refused it (invalid_capability — a read is not an operational capability). Corrected to the established governed-read pattern (resolvePrincipal + authorizeRead + refusalBody/refusalStatus, as GetDocumentAnnotations uses), which is the single owner of read authorization.",
+      "policy_suites_re_run_under_1_8_0": "PASS — decision integrity 40/40 · vote eligibility 12/12 · meeting lifecycle 19/19 · decision lifecycle 22/22 · evidence acceptance 20/20 · continuity 60/60 · guest access 22/22 · proposal content 18/18 · annotation continuity 26/26",
       "new_cases_in_1_7_0": "AUTH-043 (an observer's personal note is derived from read) · AUTH-044 (platform administration writes no notes) · POS-020 (a member annotates a document version, scope derived through the version) · POS-021 (the author acts on their own note) · FCL-023 (even the chair cannot carry forward or resolve another person's note — identity_mismatch)",
       "annotation_continuity_suite": "PASS 26/26 (annotation-continuity-1.0.0, writes_performed: 0, records_read: 0)",
       "policy_suites_re_run_under_1_7_0": "PASS — decision integrity 40/40 · vote eligibility 12/12 · meeting lifecycle 19/19 · decision lifecycle 22/22 · evidence acceptance 20/20 · continuity 60/60 · guest access 22/22 · proposal content 18/18",
@@ -109,12 +118,14 @@
       "scope_note": "these suites are NOT completion of A02–A10 or J01–J14: no successful live issuance package, no persisted round and no persisted evidence verdict have been exercised"
     },
     "resolved_this_revision": [
-      "D-046 — the performer no longer certifies itself: verification is its own right (action.verify), the verdict is bound to the revision it judged, and closure requires an ACCEPTED verdict. compliance_verified is derived, not declared.",
-      "D-047 — the two test fixtures invalidated by the policy change were corrected (the failure was in the fixture, not the evaluator) and three cases were added for the new right and the new exclusion",
-      "D-048 — the execution surface now shows the verdict step (who judged, in what capacity, when) and reports an unavailable path with its reason instead of presenting an unwired closure as available"
+      "D-066 — the circulation route no longer leads to a dead end: an APPROVED written resolution is read by IssueDecision through the same frozen-round evaluation a vote uses (circulationRoundContext.ts), the basis names the route, and two approved rounds or invalidated approvals are a refusal rather than a pick",
+      "D-067 — dispatch and finalize are different authorities: the secretary dispatches and the chair finalizes, the guard refuses a finalize by the seat that dispatched the round, a response is identity-bound to one row and written once, and silence is never approval (a policy declaring otherwise is refused)",
+      "D-068 — the route exists only where the committee's own policy record permits it, on matter types the contract recognises, with an electorate computed by the same rule a vote uses and one open round at a time"
     ],
     "open_defects": [
-      "no authenticated SEATED test actor exists, so no persisted end-to-end cycle can be executed (blocker, unassigned owner) — this is now the ONLY structural reason G1/G3/G4 remain unaccepted",
+      "no authenticated SEATED test actor exists, so no persisted end-to-end cycle can be executed (blocker, unassigned owner) — the circulation route is the fourth governed route waiting on the same actor, and it is the ONLY structural reason G1/G3/G4 remain unaccepted",
+      "the circulation route has no read of its own for the policy before the first round: a committee must record its policy through SetCirculationPolicy, and until it does the route is reported closed rather than half-shown",
+      "a person holding two eligible seats in one round is refused a second response (duplicate_principal) — the contract states it plainly; the policy question of proxy/alternate responses is NOT decided",
       "no correction procedure is defined for an issued package (re-issuance after a superseded round is refused, correction_procedure: null)",
       "packages issued under decision-integrity 1.1.0 carry no round binding (reported as unbound_legacy_package, never silently rebound)",
       "actions that predate the acceptance contract hold no verdict; closure is refused for them (closure_requires_acceptance) until a governed path decides what a legacy record's evidence is worth — reported, never assumed",
@@ -128,6 +139,15 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.7.0",
+      "superseded_at": "2026-10-06T11:10:00Z",
+      "evidence_state": "INVALIDATED by the authz-1.8.0 kernel revision — the decision-by-circulation route named three operational rights, one identity binding and two scope-chain records; every suite was re-run against 1.8.0 (96/96 authority, 24/24 circulation approval)",
+      "recorded": {
+        "evidence_that_ran_under_it": "authority 44/44 + 21/21 + 23/23 = 88/88 · annotation continuity 26/26 · continuity 60/60 · integrity 40/40 · decision lifecycle 22/22 · meeting lifecycle 19/19 · vote eligibility 12/12 · acceptance 20/20 · guest access 22/22 · proposal content 18/18",
+        "command_sites_under_it": ["AnnotateDocument", "GetDocumentAnnotations"]
+      }
+    },
     {
       "version": "authz-1.6.0",
       "superseded_at": "2026-10-06T09:30:00Z",

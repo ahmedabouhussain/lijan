@@ -6,6 +6,7 @@ import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import ProposalIntegrityPanel from "@/components/raqeem/ProposalIntegrityPanel";
+import CirculationPanel from "@/components/raqeem/CirculationPanel";
 
 // P0-02 determination, expressed in code rather than in a comment:
 //
@@ -146,6 +147,10 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {/* The voted text itself: which version the round froze, and what moved since. Shown before the
           ballot and before issuance, so a stale text is seen rather than discovered by a refusal. */}
       <ProposalIntegrityPanel decision={decision} />
+
+      {/* The secretary's route to the same approval, presented with its own four facts (dispatch,
+          opening, acknowledgment, response) and with issuance kept as the separate next step. */}
+      <CirculationPanel decision={decision} capabilities={capabilities} onChanged={reloadAuthority} />
 
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-muted-foreground">{t("الحالة الحالية:", "Current status:")}</span>
