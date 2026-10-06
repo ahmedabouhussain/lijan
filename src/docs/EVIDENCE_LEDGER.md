@@ -217,3 +217,20 @@
 **بصمات هذه الشريحة (SHA-256، أول 12 خانة)**: `annotationContinuity a4ad569f74f4` (جديد) · `Annotation 8690d5653fba` (جديد) · `AnnotateDocument 23677fd94da7` (جديد) · `GetDocumentAnnotations d73d21c63358` (جديد) · `TestAnnotationContinuity 46ccd819671d` (جديد) · `useDocumentAnnotations e83352c3039d` (جديد) · `annotationLabels 23c0afc005ba` (جديد) · `AnnotationComposer a595493a2110` (جديد) · `AnnotationRow 5a804195c51b` (جديد) · `VersionChangeStrip dbc2ed06a354` (جديد) · `DocumentAnnotationsPanel 35a9419856b9` (جديد) · `authorityKernel 081af6cd5325` · `commandGuard 3b8fdd2d108c` · `DocumentDetail beed9b5c4d62`.
 **وحدات لم تُلمس**: `proposalContent d792bf69a4d1` · `decisionLifecycle 923bf3c971a8` · `meetingLifecycle 2302a3180bcf` · `evidenceAcceptance 6a7078b15b15` · `continuityContract 2b7f42948c4f` · `transitionClaim b3c6bbfb9a33` · `roundContext af1881717433` · `decisionIntegrity a3ce3c732189`.
 **أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل (سجلات `Annotation` في قاعدة الإنتاج: **0**).
+
+## دفعة S16 — مسارات عامة محفوظة، وحصر الفاعل المُقعد
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S16-001** | مسار الضيف العام من طرفه إلى طرفه على **سجل محفوظ**: قراءة بنطاق بند واحد، تسجيل تدقيق لكل قراءة، ثم الإلغاء يُغلق الرابط | تنفيذ مباشر على سجل إنتاجي (اختباري موسوم) | `GetGuestItemView` + `AgendaItemGuest` | **200** بنطاق `item_only` ثم **410** بعد الإلغاء · `file_delivery.status = blocked` · ثلاث `guest.view` في التدقيق | `6ac4bd48e86e28bc6d66ff22` | **PASS** |
+| **E-S16-002** | إدارة المنصة لا تحمل سلطة تشغيلية — على هدفين **محفوظين** لا على وحدة | نداء خادم مباشر | `CreateDecisionDraft` · `OpenVote` | **403 `admin_not_operational` · `authz-1.7.0` · صفر كتابة** | `corr_muwgw3dxv20qmv` · `corr_muwgw3galmz0g6` | **PASS** |
+| **E-S16-003** | قراءة سجل عرض تجريبي من جلسة حقيقية مرفوضة بالتصميم | نداء خادم مباشر | `GetCommitteeRecord` (Meeting · Decision) | **403 `showcase_scope`** | نداء على `6ac1360782ce89b3b538fbef` · `6ac13608ad1cddfd9f35cec7` | **PASS** |
+| **E-S16-004** | التحقق العام من مُخرَج مؤسسي على سجل محفوظ | نداء خادم مباشر | `VerifyProductInstance` | **200** بحالة `verified: false` على منتج `committee_report` | `6ac21a462374884233b6b813` | **PASS** |
+| **E-S16-005** | حصر المقاعد: من يستطيع التشغيل اليوم فعلًا | قياس على قاعدة الإنتاج | `CommitteeMembership` · `User` | **463** عضوية · **16** مربوطة بمعرّف · **مقعدان** لحساب حقيقي واحد (`ahmed.abouhussain@elan.qa` — رئيس ITISG) | `cmte_mtlj3n2fvs3gps` | **PASS** |
+| **E-S16-006** | إصدار دعوة ضيف بأمر محكوم | فاعل مُقعد | `InviteAgendaItemGuest` | **NOT TESTED** — يلزم مقعد (الأمر يطلب `guest.invite`) | — | **BLOCKED** |
+| **E-S16-007** | الدورة الموجبة (قرار → تصويت → تصديق → إصدار)، والملاحظة المحفوظة، والتحقق المستقل للدليل، والاعتماد والتسليم | جلسة إنسان مُقعد | — | **NOT TESTED / BLOCKED** — لا انتحال هوية من بيئة البناء؛ القائمة التشغيلية جاهزة: `src/docs/SEATED_E2E_RUNSHEET.md` | D-064 | **BLOCKED** |
+| **E-S16-008** | قياس التزامن | — | — | **NOT ESTABLISHED** | D-009 | **NOT MEASURED** |
+
+**حدّ الأدلة**: E-S16-001 يُثبت مسارًا **محفوظًا** كاملًا لكنه **مسار عام بالرمز** لا أمر مقعدي؛ E-S16-002/003 يُثبتان الرفض على أهداف محفوظة (لا استنتاج من وحدة)؛ E-S16-004 مسار تحقق عام. و**لا انتقال مقعدي محفوظ** تحقّق في هذه الدفعة، والسبب مدلَّل لا مُفترض (E-S16-002 + E-S16-005).
+
+**أثر البيانات (S16)**: سجل `AgendaItemGuest` اختباري واحد (موسوم `synthetic_presentational`، منتهٍ ومُلغى) · ثلاثة أسطر `AuditEvent` من نوع `guest.view` (كتبها الخادم في مساره) · صفر حذف · صفر تعديل على بيانات اللجان أو القرارات.
