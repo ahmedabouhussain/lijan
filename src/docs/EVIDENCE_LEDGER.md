@@ -304,3 +304,19 @@
 **لا ارتفاع نسخة سياسة في S20**: لم تُمس النواة ولا الحارس — الفعل المحكوم يقع بحق `committee.manage` القائم على **اللجنة** كسجل مستهدف، والسجل المحسوم يُمرَّر إلى الحارس كسجل **مرتبط** يجب أن يوافق اللجنة نفسها. وما تغيّر هو **بوابة داخل أمر قائم**: `CloseAction` صار يقرأ الحجز القانوني قبل أي كتابة، **fail-closed**: تعذّر إثبات الحجز ⇒ **503 `hold_state_unverifiable`**، وحجز قائم ⇒ **409 `legal_hold_active`** بسببه وجهته والسبيل إلى رفعه.
 **التغييرات (للتراجع) — S20**: أُضيف `base44/shared/institutionalChange.ts` · `base44/entities/ChangeDisposition.jsonc` · `CompileChangeInventory` · `RecordChangeDisposition` · `TestInstitutionalChange` · `src/components/raqeem/ChangeInventoryPanel.jsx`. وعُدِّل `base44/functions/CloseAction/entry.ts` (بوابة الحجز) · `src/pages/committee/CommitteeClosure.jsx` (السطح).
 **أثر البيانات**: صفر كتابة · لا حذف (سجلات `ChangeDisposition` في قاعدة الإنتاج: **0**).
+
+## دفعة S21 — G-1 (سجل الأسطح المحكومة) وG-5 (أثر التدقيق للدليل والقرار)
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S21-001** | سجل الأسطح: 46 سطحًا، كل سطح بأربع وقائع (الحق · الأمر · العقد · ما يُعرض عند تعذّر الفعل)، وربط الفاعل بحقله، والدليل لا يُبالغ في نفسه | اختبار مُنفَّذ (22 حالة) | وحدة مشتركة | **22/22 PASS** · `writes_performed: 0` · `records_read: 0` · فحص السجل: `ok=true` · موانع **0** · قائمة عمل معلنة **7** | `TestGovernanceSurfaces` (GS-001…GS-022) | **PASS** |
+| **E-S21-002** | سلسلة الأثر: خطوة إلزامية غائبة تُسمّى ولا تُستنتج، وحدث مسجَّل قبل سابقه يُعلن ولا يُعاد ترتيبه، وأثر لم يُقرأ يُعلن غير مكتمل لا فارغًا | اختبار مُنفَّذ (17 حالة) | وحدة مشتركة | **17/17 PASS** · `writes_performed: 0` · `records_read: 0` | `TestAuditChain` (AC-001…AC-017) | **PASS** |
+| **E-S21-003** | القراءتان المحكومتان الجديدتان ترفضان عند بوابة السلطة قبل أي قراءة أو كتابة | نداءان مباشران | `GetGovernanceSurfaces` · `GetRecordAuditTrail` | **404 `target_not_found`** (`corr_muwmzk6iuvtm72` · `corr_muwmzk6v25shmy`) · `authz-1.10.0` · **صفر كتابة** | نداءان مباشران | **PASS** |
+| **E-S21-004** | الفحص الثابت | سكربت | 214 ملفًا | **125** موضع أمر · **80** على سجل مستهدف (+2) · **0** خطأ · **0** كتابة بحق قراءة · **0** مطابقة بالاسم · 3 أفعال برمز قدرة | `authority-guardrails` | **PASS** |
+| **E-S21-005** | بناء الواجهة بعد سطح السجل ولوحة الأثر | بناء | شجرة العمل | `npx vite build` → **BUILD_EXIT=0** · صفر خطأ | سجل البناء | **PASS** |
+| **E-S21-006** | أثر تدقيق مقروء على سجل حقيقي ورحلة متصفح | فاعل مُقعد / جلسة | — | **NOT TESTED** — لا فاعل مُقعد مُصادَق (D-064) | D-064 | **BLOCKED** |
+| **E-S21-007** | قياس تزامن | — | — | **NOT ESTABLISHED** (D-009) | D-009 | **NOT MEASURED** |
+
+**لا ارتفاع نسخة سياسة في S21**: النواة والحارس وسلسلة النطاق لم تُمسّا، ولم يُضف حق ولا سجل إلى سلسلة النطاق — الأمران الجديدان قارئان يقعان بحق القراءة القائم على اللجنة نفسها. وما أُضيف فحص ثابت واحد فقط (فئة «أفعال برمز قدرة» كانت بلا مطابقة صحيحة قبل هذه الجولة: العبارة كانت مثبّتة بنهاية المسار فلم تُطابق ملفات `entry.ts` أبدًا ⇒ صُحّحت وصُنِّفت **3** أفعال بالتصميم، وانخفض «قيد الترحيل» إلى 42).
+**التغييرات (للتراجع) — S21**: أُضيف `base44/shared/governanceSurfaceRegistry.ts` · `base44/shared/auditChain.ts` · `GetGovernanceSurfaces` · `GetRecordAuditTrail` · `TestGovernanceSurfaces` · `TestAuditChain` · `src/pages/committee/GovernanceSurfaceRegistry.jsx` · `src/components/raqeem/AuditChainPanel.jsx`. وعُدِّل `src/pages/committee/hubs/GovernanceHub.jsx` (تبويب السجل) · `src/pages/DecisionDetail.jsx` (سلسلة القرار) · `src/components/raqeem/ActionEvidencePanel.jsx` (سلسلة الدليل) · `scripts/authority-guardrails.mjs` (تصحيح مطابقة أفعال رمز القدرة).
+**أثر البيانات**: صفر كتابة · لا حذف.
