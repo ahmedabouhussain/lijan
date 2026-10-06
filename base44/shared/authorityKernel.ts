@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.8.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.9.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,17 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.8.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.8.0",
-  supersedes: "authz-1.7.0",
+  version: "authz-1.9.0",
+  supersedes: "authz-1.8.0",
   change_class: "security",
   changes: [
+    "EFFECTIVE TIME (material D of the committee/membership lifecycle contract; contract membership-effect-1.0.0): the command guard refuses a mandate-bearing act by a seat whose appointment had EFFECTIVELY ended at that instant — by term end, by a bounded acting expiry, or by a recorded ending event (resignation, removal, end of term, representation transfer, incapacity).",
+    "The authority path asked only whether a row with status active existed. A membership whose term had ended, or whose bounded acting appointment had expired, carried every right of its seat: the seat's own effective date did not exist for the command path (D-069). Standing is now decided AT THE INSTANT from effective facts: a change recorded today but effective later removes nothing today, and a change effective today removes the right from that instant.",
+    "Standing is evaluated over ALL of the person's seats in the committee — a person whose first row has ended still acts on a seat that is standing. Only when NO seat is standing at the instant is the act refused.",
+    "FAIL-CLOSED: an appointment history that cannot be read refuses the act (standing_unverifiable), and a status carrying no effective instant cannot establish standing at a past instant. An unreadable fact is never treated as a standing seat.",
+    "The refusal names the effective instant, the ending fact and the institution's route (appoint or replace, or one of the authorized choices when the act belongs to a round already open). An act outside an appointment period is refused in BOTH directions, which is what makes a retrospective signature or a fabricated past attendance impossible rather than merely discouraged.",
+    "This is a GUARD-level gate on purpose: one place decides standing for every mandate-bearing act, so the vote path, the minutes path and the issuance path cannot drift apart.",
+    "NO NEW RIGHT is named and no baseline moves: the gate narrows what an already-ended appointment may do. The mid-round question (what a change does to a round already open) is NOT decided by the guard — it is read from the institution's own recorded policy, and where the instrument is silent the affected official action stops and shows the choice (SetMembershipEffectPolicy · membership-effect-1.0.0).",
     "circulation.open named as an OPERATIONAL and DELEGABLE right: dispatching a written resolution (decision by circulation, brief rev 5 §4C) is the drafting office's act (chair, secretary). It also carries the administrative acts on a live round — extend, cancel, withdraw — none of which can produce an outcome.",
     "circulation.finalize named as its own OPERATIONAL right, granted to the CHAIR and NOT to the secretary: producing a round's outcome approves the committee's decision, and the office that prepares, checks, routes and records does not approve it because it sent it. The guard refuses a finalize by the seat that dispatched the round even when it holds the right, unless the institution's policy explicitly authorizes it.",
     "circulation.respond named as an OPERATIONAL, SELF-SERVICE and IDENTITY-BOUND right: a written-resolution recipient answers on their OWN row (circulation-approval-1.0.0, CIRCULATION_IDENTITY_BOUND), and the guard enforces that identity binding for EVERY role — no chair answers for a member.",

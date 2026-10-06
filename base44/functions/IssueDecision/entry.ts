@@ -8,6 +8,9 @@ import {
 } from '../../shared/decisionIntegrity.ts';
 import { AUTHORITY_POLICY_VERSION } from '../../shared/authorityKernel.ts';
 import { loadRoundContext } from '../../shared/roundContext.ts';
+import {
+  midRoundChangeReport, readEffectPolicy, loadAppointmentEvents, MEMBERSHIP_EFFECT_CONTRACT_VERSION,
+} from '../../shared/membershipEffect.ts';
 // A written resolution freezes its own evidence, so issuance can read it through the same evaluation.
 import { circulationAsFrozenRound } from '../../shared/circulationRoundContext.ts';
 import { issuanceGate, refusalFor } from '../../shared/decisionLifecycle.ts';
@@ -194,6 +197,51 @@ export default async function(req) {
       }, { status: 409 });
     }
 
+    // ── MATERIAL D: a departure or a changed appointment INSIDE this round ────────────────────────
+    // The frozen round stays the authority for WHO was eligible (roundContext), so a change never
+    // rewrites the electorate. What it can affect is the participation the round must still carry, and
+    // what the institution says about a change inside a round it has already opened. The institution's
+    // OWN recorded policy decides the latter; where the instrument is silent, no rule is assumed on its
+    // behalf and only this affected official action waits (the brief's rule for an ambiguous source).
+    //
+    // An already-stored package is never re-judged by a later departure: re-verification stays
+    // idempotent, because a membership change does not invalidate a decision that was validly issued.
+    const effectEvents = await loadAppointmentEvents(sr, roundCtx.memberships.map((m) => m.id));
+    const effectPolicyRows = await sr.entities.MembershipEffectPolicy
+      .filter({ committee_id: committee.id, status: 'active' }, { sort: '-recorded_at', limit: 1 }).catch(() => null);
+    const effectPolicy = effectPolicyRows == null ? null : (readEffectPolicy(arr(effectPolicyRows)[0] || null));
+    const effect: any = midRoundChangeReport({
+      round: roundCtx.round,
+      seats: roundCtx.memberships,
+      events: effectEvents.events || [],
+      policy: effectPolicy,
+      ballots: roundCtx.ballots,
+      quorum_required: roundCtx.round.quorum_required ?? null,
+      unreadable: effectEvents.unreadable,
+    });
+    if (!storedSnapshot && (effect.action === 'unresolved_policy' || effect.action === 'participation_not_met_after_change')) {
+      return Response.json({
+        error: effect.refusal.en,
+        error_ar: effect.refusal.ar,
+        code: effect.refusal.code,
+        contract_version: MEMBERSHIP_EFFECT_CONTRACT_VERSION,
+        round: { id: roundCtx.round.id, round: roundCtx.round.round || 1, frozen_on: roundCtx.round.frozen_on || null },
+        changes: effect.changes,
+        within_round: effect.within_round,
+        affected_facts: effect.affected_facts,
+        authorized_choices: effect.authorized_choices,
+        retest: effect.retest,
+        ballot_inheritance: effect.ballot_inheritance,
+        decided: 'refused_before_write',
+        correlation_id: auth.correlation_id,
+      }, { status: effect.refusal.code === 'standing_unverifiable' ? 503 : 409 });
+    }
+    // The facts are RECORDED either way: an issuance that proceeded through a mid-round change says so
+    // in its own basis, and its package carries the seats, the ending facts and the policy in force.
+    const effectNote = effect.within_round > 0
+      ? `mid-round membership change inside this round: ${effect.within_round} seat(s); policy ${effect.policy?.mid_round_change || 'not recorded — the choice was required and this act proceeded only because no change fell inside the round'}; participation re-measured: ${effect.retest ? String(effect.retest.quorum_met_after) : 'not applicable'}`
+      : 'no membership change fell inside this round';
+
     // D-061 (proposal-content-1.0.0): a NEW issuance rests on the text the round froze. If the
     // proposal was edited after the vote opened, what would be issued is not what was voted; a round
     // opened before content freezing names no text at all. Both stop here, before any claim or write.
@@ -251,6 +299,15 @@ export default async function(req) {
       })),
       signature_requirement: readiness.signatures.requirement,
       signature_basis: readiness.signatures.basis,
+      // Material D, recorded in the package: who changed, when it took effect, and under which policy.
+      mid_round_effect: {
+        contract_version: MEMBERSHIP_EFFECT_CONTRACT_VERSION,
+        action: effect.action,
+        within_round: effect.within_round,
+        seats_affected: (effect.changes || []).map((c) => ({ seat_id: c.seat_id, ended_by: c.ended_by, effective_at: c.effective_at, recorded_after_effect: c.recorded_after_effect, position: c.position })),
+        policy: effect.policy?.mid_round_change || null,
+        next_freeze_must_use_current_register: effect.next_freeze_must_use_current_register === true,
+      },
       issuing_authority: auth.user.full_name || auth.user.email,
       issuing_role: auth.effective_role,
       created_actions: (actions || []).map((a) => ({ id: a.id, title: a.title, owner: a.owner_name })),
@@ -353,7 +410,7 @@ export default async function(req) {
       threshold_needed: readiness.threshold.needed,
       threshold_met: readiness.ballots.tally.for >= readiness.threshold.needed,
       electorate_size: readiness.electorate.size,
-      electorate_basis: `${readiness.electorate.basis} — ${electorateBasisNote}`,
+      electorate_basis: `${readiness.electorate.basis} — ${electorateBasisNote} — ${effectNote}`,
       eligible_seat_ids: readiness.electorate.seats.map((s) => s.seat_id),
       excluded_seats: readiness.electorate.excluded.map((e) => `${e.seat_id}:${e.reason}`),
       accepted_ballots: readiness.ballots.accepted.map((b) => `${b.seat_id || b.user_id}:${b.choice}:${b.method}`),

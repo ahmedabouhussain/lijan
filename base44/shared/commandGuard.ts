@@ -31,6 +31,9 @@ import { ANNOTATION_IDENTITY_BOUND } from './annotationContinuity.ts';
 // A written-resolution response belongs to ONE eligible seat, and its state gates come from the same
 // contract the circulation commands consume (circulation-approval-1.0.0, authz-1.8.0).
 import { CIRCULATION_IDENTITY_BOUND, CIRCULATION_TRANSITIONS } from './circulationApproval.ts';
+// EFFECTIVE TIME (material D, membership-effect-1.0.0): a seat's own effective facts decide whether it
+// may still act. Read from the effective-time contract, never re-typed here.
+import { standingAt, loadAppointmentEvents, EFFECT_REFUSALS, MEMBERSHIP_EFFECT_CONTRACT_VERSION, AUTHORIZED_CHOICES } from './membershipEffect.ts';
 
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
@@ -135,6 +138,28 @@ export const ACTOR_EXCLUDED = { ...EVIDENCE_ACTOR_EXCLUDED };
 
 /** Required states read from the acceptance contract: a second field that must hold a value. */
 export const REQUIRED_STATES = { ...EVIDENCE_STATE_GATES };
+
+/**
+ * Acts that require the acting seat to be STANDING at the instant of the act (authz-1.9.0, material D).
+ *
+ * These are the mandate-bearing acts: a ballot, a certification, a decision, minutes, a written
+ * resolution, the certification of attendance. A seat whose appointment has EFFECTIVELY ended may not
+ * perform them — whether it ended by term, by a bounded acting expiry, or by a recorded ending event.
+ *
+ * Deliberately NOT listed: the administrative continuation acts (assigning an action, recording
+ * progress, closing an obligation that a successor may inherit). A closed or departed office must not
+ * stop the institution's execution work, and the brief requires that a departure never forces a former
+ * member to log in before the institution can continue.
+ */
+export const STANDING_REQUIRED = [
+  "vote.cast", "vote.call", "vote.certify",
+  "decision.approve", "decision.issue", "decision.submit", "decision.execute",
+  "minutes.approve", "minutes.issue", "minutes.review",
+  "circulation.open", "circulation.finalize", "circulation.respond",
+  "attendance.certify",
+];
+
+const asArray = (x) => (Array.isArray(x) ? x : (x && x.items) || []);
 
 /** Request fields a command may only ever COMPARE against the derived truth. */
 export function requestClaims(body) {
@@ -247,6 +272,68 @@ export async function authorizeCommand(base44, opts = {}) {
   });
   const trusted_target = { type: target_type, id: record.id, mode, parents_checked: parentsChecked, derived_committee_id: committeeId };
   if (!auth.allowed) return { ...auth, trusted_target, target: null };
+
+  // ── EFFECTIVE TIME (authz-1.9.0 · membership-effect-1.0.0) ─────────────────────────────────────
+  // The kernel answered "is there a seat?". This answers the question the seat's own record was
+  // already carrying and nothing read: is that appointment still STANDING at this instant?
+  //
+  // Standing is evaluated by instant over every seat the person holds here, from effective facts — a
+  // term end, a bounded acting expiry, an ending appointment event — so a change recorded today but
+  // effective later removes nothing today, and an appointment that effectively ended yesterday cannot
+  // act today. Only when NO seat is standing is the act refused; the refusal names the ending fact and
+  // the institution's route.
+  if (STANDING_REQUIRED.includes(capability)) {
+    let seatRows;
+    try {
+      seatRows = await sr.entities.CommitteeMembership.filter({ committee_id: committeeId, user_id: auth.user.id, status: "active" });
+    } catch (_e) {
+      return {
+        ...auth, allowed: false, status: 503, code: "authority_unavailable",
+        reason: EFFECT_REFUSALS.standing_unverifiable.en, reason_ar: EFFECT_REFUSALS.standing_unverifiable.ar,
+        contract_version: MEMBERSHIP_EFFECT_CONTRACT_VERSION, trusted_target, target: null,
+      };
+    }
+    const seats = asArray(seatRows);
+    if (seats.length > 0) {
+      const { events, unreadable } = await loadAppointmentEvents(sr, seats.map((s) => s.id));
+      if (unreadable) {
+        return {
+          ...auth, allowed: false, status: 503, code: "authority_unavailable",
+          reason: EFFECT_REFUSALS.standing_unverifiable.en, reason_ar: EFFECT_REFUSALS.standing_unverifiable.ar,
+          contract_version: MEMBERSHIP_EFFECT_CONTRACT_VERSION, trusted_target, target: null,
+        };
+      }
+      const at = new Date().toISOString();
+      const verdicts = seats.map((seat) => ({ seat, standing: standingAt({ seat, events, at }) }));
+      const standingSeat = verdicts.find((v) => v.standing.standing === "standing");
+      if (!standingSeat) {
+        // Report the most informative verdict: a definite ending beats "not yet seated", and one that
+        // names an instant beats one that cannot.
+        const informative = verdicts.find((v) => v.standing.standing === "ended" && v.standing.effective_at)
+          || verdicts.find((v) => v.standing.standing === "ended")
+          || verdicts[0];
+        const standing = informative.standing;
+        const known = standing.standing !== "unknown";
+        return {
+          ...auth,
+          allowed: false,
+          status: known ? 403 : 503,
+          code: standing.refusal?.code || "seat_not_standing",
+          reason: standing.refusal?.en || EFFECT_REFUSALS.seat_not_standing.en,
+          reason_ar: standing.refusal?.ar || EFFECT_REFUSALS.seat_not_standing.ar,
+          standing: {
+            state: standing.standing, ended_by: standing.ended_by,
+            effective_at: standing.effective_at || null, recorded_at: standing.recorded_at || null,
+            recorded_after_effect: standing.recorded_after_effect === true,
+            source: standing.source, seat_id: standing.seat_id,
+          },
+          contract_version: MEMBERSHIP_EFFECT_CONTRACT_VERSION,
+          remedy: { route: "appoint_or_replace", authorized_choices: AUTHORIZED_CHOICES },
+          trusted_target, target: null,
+        };
+      }
+    }
+  }
 
   const state = PERMITTED_STATES[capability];
   if (mode === "existing" && state && !state.states.includes(record[state.field])) {

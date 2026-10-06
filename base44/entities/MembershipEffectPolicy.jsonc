@@ -1,0 +1,118 @@
+{
+  "name": "MembershipEffectPolicy",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "mid_round_change": {
+      "type": "string",
+      "title": "Effect of a change inside an open round (the institution's own choice, never an assumed rule)",
+      "enum": [
+        "freeze_hold",
+        "retest_participation",
+        "next_round_only"
+      ]
+    },
+    "resolution_route": {
+      "type": "string",
+      "title": "Who resolves a change during a running process (the competent authority the instrument names)"
+    },
+    "authorized_choices": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Authorized choices this institution permits (pause \u00b7 replace prospectively \u00b7 re-establish quorum \u00b7 close/reopen round \u00b7 reconstitute meeting \u00b7 seek ratification)"
+    },
+    "delegation_expiry_handling": {
+      "type": "string",
+      "title": "Delegation expiry during a running process",
+      "enum": [
+        "act_stops_immediately",
+        "acts_until_close_if_policy_authorized"
+      ],
+      "default": "act_stops_immediately"
+    },
+    "policy_version": {
+      "type": "string",
+      "title": "Policy Revision Stated by the Institution"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Membership Effect Contract Version in Force"
+    },
+    "policy_source": {
+      "type": "string",
+      "title": "Policy Source (committee_instrument when read from the institution's own recorded policy)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes (the instrument clause the choice rests on)"
+    },
+    "recorded_by_user_id": {
+      "type": "string",
+      "title": "Recorded By (user id)"
+    },
+    "recorded_by_name": {
+      "type": "string",
+      "title": "Recorded By (display only)"
+    },
+    "recorded_at": {
+      "type": "string",
+      "title": "Recorded At (server clock)",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (a superseded policy is preserved; policy is never rewritten silently)",
+      "enum": [
+        "active",
+        "superseded"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "mid_round_change",
+    "resolution_route",
+    "policy_version",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

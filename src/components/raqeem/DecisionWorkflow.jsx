@@ -6,6 +6,7 @@ import { DECISION_STATUS } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import ProposalIntegrityPanel from "@/components/raqeem/ProposalIntegrityPanel";
+import RoundEffectPanel from "@/components/raqeem/RoundEffectPanel";
 import CirculationPanel from "@/components/raqeem/CirculationPanel";
 
 // P0-02 determination, expressed in code rather than in a comment:
@@ -147,6 +148,11 @@ export default function DecisionWorkflow({ decision, onChanged }) {
       {/* The voted text itself: which version the round froze, and what moved since. Shown before the
           ballot and before issuance, so a stale text is seen rather than discovered by a refusal. */}
       <ProposalIntegrityPanel decision={decision} />
+
+      {/* Material D: what a membership change does to THIS round — the frozen seats, the change with
+          both its effective and recorded instants, the institution's own policy, and (when the
+          instrument is silent) the unresolved choice with the authorized choices that settle it. */}
+      <RoundEffectPanel decision={decision} />
 
       {/* The secretary's route to the same approval, presented with its own four facts (dispatch,
           opening, acknowledgment, response) and with issuance kept as the separate next step. */}

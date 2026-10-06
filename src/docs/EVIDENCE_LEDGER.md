@@ -255,3 +255,22 @@
 
 **التغييرات (للتراجع) — S17**: أُضيف `base44/shared/circulationRoundContext.ts` · `base44/functions/{SetCirculationPolicy,OpenCirculation,RecordCirculationResponse,FinalizeCirculation,GetCirculationState,TestCirculationApproval}/entry.ts` · `src/components/raqeem/CirculationPanel.jsx`. وتمّ توسيع `base44/shared/circulationApproval.ts` (سابقًا في هذه الموجة) وحُوِّل إلى **العقد المُستهلك**: `base44/shared/authorityKernel.ts` (authz-1.8.0: ثلاثة حقوق + خط أساس + كتالوج التفويض) · `base44/shared/commandGuard.ts` (سلسلة النطاق + بوابتا الحالة من العقد + قيد الهوية) · `base44/functions/IssueDecision` (يقرأ الدورة المعتمدة بالتمرير عبر التقييم نفسه) · `base44/functions/TestAuthorizationGuard` (AUTH-045…052) · `base44/shared/authorityPolicyManifest.json` · `DecisionWorkflow.jsx` (عرض اللوحة).
 **أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل (سجلات `CirculationRound` و`CirculationResponse` في قاعدة الإنتاج: **0**).
+
+## دفعة S18 — المادة د: وقت النفاذ عند الخروج أو انتهاء التفويض أثناء تصويت/مراجعة محضر
+
+**المرجع الحاكم**: الموجز (مراجعة 5) §4A المادة د — «apply an explicit effective-time policy … Distinguish effective date from recorded date».
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S18-001** | عقد `membership-effect-1.0.0`: قيام الصفة باللحظة في الاتجاهين، النفاذ مقابل التسجيل، السياسات الثلاث، الخيارات الستة، ومنع قاعدة الإلغاء التلقائي | اختبار مُنفَّذ (39 حالة) | وحدة مشتركة | **39/39 PASS** · `writes_performed: 0` · `records_read: 0` | `TestMembershipEffect` (ME-001…ME-039) | **PASS** |
+| **E-S18-002** | النواة بعد الترقية: بوابة قيام الصفة بلا حق جديد | اختبار مُنفَّذ | نواة السلطة + الحارس | **96/96 PASS** (52+21+23) · `authz-1.9.0` · `failures: []` · خط الأساس **بلا تغيير** 53/22/39/17 | `TestAuthorizationGuard` | **PASS** |
+| **E-S18-003** | إعادة تشغيل كل الأسر تحت النسخة الجديدة (الأدلة السابقة مُبطَلة) | أسر مُنفَّذة | طبقة العقود | 40/40 · 20/20 · 60/60 · 24/24 · 22/22 · 19/19 · 12/12 · 22/22 · 18/18 · 26/26 | `Test*` | **PASS** |
+| **E-S18-004** | تحميل الأمر والقراءة الجديدين وأن الرفض يسبق كل قراءة وكتابة | نداء خادم مباشر على أهداف غير موجودة | `SetMembershipEffectPolicy` · `GetDecisionEffectState` | **404 `target_not_found` · `authz-1.9.0` · صفر كتابة** (`corr_muwlc8j7qyswyh`) · والقراءة: **404 `not_found`** | نداءان مباشران | **PASS** |
+| **E-S18-005** | بناء الواجهة بعد السطح الجديد | بناء | شجرة العمل | `npx vite build` → **BUILD_EXIT=0** | سجل البناء | **PASS** |
+| **E-S18-006** | خروج عضو نفاذًا أثناء دورة تصويت مفتوحة، وتبديل موقّع أثناء مراجعة المحضر، وخطأ تاريخ تعيين بعد الإصدار | فاعل مُقعد | — | **NOT TESTED** — لا فاعل مُقعد (الحاجز نفسه)؛ وقائمة التشغيل `SEATED_E2E_RUNSHEET.md` هي المخرج | D-064 | **BLOCKED** |
+| **E-S18-007** | قياس التزامن | — | — | **NOT ESTABLISHED** (D-009) | D-009 | **NOT MEASURED** |
+
+**حدّ الأدلة**: E-S18-001 يُثبت **العقد** الذي يستهلكه الحارس والأمر والقراءة — ولا يفتح دورة ولا يحفظ خروجًا. وE-S18-004 يُثبت التحميل وسبق الرفض، لا انتقالًا محفوظًا. وE-S18-002 يُثبت أن البوابة لم تزد حقًّا (خط الأساس ثابت) ولم تُسقط حالة قائمة.
+
+**التغييرات (للتراجع) — S18**: أُضيف `base44/shared/membershipEffect.ts` · `base44/entities/MembershipEffectPolicy.jsonc` · `base44/functions/SetMembershipEffectPolicy` · `base44/functions/GetDecisionEffectState` · `base44/functions/TestMembershipEffect` · `src/components/raqeem/RoundEffectPanel.jsx`. وعُدِّل: `base44/shared/commandGuard.ts` (بوابة `STANDING_REQUIRED`) · `base44/shared/authorityKernel.ts` (`authz-1.9.0`) · `base44/functions/IssueDecision` (بوابة الأثر داخل الدورة + تسجيله في الحزمة) · `src/components/raqeem/DecisionWorkflow.jsx` · `base44/shared/authorityPolicyManifest.json`.
+**أثر البيانات**: صفر كتابة · لا حذف · لا إعادة بذر (سجلات `MembershipEffectPolicy` في قاعدة الإنتاج: **0**).
