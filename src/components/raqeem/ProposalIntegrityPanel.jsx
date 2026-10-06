@@ -21,6 +21,15 @@ const FINDING_LABEL = {
   field_added: { ar: "حقل أُضيف", en: "Field added" },
   field_removed: { ar: "حقل أُفرغ", en: "Field emptied" },
   wording_changed: { ar: "صياغة فقط", en: "Wording only" },
+  // Materiality findings (material-change-1.0.0) — the changes a field-level diff cannot see.
+  unit_changed: { ar: "تغيّرت الوحدة مع بقاء الرقم (يوم/أسبوع · نسبة/عملة)", en: "Unit changed while the number stayed (day/week · percent/currency)" },
+  value_subject_swap: { ar: "انتقل الرقم إلى جهة أو بند آخر", en: "A number moved to another party or subject" },
+  modality_strengthened: { ar: "تشددت الصيغة الإلزامية (يجوز ← يجب)", en: "Obligation strengthened (may → shall)" },
+  modality_weakened: { ar: "تراخت الصيغة الإلزامية (يجب ← يجوز)", en: "Obligation weakened (shall → may)" },
+  scope_changed: { ar: "تغيّر نطاق الالتزام (كل/بعض · حد أدنى/حد أعلى)", en: "Scope changed (all/some · floor/ceiling)" },
+  reference_changed: { ar: "تغيّر السند المرجعي المُسمّى", en: "A named normative reference changed" },
+  text_added: { ar: "أُضيف نص لم يكن مُصوَّتًا عليه", en: "Text was added that was not voted on" },
+  text_removed: { ar: "أُزيل نص كان مُصوَّتًا عليه", en: "Text that was voted on was removed" },
 };
 
 const BINDING_STATE = {
@@ -136,14 +145,30 @@ export default function ProposalIntegrityPanel({ decision }) {
               <div key={f.field} className={`rounded border p-2 text-[11px] ${f.material ? "border-destructive/30 bg-state-danger-surface" : "border-border bg-secondary/30"}`}>
                 <p className={`font-medium ${f.material ? "text-state-danger-ink" : "text-muted-foreground"}`}>
                   {lang === "ar" ? f.label.ar : f.label.en}
-                  {f.material ? " · " : " · "}
-                  <span className="font-normal">{f.findings.map((x) => (lang === "ar" ? FINDING_LABEL[x.type]?.ar : FINDING_LABEL[x.type]?.en) || x.type).join(" · ")}</span>
+                  {" · "}
+                  <span className="font-normal">
+                    {Array.from(new Set([...(f.findings || []), ...(f.semantic_findings || [])].map((x) => x.type || x.code)))
+                      .map((code) => (lang === "ar" ? FINDING_LABEL[code]?.ar : FINDING_LABEL[code]?.en) || code)
+                      .join(" · ")}
+                  </span>
                 </p>
                 <p className="text-muted-foreground line-through truncate">{f.before || t("(فارغ)", "(empty)")}</p>
                 <p className="text-foreground truncate">{f.after || t("(فارغ)", "(empty)")}</p>
               </div>
             ))}
           </div>
+
+          {/* A change whose number and unit sit in DIFFERENT fields: no per-field diff can see it. */}
+          {(changes?.cross_field_findings || []).length > 0 && (
+            <div className="rounded border border-destructive/30 bg-state-danger-surface p-2 text-[11px]">
+              <p className="font-medium text-state-danger-ink">{t("تغيير بين الحقول (رقم هنا ووحدته هناك)", "Movement across fields (a number here, its unit there)")}</p>
+              <p className="text-state-danger-ink">
+                {(changes.cross_field_findings || [])
+                  .map((x) => (lang === "ar" ? FINDING_LABEL[x.code]?.ar || x.label?.ar : FINDING_LABEL[x.code]?.en || x.label?.en) || x.code)
+                  .join(" · ")}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

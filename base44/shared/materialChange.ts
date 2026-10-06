@@ -67,21 +67,48 @@ const MONEY_UNITS = new Set(["ريال", "ريالا", "ريالات", "درهم
 const UNIT_WORDS = new Set([...DAY_UNITS, ...MONEY_UNITS, "%", "نسبة", "بالمية", "بالمئة", "بالمائة", "percent"]);
 const BINDING_WORDS = new Set(["من", "في", "على", "الى", "إلى", "عن", "لـ", "لا", "يقل", "يزيد", "اقل", "اكثر", "الاقل", "الاكثر", "of", "to", "for", "per", "each", "within"]);
 
+/** Canonical unit form, so a finding reads «30 يوم ← 30 أسبوع» however Arabic spelling bends the word. */
+const UNIT_CANON: Record<string, string> = {
+  يوما: "يوم", يوم: "يوم", يومين: "يوم", ايام: "ايام", day: "يوم", days: "يوم",
+  اسبوعا: "اسبوع", اسبوع: "اسبوع", اسابيع: "اسبوع", week: "اسبوع", weeks: "اسبوع",
+  شهرا: "شهر", شهر: "شهر", اشهر: "شهر", month: "شهر", months: "شهر",
+  سنة: "سنة", سنه: "سنة", سنوات: "سنة", year: "سنة", years: "سنة",
+  ساعة: "ساعة", ساعات: "ساعة", hour: "ساعة", hours: "ساعة",
+  ريالا: "ريال", ريال: "ريال", ريالات: "ريال", درهم: "درهم", دولار: "دولار", يورو: "يورو",
+  بالمئة: "نسبة", بالمائة: "نسبة", بالميه: "نسبة", نسبة: "نسبة", percent: "نسبة",
+};
+
+export function asUnit(token: string | null) {
+  if (!token) return null;
+  if (token === "%") return "%";
+  if (UNIT_CANON[token]) return UNIT_CANON[token];
+  const noTanween = token.replace(/ا$/, "");
+  if (UNIT_CANON[noTanween]) return UNIT_CANON[noTanween];
+  const taMarbuta = token.replace(/ة$/, "ه");
+  if (UNIT_CANON[taMarbuta]) return UNIT_CANON[taMarbuta];
+  return null;
+}
+
+const SKIP_WORDS = new Set([
+  ...BINDING_WORDS, ...NEGATIONS_AR, ...NEGATIONS_EN, ...STRONG, ...PERMISSIVE,
+  "يقل", "تقل", "يزيد", "تزيد", "اقل", "اكثر", "بما", "بحد", "كحد", "مدة", "رقم",
+]);
+
 /** Numbers paired with the unit that follows and the subject that precedes — the pairing IS the meaning. */
 export function numberPairs(text: any) {
-  const toks = tokenize(text);
+  const toks = tokenize(withoutDates(text));
   const pairs: any[] = [];
   for (let i = 0; i < toks.length; i++) {
-    const m = /^(\d+(?:\.\d+)?)(%?)$/.exec(toks[i]);
+    // Arabic attaches و/ف/ب/ل to the number: «و30%» is a number with a conjunction, not a word (D-089).
+    const m = /^[وفبل]{0,2}(\d+(?:\.\d+)?)(%?)$/.exec(toks[i]);
     if (!m) continue;
     const number = m[1];
     const next = toks[i + 1] || null;
-    let unit = m[2] || null;
-    if (!unit && next && UNIT_WORDS.has(next)) unit = next;
-    const prev = [];
+    const unit = m[2] || asUnit(next);
+    const prev: string[] = [];
     for (let j = i - 1; j >= 0 && prev.length < 2; j--) {
       const t = toks[j];
-      if (/^\d/.test(t) || UNIT_WORDS.has(t) || BINDING_WORDS.has(t)) continue;
+      if (/[0-9]/.test(t) || UNIT_CANON[t] || SKIP_WORDS.has(t) || t.length < 2) continue;
       prev.unshift(t);
     }
     pairs.push({ number, unit, subject: prev.join(" ") });
@@ -89,8 +116,14 @@ export function numberPairs(text: any) {
   return pairs;
 }
 
+// Dates are read BEFORE normalisation strips separators: a normalised "2026-11-01" would arrive as
+// three separate numbers and the date change would vanish (D-089).
 const DATE_RE = /\b\d{4}-\d{1,2}-\d{1,2}\b|\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b/g;
-export const datesIn = (text: any) => (normalizeText(text).match(DATE_RE) || []).map((d) => d.replace(/[/.]/g, "-")).sort();
+export const datesIn = (text: any) => {
+  const raw = toAsciiDigits(text).normalize("NFC");
+  return (raw.match(DATE_RE) || []).map((d) => d.replace(/[/.]/g, "-")).sort();
+};
+const withoutDates = (text: any) => toAsciiDigits(text).normalize("NFC").replace(DATE_RE, " ");
 
 const NEGATIONS_AR = new Set(["لا", "ليس", "ليست", "غير", "لم", "لن", "عدم", "دون", "بدون", "الا", "إلا", "باستثناء", "عدا", "يحظر", "يمنع", "ممنوع", "محظور"]);
 const NEGATIONS_EN = new Set(["not", "no", "never", "without", "except", "unless", "none", "neither", "nor", "cannot", "prohibited", "excluding"]);
@@ -130,12 +163,14 @@ export function scopeMarkers(text: any) {
   return SCOPE_PHRASES.filter((p) => p.re.test(t)).map((p) => p.code).sort();
 }
 
-const REFERENCE_RE = /(نظام|قانون|لائحة|مادة|مرسوم|قرار|تعميم|دستور|اتفاقية|معيار|article|law|regulation|clause|decree|resolution|policy|standard)\s+([^ ]+(?: [^ ]+)?)/g;
+// A normative reference, named precisely: a body of law (نظام/قانون/لائحة…) with its name, or an
+// instrument identified BY NUMBER. «القرار كل الأقسام» is a common noun, not a reference (D-089).
+const REFERENCE_RE = /(?:نظام|قانون|لائحة|مرسوم|تعميم|دستور|اتفاقية|معيار|law|regulation|decree|policy|standard|clause)\s+[^ ]+(?: [^ ]+)?|(?:قرار|مادة|مرسوم|article)\s+(?:رقم\s+)?[0-9]+/g;
 export function referencesIn(text: any) {
   const t = normalizeText(text);
   const out: string[] = [];
   let m: RegExpExecArray | null;
-  while ((m = REFERENCE_RE.exec(t)) !== null) out.push(`${m[1]} ${m[2]}`.trim());
+  while ((m = REFERENCE_RE.exec(t)) !== null) out.push(m[0].trim());
   return out.sort();
 }
 

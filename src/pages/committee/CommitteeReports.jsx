@@ -10,6 +10,7 @@ import { BarChart3, ShieldCheck, CheckCircle, AlertTriangle, Clock, Loader2, Dow
 import { Button } from "@/components/ui/button";
 import { isOverdue } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import MetricsPanel from "@/components/raqeem/MetricsPanel";
 
 function MaturityBar({ label, value, color }) {
   return (
@@ -98,6 +99,10 @@ export default function CommitteeReports() {
           <MaturityBar label={t("انتظام الاجتماعات", "Meeting Regularity")} value={meetingRegularity} color="bg-accent" />
         </div>
       </div>
+
+      {/* Every figure below is computed on the SERVER and arrives with its definition, owner, period,
+          numerator, denominator and source — never from the page of records loaded in this view. */}
+      <MetricsPanel committeeId={committeeId} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
