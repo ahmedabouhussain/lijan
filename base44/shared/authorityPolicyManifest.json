@@ -3,8 +3,8 @@
   "generated_by": "static enumeration of the frozen sources (scripts/*.mjs cannot be executed from the builder environment, so per-file digests below stand as the identifiable revision and combined_sha256 is NOT recomputed)",
   "candidate": true,
   "current": {
-    "version": "authz-1.5.0",
-    "supersedes": "authz-1.4.0",
+    "version": "authz-1.6.0",
+    "supersedes": "authz-1.5.0",
     "version_scope": "the version string belongs to the AUTHORITY KERNEL and is reported by TestAuthorizationGuard from the kernel itself. authz-1.5.0 IS a kernel revision: verification of execution evidence was named as its OWN operational right (action.verify — presenting performance and judging it are different acts by different seats), closure stopped being decidable from a field the performer writes (compliance_verified is no longer a closure condition; it is derived from an ACCEPTED verdict), and the guard gained two structural gates plus an actor-independence exclusion. All three are security material, so the previous evidence is invalidated and every suite is re-run against this revision.",
     "built_at": "2026-10-06T07:10:00Z",
     "repository_revision": {
@@ -12,13 +12,21 @@
       "note": "this slice is an uncommitted working tree on top of that commit; the revision is identified by the per-file digests below"
     },
     "change_class": "security",
+    "changes_this_revision": [
+      "seat.resign — the seat holder's own-act right (resignation, a reported absence, acceptance of one's own appointment). SELF-SERVICE: derived from the seat's read right and bound to the actor's OWN identity by the command guard for EVERY role.",
+      "seat.handover_accept — the NAMED successor accepts institutional obligations under their own identity and only for themselves. An institution cannot accept on their behalf, and an unaccepted obligation stays visible as unresolved.",
+      "IDENTITY-BOUND ACTIONS enforced structurally in commandGuard (read from continuityContract.ts, never re-typed): a listed act is refused unless the record's own identity field equals the actor's, whatever role the actor holds.",
+      "commandGuard scope chain extended with CommitteeRelationship, SeatAppointmentEvent, HandoverPack and HandoverItem. CommitteeRelationship deliberately does NOT treat the counterparty as a parent link: a joint committee or a reporting line may lawfully cross an institution boundary, and a parent chain would either refuse a lawful relationship or derive the wrong committee from it."
+    ],
     "frozen": true,
     "invalidates_prior_evidence": true,
     "combined_sha256": null,
     "source_files": [
-      { "path": "base44/shared/authorityKernel.ts", "sha256": "608c23378036b4a3b0f1124fc66a80ecf10081309f8be09e0238aa1a266965f3" },
-      { "path": "base44/shared/commandGuard.ts", "sha256": "021bdf670e9549df93d32b34bed041e54bbfb344f81565cb093d3c8b5eec115e", "contract": "authz-1.5.0 — REQUIRED_STATES reads the acceptance contract (closure requires a verdict state of 'accepted'; verification requires 'submitted') and an ACTOR_EXCLUDED table refuses the seat that submitted the revision, for every role" },
+      { "path": "base44/shared/authorityKernel.ts", "sha256": null, "digest_note": "kernel edited for authz-1.6.0; scripts/authority-policy-manifest.mjs cannot be executed from the builder environment, so this digest is NOT recomputed here" },
+      { "path": "base44/shared/commandGuard.ts", "sha256": null, "digest_note": "guard edited for authz-1.6.0 (identity-bound actions); digest not recomputed from this environment", "contract": "authz-1.5.0 — REQUIRED_STATES reads the acceptance contract (closure requires a verdict state of 'accepted'; verification requires 'submitted') and an ACTOR_EXCLUDED table refuses the seat that submitted the revision, for every role" },
       { "path": "base44/shared/evidenceAcceptance.ts", "sha256": "6a7078b15b15884fa765cbc29d5f4340554bfe2615a7d1fa630adff101f13ad3", "added_after": "the authz-1.4.0 kernel freeze", "contract": "evidence-acceptance-1.0.0 (submission, acceptance by an INDEPENDENT seat, return for correction, and closure as an accountable act — stated ONCE and consumed by SubmitActionEvidence, ReviewActionEvidence, CloseAction and the guard)" },
+      { "path": "base44/shared/continuityContract.ts", "sha256": null, "added_after": "the authz-1.5.0 kernel freeze", "contract": "continuity-1.0.0 (seat ≠ person; appointment events with effective time and reason class; bounded acting capacity; no automatic succession; effective-time policy for live meetings; handover dispositions, exclusions and the successor's own acceptance — stated ONCE and consumed by RecordAppointmentEvent, InitiateHandover, AcceptHandover and the guard)" },
+      { "path": "base44/shared/committeeStructure.ts", "sha256": null, "added_after": "the authz-1.5.0 kernel freeze", "contract": "committee-structure-1.0.0 (typed relationships and what each conveys — a reporting recipient and an oversight body convey NO approval; authority-cycle detection; bounded inter-committee delegation with reservation, expiry, non-delegable powers and no re-delegation)" },
       { "path": "base44/shared/transitionClaim.ts", "sha256": "b3c6bbfb9a3328cd42947947e6b94eaf5683cee24a058cb169f0d8fbc8ab2789", "unchanged_this_round": true },
       { "path": "base44/shared/decisionIntegrity.ts", "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d", "unchanged_this_round": true, "contract": "decision-integrity-1.2.0" },
       { "path": "base44/shared/roundContext.ts", "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d", "unchanged_this_round": true, "contract": "round-context-1.1.0" },
@@ -41,8 +49,10 @@
     "policy": {
       "delegable_capabilities": 15,
       "operational_capabilities_note": "the catalogue is OPERATIONAL_CAPABILITIES in authorityKernel.ts; its size is NOT asserted here because it cannot be machine-read from this environment. The derived role baselines reported by the guard at this revision are authoritative for what a seat actually holds.",
-      "capabilities_added_this_round": ["action.verify"],
-      "baselines_reported_by_guard": { "chair": 46, "vice_chair": 17, "vice_chair_delegated": 32, "delegable": 15 },
+      "capabilities_added_this_round": ["seat.resign", "seat.handover_accept"],
+      "capabilities_added_in_1_5_0": ["action.verify"],
+      "baselines_reported_by_guard": { "chair": 48, "vice_chair": 19, "vice_chair_delegated": 34, "delegable": 15 },
+      "baseline_growth_explained": "chair 46→48 and vice_chair 17→19: two SELF-SERVICE rights (seat.resign, seat.handover_accept) are derived from the seat's read right, so every seated person gains the right to resign their OWN appointment and to accept a handover addressed to them — and nobody gains a right over another person's record. The delegable envelope is unchanged at 15.",
       "action_verify_is_delegable": true,
       "state_gates_source": "PERMITTED_STATES reads the lifecycle contracts; REQUIRED_STATES (added in this revision) reads evidence-acceptance-1.0.0 — closure requires verification_state 'accepted', verification requires 'submitted'",
       "actor_exclusion_source": "evidence-acceptance-1.0.0 — the seat that submitted a revision is excluded from judging it, for EVERY role (actor_not_independent)",
@@ -68,7 +78,11 @@
       "open_resolution": "a stuck 'claimed' row still blocks its key and needs releaseTransition (governed maintenance) or a stale-claim policy that is not yet defined"
     },
     "tests": {
-      "authority_suites_re_run": "PASS — TestAuthorizationGuard 42/42 (roles) + 17/17 (positive) + 19/19 (fail-closed) = 78/78 with failures: [] and policy_version authz-1.5.0",
+      "authority_suites_re_run": "PASS — TestAuthorizationGuard 42/42 (roles) + 19/19 (positive) + 22/22 (fail-closed) = 83/83 with failures: [] and policy_version authz-1.6.0 (re-run after the kernel revision; the authz-1.5.0 run of 78/78 is INVALIDATED)",
+      "new_cases_in_1_6_0": "POS-018 (a seated person resigns their OWN appointment) · POS-019 (the NAMED successor accepts the handover addressed to them) · FCL-020 (even the chair cannot resign another person's seat — identity_mismatch) · FCL-021 (a handover addressed to somebody else is not accepted by this caller) · FCL-022 (a handover already decided is not reopened — state_not_permitted)",
+      "continuity_contract_suite": "PASS 60/60 (structure 24 + continuity 36; committee-structure-1.0.0, continuity-1.0.0; writes_performed: 0, records_read: 0) — includes 'a reporting recipient never conveys approval', 'a permitted reporting network may loop — it carries no authority', 'a ratification loop is refused', 'a parent cannot delegate a power it does not itself hold', 'a private reason is never surfaced through registers', 'no office succeeds another automatically', 'a valid cast vote is never reassigned to a successor'",
+      "evidence_acceptance_re_run_under_1_6_0": "PASS 20/20 (contract evidence-acceptance-1.0.0, writes_performed: 0)",
+      "policy_suites_re_run_under_1_6_0": "PASS — decision integrity 40/40 · decision lifecycle 22/22 · meeting lifecycle 19/19 · vote eligibility 12/12",
       "evidence_acceptance_suite": "PASS 20/20 (contract evidence-acceptance-1.0.0, writes_performed: 0) — includes 'a submission is not a verdict', 'an accepted verdict is not overwritten by a later submission', 'a verdict judges only a submission awaiting one', and 'closure requires an accepted verdict, declared once'",
       "decision_integrity_suite": "PASS 40/40 (policy decision-integrity-1.2.0, writes_performed: 0)",
       "meeting_lifecycle_suite": "PASS 19/19 (policy meeting-lifecycle-1.0.0, writes_performed: 0, records_read: 0)",
@@ -104,6 +118,15 @@
     ]
   },
   "history": [
+    {
+      "version": "authz-1.5.0",
+      "superseded_at": "2026-10-06T08:20:00Z",
+      "evidence_state": "INVALIDATED by the authz-1.6.0 kernel revision — two capabilities were named (seat.resign, seat.handover_accept) and the guard gained an identity-binding gate for every role; the whole suite set was re-run against 1.6.0 (83/83 authority, 60/60 continuity, 20/20 acceptance, 40/40 integrity, 22/22 decision lifecycle, 19/19 meeting lifecycle, 12/12 vote eligibility)",
+      "recorded": {
+        "evidence_that_ran_under_it": "authority 42/42 + 17/17 + 19/19 = 78/78 · decision integrity 40/40 · vote eligibility 12/12 · meeting lifecycle 19/19 · decision lifecycle 22/22 · evidence acceptance 20/20",
+        "command_sites_under_it": ["SubmitActionEvidence", "ReviewActionEvidence", "CloseAction"]
+      }
+    },
     {
       "version": "authz-1.4.0",
       "superseded_at": "2026-10-06T07:10:00Z",
