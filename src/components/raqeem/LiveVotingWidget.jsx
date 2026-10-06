@@ -5,16 +5,31 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function LiveVotingWidget({ decision, canCallVote, canCastVote, onVoted }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [voting, setVoting] = useState(false);
+  const [refusal, setRefusal] = useState(null);
 
+  // A refusal is SHOWN, never swallowed: the server's own bilingual text carries the reason
+  // (e.g. a proposal edited after the round froze), and a vote that did not register must not look
+  // like one that did.
   const handle = async (fn, payload) => {
     setVoting(true);
+    setRefusal(null);
     try {
-      await base44.functions.invoke(fn, payload);
-      onVoted();
+      const res = await base44.functions.invoke(fn, payload);
+      const data = res?.data || {};
+      if (data.error) {
+        setRefusal({ text: data.message?.[lang] || data.error, code: data.code || null, changes: data.content_binding?.changes || null });
+      } else {
+        onVoted();
+      }
     } catch (e) {
-      console.error("Vote action failed:", e);
+      const data = e?.response?.data || {};
+      setRefusal({
+        text: data.message?.[lang] || data.error || e?.message || t("تعذّر تنفيذ إجراء التصويت.", "The voting action could not be performed."),
+        code: data.code || null,
+        changes: data.content_binding?.changes || null,
+      });
     }
     setVoting(false);
   };
@@ -48,6 +63,13 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
           <div className="bg-emerald-500" style={{ width: `${((decision.vote_for || 0) / total) * 100}%` }} />
           <div className="bg-red-500" style={{ width: `${((decision.vote_against || 0) / total) * 100}%` }} />
           <div className="bg-gray-400" style={{ width: `${((decision.vote_abstain || 0) / total) * 100}%` }} />
+        </div>
+      )}
+
+      {refusal && (
+        <div className="mb-3 rounded-md border border-destructive/30 bg-state-danger-surface p-2.5 text-[11px] text-state-danger-ink space-y-1">
+          <p>{refusal.text}</p>
+          {refusal.code && <p className="font-mono opacity-70">{refusal.code}</p>}
         </div>
       )}
 
