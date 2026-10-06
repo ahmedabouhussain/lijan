@@ -1,97 +1,71 @@
-import React, { useState } from "react";
+import React from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
-import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
-import { useCrudAction } from "@/hooks/useCrudAction";
-import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import { ShieldCheck, Upload, Loader2, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
-import { formatDate } from "@/lib/raqeemUtils";
+import StatusBadge from "@/components/raqeem/StatusBadge";
+import ActionEvidencePanel from "@/components/raqeem/ActionEvidencePanel";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
+import { verificationStateOf } from "@/lib/actionState";
+import { ShieldCheck } from "lucide-react";
 import { L } from "@/lib/l10n";
 
+// Evidence & Verification — the queue of what still needs a step: work awaiting evidence, evidence
+// returned for correction, and submissions awaiting an INDEPENDENT verdict. An accepted record
+// leaves this queue: closure is its own act on the action itself.
 export default function CommitteeEvidence() {
   const { data, reload } = useCommittee();
   const { t, lang } = useLanguage();
-  const { getTitle } = usePageConfig("evidence");
-  const { canManageExecution } = useCommitteeAdmin();
-  const { submitting, execute } = useCrudAction();
-  const [uploadingFor, setUploadingFor] = useState(null);
-  const [evidenceUrl, setEvidenceUrl] = useState("");
+  const { getTitle, getDescription } = usePageConfig("evidence");
 
   if (!data) return <TableSkeleton rows={4} />;
-  const actions = (data.registers?.actions || []).filter((a) => a.status === "evidence_pending" || (a.status === "under_review" && !a.compliance_verified));
+  const { my_role, is_oversight, is_recused } = data;
 
-  const handleUpload = async (actionId) => {
-    await execute("UpdateActionProgress", {
-      action_id: actionId,
-      evidence_url: evidenceUrl,
-      status: "under_review",
-    }, () => {
-      setUploadingFor(null);
-      setEvidenceUrl("");
-      reload();
-    });
-  };
+  const queue = (data.registers?.actions || []).filter((a) => {
+    const state = verificationStateOf(a);
+    if (a.status === "closed" || a.status === "verified") return false;
+    return a.status === "evidence_pending" || state === "returned" || state === "submitted" || a.status === "under_review";
+  });
+
+  // A UI hint only: whether THIS seat holds the verification right is decided server-side by the
+  // kernel, and a refusal is shown on the record.
+  const canJudge = ["chair", "secretary"].includes(my_role) && !is_oversight && !is_recused;
 
   return (
     <div className="space-y-4">
       <PageHeader
         icon={ShieldCheck}
         title={getTitle("الأدلة والتحقق", "Evidence & Verification", lang)}
-        badge={<span className="text-sm text-muted-foreground">({actions.length})</span>}
+        subtitle={getDescription(
+          "تقديم الدليل من المُنفِّذ، وتحقق مستقل من مقعد آخر، ثم الإغلاق",
+          "Evidence submitted by the performer, judged independently by another seat, then closure",
+          lang,
+        )}
+        badge={<span className="text-sm text-muted-foreground">({queue.length})</span>}
       />
 
-      {actions.length === 0 ? (
-        <EmptyState icon={ShieldCheck} title={t("لا توجد أدلة بانتظار التحقق", "No Evidence Pending")} description={t("جميع الإجراءات مكتملة أو لا تتطلب أدلة.", "All actions are complete or don't require evidence.")} />
+      {queue.length === 0 ? (
+        <EmptyState
+          icon={ShieldCheck}
+          title={t("لا توجد أدلة بانتظار خطوة", "No Evidence Awaiting A Step")}
+          description={t("لا يوجد إجراء بانتظار تقديم دليل أو تحقق مستقل.", "No action awaits evidence or an independent verdict.")}
+        />
       ) : (
         <div className="space-y-2">
-          {actions.map((a) => (
+          {queue.map((a) => (
             <div key={a.id} className="raqeem-card p-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between gap-2 mb-1">
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground truncate">{L.title(a)}</div>
-                  <div className="text-xs text-muted-foreground">{a.owner_name} · {formatDate(a.deadline)}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {lang === "ar" ? a.owner_name : a.owner_name_en || a.owner_name} · {formatDate(a.deadline)}
+                  </div>
                 </div>
-                <StatusBadge label={a.status === "evidence_pending" ? t("بانتظار الدليل", "Evidence Pending") : t("قيد المراجعة", "Under Review")} colorClass="bg-amber-50 text-amber-700" />
+                <StatusBadge label={L.label(ACTION_STATUS, a.status, a.status)} colorClass={ACTION_STATUS[a.status]?.color} />
               </div>
-              {a.evidence_url && (
-                <a href={a.evidence_url} target="_blank" rel="noreferrer" className="text-xs text-primary flex items-center gap-1 hover:underline">
-                  <ExternalLink className="w-3 h-3" /> {t("عرض الدليل الحالي", "View Current Evidence")}
-                </a>
-              )}
-              {canManageExecution && (
-                <>
-                  {uploadingFor === a.id ? (
-                    <div className="mt-2 space-y-2">
-                      <div>
-                        <Label className="text-xs">{t("رابط الدليل", "Evidence URL")}</Label>
-                        <Input aria-label={t("رابط الدليل", "Evidence URL")} value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" disabled={submitting || !evidenceUrl.trim()} onClick={() => handleUpload(a.id)} className="min-h-[36px] flex-1">
-                          {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-                          {t("رفع", "Upload")}
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => { setUploadingFor(null); setEvidenceUrl(""); }}>
-                          <X className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button size="sm" variant="outline" className="mt-2 min-h-[36px]" onClick={() => setUploadingFor(a.id)}>
-                      <Upload className="w-3.5 h-3.5" />
-                      {t("رفع دليل", "Upload Evidence")}
-                    </Button>
-                  )}
-                </>
-              )}
+              <ActionEvidencePanel action={a} onChanged={reload} allowVerify={canJudge} />
             </div>
           ))}
         </div>

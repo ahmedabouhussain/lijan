@@ -26,6 +26,23 @@ export function todayIso() {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
+// ── Evidence verification (contract: base44/shared/evidenceAcceptance.ts) ──
+// Submitting is not verifying, and closure is not an assertion: an action closes only on a verdict
+// ACCEPTED by an independent verifier, and the verdict is bound to the revision it judged.
+export const VERIFICATION_STATES = ["not_submitted", "submitted", "returned", "accepted"];
+
+export const VERIFICATION_LABELS = {
+  not_submitted: { ar: "لم يُقدَّم دليل", en: "No evidence submitted", color: "bg-secondary text-muted-foreground" },
+  submitted: { ar: "بانتظار تحقق مستقل", en: "Awaiting independent verification", color: "bg-state-ceremonial-surface text-state-ceremonial-ink" },
+  returned: { ar: "أُعيد للتعديل", en: "Returned for correction", color: "bg-state-warning-surface text-state-warning-ink" },
+  accepted: { ar: "دليل مقبول", en: "Evidence accepted", color: "bg-state-success-surface text-state-success-ink" },
+};
+
+export function verificationStateOf(action) {
+  const state = action?.verification_state;
+  return VERIFICATION_STATES.includes(state) ? state : "not_submitted";
+}
+
 /** One set of totals, so a card and the register it opens can never disagree. */
 export function summarizeActions(actions = []) {
   let open = 0;

@@ -19,6 +19,9 @@ import { resolveAuthority, OPERATIONAL_CAPABILITIES, AUTHORITY_POLICY_VERSION } 
 // approved. One declaration, consumed by both.
 import { DECISION_TRANSITIONS } from './decisionLifecycle.ts';
 import { AGENDA_TRANSITIONS, AGENDA_ARCHIVE, MINUTES_TRANSITIONS, MINUTES_EDITABLE_STATES } from './meetingLifecycle.ts';
+// The evidence-acceptance gates come from the contract the evidence commands consume, so the guard
+// cannot describe a rule the commands do not enforce (evidence-acceptance-1.0.0, authz-1.5.0).
+import { EVIDENCE_STATE_GATES, EVIDENCE_ACTOR_EXCLUDED, EVIDENCE_REFUSALS } from './evidenceAcceptance.ts';
 
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
@@ -41,7 +44,7 @@ const SCOPE_CHAIN = {
 export const TRUSTED_TARGET_TYPES = Object.keys(SCOPE_CHAIN);
 
 /** Acts permitted only while the record is in one of these states. */
-const PERMITTED_STATES = {
+export const PERMITTED_STATES = {
   "meeting.start": { field: "status", states: ["scheduled"] },
   "attendance.respond": { field: "status", states: ["scheduled", "in_progress"] },
   "action.progress": { field: "status", states: ["assigned", "in_progress", "blocked", "evidence_pending", "under_review", "overdue"] },
@@ -68,18 +71,33 @@ const PERMITTED_STATES = {
   "minutes.draft": { field: "status", states: [...MINUTES_EDITABLE_STATES] },
   "minutes.review": { field: "status", states: [...MINUTES_TRANSITIONS.amend.from] },
   "minutes.issue": { field: "status", states: [...MINUTES_TRANSITIONS.issue.from] },
-  "action.close": { field: "status", states: ["in_progress", "evidence_pending", "under_review"] },
+  // 'verified' is the state an ACCEPTED verdict leaves, so closure may act there — and only there,
+  // because 'closed' stays outside the list and a second closure is refused. The accepted verdict
+  // itself is a separate required state (REQUIRED_STATES, read from evidence-acceptance-1.0.0).
+  "action.close": { field: "status", states: ["in_progress", "evidence_pending", "under_review", "verified"] },
   "committee.close": { field: "status", states: ["active", "closing", "temporarily_suspended", "expiring_soon"] },
   "committee.activate": { field: "status", states: ["draft", "pending_activation"] },
 };
 
 /** Seats that may act only on a record bound to themselves. */
-const ACTOR_BOUND = {
+export const ACTOR_BOUND = {
   "action.progress": "owner_user_id",
   "action.update_progress": "owner_user_id",
   "action.request_extension": "owner_user_id",
   "review.respond": "reviewer_user_id",
 };
+
+/**
+ * Seats that may NOT act on a record bound to themselves — the mirror of the owner binding above.
+ * Verifying evidence is an independent act: the seat that submitted the evidence, and the seat that
+ * owns the action, may not judge it. Unlike ACTOR_BOUND (which binds a plain member to its own
+ * records), this exclusion holds for EVERY role — a chair who owns the action cannot verify it either.
+ * Read from evidence-acceptance-1.0.0, never re-typed here.
+ */
+export const ACTOR_EXCLUDED = { ...EVIDENCE_ACTOR_EXCLUDED };
+
+/** Required states read from the acceptance contract: a second field that must hold a value. */
+export const REQUIRED_STATES = { ...EVIDENCE_STATE_GATES };
 
 /** Request fields a command may only ever COMPARE against the derived truth. */
 export function requestClaims(body) {
@@ -202,6 +220,26 @@ export async function authorizeCommand(base44, opts = {}) {
     };
   }
 
+  // A required state beyond `status` (e.g. closure demands an ACCEPTED evidence verdict). The text
+  // shown is the contract's own, so the refusal names the requirement instead of a bare code.
+  const required = REQUIRED_STATES[capability];
+  if (mode === "existing" && required) {
+    const actual = record[required.field];
+    const ok = required.equals !== undefined
+      ? actual === required.equals
+      : (required.states || []).includes(actual);
+    if (!ok) {
+      const text = (required.code && EVIDENCE_REFUSALS[required.code]) || null;
+      return {
+        ...auth, allowed: false, status: 409, code: required.code || "state_not_permitted",
+        reason: text ? text.en : `This act is not permitted while the record's ${required.field} is '${actual || "unset"}'`,
+        reason_ar: text ? text.ar : null,
+        required_state: { field: required.field, actual: actual || "unset" },
+        trusted_target, target: null,
+      };
+    }
+  }
+
   const actorField = ACTOR_BOUND[capability];
   if (actorField && auth.effective_role === "member" && record[actorField] !== auth.user.id) {
     return {
@@ -211,6 +249,19 @@ export async function authorizeCommand(base44, opts = {}) {
     };
   }
 
+  // Separation of duty, for every role: the submitter and the owner are both barred from judging.
+  for (const field of ACTOR_EXCLUDED[capability] || []) {
+    if (record[field] && record[field] === auth.user.id) {
+      const text = EVIDENCE_REFUSALS.actor_not_independent;
+      return {
+        ...auth, allowed: false, status: 403, code: "actor_not_independent",
+        reason: text.en, reason_ar: text.ar,
+        excluded_field: field,
+        trusted_target, target: null,
+      };
+    }
+  }
+
   return { ...auth, trusted_target, target: record };
 }
 
@@ -218,6 +269,7 @@ export async function authorizeCommand(base44, opts = {}) {
 export function refusalResponse(auth) {
   return Response.json({
     error: auth.reason || "Forbidden",
+    error_ar: auth.reason_ar || null,
     code: auth.code || null,
     policy_version: auth.policy_version || null,
     correlation_id: auth.correlation_id || null,

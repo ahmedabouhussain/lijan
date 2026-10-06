@@ -7,6 +7,7 @@ import { Clock, User, FileText, GitBranch, Calendar, ShieldAlert } from "lucide-
  * - Action without deadline
  * - Deadline without reminder
  * - Closed action without evidence
+ * - Verification marked without an independent verdict (evidence-acceptance-1.0.0)
  * - Member with expired term still active
  * - Expired delegation still active
  * - Meeting without complete pack
@@ -75,6 +76,26 @@ export function detectSilentFailures(data) {
         detail: {
           ar: `إجراء «${a.title?.substring(0, 40) || ""}» أُغلق دون دليل إتمام`,
           en: `Action "${a.title?.substring(0, 40) || ""}" closed without completion evidence`,
+        },
+      });
+    }
+  });
+
+  // 3b. Verification claimed while no independent verdict exists.
+  // Through the governed commands this is unreachable: only ReviewActionEvidence writes
+  // compliance_verified, and only when the verdict is `accepted` (evidence-acceptance-1.0.0). So its
+  // presence means the record was written outside them — the silent failure worth surfacing.
+  actions.forEach((a) => {
+    const evidenceState = a.verification_state || "not_submitted";
+    if (a.compliance_verified === true && evidenceState !== "accepted") {
+      signals.push({
+        type: "verified_without_verdict",
+        icon: ShieldAlert,
+        severity: "high",
+        title: { ar: "دليل مُعلَّم كمتحقق منه بلا إقرار مستقل", en: "Evidence Marked Verified Without An Independent Verdict" },
+        detail: {
+          ar: `إجراء «${a.title?.substring(0, 40) || ""}» يحمل علامة تحقق بينما حالة الدليل «${evidenceState}»`,
+          en: `Action "${a.title?.substring(0, 40) || ""}" carries a verification mark while the evidence state is "${evidenceState}"`,
         },
       });
     }

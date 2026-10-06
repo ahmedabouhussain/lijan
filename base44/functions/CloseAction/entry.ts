@@ -8,7 +8,7 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    const { action_id, evidence_url, compliance_notes } = body;
+    const { action_id, compliance_notes } = body;
 
     if (!action_id) return Response.json({ error: 'action_id is required' }, { status: 400 });
 
@@ -26,15 +26,10 @@ export default async function(req) {
     if (!auth.allowed) return refusalResponse(auth);
 
     const action = auth.target;
-
-    // Evidence verification gate — cannot close based on percentage alone
-    if (!evidence_url && !action.evidence_url) {
-      return Response.json({ error: 'Action cannot be closed without verified evidence' }, { status: 400 });
-    }
-
-    if (action.progress_percent < 100) {
-      return Response.json({ error: 'Action progress must be 100% before closure' }, { status: 400 });
-    }
+    // The gate that makes closure mean something is STRUCTURAL, not advisory: `action.close` now
+    // carries a required state read from evidence-acceptance-1.0.0 — the record must hold a verdict
+    // ACCEPTED by an independent verifier. A reported percentage together with an attachment can no
+    // longer pass for verification, and the refusal names the requirement (D-046).
 
     // Exclusivity on CLOSURE: a second simultaneous closure would write twice and notify twice.
     const claim = await claimTransition(base44, {
@@ -49,10 +44,13 @@ export default async function(req) {
     if (!claim.won) return duplicateResponse(claim, 'This action is already closed or its closure is in progress');
 
     await base44.asServiceRole.entities.Action.update(action_id, {
-      status: 'verified',
-      evidence_url: evidence_url || action.evidence_url,
-      compliance_verified: true,
-      compliance_notes: compliance_notes || 'Evidence verified and action closed',
+      status: 'closed',
+      closed_at: new Date().toISOString(),
+      closed_by_user_id: auth.user.id,
+      closed_by_name: auth.user.full_name || auth.user.email,
+      // The verdict already marked the evidence verified; closure records the accountable act and
+      // never re-writes the verification fields it did not judge.
+      compliance_notes: compliance_notes || action.compliance_notes || 'Execution closed on accepted evidence',
     });
 
     await base44.asServiceRole.entities.AuditEvent.create({
@@ -60,7 +58,7 @@ export default async function(req) {
       actor_user_id: auth.user.id, actor_name: auth.user.full_name || auth.user.email, actor_email: auth.user.email,
       action: 'action.close', entity_type: 'Action', entity_id: action_id,
       entity_title: action.title,
-      description: `Action closed with verified evidence`,
+      description: `Action closed on accepted evidence revision ${Number(action.evidence_revision || 0)} (verified by ${action.verified_by_name || 'an independent verifier'})`,
       correlation_id: auth.correlation_id, authority_context: auth.authority_context,
     });
 
@@ -78,9 +76,9 @@ export default async function(req) {
           event_type: 'action_reminder',
           context: {
             action_title: action.title,
-            status: 'verified',
+            status: 'closed',
             actor_name: auth.user.full_name || auth.user.email,
-            message: `تم إغلاق الإجراء الخاص بك بعد التحقق من الأدلة`,
+            message: `أُغلق إجراءك «${action.title}» بعد قبول دليله من متحقّق مستقل`,
             deep_link: deepLink,
           },
           source_entity_type: 'Action',

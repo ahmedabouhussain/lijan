@@ -104,8 +104,23 @@ const MEETING = { id: 'MTG-T1', committee_id: COM, organization_id: ORG, status:
 const MEETING_RUNNING = { ...MEETING, status: 'in_progress' };
 const MINUTES = { id: 'MNT-T1', committee_id: COM, organization_id: ORG, meeting_id: 'MTG-T1', status: 'draft' };
 const ACTION_OWNED = { id: 'ACT-T1', committee_id: COM, organization_id: ORG, status: 'in_progress', owner_user_id: USER.id, title: 'Action' };
-const ACTION_ACCEPT = { ...ACTION_OWNED, id: 'ACT-T2', status: 'evidence_pending', owner_user_id: 'USR-OTHER' };
-const ACTION_CLOSED = { ...ACTION_ACCEPT, id: 'ACT-T3', status: 'verified' };
+// The execution-evidence chain of authz-1.5.0: ACT-T2 holds a verdict ACCEPTED by an independent seat
+// (so the closure right may act on it), ACT-T3 is already CLOSED, ACT-T4 is a submission awaiting a
+// verdict, and ACT-T5 is a submission made by the very chair who would judge it (separation of duty).
+const ACTION_ACCEPT = {
+  ...ACTION_OWNED, id: 'ACT-T2', status: 'under_review', owner_user_id: 'USR-OTHER',
+  verification_state: 'accepted', evidence_url: 'https://evidence.example/revision-1',
+  evidence_revision: 1, compliance_verified: true, verified_by_name: 'Secretary',
+};
+const ACTION_AWAITING_VERDICT = {
+  ...ACTION_ACCEPT, id: 'ACT-T4', verification_state: 'submitted', compliance_verified: false,
+  evidence_submitted_by_user_id: 'USR-OTHER', evidence_submitted_by_name: 'Other Owner',
+};
+const ACTION_SELF_SUBMITTED = {
+  ...ACTION_AWAITING_VERDICT, id: 'ACT-T5',
+  evidence_submitted_by_user_id: USER.id, evidence_submitted_by_name: 'Chair',
+};
+const ACTION_CLOSED = { ...ACTION_ACCEPT, id: 'ACT-T3', status: 'closed' };
 const REVIEW = { id: 'RRV-T1', committee_id: COM, organization_id: ORG, document_id: 'DOC-T1', reviewer_user_id: USER.id, status: 'pending' };
 const DECISION = { id: 'DEC-T1', committee_id: COM, organization_id: ORG, status: 'approved' };
 const DOCUMENT = { id: 'DOC-T1', committee_id: COM, organization_id: ORG };
@@ -147,7 +162,7 @@ const POSITIVE_CASES = [
   { id: 'POS-008', label: 'action owner raises progress on their OWN action', role: 'member', expect: true,
     opts: { capability: 'action.progress', target_type: 'Action', target_id: 'ACT-T1' },
     records: () => baseRecords('member', { Action: { 'ACT-T1': ACTION_OWNED } }) },
-  { id: 'POS-009', label: 'holder of the acceptance right closes an evidenced action', role: 'chair', expect: true,
+  { id: 'POS-009', label: 'holder of the closure right closes an action whose evidence an independent seat ACCEPTED', role: 'chair', expect: true,
     opts: { capability: 'action.close', target_type: 'Action', target_id: 'ACT-T2' },
     records: () => baseRecords('chair', { Action: { 'ACT-T2': ACTION_ACCEPT } }) },
   { id: 'POS-010', label: 'named reviewer answers the review addressed to them', role: 'secretary', expect: true,
@@ -171,6 +186,9 @@ const POSITIVE_CASES = [
   { id: 'POS-016', label: 'chair starts execution of an ISSUED decision (decision.execute now has a command)', role: 'chair', expect: true,
     opts: { capability: 'decision.execute', target_type: 'Decision', target_id: 'DEC-ISSUED' },
     records: () => baseRecords('chair', { Decision: { 'DEC-ISSUED': { ...DECISION, id: 'DEC-ISSUED', status: 'issued' } } }) },
+  { id: 'POS-017', label: 'an INDEPENDENT seat accepts submitted evidence (action.verify is its own right)', role: 'chair', expect: true,
+    opts: { capability: 'action.verify', target_type: 'Action', target_id: 'ACT-T4' },
+    records: () => baseRecords('chair', { Action: { 'ACT-T4': ACTION_AWAITING_VERDICT } }) },
 ];
 
 // ── Suite 3 · Fail-Closed Tests (a fact that cannot be read is not an absent fact) ─
@@ -217,7 +235,7 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-014', label: 'a state that does not permit the act is refused before it is written', expectCode: 'state_not_permitted',
     opts: { capability: 'minutes.approve', target_type: 'MeetingMinutes', target_id: 'MNT-T1' },
     stub: () => stubClient({ records: baseRecords('chair', { MeetingMinutes: { 'MNT-T1': { ...MINUTES, status: 'approved' } }, Meeting: { 'MTG-T1': MEETING } }) }) },
-  { id: 'FCL-015', label: 'an action already verified cannot be closed a second time (no duplicate closure)', expectCode: 'state_not_permitted',
+  { id: 'FCL-015', label: 'an action already CLOSED cannot be closed a second time (no duplicate closure)', expectCode: 'state_not_permitted',
     opts: { capability: 'action.close', target_type: 'Action', target_id: 'ACT-T3' },
     stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T3': ACTION_CLOSED } }) }) },
   { id: 'FCL-016', label: 'execution cannot start on a decision that is not issued yet', expectCode: 'state_not_permitted',
@@ -226,6 +244,12 @@ const FAIL_CLOSED_CASES = [
   { id: 'FCL-017', label: 'an APPROVED decision is not sent back for review (no step reopens a reviewed draft)', expectCode: 'state_not_permitted',
     opts: { capability: 'decision.submit', target_type: 'Decision', target_id: 'DEC-T1' },
     stub: () => stubClient({ records: baseRecords('chair', { Decision: { 'DEC-T1': DECISION } }) }) },
+  { id: 'FCL-018', label: 'closure is refused while the verdict is only SUBMITTED (no acceptance, no closure)', expectCode: 'closure_requires_acceptance',
+    opts: { capability: 'action.close', target_type: 'Action', target_id: 'ACT-T4' },
+    stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T4': ACTION_AWAITING_VERDICT } }) }) },
+  { id: 'FCL-019', label: 'the seat that submitted the evidence cannot judge it (separation of duty, every role)', expectCode: 'actor_not_independent',
+    opts: { capability: 'action.verify', target_type: 'Action', target_id: 'ACT-T5' },
+    stub: () => stubClient({ records: baseRecords('chair', { Action: { 'ACT-T5': ACTION_SELF_SUBMITTED } }) }) },
 ];
 
 function verdictOf(rows) {

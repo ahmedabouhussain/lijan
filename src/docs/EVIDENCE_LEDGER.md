@@ -150,3 +150,33 @@
 **حدّ الأدلة**: E-S1-020 يُثبت **القاعدة** التي يستهلكها المعالج؛ وE-S1-021 يُثبت **بوابة الحارس** على الهدف والولاية (بما فيها `FCL-016` تنفيذ على قرار غير صادر، و`FCL-017` إعادة قرار معتمد إلى المراجعة). ولا حالة واحدة تُمارس معالج `TransitionDecision` على قرار محفوظ، ولا تُثبت انتقالًا في قاعدة البيانات. ولا كتابة بيانات (`writes_performed: 0`).
 
 **التغييرات (للتراجع) — الشريحة الرابعة**: أُضيف `base44/functions/TransitionDecision/entry.ts`؛ وعُدِّل `base44/shared/decisionLifecycle.ts` (1.1.0) · `base44/shared/authorityKernel.ts` (1.4.0: `decision.submit` قدرة تشغيلية للرئيس والسكرتير) · `base44/shared/commandGuard.ts` (بوابتان تقرآن العقد) · `src/components/raqeem/DecisionWorkflow.jsx` (زرّان محكومان وإزالة ثلاثة أسباب معطّلة صارت غير صحيحة) · `TestAuthorizationGuard` (+7 حالات ووضع ملخص) · `TestDecisionLifecycle` (+8 حالات) · السجلات. **بصمات هذه الشريحة**: `authorityKernel 099856cf…` · `commandGuard e2ad6292…` · `decisionLifecycle 923bf3c9…` · `TransitionDecision 771921b1…`. أثر البيانات: **صفر كتابة**.
+
+## 12. دفعة S10 — قبول الأدلة التنفيذية (D-046)
+
+**ما أُغلق**: الإغلاق لم يكن شاهدًا مستقلًّا. كان `compliance_verified` يُكتب من المالك في مسار التقدّم نفسه، ثم يُتخذ شرطًا وحيدًا للإغلاق — أي أن **مقدِّم الأداء كان يشهد لنفسه**. أُدخل فصل الصلاحيات: **تقديم** (المنفّذ) → **تقييم بمقعد مستقل** (اعتماد/إرجاع) → **إغلاق** كفعل مسؤول، والفعل المحكوم `ReviewActionEvidence` هو الكاتب الوحيد لحقل الحكم، والإغلاق يُرفض بنيويًّا بلا حكم مقبول.
+
+| المعرّف | الاختبار | الفاعل/الصفة | نسخة السياسة/العقد | النتيجة المتوقعة | النتيجة الفعلية | الأصل | الحالة |
+|---|---|---|---|---|---|---|---|
+| **E-S10-001** | أسرة عقد قبول الأدلة `evidence-acceptance-1.0.0` | خدمة (بلا كتابة) | `authz-1.5.0` | الفصل بين الحقوق الثلاثة وعدم قفل بلا حكم مقبول | **20/20 PASS** (`writes_performed: 0`) — تشمل «التقديم ليس حكمًا» · «الحكم لا يُكتب مرتين فوق مقبول» · «الإغلاق يشترط `accepted`» · «الحكم لا يكتب إلا على تقديم ينتظر حكمًا» | ردّ الدالة | **PASS (نطاق العقد)** |
+| **E-S10-002** | إعادة تشغيل أسرة السلطة على `authz-1.5.0` بعد تصحيح بيتَي الاختبار | خدمة | `authz-1.5.0` | 42/42 + 17/17 + 19/19 و`failures: []` | **78/78 PASS** · `baseline_sizes: chair 46 · vice_chair 17 · delegated 32 · delegable 15` | ردّ الدالة | **PASS** |
+| **E-S10-003** | إعادة تشغيل أسرة سلامة الإصدار | خدمة | `decision-integrity-1.2.0` | لا تراجع | **40/40 PASS** (`writes_performed: 0`) | ردّ الدالة | **PASS** |
+| **E-S10-004** | إعادة تشغيل أسرة دورة الاجتماع | خدمة | `meeting-lifecycle-1.0.0` | لا تراجع | **19/19 PASS** | ردّ الدالة | **PASS** |
+| **E-S10-005** | إعادة تشغيل أسرة الهيئة الناخبة | خدمة | `vote-eligibility-1.0.0` | لا تراجع | **12/12 PASS** | ردّ الدالة | **PASS** |
+| **E-S10-006** | إعادة تشغيل أسرة دورة القرار | خدمة | `decision-lifecycle-1.1.0` | لا تراجع | **22/22 PASS** | ردّ الدالة | **PASS** |
+| **E-S10-007** | دخان معالج `SubmitActionEvidence` على البناء المُعدَّل | غير مُصادَق | `authz-1.5.0` | رفض قبل أي أثر + تحميل الوحدات وقت التشغيل | **404** `target_not_found` · `policy_version: authz-1.5.0` · `corr_muwby3axmcxd6x` · **صفر كتابة** | ردّ الدالة | **PASS (نطاق ضيق)** |
+| **E-S10-008** | دخان معالج `ReviewActionEvidence` (الفاعل الجديد للحكم) | غير مُصادَق | `authz-1.5.0` | رفض قبل أي أثر | **404** `target_not_found` · `authz-1.5.0` · `corr_muwbyjqd5p4kqm` · **صفر كتابة** | ردّ الدالة | **PASS (نطاق ضيق)** |
+| **E-S10-009** | دخان معالج `CloseAction` بعد تشديد البوابة | غير مُصادَق | `authz-1.5.0` | رفض قبل أي أثر | **NOT READ** — تجاوز الزمن 300 ثانية (قيد منصة)، **لا يُسجَّل نجاحًا ولا فشلًا** | — | **UNREAD** |
+| **E-S10-010** | بناء الواجهة بعد تغيير سطح التنفيذ | — | شجرة العمل | بناء ناجح | `npx vite build` → **status=0** | سجل البناء | **PASS** |
+| **E-S10-011** | تقديم حقيقي → حكم مستقل → إغلاق على سجل محفوظ في المعاينة | فاعل مُقعد | — | دورة كاملة محفوظة | **NOT TESTED** — لا فاعل مُقعد (الحاجز نفسه) | — | **BLOCKED** |
+| **E-S10-012** | قياس التزامن | — | — | طلبان متزامنان | **NOT ESTABLISHED** (كما في كل الدفعات) | — | **NOT MEASURED** |
+
+**تصحيحان في بيتَي اختبار (لا في المُقيِّم)** — التصنيف نفسه المُثبت في D-004/D-016/D-034:
+- `POS-009` كان يفترض أن مقعدًا يغلق إجراءً «مُدلَّلًا» بلا حكم مقبول — وهو بالضبط ما صار مرفوضًا بالسياسة. أُصلح البيت ليحمل حكمًا **مقبولًا** (بيانات الحكم: `verification_state: accepted` · `evidence_revision: 1` · `compliance_verified: true`).
+- `FCL-015` كانت مقدمته أن «المُتحقَّق» لا يُغلق ثانية — وقد صار `verified` **قابلًا للإغلاق** بموجب العقد (الإغلاق بعده). أُصلحت المقدمة إلى «المُغلق» (`status: closed`) فبقي الرفض بالرمز المقصود `state_not_permitted`.
+- أُضيفت ثلاث حالات جديدة للحق والفصل الجديدين: **POS-017** (مقعد مستقل يقبل دليلًا مُقدَّمًا) · **FCL-018** (لا إغلاق بلا حكم مقبول — الرمز `closure_requires_acceptance`) · **FCL-019** (من قدّم الدليل لا يحكم عليه — الرمز `actor_not_independent`).
+
+**حدّ الأدلة المعلن**: E-S10-001 يُثبت **العقد**؛ وE-S10-002 يُثبت **بوابة الحارس** على (الهدف، الحالة المطلوبة، الحق، استقلال الفاعل) عبر بديل معزول؛ وE-S10-007/008 يُثبتان أن المعالجين يُحمَّلون وقت التشغيل وأن الرفض يسبق كل قراءة وكتابة. **ولا حالة واحدة** تُمارس معالجًا على إجراء محفوظ، ولا تُثبت حكمًا أو إغلاقًا في قاعدة البيانات.
+
+**التغييرات (للتراجع) — S10**: أُضيف `base44/shared/evidenceAcceptance.ts` · `base44/functions/SubmitActionEvidence/entry.ts` · `base44/functions/ReviewActionEvidence/entry.ts` · `base44/functions/TestEvidenceAcceptance/entry.ts` · `src/components/raqeem/ActionEvidencePanel.jsx` · `src/lib/actionState.js` · `src/docs/PRODUCT_DELIVERY_MAP.md` · `src/docs/CLOSURE_PROTOCOL.md`. وعُدِّل `authorityKernel.ts` (1.5.0) · `commandGuard.ts` (بوابة الحالة المطلوبة + استقلال الفاعل) · `CloseAction` · `CommitteeActions.jsx` · `ActionEvidencePanel` (ربط العرض بالحقيقة) · `SilentFailureRadar.jsx` · `TestAuthorizationGuard` + `TestEvidenceAcceptance` · `authorityPolicyManifest.json` · السجلات.
+**بصمات هذه الشريحة**: `authorityKernel 608c2337…` · `commandGuard 021bdf67…` · `evidenceAcceptance 6a7078b1…` (جديد) · `SubmitActionEvidence 44fcccf5…` · `ReviewActionEvidence fa3ed77a…` · `CloseAction cf22e62e…` · وحدات لم تُلمس: `transitionClaim b3c6bbfb…` · `decisionIntegrity a3ce3c73…` · `roundContext af188171…` · `decisionLifecycle 923bf3c9…` · `meetingLifecycle 2302a318…` · `serverRichText beb95873…`.
+**أثر البيانات**: صفر كتابة على أي سجل · لا حذف · لا إعادة بذر · لا ترحيل.

@@ -103,8 +103,95 @@
     },
     "evidence_url": {
       "type": "string",
-      "title": "Evidence URL",
+      "title": "Evidence URL (the submitted revision's reference \u2014 submission is not verification)",
       "format": "uri"
+    },
+    "evidence_notes": {
+      "type": "string",
+      "title": "Evidence Notes (stated by the submitter with the submission)"
+    },
+    "evidence_revision": {
+      "type": "number",
+      "title": "Evidence Revision (the submission a verdict judges \u2014 a later upload is a NEW revision, it never inherits an earlier verdict)",
+      "default": 0
+    },
+    "verification_state": {
+      "type": "string",
+      "title": "Evidence Verification State (an action cannot be closed on this field alone \u2014 closure requires an accepted verdict by an independent verifier)",
+      "enum": [
+        "not_submitted",
+        "submitted",
+        "returned",
+        "accepted"
+      ],
+      "default": "not_submitted"
+    },
+    "evidence_submitted_at": {
+      "type": "string",
+      "title": "Evidence Submitted At",
+      "format": "date-time"
+    },
+    "evidence_submitted_by_user_id": {
+      "type": "string",
+      "title": "Evidence Submitted By (user id \u2014 the seat that may not judge it)"
+    },
+    "evidence_submitted_by_name": {
+      "type": "string",
+      "title": "Evidence Submitted By (display name)"
+    },
+    "evidence_returned_at": {
+      "type": "string",
+      "title": "Evidence Returned At (for correction)"
+    },
+    "return_reason": {
+      "type": "string",
+      "title": "Return Reason (why the evidence was sent back \u2014 required for a return)"
+    },
+    "returned_by_user_id": {
+      "type": "string",
+      "title": "Returned By (user id)"
+    },
+    "returned_by_name": {
+      "type": "string",
+      "title": "Returned By (display name)"
+    },
+    "verified_by_user_id": {
+      "type": "string",
+      "title": "Verified By (user id of the independent verifier who accepted the evidence)"
+    },
+    "verified_by_name": {
+      "type": "string",
+      "title": "Verified By (display name)"
+    },
+    "verified_at": {
+      "type": "string",
+      "title": "Verified At (when the verdict accepted the revision)",
+      "format": "date-time"
+    },
+    "verification_notes": {
+      "type": "string",
+      "title": "Verification Notes (the verifier's stated basis)"
+    },
+    "last_verification_key": {
+      "type": "string",
+      "title": "Last Evidence Transition Key (the transition the current verdict belongs to)"
+    },
+    "verification_correlation_id": {
+      "type": "string",
+      "title": "Evidence Correlation ID"
+    },
+    "closed_at": {
+      "type": "string",
+      "title": "Closed At",
+      "format": "date-time"
+    },
+    "closed_by_user_id": {
+      "type": "string",
+      "title": "Closed By (user id)"
+    },
+    "closed_by_name": {
+      "type": "string",
+      "title": "Closed By (display name)"
     },
     "escalation_level": {
       "type": "string",
@@ -192,7 +279,7 @@
     },
     "compliance_verified": {
       "type": "boolean",
-      "title": "Compliance Verified",
+      "title": "Compliance Verified (written only by an accepted verdict from an independent verifier \u2014 never by a submission or a closure)",
       "default": false
     },
     "compliance_notes": {

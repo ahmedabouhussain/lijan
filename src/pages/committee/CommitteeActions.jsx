@@ -5,14 +5,13 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 import { base44 } from "@/api/base44Client";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import AuthorityLens from "@/components/raqeem/AuthorityLens";
+import ActionEvidencePanel from "@/components/raqeem/ActionEvidencePanel";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import { classifyAction } from "@/lib/actionState";
 import { CheckSquare, AlertTriangle, Clock, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { L } from "@/lib/l10n";
 
 export default function CommitteeActions() {
@@ -21,7 +20,6 @@ export default function CommitteeActions() {
   const { getTitle, getDescription } = usePageConfig("actions");
   const [updating, setUpdating] = useState(null);
   const [closeModal, setCloseModal] = useState(null);
-  const [evidenceUrl, setEvidenceUrl] = useState("");
 
   if (!data) return <TableSkeleton rows={4} />;
   const { my_role, is_oversight, is_recused, committee } = data;
@@ -118,9 +116,14 @@ export default function CommitteeActions() {
                   </div>
                   <span className="text-[11px] text-muted-foreground w-8 text-right">{a.progress_percent || 0}%</span>
                 </div>
+                {/* Evidence trail: the owner submits a revision, an independent verifier judges it, and
+                    closure follows the accepted verdict. The server decides who may do each; every
+                    refusal is shown on the record rather than swallowed. */}
+                <ActionEvidencePanel action={a} onChanged={reload} allowVerify={!is_oversight && !is_recused} />
+
                 {/* Update controls */}
                 {!is_oversight && !is_recused && (
-                  <div className="flex items-center gap-1.5 mt-2">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
                     <Button size="sm" variant="outline" disabled={updating === a.id} onClick={async () => {
                       setUpdating(a.id);
                       await base44.functions.invoke("UpdateActionProgress", { action_id: a.id, progress_percent: Math.min(100, (a.progress_percent || 0) + 25), status: "in_progress" });
@@ -128,10 +131,14 @@ export default function CommitteeActions() {
                     }}>
                       {updating === a.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "+25%"}
                     </Button>
-                    {(a.progress_percent || 0) >= 100 && (
-                      <Button size="sm" disabled={updating === a.id} onClick={() => { setCloseModal(a.id); setEvidenceUrl(""); }}>
-                        {t("إغلاق بالإثبات", "Close with Evidence")}
+                    {a.verification_state === "accepted" ? (
+                      <Button size="sm" disabled={updating === a.id} onClick={() => setCloseModal(a.id)}>
+                        {t("إغلاق الإجراء", "Close Action")}
                       </Button>
+                    ) : (
+                      <span className="text-[11px] text-muted-foreground">
+                        {t("الإغلاق يستند إلى قبول الدليل من متحقّق مستقل.", "Closure rests on evidence accepted by an independent verifier.")}
+                      </span>
                     )}
                   </div>
                 )}
@@ -149,11 +156,12 @@ export default function CommitteeActions() {
               <h3 className="text-sm font-semibold">{t("إغلاق الإجراء", "Close Action")}</h3>
               <button onClick={() => setCloseModal(null)}><X className="w-4 h-4 text-muted-foreground" /></button>
             </div>
-            <p className="text-xs text-muted-foreground">{t("يجب تقديم رابط دليل الإنجاز قبل الإغلاق.", "Evidence URL is required before closure.")}</p>
-            <div><Label>{t("رابط الدليل", "Evidence URL")}</Label><Input aria-label={t("رابط الدليل", "Evidence URL")} value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="https://..." dir="ltr" /></div>
-            <Button disabled={updating === closeModal || !evidenceUrl.trim()} onClick={async () => {
+            <p className="text-xs text-muted-foreground">
+              {t("الإغلاق يستند إلى الدليل المقبول من متحقّق مستقل؛ لا يُطلب هنا رابط جديد.", "Closure rests on the evidence an independent verifier accepted; no new reference is collected here.")}
+            </p>
+            <Button disabled={updating === closeModal} onClick={async () => {
               setUpdating(closeModal);
-              await base44.functions.invoke("CloseAction", { action_id: closeModal, evidence_url: evidenceUrl });
+              await base44.functions.invoke("CloseAction", { action_id: closeModal });
               setUpdating(null); setCloseModal(null); reload();
             }} className="w-full">
               {updating === closeModal ? <Loader2 className="w-4 h-4 animate-spin" /> : t("تأكيد الإغلاق", "Confirm Close")}

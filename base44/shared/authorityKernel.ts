@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.4.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.5.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,8 +30,8 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.4.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.4.0",
-  supersedes: "authz-1.3.0",
+  version: "authz-1.5.0",
+  supersedes: "authz-1.4.0",
   change_class: "security",
   changes: [
     "GRANT NARROWING CORRECTED: a role-held right outside a NONEMPTY permitted_actions list is refused. The previous condition also required the capability to be absent from the role — a state the preceding branch had already returned on — so the branch was unreachable and every populated grant narrowed nothing.",
@@ -51,6 +51,9 @@ export const AUTHORITY_POLICY_BUILD = {
     "agenda.edit / agenda.approve / minutes.draft / minutes.review now carry permitted-state gates: preparing the agenda is not approving it, and minutes content is written only while the minutes can still be corrected.",
     "decision.submit named as its own OPERATIONAL right: sending a draft decision for review is the drafting office's act (chair, secretary) and is deliberately neither decision.propose (raising a draft) nor decision.review (reviewing one).",
     "decision.execute now has a COMMAND: the right was already named in the catalogue and granted to the chair, but nothing exercised it, so 'executing' was displayed by every register while no governed transition could produce it. Its permitted state is read from decision-lifecycle-1.1.0 (issued only).",
+    "action.verify named as its own OPERATIONAL and DELEGABLE right, and evidence acceptance made a contract (evidence-acceptance-1.0.0): verifying submitted evidence is an independent act, distinct from closure. Until now a closure right could write compliance_verified:true on the owner's own word, so 'verified' proved only belief (D-046).",
+    "action.close now carries a REQUIRED state read from that contract — the record must hold a verdict ACCEPTED by an independent verifier — so a percentage together with an attachment can no longer pass for verification, and a refusal names the requirement.",
+    "separation of duty made structural in the command guard: EVIDENCE_ACTOR_EXCLUDED refuses a verdict from the seat that submitted the evidence or owns the action, for EVERY role (the mirror of the owner binding, which binds plain member seats only).",
   ],
   invalidates_prior_evidence: true,
 };
@@ -67,7 +70,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "vote.call", "vote.certify", "vote.cast",
   "minutes.draft", "minutes.review", "minutes.approve", "minutes.issue",
   "attendance.certify", "attendance.respond", "action.admin", "action.progress",
-  "action.close", "escalation.approve", "review.respond", "amendment.notify", "amendment.acknowledge",
+  "action.close", "action.verify", "escalation.approve", "review.respond", "amendment.notify", "amendment.acknowledge",
   "agenda.evaluate", "instrument.extract",
   "decision.propose", "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute", "decision.submit",
@@ -84,7 +87,7 @@ export const DELEGABLE_CAPABILITIES = [
   "agenda.approve", "meeting.start", "meeting.adjourn", "meeting.cancel",
   "vote.call", "vote.certify",
   "minutes.approve", "minutes.issue", "decision.approve", "decision.issue",
-  "escalation.approve", "action.admin", "action.close", "committee.activate",
+  "escalation.approve", "action.admin", "action.close", "action.verify", "committee.activate",
 ];
 
 /**
@@ -101,7 +104,7 @@ const ROLE_BASELINE = {
     "vote.call", "vote.certify", "vote.cast",
     "minutes.draft", "minutes.review", "minutes.approve", "minutes.issue",
     "attendance.certify", "attendance.respond", "action.admin", "action.progress",
-    "action.close",
+    "action.close", "action.verify",
     "escalation.approve", "amendment.notify", "agenda.evaluate", "instrument.extract",
     "decision.view", "decision.comment", "decision.propose", "decision.review",
     "decision.approve", "decision.issue", "decision.vote", "decision.acknowledge",
@@ -118,7 +121,7 @@ const ROLE_BASELINE = {
     "meeting.schedule", "meeting.cancel", "memory.compile",
     "agenda.edit", "agenda.propose", "agenda.evaluate",
     "minutes.draft", "minutes.review", "attendance.certify", "attendance.respond",
-    "action.admin", "action.progress", "amendment.notify", "instrument.extract",
+    "action.admin", "action.progress", "action.verify", "amendment.notify", "instrument.extract",
     "review.respond",
     "decision.view", "decision.comment", "decision.review", "decision.submit", "decision.acknowledge",
     "read", "audit.read", "report.export",
