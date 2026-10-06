@@ -1,0 +1,175 @@
+{
+  "name": "HandoverItem",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "pack_id": {
+      "type": "string",
+      "title": "Handover Pack ID"
+    },
+    "obligation_type": {
+      "type": "string",
+      "title": "Obligation Type",
+      "enum": [
+        "open_action",
+        "agenda_item",
+        "pending_signature",
+        "upcoming_meeting",
+        "group_membership",
+        "document_custody",
+        "official_correspondence",
+        "review_request",
+        "personal_delegation",
+        "active_delegation",
+        "risk",
+        "unresolved_exception"
+      ]
+    },
+    "source_entity_type": {
+      "type": "string",
+      "title": "Source Entity Type"
+    },
+    "source_entity_id": {
+      "type": "string",
+      "title": "Source Entity ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Obligation Title"
+    },
+    "due_date": {
+      "type": "string",
+      "title": "Due Date",
+      "format": "date"
+    },
+    "source_status": {
+      "type": "string",
+      "title": "Status of the Source Record at Handover"
+    },
+    "proposed_disposition": {
+      "type": "string",
+      "title": "System-Proposed Disposition (a human decides)",
+      "enum": [
+        "assign_to_successor",
+        "return_to_institution",
+        "interim_custodian",
+        "retain_with_seat",
+        "revoke_not_transferred",
+        "expire"
+      ]
+    },
+    "disposition": {
+      "type": "string",
+      "title": "Approved Disposition (each obligation is assigned exactly once)",
+      "enum": [
+        "assign_to_successor",
+        "return_to_institution",
+        "interim_custodian",
+        "retain_with_seat",
+        "revoke_not_transferred",
+        "expire"
+      ]
+    },
+    "destination_seat_id": {
+      "type": "string",
+      "title": "Destination Seat ID"
+    },
+    "destination_name": {
+      "type": "string",
+      "title": "Destination (display only)"
+    },
+    "predecessor_private": {
+      "type": "boolean",
+      "title": "Predecessor's Private Item (never transferred automatically)",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "accepted",
+        "returned",
+        "reassigned",
+        "not_transferred"
+      ],
+      "default": "pending"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason / Return Reason"
+    },
+    "effective_at": {
+      "type": "string",
+      "title": "Effective At",
+      "format": "date-time"
+    },
+    "moved_at": {
+      "type": "string",
+      "title": "Moved At",
+      "format": "date-time"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Continuity Contract Version in Force"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "pack_id",
+    "obligation_type",
+    "title",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

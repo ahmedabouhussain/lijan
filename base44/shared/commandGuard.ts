@@ -22,6 +22,10 @@ import { AGENDA_TRANSITIONS, AGENDA_ARCHIVE, MINUTES_TRANSITIONS, MINUTES_EDITAB
 // The evidence-acceptance gates come from the contract the evidence commands consume, so the guard
 // cannot describe a rule the commands do not enforce (evidence-acceptance-1.0.0, authz-1.5.0).
 import { EVIDENCE_STATE_GATES, EVIDENCE_ACTOR_EXCLUDED, EVIDENCE_REFUSALS } from './evidenceAcceptance.ts';
+// Continuity acts (a person resigning their own seat, a named successor accepting a handover) are
+// bound to the actor's OWN identity for every role. Read from the continuity contract so the guard
+// and the commands can never disagree about which field carries that identity.
+import { IDENTITY_BOUND_ACTIONS, CONTINUITY_REFUSALS } from './continuityContract.ts';
 
 const SCOPE_CHAIN = {
   Committee: { self: true, parents: [] },
@@ -39,6 +43,14 @@ const SCOPE_CHAIN = {
   Vote: { parents: [["decision_id", "Decision"]] },
   Attendance: { parents: [["meeting_id", "Meeting"]] },
   AIOutputLedger: { parents: [] },
+  // Structure and continuity records: the scope comes from the record's own committee_id. A
+  // counterparty committee is deliberately NOT a parent link — a joint committee or a reporting
+  // line may cross an institution boundary, and treating it as a parent would refuse a lawful
+  // relationship or, worse, derive the wrong committee from it.
+  CommitteeRelationship: { parents: [] },
+  SeatAppointmentEvent: { parents: [["membership_id", "CommitteeMembership"]] },
+  HandoverPack: { parents: [] },
+  HandoverItem: { parents: [["pack_id", "HandoverPack"]] },
 };
 
 export const TRUSTED_TARGET_TYPES = Object.keys(SCOPE_CHAIN);
@@ -77,7 +89,18 @@ export const PERMITTED_STATES = {
   "action.close": { field: "status", states: ["in_progress", "evidence_pending", "under_review", "verified"] },
   "committee.close": { field: "status", states: ["active", "closing", "temporarily_suspended", "expiring_soon"] },
   "committee.activate": { field: "status", states: ["draft", "pending_activation"] },
+  // Continuity acts act on a live record only: a seat that is still active may be resigned, and a
+  // handover that is still open may be accepted or returned.
+  "seat.resign": { field: "status", states: ["active"] },
+  "seat.handover_accept": { field: "status", states: ["pending_acceptance", "partially_accepted", "returned"] },
 };
+
+/**
+ * Acts the record's OWN identity field must match — for EVERY role, including the chair. This is the
+ * mirror of ACTOR_BOUND (which binds plain member seats to their own records): here the binding is a
+ * fact about the person, not a privilege of rank.
+ */
+export const ACTOR_IDENTITY_REQUIRED = { ...IDENTITY_BOUND_ACTIONS };
 
 /** Seats that may act only on a record bound to themselves. */
 export const ACTOR_BOUND = {
@@ -247,6 +270,21 @@ export async function authorizeCommand(base44, opts = {}) {
       reason: "This seat may act only on records assigned to it",
       trusted_target, target: null,
     };
+  }
+
+  // A personal act belongs to the person it concerns, whatever role that person holds.
+  const identityField = ACTOR_IDENTITY_REQUIRED[capability];
+  if (identityField) {
+    const bound = record[identityField];
+    if (!bound || bound !== auth.user.id) {
+      const text = CONTINUITY_REFUSALS.identity_mismatch;
+      return {
+        ...auth, allowed: false, status: 403, code: "identity_mismatch",
+        reason: text.en, reason_ar: text.ar,
+        identity_field: identityField,
+        trusted_target, target: null,
+      };
+    }
   }
 
   // Separation of duty, for every role: the submitter and the owner are both barred from judging.

@@ -1,0 +1,209 @@
+{
+  "name": "CommitteeRelationship",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (of the subject committee)"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Subject Committee ID (the committee this relationship describes)"
+    },
+    "counterparty_committee_id": {
+      "type": "string",
+      "title": "Counterparty Committee ID"
+    },
+    "counterparty_name_ar": {
+      "type": "string",
+      "title": "Counterparty Name (Arabic)"
+    },
+    "counterparty_name_en": {
+      "type": "string",
+      "title": "Counterparty Name (English)"
+    },
+    "relationship_type": {
+      "type": "string",
+      "title": "Typed Relationship (what this link MEANS \u2014 a reporting recipient never approves)",
+      "enum": [
+        "parent_committee",
+        "subcommittee",
+        "advisory_group",
+        "joint_committee",
+        "appointing_body",
+        "ratifying_body",
+        "reporting_recipient",
+        "oversight_body",
+        "execution_dependency",
+        "secretariat_custodian"
+      ]
+    },
+    "direction": {
+      "type": "string",
+      "title": "Direction (as seen from the subject committee)",
+      "enum": [
+        "outbound",
+        "inbound",
+        "symmetric"
+      ],
+      "default": "outbound"
+    },
+    "legal_basis": {
+      "type": "string",
+      "title": "Legal / Mandate Basis"
+    },
+    "basis_reference": {
+      "type": "string",
+      "title": "Basis Reference (instrument or decision number)"
+    },
+    "basis_document_id": {
+      "type": "string",
+      "title": "Basis Document ID"
+    },
+    "scope": {
+      "type": "string",
+      "title": "Scope of the Relationship"
+    },
+    "delegated_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Delegated Capabilities (bounded list \u2014 never a power the parent does not itself hold)"
+    },
+    "reserved_matters": {
+      "type": "string",
+      "title": "Reserved Matters (what the parent keeps \u2014 an explicit 'none' is required for any delegation)"
+    },
+    "review_or_overturn": {
+      "type": "string",
+      "title": "Parent's Power over the Child's Output",
+      "enum": [
+        "none",
+        "review",
+        "ratify",
+        "overturn"
+      ],
+      "default": "none"
+    },
+    "ratification_required": {
+      "type": "boolean",
+      "title": "Ratification Required (the child's output is not effective until ratified)",
+      "default": false
+    },
+    "reporting_obligation": {
+      "type": "string",
+      "title": "Reporting Obligation"
+    },
+    "escalation_route": {
+      "type": "string",
+      "title": "Escalation / Appeal Route"
+    },
+    "owner_seat_id": {
+      "type": "string",
+      "title": "Relationship Owner (committee membership id)"
+    },
+    "owner_name": {
+      "type": "string",
+      "title": "Relationship Owner (display only)"
+    },
+    "start_date": {
+      "type": "string",
+      "title": "Start Date",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "title": "End Date",
+      "format": "date"
+    },
+    "effective_from": {
+      "type": "string",
+      "title": "Effective From",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "proposed",
+        "active",
+        "suspended",
+        "ended"
+      ],
+      "default": "proposed"
+    },
+    "cycle_checked": {
+      "type": "boolean",
+      "title": "Authority Cycle Checked (no body is its own parent, appointer or ratifier)",
+      "default": true
+    },
+    "delegation_expires_at": {
+      "type": "string",
+      "title": "Delegation Expiry (an inter-committee delegation is never perpetual)",
+      "format": "date-time"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Structure Contract Version in Force"
+    },
+    "relationship_notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "created_by_name": {
+      "type": "string",
+      "title": "Recorded By Name"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "counterparty_committee_id",
+    "relationship_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

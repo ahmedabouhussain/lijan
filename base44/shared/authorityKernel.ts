@@ -21,7 +21,7 @@
 //   • Every decision reports `scope_provenance`, so a surface can tell whether the scope came from
 //     the target record itself or from a committee lookup hint.
 
-export const AUTHORITY_POLICY_VERSION = "authz-1.5.0";
+export const AUTHORITY_POLICY_VERSION = "authz-1.6.0";
 
 /**
  * The build record of the policy in force. A security-material change never keeps the previous
@@ -30,10 +30,13 @@ export const AUTHORITY_POLICY_VERSION = "authz-1.5.0";
  * `source_hash` is computed and written by scripts/authority-policy-manifest.mjs, never by hand.
  */
 export const AUTHORITY_POLICY_BUILD = {
-  version: "authz-1.5.0",
-  supersedes: "authz-1.4.0",
+  version: "authz-1.6.0",
+  supersedes: "authz-1.5.0",
   change_class: "security",
   changes: [
+    "seat.resign named as an OPERATIONAL and SELF-SERVICE right: a seated person resigns their OWN appointment, and no office may resign another person's seat. Identity is enforced in the command guard for EVERY role (a chair cannot resign a member's seat either).",
+    "seat.handover_accept named as an OPERATIONAL and SELF-SERVICE right: the NAMED successor accepts the handover of institutional obligations under their own identity, and only for themselves. An institution cannot accept on the successor's behalf, and an unaccepted obligation stays visibly unresolved.",
+    "IDENTITY-BOUND ACTIONS enforced structurally in the command guard (read from the continuity contract, never re-typed): an act listed there is refused unless the record's own identity field equals the actor's, for every role.",
     "GRANT NARROWING CORRECTED: a role-held right outside a NONEMPTY permitted_actions list is refused. The previous condition also required the capability to be absent from the role — a state the preceding branch had already returned on — so the branch was unreachable and every populated grant narrowed nothing.",
     "decision.propose named as an OPERATIONAL capability, so the narrow decision-proposal right is what the command, the UI and the role tests use. agenda.propose is NOT granted to the chair as a workaround: proposing and agenda preparation remain distinct rights.",
     "trusted-target coverage extended to every writing command (no committee lookup hint)",
@@ -74,6 +77,7 @@ export const OPERATIONAL_CAPABILITIES = [
   "agenda.evaluate", "instrument.extract",
   "decision.propose", "decision.review", "decision.approve", "decision.issue", "decision.vote",
   "decision.sign_image", "decision.digital_sign", "decision.execute", "decision.submit",
+  "seat.resign", "seat.handover_accept",
 ];
 
 /** Capabilities blocked for a member who is recused from the committee. */
@@ -150,7 +154,12 @@ const ROLE_BASELINE = {
  * Self-service rights are listed here so the set stays ONE list: each is a personal act bound to the
  * actor's own record, never a right over another person's record.
  */
-const SELF_SERVICE_CAPABILITIES = ["conflict.declare", "recusal.record", "amendment.acknowledge"];
+// seat.resign and seat.handover_accept join the personal acts: both are about the actor's OWN seat
+// or the handover addressed to the actor, never about another person's record.
+const SELF_SERVICE_CAPABILITIES = [
+  "conflict.declare", "recusal.record", "amendment.acknowledge",
+  "seat.resign", "seat.handover_accept",
+];
 
 export function capabilitiesForRole(role, { delegationActive = false } = {}) {
   const base = ROLE_BASELINE[role] ? [...ROLE_BASELINE[role]] : [];

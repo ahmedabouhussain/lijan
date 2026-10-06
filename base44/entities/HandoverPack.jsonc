@@ -1,0 +1,188 @@
+{
+  "name": "HandoverPack",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "outgoing_event_id": {
+      "type": "string",
+      "title": "Outgoing Appointment Event ID"
+    },
+    "predecessor_membership_id": {
+      "type": "string",
+      "title": "Outgoing Seat"
+    },
+    "predecessor_user_id": {
+      "type": "string",
+      "title": "Outgoing Person (user id)"
+    },
+    "predecessor_name": {
+      "type": "string",
+      "title": "Outgoing Person (display only)"
+    },
+    "successor_membership_id": {
+      "type": "string",
+      "title": "Incoming Seat"
+    },
+    "successor_user_id": {
+      "type": "string",
+      "title": "Incoming Person (user id) \u2014 accepts under their own identity"
+    },
+    "successor_name": {
+      "type": "string",
+      "title": "Incoming Person (display only)"
+    },
+    "approving_authority": {
+      "type": "string",
+      "title": "Approving Authority"
+    },
+    "effective_date": {
+      "type": "string",
+      "title": "Effective Date",
+      "format": "date"
+    },
+    "history_scope": {
+      "type": "string",
+      "title": "Permitted History Scope (what institutional history the successor may read)"
+    },
+    "items_total": {
+      "type": "number",
+      "title": "Open Obligations Found",
+      "default": 0
+    },
+    "items_assigned": {
+      "type": "number",
+      "title": "Obligations Assigned Once",
+      "default": 0
+    },
+    "items_unresolved": {
+      "type": "number",
+      "title": "Obligations Still Unresolved (never silently completed)",
+      "default": 0
+    },
+    "personal_items_revoked": {
+      "type": "number",
+      "title": "Personal Items Revoked, Never Transferred",
+      "default": 0
+    },
+    "reassessed_delegations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Grants and Delegations Reassessed (expire / revoke / retain / reassign)"
+    },
+    "excluded_from_handover": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "What Was Excluded by Contract (private notes, personal delegations, credentials, personal messages, unrelated memberships, own consents)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (unaccepted items remain visible as unresolved)",
+      "enum": [
+        "pending_acceptance",
+        "partially_accepted",
+        "returned",
+        "accepted"
+      ],
+      "default": "pending_acceptance"
+    },
+    "accepted_at": {
+      "type": "string",
+      "title": "Accepted At",
+      "format": "date-time"
+    },
+    "accepted_by_user_id": {
+      "type": "string",
+      "title": "Accepted By (user id \u2014 the successor's own acceptance)"
+    },
+    "accepted_by_name": {
+      "type": "string",
+      "title": "Accepted By (display only)"
+    },
+    "returned_at": {
+      "type": "string",
+      "title": "Returned At (for missing information)"
+    },
+    "return_reason": {
+      "type": "string",
+      "title": "Return Reason"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Continuity Contract Version in Force"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "predecessor_membership_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.successor_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "data.successor_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

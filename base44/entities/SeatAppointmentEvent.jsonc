@@ -1,0 +1,236 @@
+{
+  "name": "SeatAppointmentEvent",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "membership_id": {
+      "type": "string",
+      "title": "Seat (committee membership id) \u2014 the seat is not the person"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "Person (user id) at the time of the event \u2014 identity of record"
+    },
+    "person_name": {
+      "type": "string",
+      "title": "Person Name (display only)"
+    },
+    "person_name_en": {
+      "type": "string",
+      "title": "Person Name (English, display only)"
+    },
+    "seat_role": {
+      "type": "string",
+      "title": "Seat Role at the Time of the Event"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Appointment Event (each event is a different institutional act)",
+      "enum": [
+        "nomination",
+        "acceptance",
+        "appointment",
+        "acting_appointment",
+        "acting_expiry",
+        "end_of_term",
+        "resignation",
+        "removal",
+        "death",
+        "incapacity",
+        "representation_transfer",
+        "temporary_absence",
+        "reinstatement"
+      ]
+    },
+    "effective_at": {
+      "type": "string",
+      "title": "Effective At (when the change takes effect \u2014 distinct from when it was recorded)",
+      "format": "date-time"
+    },
+    "recorded_at": {
+      "type": "string",
+      "title": "Recorded At (when the institution learned of it \u2014 never backdated)",
+      "format": "date-time"
+    },
+    "competent_authority": {
+      "type": "string",
+      "title": "Competent Authority (who holds the power to decide this event)"
+    },
+    "competent_authority_user_id": {
+      "type": "string",
+      "title": "Competent Authority (user id)"
+    },
+    "reason_class": {
+      "type": "string",
+      "title": "Reason Class (a personal_private reason is stored but never surfaced in registers or portfolio output)",
+      "enum": [
+        "institutional",
+        "public",
+        "personal_private"
+      ],
+      "default": "institutional"
+    },
+    "reason_note": {
+      "type": "string",
+      "title": "Reason (institutional wording)"
+    },
+    "evidence_url": {
+      "type": "string",
+      "title": "Supporting Evidence",
+      "format": "uri"
+    },
+    "acting_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Bounded Scope of an Acting Appointment (never a blanket chair permission set)"
+    },
+    "acting_expires_at": {
+      "type": "string",
+      "title": "Acting Expiry (a bounded appointment ends by time, not by remaining in force)",
+      "format": "date-time"
+    },
+    "bounded": {
+      "type": "boolean",
+      "title": "Bounded Appointment",
+      "default": false
+    },
+    "predecessor_membership_id": {
+      "type": "string",
+      "title": "Predecessor Seat (the seat this assignment follows)"
+    },
+    "predecessor_user_id": {
+      "type": "string",
+      "title": "Predecessor Person (user id)"
+    },
+    "successor_membership_id": {
+      "type": "string",
+      "title": "Seat Created or Affected by this Event"
+    },
+    "successor_user_id": {
+      "type": "string",
+      "title": "Person the Event Concerns (user id)"
+    },
+    "seats_ended": {
+      "type": "boolean",
+      "title": "This Event Ends the Seat",
+      "default": false
+    },
+    "creates_vacancy": {
+      "type": "boolean",
+      "title": "This Event Creates a Visible Vacancy",
+      "default": false
+    },
+    "vacancy_status": {
+      "type": "string",
+      "title": "Vacancy Status",
+      "enum": [
+        "none",
+        "open",
+        "resolved",
+        "waived"
+      ],
+      "default": "none"
+    },
+    "quorum_may_break": {
+      "type": "boolean",
+      "title": "Quorum May Be Affected",
+      "default": false
+    },
+    "powers_stopped": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Powers that Stop (which authority ends, which obligations remain with the institution)"
+    },
+    "obligations_remain_with": {
+      "type": "string",
+      "title": "Open Obligations Remain With",
+      "enum": [
+        "seat",
+        "institution",
+        "successor_after_acceptance"
+      ],
+      "default": "seat"
+    },
+    "handover_pack_id": {
+      "type": "string",
+      "title": "Handover Pack (raised for this event, when a handover is required)"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Continuity Contract Version in Force"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "recorded",
+        "effective",
+        "superseded"
+      ],
+      "default": "recorded"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "membership_id",
+    "event_type",
+    "effective_at",
+    "reason_class",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
