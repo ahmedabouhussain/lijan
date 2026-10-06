@@ -274,3 +274,33 @@
 
 **التغييرات (للتراجع) — S18**: أُضيف `base44/shared/membershipEffect.ts` · `base44/entities/MembershipEffectPolicy.jsonc` · `base44/functions/SetMembershipEffectPolicy` · `base44/functions/GetDecisionEffectState` · `base44/functions/TestMembershipEffect` · `src/components/raqeem/RoundEffectPanel.jsx`. وعُدِّل: `base44/shared/commandGuard.ts` (بوابة `STANDING_REQUIRED`) · `base44/shared/authorityKernel.ts` (`authz-1.9.0`) · `base44/functions/IssueDecision` (بوابة الأثر داخل الدورة + تسجيله في الحزمة) · `src/components/raqeem/DecisionWorkflow.jsx` · `base44/shared/authorityPolicyManifest.json`.
 **أثر البيانات**: صفر كتابة · لا حذف · لا إعادة بذر (سجلات `MembershipEffectPolicy` في قاعدة الإنتاج: **0**).
+
+## دفعة S19 — مستخلص التنفيذ للجهة + تصدير مقروء (الموجز مراجعة 5 · التيار D)
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S19-001** | عقد `execution-extract-1.0.0`: كل ما يجوز أن يخرج إلى جهة خارج اللجنة، ومنع هوية المُحكِّم والمعرّفات الداخلية والوسوم الداخلية، وفصل الوقائع الأربع (إرسال · فتح · إقرار · سؤال)، وأن الإقرار ثبوت استلام لا اعتماد، وأن السؤال لا يغيّر حالة ولا مهلة | اختبار مُنفَّذ (31 حالة) | وحدة مشتركة | **31/31 PASS** · `writes_performed: 0` · `records_read: 0` | `TestExecutionExtract` (EX-001…EX-031) | **PASS** |
+| **E-S19-002** | النواة `authz-1.10.0`: سلسلة النطاق استوعبت سجلي المسار الجديد بلا حق جديد | اختبار مُنفَّذ | نواة السلطة + الحارس | **96/96 PASS** (52+21+23) · خط الأساس **ثابت** 53/22/39/17 | `TestAuthorizationGuard` | **PASS** |
+| **E-S19-003** | إعادة تشغيل كل الأسر تحت 1.10.0 (أدلة 1.9.0 مُبطَلة) | أسر مُنفَّذة | طبقة العقود | 39/39 · 40/40 · 20/20 · 60/60 · 24/24 · 22/22 · 19/19 · 12/12 · 22/22 · 18/18 · 26/26 | `Test*` | **PASS** |
+| **E-S19-004** | تحميل الأوامر الجديدة وأن الرفض يسبق كل قراءة وكتابة | نداءات خادم مباشرة | ثلاثة أوامر + فعلان برمز | **404 `target_not_found`** (`corr_muwm4w6osg1euq` · `corr_muwm57r8uo9fny` · `corr_muwm4w6rpgusbj`) بصفر كتابة · والرمز المجهول: **404 `token_unknown`** بنص العقد ثنائي اللغة | نداءات مباشرة | **PASS** |
+| **E-S19-005** | بناء الواجهة بعد السطحين الجديدين | بناء | شجرة العمل | `npx vite build` → **BUILD_EXIT=0** · صفر خطأ | سجل البناء | **PASS** |
+| **E-S19-006** | الفحص الثابت للأوامر | سكربت | 214 ملفًا | **123** موضع أمر · **78** على سجل مستهدف · **0** خطأ · **0** كتابة بحق قراءة · **0** مطابقة بالاسم · **3** أفعال برمز قدرة (خارج المسار بالتصميم) | `authority-guardrails` | **PASS** |
+| **E-S19-007** | رابط محفوظ، إقرار على التزام حقيقي، ورحلة متصفح | فاعل مُقعد / جلسة متصفح | — | **NOT TESTED** — لا فاعل مُقعد مُصادَق (D-064) | D-064 | **BLOCKED** |
+
+**حدّ الأدلة**: E-S19-001 يُثبت العقد؛ وE-S19-004 يُثبت التحميل وسبق الرفض — ولا يُثبتان رابطًا محفوظًا ولا إقرارًا مُنفَّذًا.
+**التغييرات (للتراجع) — S19**: أُضيف `base44/shared/executionExtract.ts` · `base44/entities/ActionExtractGrant.jsonc` · `base44/entities/ActionClarification.jsonc` · `ShareActionExtract` · `ListActionExtracts` · `GetActionExtractView` · `RespondToActionExtract` · `AnswerActionClarification` · `TestExecutionExtract` · `src/components/raqeem/ActionExtractPanel.jsx` · `src/pages/ActionExtractView.jsx` · `src/lib/workExport.js`. وعُدِّل `commandGuard.ts` (سلسلة النطاق) · `authorityKernel.ts` (`authz-1.10.0`) · `CommitteeActions.jsx` · `MyWorkInbox.jsx` · `App.jsx` (مسار `/extract/:token`) · `scripts/authority-guardrails.mjs` (فئة أفعال رمز القدرة).
+**أثر البيانات**: صفر كتابة · لا حذف (سجلات `ActionExtractGrant` و`ActionClarification` في قاعدة الإنتاج: **0**).
+
+## دفعة S20 — المادة هـ: التعداد الإلزامي قبل التغيير والحجز القانوني
+
+| المعرّف | ما يثبته | نوع الدليل | النطاق | النتيجة | المرجع | الحكم |
+|---|---|---|---|---|---|---|
+| **E-S20-001** | عقد `institutional-change-1.0.0`: أنواع التغيير السبعة، والفئات التسع الإلزامية (وفئة يُعلن العقد أن هذا البناء لا يقرأها)، وأن التغيير لا يقع فوق التزام بلا مصير، وأن مصدرًا لم يُقرأ يُبطل الجاهزية، وقواعد الحجز القانوني | اختبار مُنفَّذ (22 حالة) | وحدة مشتركة | **22/22 PASS** · `writes_performed: 0` · `records_read: 0` | `TestInstitutionalChange` (IC-001…IC-022) | **PASS** |
+| **E-S20-002** | تحميل الأمرين وأن الرفض يسبق كل قراءة وكتابة | نداءات مباشرة | `CompileChangeInventory` · `RecordChangeDisposition` | **404 `target_not_found`** (`corr_muwm89915b2c7d` · `corr_muwm899izxptj8`) · `authz-1.10.0` · **صفر كتابة** | نداءان مباشران | **PASS** |
+| **E-S20-003** | بناء الواجهة بعد السطح الجديد | بناء | شجرة العمل | `BUILD_EXIT=0` · صفر خطأ | سجل البناء | **PASS** |
+| **E-S20-004** | تعداد محفوظ على لجنة حقيقية، وحجز موضوع على التزام حقيقي، وإغلاق مُرفض بسبب حجز | فاعل مُقعد | — | **NOT TESTED** — لا فاعل مُقعد مُصادَق | D-064 | **BLOCKED** |
+| **E-S20-005** | قياس التزامن (المطالبة الفريدة + قارن-وبدّل) | — | — | **NOT ESTABLISHED** (D-009) | D-009 | **NOT MEASURED** |
+
+**لا ارتفاع نسخة سياسة في S20**: لم تُمس النواة ولا الحارس — الفعل المحكوم يقع بحق `committee.manage` القائم على **اللجنة** كسجل مستهدف، والسجل المحسوم يُمرَّر إلى الحارس كسجل **مرتبط** يجب أن يوافق اللجنة نفسها. وما تغيّر هو **بوابة داخل أمر قائم**: `CloseAction` صار يقرأ الحجز القانوني قبل أي كتابة، **fail-closed**: تعذّر إثبات الحجز ⇒ **503 `hold_state_unverifiable`**، وحجز قائم ⇒ **409 `legal_hold_active`** بسببه وجهته والسبيل إلى رفعه.
+**التغييرات (للتراجع) — S20**: أُضيف `base44/shared/institutionalChange.ts` · `base44/entities/ChangeDisposition.jsonc` · `CompileChangeInventory` · `RecordChangeDisposition` · `TestInstitutionalChange` · `src/components/raqeem/ChangeInventoryPanel.jsx`. وعُدِّل `base44/functions/CloseAction/entry.ts` (بوابة الحجز) · `src/pages/committee/CommitteeClosure.jsx` (السطح).
+**أثر البيانات**: صفر كتابة · لا حذف (سجلات `ChangeDisposition` في قاعدة الإنتاج: **0**).
