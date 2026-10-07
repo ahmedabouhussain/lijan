@@ -295,9 +295,14 @@ export function evaluateParticipant(input: any = {}) {
   // Alternate containment: principal present ⇒ neither is counted twice, the alternate's acts stop.
   if (kind === 'alternate') {
     const alt = input.alternate || {};
-    if (alt.principal_present === true || alt.window_closed === true || alt.active === false) {
-      ['sign_minutes', 'attest_authored_material'].forEach((r) => deny(rights, withheld, r, 'grant_window_closed'));
+    if (alt.principal_present === true) {
+      // Two capacities for one seat at once: the seat is never counted twice, so the alternate's
+      // personal acts stop under their OWN code — never blurred into the expiry code.
+      ['sign_minutes', 'attest_authored_material', 'view_full_pack'].forEach((r) => deny(rights, withheld, r, 'alternate_duplicate_principal'));
       findings.push('alternate_duplicate_principal');
+    } else if (alt.window_closed === true || alt.active === false) {
+      ['sign_minutes', 'attest_authored_material'].forEach((r) => deny(rights, withheld, r, 'grant_window_closed'));
+      findings.push('grant_window_closed');
     }
   }
 
