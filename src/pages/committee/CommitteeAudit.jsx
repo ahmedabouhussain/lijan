@@ -12,6 +12,7 @@ import CompletionLedger from "@/components/raqeem/CompletionLedger";
 import TraceabilityMatrix from "@/components/raqeem/TraceabilityMatrix";
 import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
 import ConsistencyCheckPanel from "@/components/raqeem/ConsistencyCheckPanel";
+import ExceptionCataloguePanel from "@/components/raqeem/ExceptionCataloguePanel";
 import { SURFACE_STATE } from "@/lib/governedState";
 
 export default function CommitteeAudit() {
@@ -81,6 +82,9 @@ export default function CommitteeAudit() {
 
       {/* Cross-record consistency — a checker, never a corrector: it reports and writes nothing. */}
       <ConsistencyCheckPanel committeeId={data?.committee?.id} />
+
+      {/* Why an act stopped, what stops with it, who resolves it — and what may never be assumed. */}
+      <ExceptionCataloguePanel committeeId={data?.committee?.id} />
 
       {/* Change Tracker */}
       <div className="raqeem-card p-4">

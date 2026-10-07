@@ -88,6 +88,21 @@ export default async function (req) {
     !!audit.note_ar && !!audit.note_en && /لا يحلّ|resolves no exception/.test(`${audit.note_ar} ${audit.note_en}`),
     audit.note_en);
 
+  check('EC-015', 'no DEAD class and no PHANTOM resolution: every declared class and every declared resolution is used by at least one exception',
+    Object.keys(EXCEPTION_CLASSES).every((c) => EXCEPTIONS.some((e: any) => e.class === c))
+    && Object.keys(EXCEPTION_RESOLUTIONS).every((r) => EXCEPTIONS.some((e: any) => e.resolution === r)),
+    {
+      classes_used: [...new Set(EXCEPTIONS.map((e: any) => e.class))].length, classes_declared: Object.keys(EXCEPTION_CLASSES).length,
+      resolutions_used: [...new Set(EXCEPTIONS.map((e: any) => e.resolution))].length, resolutions_declared: Object.keys(EXCEPTION_RESOLUTIONS).length,
+    });
+
+  check('EC-016', 'the register derives from THREE compared sources, and every one of their codes is covered — a code cannot change in its contract without this register noticing',
+    DERIVED_SOURCES.length === 3
+    && audit.derived.length === 3
+    && audit.derived.every((d: any) => d.codes_read > 0)
+    && audit.derived_missing_from_catalogue.length === 0,
+    audit.derived);
+
   const failed = results.filter((r) => !r.pass);
   return Response.json({
     suite: 'TestExceptionCatalogue',

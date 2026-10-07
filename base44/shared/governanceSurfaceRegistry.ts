@@ -369,6 +369,12 @@ export const GOVERNANCE_SURFACES: Surface[] = [
     unavailable: "authority", evidence: "contract_verified", suite: "TestRecordConsistency", recorded_path: false, recorded_path_evidence: null,
     note_ar: "فحص لا تصحيح: يقابل السجلات بقواعد تمتد بينها (إغلاق بلا حكم مقبول · حجز قائم · حزمة بلا بصمة · صوت بلا دورة مجمّدة · حضور بلا مقعد · تسليم لا يجمع). ومصدر لم يُقرأ تُسمّى قواعده **غير مُقيَّمة** ولا تُحسب نظيفة، ونطاق القراءة مُعلن بالحدّ المقيَّد.",
     note_en: "A check, not a correction: it matches records against rules that span them (closure without an accepted verdict · a standing hold · a package without a fingerprint · a ballot without a frozen round · presence without a seat · a handover whose arithmetic fails). A source that was not read has its rules reported NOT evaluated and never counted clean, and the read scope is declared with its cap." },
+  { id: "view_exception_catalogue", ar: "سجل الاستثناءات", en: "The exception register", stage: "oversight", kind: "view",
+    capability: "read", capability_source: "verified", command: "GetExceptionCatalogue", contract: "exception-catalogue-1.0.0",
+    actor_binding: "none", route: "/o/:orgRef/c/:committeeRef/audit", route_file: "src/components/raqeem/ExceptionCataloguePanel.jsx",
+    unavailable: "authority", evidence: "contract_verified", suite: "TestExceptionCatalogue", recorded_path: false, recorded_path_evidence: null,
+    note_ar: "يجيب عن ثلاثة أسئلة لكل توقّف: ما الذي مُنع · ماذا يتوقف بالضبط · مَن يحلّه — ومعه **ما لا يجوز استنتاجه** وهو قائم. والسجل يُعلن ولا يقرّر، ويعلن ما لا يغطيه، ومصادره المُشتقّة مقارَنة لا منسوخة.",
+    note_en: "Answers three questions for every stop: what was prevented · what exactly stops · who resolves it — with what may NEVER be assumed while it stands. The register declares and never decides, it names what it does not cover, and its derived sources are compared rather than copied." },
 ];
 
 export const SURFACE_IDS = GOVERNANCE_SURFACES.map((s) => s.id);

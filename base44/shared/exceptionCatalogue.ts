@@ -1,4 +1,6 @@
 import { RETRIEVAL_REFUSALS, AMEEN_RETRIEVAL_GUARD_VERSION } from './ameenRetrievalGuard.ts';
+import { AUDIT_CHAIN_REFUSALS, AUDIT_CHAIN_VERSION } from './auditChain.ts';
+import { METRIC_EXCEPTION_CODES, METRIC_DEFINITIONS_VERSION } from './metricDefinitions.ts';
 
 // exception-catalogue-1.0.0 — المادة و: سجل الاستثناءات الواحد.
 //
@@ -28,7 +30,8 @@ export const EXCEPTION_CLASSES = {
   integrity: { ar: 'خلل سلامة: السجل أو بصمته لا تطابق ما تحمله؛ يُقرأ «غير متحقق» لا «سليم».', en: 'Integrity failure: the record or its fingerprint does not match what it carries; it reads unverified, never sound.' },
   boundary: { ar: 'حدّ نطاق: فعل أو قراءة خارج ما يملكه الفاعل أو الرابط.', en: 'Scope boundary: an act or a read outside what the actor or the link holds.' },
   degraded: { ar: 'قناة غير متاحة: الحوكمة تعمل بلا مزوّد خارجي، والحالة تُعلن.', en: 'Channel unavailable: governance runs without the external provider, and the state is declared.' },
-  quarantine: { ar: 'حجر التباس: صف لم يُتحقق من هويته يُحتجز ولا يُخمَّن.', en: 'Ambiguity quarantine: a row whose identity is unverified is held and never guessed.' },
+  // `quarantine` is deliberately NOT declared here: a class with no emitter would be a promise, not a
+  // register entry. It is declared the moment a path holds an ambiguous row (see DECLARED_GAPS).
 };
 
 export const EXCEPTION_RESOLUTIONS = {
@@ -253,18 +256,130 @@ export const EXCEPTIONS = [
     'Delivering file bytes to unauthenticated parties is not authorized: it is declared blocked and never simulated.',
     'الفهرس ليس الملف، والإعلان ليس تنزيلًا.',
     'An index is not a file, and a declaration is not a download.'),
+  // ── سلاسل التدقيق (رموز مُشتقّة من عقدها، لا مقتبسة) ─────────────────────────────────────────────
+  E('chain_unknown', 'refusal', 'audit-chain-1.0.0', 'buildChain', 'read', 'identity_binding', 'read_in_source',
+    'سلسلة أثر غير معرّفة في العقد: لا يُبنى أثر على سلسلة غير معلنة.',
+    'An audit chain not declared in the contract: no trail is built on an undeclared chain.',
+    'السلسلة لا تُخترع في الواجهة.',
+    'A chain is not invented on the surface.'),
+  E('subject_required', 'refusal', 'audit-chain-1.0.0', 'buildChain', 'read', 'identity_binding', 'read_in_source',
+    'لم يُسمَّ السجل الذي يُبنى أثره: لا أثر بلا موضوع.',
+    'The record whose trail is built was not named: there is no trail without a subject.',
+    'الأثر لا يُبنى على «كل السجلات».',
+    'A trail is never built over "all records".'),
+  E('subject_type_mismatch', 'refusal', 'audit-chain-1.0.0', 'buildChain', 'read', 'identity_binding', 'read_in_source',
+    'نوع السجل لا يوافق السلسلة المطلوبة: لا يُفرض أثر سلسلة على نوع آخر.',
+    'The record type does not match the requested chain: a chain is never forced onto another record type.',
+    'التوافق لا يُفترض لأن العناوين متشابهة.',
+    'A match is not assumed because the names look alike.'),
+  E('trail_unreadable', 'integrity', 'audit-chain-1.0.0', 'buildChain', 'read', 'external_read', 'read_in_source',
+    'أثر السجل غير مقروء: يُعلن **غير متحقق** ولا يُقرأ فارغًا، ولا يُستنتج منه أن شيئًا لم يقع.',
+    'The record\'s trail could not be read: it is declared UNVERIFIED and never read as empty, and nothing is inferred from it about what did not happen.',
+    'غياب الحدث في أثر غير مقروء ليس دليلًا على عدم وقوعه.',
+    'An event absent from an unreadable trail is not proof it did not occur.'),
+  // ── المؤشرات (رموز مُشتقّة من عقدها) ────────────────────────────────────────────────────────────
+  E('unknown_metric', 'refusal', 'metric-definitions-1.0.0', 'assessMetric', 'read', 'identity_binding', 'read_in_source',
+    'مؤشر غير معرّف في العقد: لا يُعرض رقم بلا تعريف.',
+    'A metric not defined in the contract: no figure is shown without its definition.',
+    'الرقم لا يُخترع في الواجهة، والتعريف يسبق القيمة.',
+    'A figure is never invented on the surface, and the definition precedes the value.'),
+  E('invalid_counts', 'refusal', 'metric-definitions-1.0.0', 'assessMetric', 'act', 'external_read', 'read_in_source',
+    'بسط أو مقام غير صحيح (غير صحيح · سالب · غير رقمي): لا تُعرض نسبة على أساس فاسد.',
+    'An invalid numerator or denominator (non-integer, negative, non-numeric): no rate is shown on a corrupt basis.',
+    'الأساس الفاسد لا يُقرَّب ولا يُعرض مع تحذير.',
+    'A corrupt basis is never rounded off or shown with a caveat.'),
+  E('numerator_exceeds_denominator', 'refusal', 'metric-definitions-1.0.0', 'assessMetric', 'act', 'external_read', 'read_in_source',
+    'البسط أكبر من المقام: فحص ذاتي يعلو صوته بدل أن يرسم رقمًا مستحيلًا.',
+    'The numerator exceeds the denominator: a self-check that fails LOUDLY rather than rendering an impossible figure.',
+    'الرقم المستحيل لا يُعرض بصمت.',
+    'An impossible figure is never shown silently.'),
+  E('small_basis', 'boundary', 'metric-definitions-1.0.0', 'assessMetric', 'affected_only', 'owner_decision', 'read_in_source',
+    'الأساس أدنى من حد الإفصاح: تُحجب النسبة ويُسمّى الحدّ.',
+    'The basis is below the disclosure floor: the rate is withheld and the floor is named.',
+    'الحجب ليس صفرًا، والحدّ يُسمّى ولا يُخفى.',
+    'A withhold is not a zero, and the floor is named rather than hidden.'),
+  E('small_numerator', 'boundary', 'metric-definitions-1.0.0', 'assessMetric', 'affected_only', 'owner_decision', 'read_in_source',
+    'عدد الحالات أدنى من حد الإفصاح: يُحجب الرقم الصغير الذي يمكن نسبته إلى أشخاص.',
+    'The count is below the disclosure floor: a small figure attributable to individuals is withheld.',
+    'الرقم الصغير قد يكشف شخصًا، والحجب حماية لا نقص.',
+    'A small figure may identify a person, and withholding is protection, not a shortfall.'),
+  E('unread', 'integrity', 'metric-definitions-1.0.0', 'assessMetric', 'affected_only', 'external_read', 'read_in_source',
+    'تعذّرت قراءة مصدر الرقم: يُعلن **غير متحقق** ولا يُعرض صفر مكانه.',
+    'The metric\'s source could not be read: it is declared UNVERIFIED and no zero is shown in its place.',
+    'الصفر الكاذب أسوأ من رقم غائب.',
+    'A false zero is worse than an absent figure.'),
+  E('no_records', 'boundary', 'metric-definitions-1.0.0', 'assessMetric', 'affected_only', 'external_read', 'read_in_source',
+    'لا سجل في الفترة: تُقرأ «لا سجل» ولا تُقرأ نسبة صفرية.',
+    'No records in the period: it reads "no records" and never a zero rate.',
+    'الغياب ليس صفرًا، والفراغ يُقال بلفظه.',
+    'An absence is not a zero, and an empty is stated in words.'),
+  // ── القيام والحالة (الرموز التي يجيب بها حارس «أمين» نفسه) ──────────────────────────────────────
+  E('standing_unknown', 'refusal', 'ameen-retrieval-guard-1.0.0', 'assessSeatStanding', 'read', 'external_read', 'observed_live',
+    'حال المقعد غير معروفة (قراءة فاشلة أو سجل تعيينات غير مقروء): يُرفض الوصول، لأن الجهل لا يُفسَّر قيامًا.',
+    'The seat\'s state is unknown (a failed read, or an unreadable appointment history): access is refused, because ignorance is never read as standing.',
+    'الجهل يمنع ولا يقوم مقام القيام.',
+    'Ignorance refuses and never stands in for standing.'),
+  E('seat_ended', 'refusal', 'membership-effect-1.0.0', 'standingAt · assessSeatStanding', 'act', 'seated_actor', 'read_in_source',
+    'انتهت مدة المقعد أو انقضى تكليفه المؤقت في اللحظة: يتوقف كل فعل على المقعد.',
+    'The seat\'s term ended, or its bounded appointment expired, at the instant: every act on that seat stops.',
+    'حالة السجل «نشط» ليست قيامًا، والواقعة الزمنية تحكم.',
+    'A record state of "active" is not standing; the instant governs.'),
+  E('seat_not_yet_started', 'refusal', 'membership-effect-1.0.0', 'standingAt · assessSeatStanding', 'act', 'seated_actor', 'read_in_source',
+    'التعيين لم يبدأ نفاذه بعد: لا فعل قبل لحظة النفاذ — والحدّ يعمل في الاتجاهين.',
+    'The appointment\'s effective instant has not arrived: no act precedes it — the bound works in both directions.',
+    'التوقيع بأثر رجعي ليس حقًا، والنفاذ لحظة لا نيّة.',
+    'A signature is never back-dated, and effect is an instant, not an intention.'),
+  // ── جلسة العرض (سحب · انتهاء · عدم صلاحية · نطاق مغلق) ──────────────────────────────────────────
+  E('session_invalid', 'boundary', 'ameen-retrieval-guard-1.0.0', 'assessShowcaseSession', 'read', 'identity_binding', 'read_in_source',
+    'جلسة عرض غير صالحة (غير قابلة للتحقق أو غير مطابقة للنطاق): تُرفض القراءة قبل أي سجل.',
+    'A showcase session that is not valid (unverifiable, or not matching the scope): the read is refused before any record.',
+    'الجلسة لا تُفترض صالحة، وعدم التحقق ليس تحققًا.',
+    'A session is not assumed valid, and failing to verify is not verifying.'),
+  E('session_expired', 'boundary', 'ameen-retrieval-guard-1.0.0', 'assessShowcaseSession', 'read', 'identity_binding', 'read_in_source',
+    'جلسة عرض انقضى وقتها: تنتهي سلطة القراءة بانتهائها، وتُسمّى الحالة.',
+    'A showcase session whose time has run out: the authority to read ends with it, and the state is named.',
+    'الانتهاء بالوقت لا يُمدّد صامتًا.',
+    'A time-bound end is never extended silently.'),
+  E('session_revoked', 'boundary', 'ameen-retrieval-guard-1.0.0', 'assessShowcaseSession', 'read', 'identity_binding', 'read_in_source',
+    'جلسة عرض مسحوبة: يسقط الوصول فورًا، ولا يعتمد على بقاء متصفح مفتوحًا.',
+    'A withdrawn showcase session: access falls immediately and never depends on a browser still being open.',
+    'السحب يقع على الخادم، والوصول المفتوح ليس سلطة.',
+    'A withdrawal happens server-side, and an open browser is not authority.'),
+  E('scope_closed', 'boundary', 'ameen-retrieval-guard-1.0.0', 'assessScopeInForce', 'read', 'owner_decision', 'read_in_source',
+    'اللجنة مغلقة أو مؤرشفة: النطاق ليس ساريًا، فلا تُقرأ بياناته ولا تُحتسب في أي مجموع.',
+    'The committee is closed or archived: the scope is not in force, so its data is not read and never counted into a total.',
+    'النطاق المنتهي ليس نطاقًا فارغًا، ولا يُستنتج من سجل قديم أنه ما زال قائمًا.',
+    'A closed scope is not an empty one, and an old record never implies it still stands.'),
+  // ── رمز واحد يخدم رابطين: يُعلن في سجلين، فلا يُفترض أن الرمز يعني سياقًا واحدًا ───────────────
+  E('token_unknown', 'boundary', 'guest-access-1.0.0', 'GetGuestItemView', 'read', 'identity_binding', 'observed_live',
+    'رمز دعوة ضيف غير معروف أو منتهٍ أو مُلغى: الرابط هو القدرة الوحيدة، ولا تُوسَّع.',
+    'A guest invite token unknown, expired or revoked: the link is the only capability and it is never widened.',
+    'الرمز لا يُخمَّن، والرابط لا يُنشئ هوية.',
+    'A token is not guessed, and a link never creates an identity.'),
+  E('token_unknown', 'boundary', 'execution-extract-1.0.0', 'GetActionExtractView', 'read', 'identity_binding', 'observed_live',
+    'رمز مستخلص تنفيذ غير معروف أو منتهٍ أو مُلغى: نطاق التزام واحد لا أكثر.',
+    'An execution-extract token unknown, expired or revoked: one obligation\'s scope and no more.',
+    'الرابط لا يمنح قراءة أوسع من التزامه، والإقرار ليس اعتمادًا.',
+    'The link grants nothing wider than its obligation, and an acknowledgement is not an approval.'),
 ] as any[];
 
-/** The one source this register DERIVES from at runtime instead of restating. */
+/** The sources this register DERIVES from at runtime instead of restating — each one is compared, not copied. */
 export const DERIVED_SOURCES = [
   { module: 'ameenRetrievalGuard.ts', version: AMEEN_RETRIEVAL_GUARD_VERSION, map: 'RETRIEVAL_REFUSALS', codes: Object.keys(RETRIEVAL_REFUSALS || {}) },
+  { module: 'auditChain.ts', version: AUDIT_CHAIN_VERSION, map: 'AUDIT_CHAIN_REFUSALS', codes: Object.keys(AUDIT_CHAIN_REFUSALS || {}) },
+  { module: 'metricDefinitions.ts', version: METRIC_DEFINITIONS_VERSION, map: 'METRIC_EXCEPTION_CODES', codes: METRIC_EXCEPTION_CODES || [] },
 ];
 
 /** What this register does NOT cover, named so the register never implies a completeness it lacks. */
 export const DECLARED_GAPS = [
-  { ar: 'استيراد بتحقق جاف وحجر الالتباس: لا مسار في هذا البناء يُحتجز فيه صف مثير للالتباس بعينه؛ يُعلن كنقص لا يُخفي (المادة و).', en: 'Import with hard validation and ambiguity quarantine: no path in this build holds a specific ambiguous row; it is declared as a gap rather than hidden (Article و).' },
-  { ar: 'رموز سلاسل التدقيق (خطوة إلزامية غائبة · حدث خارج الترتيب · أثر غير مقروء) تُقرأ من عقدها عند ربط الحارس؛ ولم تُدرج حرفيًا في هذه الرحلة.', en: 'Audit-chain codes (a missing required step · an out-of-order event · an unreadable trail) are read from their contract at wiring time; they were not transcribed literally in this pass.' },
-  { ar: 'رموز حجب المؤشرات وحدود الإفصاح تُقرأ من عقد `metric-definitions-1.0.0` عند الربط؛ ولم تُدرج حرفيًا في هذه الرحلة.', en: 'Metric withholds and disclosure-floor codes are read from `metric-definitions-1.0.0` at wiring time; they were not transcribed literally in this pass.' },
+  {
+    ar: 'استيراد السجلات صفًّا صفًّا (كشف أعضاء أو قوائم) غير موجود كمسار في هذا البناء: الاستيراد القائم يقبل ملفات هوية ببصمة (تُقبل أو تُرفض بالبايت) واستخراج الأدوات بمراجعة بشرية حقولًا. فحجر الالتباس مُصمَّم ومُعلن هنا، ولم يُنشأ مسار كتابة يستدعيه — لأن إنشاء مسار استيراد لم تقرّره المؤسسة اختراع لا استكمال.',
+    en: 'Row-by-row record import (a roster or list) does not exist as a path in this build: the existing intake accepts identity files by fingerprint (accepted or refused on the bytes), and instruments by extraction with human confirmation. Ambiguity quarantine is designed and declared here, and no write path was invented to call it — building an import path the institution never decided would be invention, not completion.',
+  },
+  {
+    ar: 'الرموز التي تُبنى داخل حارس أو حكم نصًّا حرًّا (بلا خريطة مُصدَّرة) تُدرج عند ربطها؛ والسجل يعلن ثلاثة مصادر مُشتقّة مقارَنة، ولا يدّعي غيرها.',
+    en: 'Codes built inline inside a guard or a verdict with no exported map are transcribed when they are wired; the register declares three DERIVED, compared sources and claims no others.',
+  },
 ];
 
 /** A lookup that never invents: an unknown code returns null and says it is unknown. */

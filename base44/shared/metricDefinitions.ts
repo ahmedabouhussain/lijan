@@ -155,6 +155,37 @@ export function selfCheck() {
   return { contract_version: METRIC_DEFINITIONS_VERSION, ok: problems.length === 0, metrics: METRIC_KEYS.length, problems };
 }
 
+/**
+ * The metric code inventory, EXPORTED so the exception register derives from it instead of restating it —
+ * a code cannot be changed here without the register noticing.
+ */
+export const METRIC_CODE = {
+  unknown_metric: "unknown_metric",
+  invalid_counts: "invalid_counts",
+  numerator_exceeds_denominator: "numerator_exceeds_denominator",
+  refused: "refused",
+  unread: "unread",
+  no_records: "no_records",
+  suppressed: "suppressed",
+  computed: "computed",
+  small_basis: "small_basis",
+  small_numerator: "small_numerator",
+} as const;
+/**
+ * The codes that ARE exceptional — the ones a stop carries. Exported so the exception register derives
+ * from this contract instead of restating it: a code cannot change here without the register noticing.
+ * (`refused`, `suppressed` and `computed` are STATES a verdict takes, not stop codes.)
+ */
+export const METRIC_EXCEPTION_CODES: string[] = [
+  METRIC_CODE.unknown_metric,
+  METRIC_CODE.invalid_counts,
+  METRIC_CODE.numerator_exceeds_denominator,
+  METRIC_CODE.unread,
+  METRIC_CODE.no_records,
+  METRIC_CODE.small_basis,
+  METRIC_CODE.small_numerator,
+];
+
 const SUPPRESSION_TEXT: Record<string, { ar: string; en: string }> = {
   small_basis: {
     ar: "الأساس أصغر من حد الإفصاح — لا تُعرض نسبة قد تكشف أفرادًا.",
@@ -177,7 +208,7 @@ const STATE_TEXT: Record<string, { ar: string; en: string }> = {
  */
 export function assessMetric({ key, numerator, denominator }: any) {
   const m = METRICS[key];
-  if (!m) return { ok: false, code: "unknown_metric", key };
+  if (!m) return { ok: false, code: METRIC_CODE.unknown_metric, key };
   const base = {
     ok: true,
     key,
@@ -189,30 +220,30 @@ export function assessMetric({ key, numerator, denominator }: any) {
   };
 
   if (numerator === null || numerator === undefined || denominator === null || denominator === undefined) {
-    return { ...base, state: "unread", value: null, numerator: numerator ?? null, denominator: denominator ?? null, note: STATE_TEXT.unread_source };
+    return { ...base, state: METRIC_CODE.unread, value: null, numerator: numerator ?? null, denominator: denominator ?? null, note: STATE_TEXT.unread_source };
   }
   const num = Number(numerator), den = Number(denominator);
   if (!Number.isInteger(num) || !Number.isInteger(den) || num < 0 || den < 0) {
-    return { ...base, ok: false, code: "invalid_counts", state: "refused", value: null, numerator, denominator };
+    return { ...base, ok: false, code: METRIC_CODE.invalid_counts, state: METRIC_CODE.refused, value: null, numerator, denominator };
   }
   // A self-check that fails LOUDLY rather than rendering an impossible figure.
   if (num > den) {
-    return { ...base, ok: false, code: "numerator_exceeds_denominator", state: "refused", value: null, numerator: num, denominator: den };
+    return { ...base, ok: false, code: METRIC_CODE.numerator_exceeds_denominator, state: METRIC_CODE.refused, value: null, numerator: num, denominator: den };
   }
   if (den === 0) {
-    return { ...base, state: "no_records", value: null, numerator: num, denominator: den, note: STATE_TEXT.no_records };
+    return { ...base, state: METRIC_CODE.no_records, value: null, numerator: num, denominator: den, note: STATE_TEXT.no_records };
   }
   if (den < m.disclosure_floor) {
-    return { ...base, state: "suppressed", suppressed: true, reason: "small_basis", value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_basis };
+    return { ...base, state: METRIC_CODE.suppressed, suppressed: true, reason: METRIC_CODE.small_basis, value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_basis };
   }
   if (m.unit === "count" && num > 0 && num < m.disclosure_floor) {
-    return { ...base, state: "suppressed", suppressed: true, reason: "small_numerator", value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_numerator };
+    return { ...base, state: METRIC_CODE.suppressed, suppressed: true, reason: METRIC_CODE.small_numerator, value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_numerator };
   }
   if (m.unit === "percent" && num > 0 && num < m.disclosure_floor) {
-    return { ...base, state: "suppressed", suppressed: true, reason: "small_numerator", value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_numerator };
+    return { ...base, state: METRIC_CODE.suppressed, suppressed: true, reason: METRIC_CODE.small_numerator, value: null, numerator: num, denominator: den, note: SUPPRESSION_TEXT.small_numerator };
   }
   const value = m.unit === "percent" ? Math.round((num / den) * 100) : num;
-  return { ...base, state: "computed", value, numerator: num, denominator: den, fraction: `${num}/${den}` };
+  return { ...base, state: METRIC_CODE.computed, value, numerator: num, denominator: den, fraction: `${num}/${den}` };
 }
 
 /** The ONE line a surface prints for a metric — a value is never separated from its definition. */
