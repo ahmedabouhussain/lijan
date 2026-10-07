@@ -31,6 +31,12 @@ export const SHOWCASE_REFUSAL = {
   UNKNOWN_PERSONA: 'unknown_persona',
 };
 
+/**
+ * First declared revision of this module's session refusals (S32), stated when they were wired into the
+ * exception register's compared sources. No behaviour changed in declaring it.
+ */
+export const SHOWCASE_SESSION_VERSION = 'showcase-session-1.0.0';
+
 const arr = (x: any): any[] => (Array.isArray(x) ? x : (x?.items || []));
 
 /** 192 bits of randomness — the token is a capability, so it must not be guessable. */

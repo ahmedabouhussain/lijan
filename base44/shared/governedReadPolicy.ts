@@ -28,6 +28,14 @@ import {
 
 export const GOVERNED_READ_TYPES = ['Meeting', 'Decision', 'MeetingMinutes', 'Document'];
 
+/**
+ * This module declared no revision of its own until it was wired into the exception register's compared
+ * sources (S32). The revision below is its FIRST declaration — it states the module as it stands, and
+ * nothing in its behaviour changed when it was named. From here on a change to the refusals below is a
+ * change to a declared contract, and the register compares it at runtime rather than trusting a copy.
+ */
+export const GOVERNED_READ_POLICY_VERSION = 'governed-read-policy-1.0.0';
+
 export const READ_REFUSAL = {
   INVALID_REQUEST: 'invalid_request',
   UNSUPPORTED_TYPE: 'unsupported_type',

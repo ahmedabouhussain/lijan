@@ -13,8 +13,19 @@
 //   • It is NOT store-level atomicity. The platform exposes NO unique constraint and NO transactional
 //     rollback: two claim ROWS may both exist. What is excluded is two MATERIAL effects, because only
 //     the winner proceeds — uniqueness of the claim row itself is not guaranteed by the store.
-//   • A simultaneous pair has NOT been measured. No concurrent-request environment is available from
-//     this build environment (D-009), so nothing here is evidence of concurrency safety.
+//   • MEASURED, NOT ASSUMED (S32). Six rounds of two SIMULTANEOUS writers running this protocol on one
+//     key were executed against the live store: every round produced EXACTLY ONE winner, and in every
+//     round both writers read BOTH claim rows before deciding — so the deterministic tie-break
+//     (created_date, id) ruled, exactly as the design argues. What that supports: all writers agree on
+//     one winner, so one material effect is attempted. What it does NOT support: any claim of
+//     store-level atomicity. The same measurement showed two live claim rows on one key are ACCEPTED,
+//     that a filtered bulk update reports `updated: 1` to BOTH racers on the same row, and that no
+//     unique constraint or compare-and-set primitive exists (DEFECT_REGISTER D-106 · D-109). Sample:
+//     six rounds, one build environment, one storage region, one writer process pair.
+//   • The refusal body reports the KERNEL's own revision, imported and never typed here. Until S32 this
+//     helper answered duplicate refusals with `authz-1.2.0-rc.1` — six revisions stale — so an operator
+//     reading a 409 saw a policy that was not the one in force (DEFECT_REGISTER D-108). Codes, statuses
+//     and decisions are unchanged; only the reported revision became true, and it can no longer drift.
 //   • Recovery: an interrupted winner leaves its claim in 'claimed'. Selection ignores 'abandoned'
 //     claims, so a released claim never blocks a later legitimate attempt; a STUCK 'claimed' row
 //     still blocks that key and needs releaseTransition (governed maintenance) or a stale-claim
@@ -23,6 +34,19 @@
 // Scope: EXCLUSIVITY and IDEMPOTENCY, not rollback. A claim is released when the transition fails, and
 // marked completed with the record it produced when it succeeds.
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { AUTHORITY_POLICY_VERSION } from './authorityKernel.ts';
+
+/**
+ * First declared revision of this primitive's refusals (S32), stated when they were wired into the
+ * exception register's compared sources. Declaring it changed no behaviour.
+ */
+export const TRANSITION_CLAIM_VERSION = 'transition-claim-1.0.0';
+
+/** The two codes this primitive answers with — EXPORTED so the register compares them instead of restating them. */
+export const TRANSITION_CLAIM_REFUSALS = {
+  DUPLICATE: 'duplicate_transition',
+  UNAVAILABLE: 'claim_unavailable',
+};
 
 function token() {
   return "trn_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 10);
@@ -119,7 +143,7 @@ export function duplicateResponse(claim, message = "This transition has already 
     error: duplicate ? message : "The transition could not be claimed; the act was not performed",
     code: (claim && claim.code) || "claim_unavailable",
     status: "not_applied",
-    policy_version: "authz-1.2.0-rc.1",
+    policy_version: AUTHORITY_POLICY_VERSION,
     correlation_id: (claim && claim.correlation_id) || null,
     decided_by: (claim && claim.decided_by) || null,
   }, { status: duplicate ? 409 : 503 });

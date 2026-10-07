@@ -96,10 +96,10 @@ export default async function (req) {
       resolutions_used: [...new Set(EXCEPTIONS.map((e: any) => e.resolution))].length, resolutions_declared: Object.keys(EXCEPTION_RESOLUTIONS).length,
     });
 
-  check('EC-016', 'the register derives from THREE compared sources, and every one of their codes is covered — a code cannot change in its contract without this register noticing',
-    DERIVED_SOURCES.length === 3
-    && audit.derived.length === 3
-    && audit.derived.every((d: any) => d.codes_read > 0)
+  check('EC-016', 'the register derives from SIX compared sources, every one of them read (none yielding nothing), and every code of every one covered — a code cannot change in its contract without this register noticing',
+    DERIVED_SOURCES.length === 6
+    && audit.derived.length === 6
+    && audit.derived.every((d: any) => d.codes_read > 0 && d.unreadable === false)
     && audit.derived_missing_from_catalogue.length === 0,
     audit.derived);
 

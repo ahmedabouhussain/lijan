@@ -1,6 +1,9 @@
 import { RETRIEVAL_REFUSALS, AMEEN_RETRIEVAL_GUARD_VERSION } from './ameenRetrievalGuard.ts';
 import { AUDIT_CHAIN_REFUSALS, AUDIT_CHAIN_VERSION } from './auditChain.ts';
 import { METRIC_EXCEPTION_CODES, METRIC_DEFINITIONS_VERSION } from './metricDefinitions.ts';
+import { READ_REFUSAL, GOVERNED_READ_POLICY_VERSION } from './governedReadPolicy.ts';
+import { SHOWCASE_REFUSAL, SHOWCASE_SESSION_VERSION } from './showcaseSession.ts';
+import { TRANSITION_CLAIM_REFUSALS, TRANSITION_CLAIM_VERSION } from './transitionClaim.ts';
 
 // exception-catalogue-1.0.0 — المادة و: سجل الاستثناءات الواحد.
 //
@@ -42,6 +45,7 @@ export const EXCEPTION_RESOLUTIONS = {
   new_round: { ar: 'دورة جديدة مرقّمة (لا إعادة استخدام لدورة).', en: 'A new numbered round (a round is never reused).' },
   identity_binding: { ar: 'قيد الهوية على السجل نفسه قبل أي فعل.', en: 'The record is bound to its identity before any act.' },
   external_read: { ar: 'قراءة المصدر الخارجي وإعادته (لا يُفترض ما لم يُقرأ).', en: 'The external source is read and restored (nothing unread is assumed).' },
+  result_read: { ar: 'قراءة سجل الناتج الذي يحمله الفائز (`result_ref`) بدل تكرار الفعل.', en: 'Read the output record the winner carries (`result_ref`) instead of repeating the act.' },
 };
 
 /** The one-line factory, so every entry carries the same declared shape. */
@@ -361,13 +365,77 @@ export const EXCEPTIONS = [
     'An execution-extract token unknown, expired or revoked: one obligation\'s scope and no more.',
     'الرابط لا يمنح قراءة أوسع من التزامه، والإقرار ليس اعتمادًا.',
     'The link grants nothing wider than its obligation, and an acknowledgement is not an approval.'),
+  // ── قراءة السجل والجلسة: رموز مسار القراءة المحكوم وجلسة العرض، مُشتقّة من خريطتيهما المُصدَّرتين ──
+  E('invalid_request', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'طلب قراءة ناقص أو غير صالح: لا يُقرأ سجل.',
+    'An incomplete or invalid read request: no record is read.',
+    'الطلب الناقص ليس رفضًا للنطاق، ولا يُقرأ جوابًا عن الصلاحية.',
+    'An incomplete request is not a scope refusal, and is never read as an answer about permission.'),
+  E('unauthenticated', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'لا هوية مُصادَقة للطالب: لا يُقرأ سجل مؤسسي.',
+    'No authenticated identity for the caller: no institutional record is read.',
+    'غياب الهوية لا يُقرأ قراءة عامة، ولا يُعرض سجل بدلًا منها.',
+    'An absent identity is not a public read, and no record is shown in its place.'),
+  E('not_a_member', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'الطالب ليس عضوًا في نطاق السجل: القراءة تُرفض قبل السجل.',
+    'The caller is not a member of the record\'s scope: the read is refused before the record.',
+    'الانتماء يُقرأ من سجلات الخادم لا من الطلب، ولا يُمنح لتشابه اسم.',
+    'Membership is read from the server\'s own records, never from the request, and is never granted on a name that looks related.'),
+  E('not_found', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'السجل المطلوب غير موجود أو لا يملك الطالب قراءته: الرفض واحد بالجسم والحالة.',
+    'The requested record does not exist, or the caller may not read it: the refusal is one body and one status.',
+    '«غير موجود» و«غير مسموح» لا يُفترقان في الرد، ولا يدلّ الرفض على وجود السجل.',
+    '"Does not exist" and "not permitted" are not told apart in the response, and a refusal never reveals that the record exists.'),
+  E('unsupported_type', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'نوع سجل خارج الأنواع المعلنة للقراءة المحكومة: لا يُقرأ النوع غير المعلن.',
+    'A record type outside the governed read path\'s declared types: an undeclared type is not read.',
+    'النوع غير المدعوم ليس قراءة أوسع، والعقد لا يُوسَّع عند الطلب.',
+    'An unsupported type is not a wider read, and the contract is not widened on request.'),
+  E('write_not_permitted', 'boundary', 'governed-read-policy-1.0.0', 'governedReadPolicy', 'read', 'seated_actor', 'read_in_source',
+    'طلب كتابة على مسار القراءة المحكوم: يُرفض — الكتابة لكل فعل أمرها المحكوم وحقّه.',
+    'A write asked of the governed read path: refused — every act has its own governed command and right.',
+    'القراءة لا تتضمن كتابة، والقدرة تُسمّى لكل فعل.',
+    'A read never implies a write, and the capability is named per act.'),
+  E('out_of_scope', 'boundary', 'governed-read-policy-1.0.0 · showcase-session-1.0.0', 'governedReadPolicy · verifyShowcaseSession', 'read', 'seated_actor', 'read_in_source',
+    'السجل خارج نطاق الطالب أو خارج نطاق جلسة العرض: لا تُوسَّع القراءة.',
+    'The record lies outside the caller\'s scope, or outside the showcase session\'s scope: the read is not widened.',
+    'خارج النطاق ليس نطاقًا فارغًا، ولا يُوسَّع بالقراءة.',
+    'Outside the scope is not an empty scope, and it is never widened by reading.'),
+  E('unknown_persona', 'boundary', 'showcase-session-1.0.0', 'resolveShowcasePersona · governedReadPolicy', 'read', 'identity_binding', 'read_in_source',
+    'شخصية عرض غير معروفة: لا تُنشأ لها صلاحيات ولا نطاق.',
+    'An unknown demonstration persona: no capabilities and no scope are created for it.',
+    'الشخصية غير المعروفة لا تُخترع لها صلاحيات.',
+    'An unknown persona is never given invented capabilities.'),
+  E('no_session', 'boundary', 'showcase-session-1.0.0', 'verifyShowcaseSession', 'read', 'identity_binding', 'read_in_source',
+    'لا جلسة عرض قائمة: لا قراءة في نطاق استكشافي بلا جلسة مُصدَرة من الخادم.',
+    'No showcase session stands: there is no read in an exploration scope without a server-issued session.',
+    'لا جلسة ليست جلسة مفتوحة، والعرض لا يُمنح بالافتراض.',
+    'No session is not an open session, and a demonstration is never granted by assumption.'),
+  // ── مطالبة الانتقال: رمزان يطلقهما كل أمر محكوم في المنصة (خمسة عشر أمرًا) ──────────────────────
+  E('duplicate_transition', 'refusal', 'transition-claim-1.0.0', 'claimTransition · duplicateResponse', 'act', 'result_read', 'read_in_source',
+    'طلب مكرَّر على انتقال واحد: المطالبة الأسبق تفوز، ولا يُنفَّذ الفعل مرتين.',
+    'A repeated request for one transition: the earlier claim wins, and the act is never performed twice.',
+    'الرفض المكرَّر ليس دليلًا على نجاح الفعل الأول: يُقرأ سجل الناتج (`result_ref`)، ولا يُدَّعى حصر على مستوى المخزن.',
+    'A duplicate refusal is not proof that the first act succeeded: the result record (`result_ref`) is read, and exclusion is not claimed to be enforced by the store.'),
+  E('claim_unavailable', 'refusal', 'transition-claim-1.0.0', 'claimTransition · duplicateResponse', 'act', 'external_read', 'read_in_source',
+    'تعذّر إنشاء مطالبة الانتقال: يُرفض الفعل بامتناع (fail-closed) بدل تنفيذه بلا حصر.',
+    'The transition claim could not be established: the act is refused fail-closed rather than performed without exclusion.',
+    'فشل القيد ليس إذنًا بالمرور، ولا يعني أن الانتقال وقع ولا أنه لم يقع.',
+    'A failed claim is not permission to proceed, and it means neither that the transition happened nor that it did not.'),
 ] as any[];
 
 /** The sources this register DERIVES from at runtime instead of restating — each one is compared, not copied. */
+const codesOf = (map: any) => [...new Set(Object.values(map || {}).filter((x: any) => typeof x === 'string' && x.length > 0))] as string[];
+
 export const DERIVED_SOURCES = [
   { module: 'ameenRetrievalGuard.ts', version: AMEEN_RETRIEVAL_GUARD_VERSION, map: 'RETRIEVAL_REFUSALS', codes: Object.keys(RETRIEVAL_REFUSALS || {}) },
   { module: 'auditChain.ts', version: AUDIT_CHAIN_VERSION, map: 'AUDIT_CHAIN_REFUSALS', codes: Object.keys(AUDIT_CHAIN_REFUSALS || {}) },
   { module: 'metricDefinitions.ts', version: METRIC_DEFINITIONS_VERSION, map: 'METRIC_EXCEPTION_CODES', codes: METRIC_EXCEPTION_CODES || [] },
+  // Two maps whose KEYS are names and whose VALUES are the codes: the codes are read as values, deduped
+  // where two names answer with the same code (no_session), so the comparison is over codes, not names.
+  { module: 'governedReadPolicy.ts', version: GOVERNED_READ_POLICY_VERSION, map: 'READ_REFUSAL', codes: codesOf(READ_REFUSAL) },
+  { module: 'showcaseSession.ts', version: SHOWCASE_SESSION_VERSION, map: 'SHOWCASE_REFUSAL', codes: codesOf(SHOWCASE_REFUSAL) },
+  { module: 'transitionClaim.ts', version: TRANSITION_CLAIM_VERSION, map: 'TRANSITION_CLAIM_REFUSALS', codes: codesOf(TRANSITION_CLAIM_REFUSALS) },
 ];
 
 /** What this register does NOT cover, named so the register never implies a completeness it lacks. */
@@ -377,8 +445,8 @@ export const DECLARED_GAPS = [
     en: 'Row-by-row record import (a roster or list) does not exist as a path in this build: the existing intake accepts identity files by fingerprint (accepted or refused on the bytes), and instruments by extraction with human confirmation. Ambiguity quarantine is designed and declared here, and no write path was invented to call it — building an import path the institution never decided would be invention, not completion.',
   },
   {
-    ar: 'الرموز التي تُبنى داخل حارس أو حكم نصًّا حرًّا (بلا خريطة مُصدَّرة) تُدرج عند ربطها؛ والسجل يعلن ثلاثة مصادر مُشتقّة مقارَنة، ولا يدّعي غيرها.',
-    en: 'Codes built inline inside a guard or a verdict with no exported map are transcribed when they are wired; the register declares three DERIVED, compared sources and claims no others.',
+    ar: 'الرموز التي تُبنى نصًّا حرًّا بلا خريطة مُصدَّرة داخل حارس تبقى **مقتبسة لا مقارَنة**، وتُدرج عند ربطها: وحده `commandGuard.ts` باقٍ كذلك (رموزه مثل `STANDING_REQUIRED` و`ACTOR_IDENTITY_REQUIRED` مُدرجة أعلاه بقراءة مصدرها لا بمقارنة آلية). والسجل يعلن **ستة** مصادر مُشتقّة مقارَنة، ولا يدّعي غيرها، ولا يعدّل حارسًا ليجعله قارئًا له: نقل رموز حارس أمني إلى خريطة مادة أمنية تستوجب قرارًا ورفع نسخة، لا تُنفَّذ لأجل التوثيق.',
+    en: 'Codes built as free strings with no exported map inside a guard stay TRANSCRIBED, not compared, and are wired when they are: `commandGuard.ts` alone remains so (its codes such as `STANDING_REQUIRED` and `ACTOR_IDENTITY_REQUIRED` are listed above read from its source, not by an automated comparison). The register declares SIX DERIVED, compared sources and claims no others, and it never edits a guard to make it readable by the register: moving a security guard\'s codes into a map is security material requiring a decision and a version bump, and is not done for the sake of documentation.',
   },
 ];
 
