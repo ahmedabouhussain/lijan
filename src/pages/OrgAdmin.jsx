@@ -14,6 +14,7 @@ export default function OrgAdmin() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [orgActionLoading, setOrgActionLoading] = useState(false);
+  const [actionError, setActionError] = useState(null);
   const [platformAdmin, setPlatformAdmin] = useState(false);
 
   const isAdmin = data?.my_role === "owner" || data?.my_role === "admin";
@@ -33,46 +34,66 @@ export default function OrgAdmin() {
     base44.auth.me().then((u) => setPlatformAdmin(u?.role === "admin")).catch(() => setPlatformAdmin(false));
   }, []);
 
-  const suspendMember = async (member) => {
+  // Membership administration and institution status go through their OWN governed commands.
+  //
+  // They used to be direct client writes, gated only by RLS keyed on the session's selected
+  // organization — so the selection authorised the write, and a refusal surfaced nowhere but the
+  // browser console. The server now takes the membership ROW (or the institution's record) as the
+  // trusted target, derives authority from that institution's own membership rows, refuses
+  // self-administration and protects an owner from every non-owner, and answers with a named
+  // bilingual refusal that is shown here.
+  const raiseRefusal = (payload, fallback) => {
+    const d = payload || {};
+    setActionError({
+      text: d.error_ar ? `${d.error_ar} (${d.code || "—"})` : (d.error || fallback),
+      code: d.code || null,
+    });
+  };
+
+  const runMemberAction = async (member, action) => {
     setActionLoading(member.id);
+    setActionError(null);
     try {
-      const newStatus = member.status === "suspended" ? "active" : "suspended";
-      await base44.entities.OrganizationMembership.update(member.id, {
-        status: newStatus,
-        suspended_at: newStatus === "suspended" ? new Date().toISOString() : null,
-      });
-      setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, status: newStatus } : m)));
+      const res = await base44.functions.invoke("AdministerOrganizationMembership", { membership_id: member.id, action });
+      const d = res?.data || res;
+      if (d?.error) {
+        raiseRefusal(d, t("تعذّر تنفيذ الفعل.", "The act could not be performed."));
+      } else if (action === "revoke") {
+        setMembers((prev) => prev.filter((m) => m.id !== member.id));
+      } else {
+        setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, status: d.membership_state } : m)));
+      }
     } catch (e) {
-      console.error("Failed to update member", e);
+      raiseRefusal(e?.response?.data, e?.message || t("تعذّر تنفيذ الفعل.", "The act could not be performed."));
     }
     setActionLoading(null);
   };
 
+  const suspendMember = (member) => runMemberAction(member, member.status === "suspended" ? "unsuspend" : "suspend");
+
   const revokeMember = async (member) => {
     if (!window.confirm(t("هل أنت متأكد من إلغاء عضوية هذا المستخدم؟", "Are you sure you want to revoke this member's access?"))) return;
-    setActionLoading(member.id);
-    try {
-      await base44.entities.OrganizationMembership.update(member.id, { status: "revoked" });
-      setMembers((prev) => prev.filter((m) => m.id !== member.id));
-    } catch (e) {
-      console.error("Failed to revoke member", e);
-    }
-    setActionLoading(null);
+    await runMemberAction(member, "revoke");
   };
 
   const toggleOrgSuspension = async () => {
     const isSuspending = orgStatus !== "suspended";
     if (isSuspending && !window.confirm(t("هل أنت متأكد من تعليق هذه الجهة؟ لن يتمكن الأعضاء من الوصول إليها.", "Are you sure you want to suspend this organization? Members will not be able to access it."))) return;
     setOrgActionLoading(true);
+    setActionError(null);
     try {
-      const newStatus = isSuspending ? "suspended" : "official_active";
-      await base44.entities.Organization.update(data.organization.id, {
-        status: newStatus,
-        suspended_at: isSuspending ? new Date().toISOString() : null,
+      const res = await base44.functions.invoke("SetOrganizationStatus", {
+        organization_id: data.organization.id,
+        action: isSuspending ? "suspend" : "unsuspend",
       });
-      window.location.reload();
+      const d = res?.data || res;
+      if (d?.error) {
+        raiseRefusal(d, t("تعذّر تنفيذ الفعل.", "The act could not be performed."));
+      } else {
+        window.location.reload();
+      }
     } catch (e) {
-      console.error("Failed to update organization", e);
+      raiseRefusal(e?.response?.data, e?.message || t("تعذّر تنفيذ الفعل.", "The act could not be performed."));
     }
     setOrgActionLoading(false);
   };
@@ -92,6 +113,19 @@ export default function OrgAdmin() {
         <Settings className="w-5 h-5 text-primary" />
         <h1 className="text-lg font-bold">{t("إدارة المنظمة", "Organization Administration")}</h1>
       </div>
+
+      {/* A refusal is stated where the act was attempted — never left in the browser console. */}
+      {actionError && (
+        <div className="raqeem-card p-3 border-l-4 border-l-destructive flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+          <div className="min-w-0">
+            <p className="text-sm text-foreground">{actionError.text}</p>
+            {actionError.code && (
+              <p className="text-[11px] text-muted-foreground mt-0.5">{t("الرمز", "Code")}: {actionError.code}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Members management */}
       <div className="raqeem-card p-4">

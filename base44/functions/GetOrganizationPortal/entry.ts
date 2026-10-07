@@ -161,8 +161,15 @@ export default async function(req) {
       my_role_in_committee: myCommitteeIds.has(c.id) ? (myCommitteeRoles[c.id] || 'member') : null,
     }));
 
-    // Set user's active_org_id context for RLS
-    await base44.auth.updateMe({ active_org_id: org.id }).catch(() => {});
+    // A READ NEVER MUTATES THE SESSION'S AUTHORITY CONTEXT.
+    //
+    // This path used to write `active_org_id` merely because the page was opened, so the context that
+    // most RLS rules read was decided by whichever organization tab loaded last — the selection, not the
+    // target institution, was authorising reads, and the write was unattributed (D-116).
+    //
+    // The context is now established by its own verified act (EnterOrganizationPortal), which proves
+    // active membership of THAT institution first. This read answers from the membership proof taken
+    // against the target record's own id, above, and writes nothing.
 
     return Response.json({
       organization: org,
@@ -174,6 +181,7 @@ export default async function(req) {
       },
       my_role: membership?.role || 'admin_oversight',
       my_membership: membership || null,
+      context_written: false,
       theme: theme || null,
       my_committee_ids: Array.from(myCommitteeIds),
       committees: {

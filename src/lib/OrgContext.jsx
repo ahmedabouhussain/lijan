@@ -21,8 +21,17 @@ export function OrgProvider({ children }) {
     try {
       const res = await base44.functions.invoke("GetOrganizationPortal", { public_id: publicId, demo_mode: isDemoMode, demo_persona: demoPersonaKey });
       const d = res.data || res;
-      if (d.error) setError(d.error);
-      else setData(d);
+      if (d.error) { setError(d.error); }
+      else {
+        setData(d);
+        // The portal read is PURE: the session's portal context is established by its own verified act,
+        // so a second organization tab can no longer inherit a context this tab set by being viewed.
+        const ctx = await base44.functions
+          .invoke("EnterOrganizationPortal", { public_id: d.organization?.public_id || publicId, demo_mode: isDemoMode })
+          .then((r) => r?.data || r)
+          .catch(() => null);
+        if (ctx?.error) setError(ctx.error_ar ? `${ctx.error_ar} (${ctx.code || "—"})` : ctx.error);
+      }
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "تعذّر تحميل البوابة");
     }
