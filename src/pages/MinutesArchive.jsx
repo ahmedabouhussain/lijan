@@ -33,10 +33,12 @@ export default function MinutesArchive() {
         return;
       }
       setOrganizations(orgs);
-      const me = await base44.auth.me();
-      if (!me.data?.active_org_id) {
-        await base44.auth.updateMe({ data: { active_org_id: orgs[0].id } });
-      }
+      // This read establishes NO portal context.
+      //
+      // It used to write `active_org_id` from an arbitrary organization list merely because the archive
+      // was opened — the same defect the portal read carried: a page the reader visits decided the
+      // context every RLS rule then followed. The context is established only by its own verified act
+      // (EnterOrganizationPortal), so opening this page can no longer change what any other tab reads.
       const [dels, coms, decs] = await Promise.all([
         base44.entities.Deliberation.list("-deliberated_at", 100),
         base44.entities.Committee.list(),

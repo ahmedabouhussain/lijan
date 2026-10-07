@@ -17,9 +17,11 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const sr = base44.asServiceRole;
     const body = await req.json().catch(() => ({}));
-    const { public_id, demo_mode } = body;
+    const { public_id, organization_id, demo_mode } = body;
 
-    if (!public_id) return Response.json({ error: 'public_id is required' }, { status: 400 });
+    // The institution is named EITHER by its public identity or by its record id — both are resolved
+    // server-side against the record itself. No scope is ever taken from a body field as authority.
+    if (!public_id && !organization_id) return Response.json({ error: 'public_id or organization_id is required' }, { status: 400 });
 
     // A demonstration session reads synthetic records under a persona: it establishes no portal context
     // on the real session, so viewing a demonstration never changes what the real user may read.
@@ -32,9 +34,14 @@ export default async function(req) {
 
     const correlation_id = orgCorrelation();
 
-    let orgs = await sr.entities.Organization.filter({ public_id }).catch(() => []);
-    let org = (orgs || [])[0];
-    if (!org) org = await sr.entities.Organization.get(public_id).catch(() => null);
+    let org = null;
+    if (public_id) {
+      const orgs = await sr.entities.Organization.filter({ public_id }).catch(() => []);
+      org = (orgs || [])[0] || null;
+      if (!org) org = await sr.entities.Organization.get(public_id).catch(() => null);
+    } else {
+      org = await sr.entities.Organization.get(organization_id).catch(() => null);
+    }
     if (!org) return orgAuthorityResponse(orgRefusal('target_not_found', { status: 404, correlation_id }));
 
     const memberships = await sr.entities.OrganizationMembership

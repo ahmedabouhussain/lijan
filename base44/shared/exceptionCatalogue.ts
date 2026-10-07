@@ -909,8 +909,8 @@ export const NON_EXCEPTION_CODES = {
 export const EMITTED_CODE_HARVEST = {
   method: "grep -rhoE \"code: '[a-zA-Z_0-9-]+'\" base44/shared base44/functions | sed \"s/code: '//;s/'$//\" | sort -u",
   files: 61,
-  codes: 136,
-  exception_entries: 114,
+  codes: 137,
+  exception_entries: 115,
   declared_non_exception: 22,
   note_ar: 'كل رمز مُصاد من المصدر له صفّ: إمّا استثناء في السجل، وإمّا مُخرَج غير استثنائي معلن بسببه. ولا رمز واحد غير محسوب. وأُعيد أخذ المحصول بعد إضافة رموز الحساب الثلاثة نفسها، فدخلت في العدّ ولم تُستثنَ.',
   note_en: 'Every harvested code has a row: either an exception in the register, or a declared non-exception with its reason. Not one code is unaccounted for. The harvest was re-taken after the three accounting codes themselves were added, so they are counted rather than excused.',
