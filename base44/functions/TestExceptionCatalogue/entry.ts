@@ -103,6 +103,15 @@ export default async function (req) {
     && audit.derived_missing_from_catalogue.length === 0,
     audit.derived);
 
+  check('EC-017', 'NOTHING EMITTED IS UNACCOUNTED: the transcribed harvest states its own command, and every code it took has a row — an exception, or a declared non-exception with its reason in both languages; the two sets are disjoint and the accounting adds up',
+    audit.accounting.exception_codes > 0
+    && audit.accounting.declared_non_exception === audit.accounting.diagnostic + audit.accounting.informational
+    && audit.accounting.harvest.exception_entries + audit.accounting.harvest.declared_non_exception === audit.accounting.harvest.codes
+    && audit.accounting.harvest.files > 0
+    && !!audit.accounting.harvest.method && !!audit.accounting.harvest.note_ar && !!audit.accounting.harvest.note_en
+    && audit.findings.every((f: any) => !['accounting_overlap', 'accounting_duplicate', 'accounting_reason_missing'].includes(f.code)),
+    audit.accounting.harvest);
+
   const failed = results.filter((r) => !r.pass);
   return Response.json({
     suite: 'TestExceptionCatalogue',
