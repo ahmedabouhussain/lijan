@@ -443,3 +443,26 @@
 **التغييرات (للتراجع) — S30**: أُضيف `GetExceptionCatalogue` · `ExceptionCataloguePanel.jsx`. وعُدِّل: `exceptionCatalogue.ts` · `metricDefinitions.ts` · `TestExceptionCatalogue` · `governanceSurfaceRegistry.ts` · `CommitteeAudit.jsx` · `DEFECT_REGISTER.md` · `CONTINUATION_CHECKPOINT.md` · `PLAN_R3_PHASE0_MAP.md`.
 
 **أثر البيانات**: **صفر كتابة · صفر حذف**.
+
+---
+
+## S31 — السياسات تُقرَّر لا تُخترع، وأول قياس تزامن فعلي
+
+| # | ما أُدلَّ عليه | النتيجة | التفصيل |
+|---|---|---|---|
+| **E-S31-001** | عقد مسار التصديق `ratification-route-1.0.0` | **PASS 26/26** | ثلاث صفات (تصديق · رفض · إعادة) لا واحدة · جهة تُحلّ **بالمعرّف أو بالصفة**، و**الاسم وحده لا ينشئ سلطة** (`authority_not_named`) · جهة خارج المنصة **تُسجَّل ولا يُنفَّذ عنها** (`authority_outside_platform`) · المدة من **لحظة السجل نفسه**، وانقضاؤها **لا يُنتج اعتمادًا** · **«لا مسار مسجَّل» ≠ «غير مطلوب»** · والتصديق المتأخر **يبقى متأخرًا**. `writes_performed: 0` · `records_read: 0` |
+| **E-S31-002** | عقد الاحتفاظ `retention-1.0.0` | **PASS 20/20** | قاعدة الصنف تستلزم المدة/الدوام والجهة ونصّ السند · صنف بلا قاعدة **غير محسوم** · الدوام لا ينتج أهلية أبدًا · انقضاء المدة **يعرض على قرار المؤسسة** ولا يُتلف · حجز قائم — أو **حال حجز لم تُقرأ** — يمنع الأهلية (fail-closed) · صنف فارغ يُقال بلفظه · **وكل صنف معلن يسمّي سجله وحقله ونطاق حصره** (لا صنف ميت). `writes_performed: 0` · `records_read: 0` |
+| **E-S31-003** | الأوامر الثلاثة على أهداف غير موجودة | **PASS (رفض قبل أي قراءة أو كتابة)** | `SetRatificationRoute` · `RecordRatification` · `SetRetentionRule` ⇒ **404 `target_not_found`** · `authz-1.10.0` · **صفر كتابة** (`corr_muxpm2adny24iw` · `corr_muxpm2b9meygq7` · `corr_muxpm2b7kfdnfm`) — يُثبت تحميل الوحدات وقت التشغيل وسبق الرفض، **ولا يُثبت** مسارًا محفوظًا |
+| **E-S31-004** | قراءتان **حيّتان** على لجنة قائمة | **PASS (200)** | `GetRatificationState`: `route_state: not_recorded` مع **إعلان غير المحسوم بلفظه**، وقراءة العلاقات الهيكلية، و`unread_sources: []` · `GetRetentionState`: 5 أصناف بقواعدها `null` (غير محسومة)، وحصائرها مقروءة (0)، ولا حجز، وطريق الإتلاف الواحد معلن، و`no_deletion` بلفظه |
+| **E-S31-005** | سجل الأسطح بعد إضافة الأسطح الخمسة | **PASS 23/23 · 61 سطحًا** | `set_ratification_route` · `record_ratification` · `view_ratification_state` · `set_retention_rule` · `view_retention_state` — `blocking = 0` · `declared_work = 0` |
+| **E-S31-006** | بناء الواجهة | **PASS** | `BUILD_EXIT=0` |
+| **E-S31-007** | **أول قياس تزامن فعلي (D-009/D-029)** | **مقيس** | كتبان **متزامنان** على **مفتاح مطالبة واحد** (`Promise.allSettled`) ⇒ **2 مقبول · 0 مرفوض · 2 صفّان بالمفتاح نفسه** ⇒ `no_uniqueness_constraint_observed`. فالحصر في **المنطق** لا في المخزن، ولا يُدَّعى بعده منع كتابة مزدوجة تحت التزامن. سجلان تقنيان أُنشئا للقياس ثم **أُزيلا** (`probe_rows_removed: 2`) |
+| **E-S31-008** | تمريرة ساكنة يدوية (قواعد حارس السلطة مُنقولة يدويًا — أدوات `scripts/*.mjs` لا تُنفَّذ من بيئة البناء) | **0 مخالفة** | 0 مطابقة هوية بالاسم · 0 سلطة من جسم الطلب · 0 `fail-open` · 0 `resolveAuthority` في الأوامر الجديدة · 0 حذف · **5/5** أوامر جديدة تستدعي `authorizeCommand`، والحقوق المعلنة: `committee.manage` ×2 · `read` ×2 · وحق `RecordRatification` **مشتقّ من العقد** (`klass.capability` ⇒ `decision.approve`) |
+
+**حدود الدليل المعلن (S31)**: الأسرتان تُثبتان العقدين وحدهما (صفر قراءة وصفر كتابة)، والقراءتان الحيّتان تُثبتان أن الأمرين يُحمَّلان ويجيبان بعقد كامل على سجل حقيقي، والنداءات الثلاثة تُثبت الرفض المسبق. و**لا** يُثبت: تصديقًا محفوظًا، ولا قاعدة احتفاظ مكتوبة، ولا سياسة قرّرتها مؤسسة، ولا رحلة متصفح، ولا تزامنًا على طبقة المنصة (القياس على **المخزن** وحده). ولا يُتلف هذا البناء سجلًا ولا يحذفه.
+
+**لا ارتفاع نسخة سياسة في S31**: لا قدرة جديدة ولا سجل جديد في سلسلة النطاق، ولم تُمسّ `authorityKernel` ولا `commandGuard`، ولم تُضف كتابة مباشرة. وما تغيّر: عقدان جديدان (سياسات تُقرَّر)، وخمسة أسطح في السجل، ولوحتان في المنتج، وسطحان جديدان في سجل الأسطح.
+
+**التغييرات (للتراجع) — S31**: أُضيف `base44/shared/ratificationRoute.ts` · `base44/shared/retentionSchedule.ts` · `base44/functions/{SetRatificationRoute,RecordRatification,GetRatificationState,SetRetentionRule,GetRetentionState,TestRatificationRoute,TestRetentionSchedule}` · `src/components/raqeem/RatificationPanel.jsx` · `RetentionPanel.jsx`. وعُدِّل: `governanceSurfaceRegistry.ts` · `DecisionDetail.jsx` · `CommitteeGovernanceRules.jsx` · `DEFECT_REGISTER.md` · `PLAN_R3_PHASE0_MAP.md`.
+
+**أثر البيانات**: **صفر كتابة مؤسسية · صفر حذف** (سجلان تقنيان للقياس أُزيلا؛ ولا حذف لسجل مؤسسي).
