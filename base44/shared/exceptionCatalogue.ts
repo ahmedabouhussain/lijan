@@ -794,6 +794,9 @@ export const NON_EXCEPTION_CODES = {
     { code: 'severity_undeclared', ar: 'مُخرَج فحص ذاتي لفحص الاتساق: درجة غير مُعلنة.', en: 'The consistency checker\'s own self-check: an undeclared severity.' },
     { code: 'rule_not_executable', ar: 'مُخرَج فحص ذاتي لفحص الاتساق: قاعدة بلا دالة تنفيذ.', en: 'The consistency checker\'s own self-check: a rule with no runnable function.' },
     { code: 'checker_claims_a_write', ar: 'مُخرَج فحص ذاتي لفحص الاتساق: قاعدة تدّعي كتابة أو تصحيحًا أو إيقافًا.', en: 'The consistency checker\'s own self-check: a rule claiming a write, a correction or a stop.' },
+    { code: 'accounting_overlap', ar: 'مُخرَج فحص ذاتي للحساب: رمز مُدرج استثناءً ومُخرَجًا غير استثنائي في الوقت نفسه.', en: 'The accounting\'s own self-check: a code listed both as an exception and as a non-exception.' },
+    { code: 'accounting_duplicate', ar: 'مُخرَج فحص ذاتي للحساب: رمز مُعلن غير استثنائي مرتين.', en: 'The accounting\'s own self-check: a declared non-exception code listed twice.' },
+    { code: 'accounting_reason_missing', ar: 'مُخرَج فحص ذاتي للحساب: مُخرَج غير استثنائي بلا سبب بلسانين.', en: 'The accounting\'s own self-check: a declared non-exception with no reason in both languages.' },
   ],
   informational: [
     { code: 'no_route', ar: 'قياس الوصول: بند بلا مسار ⇒ لا يُقاس (لا يُدَّعى تفاعلان).', en: 'Reach measurement: an item with no route is NOT measured (no two-interaction claim is made).' },
@@ -813,12 +816,12 @@ export const NON_EXCEPTION_CODES = {
  */
 export const EMITTED_CODE_HARVEST = {
   method: "grep -rhoE \"code: '[a-zA-Z_0-9-]+'\" base44/shared base44/functions | sed \"s/code: '//;s/'$//\" | sort -u",
-  files: 44,
-  codes: 116,
+  files: 59,
+  codes: 119,
   exception_entries: 97,
-  declared_non_exception: 19,
-  note_ar: 'كل رمز مُصاد من المصدر له صفّ: إمّا استثناء في السجل، وإمّا مُخرَج غير استثنائي معلن بسببه. ولا رمز واحد غير محسوب.',
-  note_en: 'Every harvested code has a row: either an exception in the register, or a declared non-exception with its reason. Not one code is unaccounted for.',
+  declared_non_exception: 22,
+  note_ar: 'كل رمز مُصاد من المصدر له صفّ: إمّا استثناء في السجل، وإمّا مُخرَج غير استثنائي معلن بسببه. ولا رمز واحد غير محسوب. وأُعيد أخذ المحصول بعد إضافة رموز الحساب الثلاثة نفسها، فدخلت في العدّ ولم تُستثنَ.',
+  note_en: 'Every harvested code has a row: either an exception in the register, or a declared non-exception with its reason. Not one code is unaccounted for. The harvest was re-taken after the three accounting codes themselves were added, so they are counted rather than excused.',
 };
 
 /** What this register does NOT cover, named so the register never implies a completeness it lacks. */
