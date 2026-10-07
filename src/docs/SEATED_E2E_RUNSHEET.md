@@ -26,6 +26,30 @@
 
 **تنبيه على من يقود الدورة**: **حساب إدارة المنصة لا يملك سلطة تشغيلية حتى لو أُسند له مقعد** — النواة تُعيد سقف القراءة وحده (`admin_not_operational`، مُثبَت على أهداف محفوظة). فالدورة يقودها **حساب غير إداري مُقعد**: الرئيس `ahmed.abouhussain@elan.qa` للخطوات 1–10 و11، والعضوان يدخلان لتسجيل صوتيهما. أما الحضور القرائي فمتاح للإدارة كمراقب (`read_rank: 4`, `my_role: observer`).
 
+## الهدف المُفضَّل الآن: اللجنة التركيبية المعزولة (S37 — منشأة وقيست `executable`)
+
+| البند | القيمة |
+|---|---|
+| المنشأة | **منشأة تركيبية معزولة — بيئة اختبار الحوكمة** · `6ac60a3217ef59ec92de0347` · `is_demo_data: true` · `demo_dataset: seated_e2e_fixture_v1` · `status: sandbox_active` |
+| اللجنة | **اللجنة التركيبية المعزولة — اختبار الحوكمة** · `6ac60a3d8ce548ea29bf0cc7` · `public_id: cmte_muxvnvbptwxic7` · `status: draft` · `quorum_count: 3` · `simple_majority` · المدة `2026-10-07 → 2027-10-06` |
+| الرابط | `/o/org_fixture_seated_e2e/c/isolated-synthetic-committee-governance--cmte_muxvnvbptwxic7` |
+| القياس (S37) | **`executable`** · `eligible_seats: 3` · `bound_voters: 3` · `binding_state: quorum_met` · `quorum_reachable: true` · `multi_seat_principals: 0` · `unread_sources: []` · **`ready_runs: D2 · D3 · D5`** |
+| المُعطِّلان الباقيان (بسببهما المُعلن) | **D4**: `policy_row_missing` — سياسة التمرير تُقرَّر بأمر محكوم من مقعد مُقعد، لا تُكتب إداريًّا. **D6**: `no_open_obligation` — يستلزم قرارًا صادرًا له التزام مفتوح (يُنتجه إتمام D2) |
+
+**خريطة المقاعد — كلها موقّعة `seated_e2e_fixture_v1`**
+
+| المقعد | المعرّف | الصفة | حق التصويت | الحساب |
+|---|---|---|---|---|
+| `chair` | `6ac60a3e9cfb42dfb075df5f` | **قائد الدورة** | نعم | `ahmed.abouhussain@elan.qa` |
+| `member` | `6ac60a558872d07575218206` | عضو | نعم | `mustedrs@gmail.com` |
+| `member` | `6ac60a5596b1aa9b631847dc` | عضو | نعم | `adel.basher@elan.qa` |
+| `secretary` | `6ac60a3e227e58ca92ef6da2` | أمين | لا | `f.alfihaidi@lijan.com` |
+| `committee_administrator` | `6ac60a3e5c7d17c614fb6e8f` | مُنشئ التركيب | لا | `ahmed.abouhussain@gmail.com` (إدارة المنصة — **لا سلطة تشغيلية**) |
+
+**الفعل الوحيد المطلوب قبل البدء**: تسجيل الدخول بحساب الرئيس `ahmed.abouhussain@elan.qa` وتنفيذ **الخطوة 1 (تنشيط اللجنة)** من سطح اللجنة. لا ينفّذها حساب إدارة المنصة: النداءان المحاولان في S37 (`InviteCommitteeMember` مرتين و`TransitionCommitteeStatus` مرة) **رُفضا بـ`admin_not_operational` قبل أي كتابة** (`corr_muxvnyy1gqa4wi` · `corr_muxvnz0lo1eox0` · `corr_muxvogohi0nw6n`، `authz-1.10.0`) — وهو المنع نفسه الذي تقوم عليه هذه القائمة.
+
+**ملاحظة على الإسناد**: ربط المقاعد بحسابات جرى كخطوة تزويد إدارية **معلنة ومسجَّلة**، لأن **لا أمر محكوم في المنصة يربط مقعدًا بحساب** (مُسجَّل كعيب **D-120**). وهو **قابل للتراجع كاملًا**: حذف التركيب يُزيله من كل سطح.
+
 ## الخطوات بالترتيب — وما يُثبت كل خطوة
 
 | # | الفعل | الأمر المحكوم | ما يُثبت (المعرّف في سجل الأدلة) |
