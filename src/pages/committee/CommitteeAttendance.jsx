@@ -10,6 +10,7 @@ import { UserCheck, ShieldCheck, Loader2 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { Button } from "@/components/ui/button";
+import ParticipationMatrixPanel from "@/components/raqeem/ParticipationMatrixPanel";
 
 const ATT_STATUS = {
   present: { ar: "حاضر", en: "Present", color: "bg-emerald-50 text-emerald-700" },
@@ -65,6 +66,9 @@ export default function CommitteeAttendance() {
   return (
     <div className="space-y-4">
       <PageHeader icon={UserCheck} title={getTitle("سجل الحضور", "Attendance", lang)} />
+
+      {/* المادة ب: من يملك أي حقّ، ولماذا — يُعرض قبل سجل الحضور نفسه. */}
+      <ParticipationMatrixPanel committeeId={committeeId} />
 
       {loading ? (
         <div className="raqeem-card p-8 text-center text-sm text-muted-foreground">{t("جارٍ التحميل...", "Loading...")}</div>
