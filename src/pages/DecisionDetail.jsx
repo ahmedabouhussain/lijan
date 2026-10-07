@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { ChevronRight, Gavel, CheckSquare, Link2 } from "lucide-react";
+import { ChevronRight, Gavel, CheckSquare, Link2, Stamp } from "lucide-react";
 import { ACTION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import DecisionWorkflow from "@/components/raqeem/DecisionWorkflow";
@@ -9,6 +9,7 @@ import ProofChainSnapshot from "@/components/raqeem/ProofChainSnapshot";
 import IssuanceIntegrityPanel from "@/components/raqeem/IssuanceIntegrityPanel";
 import DossierExportPanel from "@/components/raqeem/DossierExportPanel";
 import AuditChainPanel from "@/components/raqeem/AuditChainPanel";
+import RatificationPanel from "@/components/raqeem/RatificationPanel";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -82,6 +83,16 @@ export default function DecisionDetail() {
           <Gavel className="w-4 h-4 text-primary" /> {t("دورة عمل القرار", "Decision Workflow")}
         </h2>
         <DecisionWorkflow decision={decision} onChanged={load} />
+      </div>
+
+      {/* Ratification: who ratifies this output under the committee's OWN recorded route, and where the
+          disposition stands today. With no route recorded the state reads unresolved — never "not
+          required" — and a lapse is never read as an approval. */}
+      <div className="raqeem-card p-5">
+        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+          <Stamp className="w-4 h-4 text-primary" /> {t("التصديق على القرار", "Ratification")}
+        </h2>
+        <RatificationPanel committeeId={committee?.id} decisionId={decision.id} />
       </div>
 
       {/* Proof-Carrying Decision — the decision carries its own proof */}

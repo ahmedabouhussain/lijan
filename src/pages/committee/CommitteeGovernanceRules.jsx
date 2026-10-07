@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import PrincipalBasisPanel from "@/components/raqeem/PrincipalBasisPanel";
+import RetentionPanel from "@/components/raqeem/RetentionPanel";
 
 const VOTING_RULES = [
   { value: "simple_majority", label_ar: "أغلبية بسيطة", label_en: "Simple Majority" },
@@ -152,6 +153,11 @@ export default function CommitteeGovernanceRules() {
           assume. The choice is recorded on the committee's own record under its management right,
           never inline in a round. */}
       <PrincipalBasisPanel committeeId={committee.id} />
+
+      {/* Retention and disposal — the institution's own decision per class of material. This build
+          records the rule and measures what it means today; it erases nothing, and a class with no
+          rule reads unresolved rather than permanent or disposable. */}
+      <RetentionPanel committeeId={committee.id} />
     </div>
   );
 }

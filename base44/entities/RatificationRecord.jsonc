@@ -1,0 +1,151 @@
+{
+  "name": "RatificationRecord",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "output_type": {
+      "type": "string",
+      "title": "\u0646\u0648\u0639 \u0627\u0644\u0646\u0627\u062a\u062c \u0627\u0644\u0645\u064f\u0635\u062f\u064e\u0651\u0642 (The class of output this disposition concerns)",
+      "enum": [
+        "decision",
+        "minutes",
+        "committee_relationship"
+      ]
+    },
+    "output_id": {
+      "type": "string",
+      "title": "\u0645\u0639\u0631\u0651\u0641 \u0627\u0644\u0646\u0627\u062a\u062c (The ONE output this disposition concerns)"
+    },
+    "output_state_at_record": {
+      "type": "string",
+      "title": "\u062d\u0627\u0644\u0629 \u0627\u0644\u0646\u0627\u062a\u062c \u0644\u062d\u0638\u0629 \u0627\u0644\u062a\u0635\u062f\u064a\u0642 \u2014 \u062a\u064f\u0643\u062a\u0628 \u0643\u0645\u0627 \u0648\u064f\u062c\u062f\u062a (The output's state at the instant of the act, as found)"
+    },
+    "route_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0633\u0627\u0631 \u0627\u0644\u0630\u064a \u0648\u0642\u0639 \u0627\u0644\u062a\u0635\u062f\u064a\u0642 \u0639\u0644\u064a\u0647 (The route in force \u2014 frozen)"
+    },
+    "route_version": {
+      "type": "string",
+      "title": "\u0646\u0633\u062e\u0629 \u0627\u0644\u0645\u0633\u0627\u0631 \u0627\u0644\u0645\u062c\u0645\u0651\u062f\u0629 (The route's version at the instant)"
+    },
+    "outcome": {
+      "type": "string",
+      "title": "\u0646\u062a\u064a\u062c\u0629 \u0627\u0644\u0641\u0639\u0644 \u2014 \u062b\u0644\u0627\u062b \u0648\u0642\u0627\u0626\u0639 \u0645\u062e\u062a\u0644\u0641\u0629 \u0644\u0627 \u0648\u0627\u062d\u062f\u0629 (Three different dispositions, never one 'approved')",
+      "enum": [
+        "ratified",
+        "refused",
+        "returned"
+      ]
+    },
+    "authority_seat_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0642\u0639\u062f \u0627\u0644\u0630\u064a \u0635\u062f\u0651\u0642 (The ratifying seat)"
+    },
+    "authority_user_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0634\u062e\u0635 \u0627\u0644\u0630\u064a \u0635\u062f\u0651\u0642 (user id \u2014 identity of record)"
+    },
+    "authority_name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u062c\u0647\u0629 (\u0644\u0644\u0639\u0631\u0636 \u0641\u0642\u0637) \u2014 display only"
+    },
+    "authority_capacity": {
+      "type": "string",
+      "title": "\u0627\u0644\u0635\u0641\u0629 \u0627\u0644\u062a\u064a \u0648\u0642\u0639 \u0628\u0647\u0627 \u0627\u0644\u062a\u0635\u062f\u064a\u0642 (Capacity the act was taken in)"
+    },
+    "within_window": {
+      "type": "boolean",
+      "title": "\u0647\u0644 \u0648\u0642\u0639 \u062f\u0627\u062e\u0644 \u0627\u0644\u0645\u062f\u0629 \u2014 \u064a\u064f\u0643\u062a\u0628 \u0644\u062d\u0638\u0629 \u0627\u0644\u0641\u0639\u0644 \u0648\u0644\u0627 \u064a\u064f\u0639\u0627\u062f \u0643\u062a\u0627\u0628\u062a\u0647 (Written at the instant of the act and never rewritten: a late ratification stays late)"
+    },
+    "window_lapsed_at": {
+      "type": "string",
+      "title": "\u0644\u062d\u0638\u0629 \u0627\u0646\u0642\u0636\u0627\u0621 \u0627\u0644\u0645\u062f\u0629 (when the window ended)",
+      "format": "date-time"
+    },
+    "instrument_basis": {
+      "type": "string",
+      "title": "\u0646\u0635\u0651 \u0627\u0644\u0633\u0646\u062f \u0627\u0644\u0646\u0638\u0627\u0645\u064a \u0644\u0644\u062a\u0635\u062f\u064a\u0642 (The clause the disposition rests on)"
+    },
+    "decided_at": {
+      "type": "string",
+      "title": "Decided At (server clock)",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Ratification Route Contract Version in Force"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "output_type",
+    "output_id",
+    "outcome",
+    "contract_version",
+    "decided_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "__append_only_no_writer__"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "__append_only_no_writer__"
+      }
+    }
+  }
+}
