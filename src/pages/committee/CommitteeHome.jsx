@@ -10,6 +10,7 @@ import ChairBrief from "@/components/raqeem/ChairBrief";
 import SecretaryOperations from "@/components/raqeem/SecretaryOperations";
 import InstitutionalTimeMachine from "@/components/raqeem/InstitutionalTimeMachine";
 import CommitteeChairCard from "@/components/raqeem/CommitteeChairCard";
+import CommitteeActivationPanel from "@/components/raqeem/CommitteeActivationPanel";
 import { COMMITTEE_STATUS } from "@/lib/raqeemUtils";
 import ChairHomeEnhanced from "@/components/raqeem/homes/ChairHomeEnhanced";
 import SecretaryHomeEnhanced from "@/components/raqeem/homes/SecretaryHomeEnhanced";
@@ -22,7 +23,7 @@ import {
 import { CardSkeleton } from "@/components/raqeem/LoadingSkeleton";
 
 export default function CommitteeHome() {
-  const { data } = useCommittee();
+  const { data, reload } = useCommittee();
   const { t } = useLanguage();
   const { orgRef, committeeRef } = useParams();
   const { user } = useAuth();
@@ -115,6 +116,10 @@ export default function CommitteeHome() {
           )}
         </div>
       </SovereignCard>
+
+      {/* The committee's first governed transition (draft → active). Shown while the committee is not
+          yet in force; the gate and the authority decision are the server's, and its refusal is shown. */}
+      <CommitteeActivationPanel committee={committee} onActivated={reload} />
 
       {chairSeat && <CommitteeChairCard chair={chairSeat} org={chairOrg} logoUrl={chairOrg?.logo_url} />}
 
