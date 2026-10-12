@@ -29,7 +29,7 @@ function confidenceWord(score, lang) {
   return lang === "ar" ? "ثقة منخفضة" : "Low confidence";
 }
 
-export default function AIFeedbackPanel({ ledgerId, confidenceScore, confidenceBasis }) {
+export default function AIFeedbackPanel({ ledgerId, confidenceScore, confidenceBasis, onSubmitted }) {
   const { t, lang } = useLanguage();
   const [rating, setRating] = useState(null);
   const [note, setNote] = useState("");
@@ -48,7 +48,7 @@ export default function AIFeedbackPanel({ ledgerId, confidenceScore, confidenceB
       });
       const d = res?.data || res;
       if (d?.error) setError(d.message?.[lang] || d.error);
-      else setDone(true);
+      else { setDone(true); if (onSubmitted) onSubmitted(); }
     } catch (e) {
       const d = e?.response?.data || {};
       setError(d.message?.[lang] || d.error || e?.message || t("تعذّر تسجيل الحكم", "Could not record feedback"));
