@@ -24,7 +24,7 @@ export default async function(req) {
       return Response.json({ error: 'Organization not found' }, { status: 404 });
     }
 
-    // Check existing membership
+    // Check existing membership — a member may always re-enter
     const existing = await base44.asServiceRole.entities.OrganizationMembership
       .filter({ organization_id: org.id, user_id: user.id })
       .catch(() => []);
@@ -38,47 +38,51 @@ export default async function(req) {
       });
     }
 
-    // Create membership
-    await base44.asServiceRole.entities.OrganizationMembership.create({
+    // D-122 — self-service join closed: no membership is created without the
+    // organization's own consent. A join request is recorded for the owner to
+    // approve; the requester is NOT a member and may NOT read the org's records
+    // until an admin grants it through the governed membership command.
+    const existingRequest = await base44.asServiceRole.entities.OrganizationAccessRequest
+      .filter({ organization_id: org.id, requester_user_id: user.id, status: { $in: ['pending_review', 'pending_email_verification'] } })
+      .catch(() => []);
+
+    if (existingRequest && existingRequest.length > 0) {
+      return Response.json({
+        portal_url: null,
+        status: 'access_already_requested',
+        message: 'Your access request is pending review by the organization administrator.',
+      });
+    }
+
+    await base44.asServiceRole.entities.OrganizationAccessRequest.create({
       organization_id: org.id,
-      user_id: user.id,
-      user_email: user.email,
-      user_name: user.full_name || user.email,
-      role: 'member',
-      status: 'active',
-      joined_at: new Date().toISOString(),
+      requester_user_id: user.id,
+      requester_email: user.email,
+      requester_name: user.full_name || user.email,
+      requested_role: 'member',
+      verification_method: 'manual_review',
+      official_domain_match: false,
+      status: 'pending_review',
+      justification: 'Self-service join request',
     });
 
-    // Create RoleAssignment
-    await base44.asServiceRole.entities.RoleAssignment.create({
-      organization_id: org.id,
-      user_id: user.id,
-      user_email: user.email,
-      user_name: user.full_name || user.email,
-      role_key: 'member',
-      status: 'active',
-    });
-
-    // Audit event
     await base44.asServiceRole.entities.AuditEvent.create({
       organization_id: org.id,
       actor_user_id: user.id,
       actor_name: user.full_name || user.email,
       actor_email: user.email,
       action: 'create',
-      entity_type: 'OrganizationMembership',
+      entity_type: 'OrganizationAccessRequest',
       entity_id: org.id,
       entity_title: org.name_ar || org.name_en,
-      description: 'User joined organization portal',
-      correlation_id: 'join_' + Date.now().toString(36),
+      description: 'User requested access to organization portal (pending review)',
+      correlation_id: 'joinreq_' + Date.now().toString(36),
     });
 
-    // Set active_org_id
-    await base44.auth.updateMe({ active_org_id: org.id }).catch(() => {});
-
     return Response.json({
-      portal_url: `/o/${org.slug}--${org.public_id}`,
-      status: 'joined',
+      portal_url: null,
+      status: 'access_requested',
+      message: 'Your access request has been submitted. An organization administrator will review it.',
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

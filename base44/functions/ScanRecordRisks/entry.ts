@@ -112,6 +112,8 @@ export default async function (req) {
         generated_by_name: actor?.name || null,
         human_reviewed: false,
         status: 'generated',
+        confidence_score: typeof llmRaw?.confidence_score === 'number' ? llmRaw.confidence_score : null,
+        confidence_basis: llmRaw?.confidence_basis ? String(llmRaw.confidence_basis) : null,
       });
     } catch (_e) { /* التسجيل لا يوقف الفحص */ }
 

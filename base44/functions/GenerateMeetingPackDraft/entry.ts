@@ -107,6 +107,8 @@ export default async function (req) {
         generated_by_name: auth.user?.full_name || auth.user?.email || null,
         human_reviewed: false,
         status: 'generated',
+        confidence_score: typeof llmRaw?.confidence_score === 'number' ? llmRaw.confidence_score : null,
+        confidence_basis: llmRaw?.confidence_basis ? String(llmRaw.confidence_basis) : null,
       });
     } catch (_e) { /* التسجيل لا يوقف */ }
 

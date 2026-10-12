@@ -134,6 +134,8 @@ export const RISK_SCAN_SCHEMA = {
         required: ['category', 'severity', 'excerpt', 'explanation_ar', 'explanation_en'],
       },
     },
+    confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_basis: { type: 'string' },
   },
   required: ['flags'],
 };

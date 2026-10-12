@@ -71,6 +71,8 @@ export const PACK_DRAFT_SCHEMA = {
         required: ['title', 'body_ar', 'source_ref'],
       },
     },
+    confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_basis: { type: 'string' },
   },
   required: ['sections'],
 };

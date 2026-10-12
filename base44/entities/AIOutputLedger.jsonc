@@ -102,6 +102,42 @@
       "type": "boolean",
       "title": "Approved"
     },
+    "confidence_score": {
+      "type": "number",
+      "title": "Confidence Score (0.0\u20131.0 \u2014 the model's own self-assessment, never a guarantee)",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "confidence_basis": {
+      "type": "string",
+      "title": "Confidence Basis (what the score rests on \u2014 source coverage, ambiguity, novelty)"
+    },
+    "feedback_rating": {
+      "type": "string",
+      "title": "Human Feedback Rating (helpful / needs_correction / not_helpful \u2014 a human verdict, never a model self-assessment)",
+      "enum": [
+        "helpful",
+        "needs_correction",
+        "not_helpful"
+      ]
+    },
+    "feedback_note": {
+      "type": "string",
+      "title": "Feedback Note (what the human found wrong or right \u2014 the basis for improving the governed prompt)"
+    },
+    "feedback_by_user_id": {
+      "type": "string",
+      "title": "Feedback By User ID"
+    },
+    "feedback_by_name": {
+      "type": "string",
+      "title": "Feedback By Name"
+    },
+    "feedback_at": {
+      "type": "string",
+      "title": "Feedback At",
+      "format": "date-time"
+    },
     "status": {
       "type": "string",
       "title": "Status"

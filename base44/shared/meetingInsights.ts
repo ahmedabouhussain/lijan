@@ -74,6 +74,8 @@ export const PREP_SCHEMA = {
     },
     cross_item_inconsistencies: { type: 'array', items: { type: 'string' } },
     deltas_from_last: { type: 'array', items: { type: 'string' } },
+    confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_basis: { type: 'string' },
   },
   required: ['items'],
 };
@@ -146,6 +148,8 @@ export const SUMMARY_SCHEMA = {
         required: ['title', 'summary_ar', 'summary_en'],
       },
     },
+    confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_basis: { type: 'string' },
   },
   required: ['overview_ar', 'overview_en', 'sections'],
 };

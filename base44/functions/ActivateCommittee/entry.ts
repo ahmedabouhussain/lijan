@@ -78,7 +78,11 @@ export default async function(req) {
     // Notify all committee members that the committee has been activated
     try {
       const actorName = auth.user.full_name || auth.user.email;
-      const deepLink = `/o/${auth.organization_id}/c/${committee_id}`;
+      // D-123 — deep link uses route refs (slug--public_id), never raw record ids
+      const org = await base44.asServiceRole.entities.Organization.get(auth.organization_id).catch(() => null);
+      const orgRef = org ? `${org.slug}--${org.public_id}` : auth.organization_id;
+      const committeeRef = `${committee.slug || committee_id}--${committee.public_id || committee_id}`;
+      const deepLink = `/o/${orgRef}/c/${committeeRef}`;
       const notifParams = (members || [])
         .filter((m) => m.user_id && m.user_id !== auth.user.id)
         .map((m) => ({
