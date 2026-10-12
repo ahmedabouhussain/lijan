@@ -34,6 +34,7 @@ import VerifyRecord from '@/pages/VerifyRecord';
 import GuestItemView from '@/pages/GuestItemView';
 import ActionExtractView from '@/pages/ActionExtractView';
 import GovernancePolicies from '@/pages/GovernancePolicies';
+import SovereignStandards from '@/pages/SovereignStandards';
 import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
@@ -140,6 +141,7 @@ const AuthenticatedApp = () => {
       <Route path="/explore/:personaSlug" element={<ExploreSession />} />
       <Route path="/create-portal" element={<CreatePortal />} />
       <Route path="/governance-policies" element={<GovernancePolicies />} />
+      <Route path="/sovereign-standards" element={<SovereignStandards />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       {/* Item-scoped guest invitation link — no account, no app role: the token is the capability. */}

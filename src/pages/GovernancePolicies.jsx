@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, ShieldCheck, Lock, FileText, Scale, Eye, Layers } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowRight, ArrowLeft, ShieldCheck, Lock, FileText, Scale, Eye, Layers, Award } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Image } from "@/components/ui/image";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
@@ -89,6 +89,27 @@ export default function GovernancePolicies() {
           <div className="raqeem-card p-6 sm:p-10">
             {activeTab === "governance" ? <GovernancePolicyContent /> : <ClassificationPolicyContent />}
           </div>
+
+          {/* Link to Sovereign Standards Register */}
+          <Link
+            to="/sovereign-standards"
+            className="mt-8 raqeem-card-interactive p-5 flex items-center gap-4 group"
+          >
+            <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+              <Award className="w-6 h-6 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-foreground" dir="rtl">سجل المعايير السيادية</div>
+              <div className="text-sm font-semibold text-muted-foreground" dir="ltr">Sovereign Standards Register</div>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                {isAr
+                  ? "الإثبات الذي يطلبه مراجعو الحوكمة الوطنيون: التزام المنصة بالمعايير الدولية والدليل والجهة المالكة."
+                  : "The evidence national governance auditors require: the platform adherence to international standards with evidence and owning authority."}
+              </p>
+            </div>
+            {isAr ? <ArrowLeft className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  : <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />}
+          </Link>
 
           {/* Footer */}
           <div className="mt-10 flex flex-col items-center gap-3">
