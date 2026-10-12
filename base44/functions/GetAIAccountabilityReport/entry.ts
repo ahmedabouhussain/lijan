@@ -3,6 +3,7 @@ import { authorizeCommand, refusalResponse } from '../../shared/commandGuard.ts'
 import {
   AI_ACCOUNTABILITY_VERSION, AI_DISCLOSURE_FLOOR, AI_OUTPUT_TYPES, FEEDBACK_RATINGS,
   AI_METRICS, assessAIMetric, selfCheckAI, ADVISORY_ONLY_CLAUSE,
+  AI_INCIDENT_TYPES, AI_INCIDENT_SEVERITY, AI_INCIDENT_STATUS, INCIDENT_STANDARD_MAP,
 } from '../../shared/aiAccountability.ts';
 
 // GetAIAccountabilityReport — تقرير المساءلة على الذكاء محسوبًا خادميًا (ai-accountability-1.0.0).
@@ -78,6 +79,63 @@ export default async function (req) {
     // الالتزام بـ«الاستشاري فقط» — كل نوع معلن استشاري
     const advisoryOnlyOk = Object.values(AI_OUTPUT_TYPES).every((t: any) => t.advisory === true);
 
+    // ── سجل الحوادث (NIST AI RMF — MEASURE/MANAGE) ──
+    const incidentsOpen = await safeCount({ committee_id: committeeId, status: { $in: ['open', 'under_review'] } }, 'AIIncident (open)');
+    const incidentsCritical = await safeCount({ committee_id: committeeId, severity: 'critical', status: { $in: ['open', 'under_review'] } }, 'AIIncident (critical open)');
+    const incidentsBySeverityAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'severity' }, 'AIIncident (by severity)');
+    const incidentsByTypeAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'incident_type' }, 'AIIncident (by type)');
+    const incidentsBySeverity = asArray(incidentsBySeverityAgg?.rows || incidentsBySeverityAgg || []).map((r: any) => ({
+      severity: r.severity || r._id || 'unknown',
+      count: r.count || 0,
+      label: AI_INCIDENT_SEVERITY[r.severity || r._id] || { ar: r.severity, en: r.severity },
+    }));
+    const incidentsByType = asArray(incidentsByTypeAgg?.rows || incidentsByTypeAgg || []).map((r: any) => ({
+      type: r.incident_type || r._id || 'unknown',
+      count: r.count || 0,
+      label: AI_INCIDENT_TYPES[r.incident_type || r._id] || { ar: r.incident_type, en: r.incident_type },
+      standard: INCIDENT_STANDARD_MAP[r.incident_type || r._id] || null,
+    })).filter((r) => r.count > 0);
+
+    // ── العدالة عبر أنواع المخرجات (OECD Fairness) ──
+    // معدل التجاوز لكل نوع: هل يفشل الذكاء في نوع دون آخر؟
+    const overrideByTypeAgg = await safeAggregate(
+      { query: { committee_id: committeeId, feedback_rating: { $in: ['needs_correction', 'not_helpful'] } }, groupBy: 'output_type' },
+      'AIOutputLedger (override by type)'
+    );
+    const helpfulByTypeAgg = await safeAggregate(
+      { query: { committee_id: committeeId, feedback_rating: 'helpful' }, groupBy: 'output_type' },
+      'AIOutputLedger (helpful by type)'
+    );
+    const overrideByType = asArray(overrideByTypeAgg?.rows || overrideByTypeAgg || []).map((r: any) => ({
+      type: r.output_type || r._id || 'other',
+      override_count: r.count || 0,
+      label: AI_OUTPUT_TYPES[r.output_type || r._id] || AI_OUTPUT_TYPES.other,
+    }));
+    const helpfulByTypeMap = {};
+    for (const r of asArray(helpfulByTypeAgg?.rows || helpfulByTypeAgg || [])) {
+      helpfulByTypeMap[r.output_type || r._id || 'other'] = r.count || 0;
+    }
+    // اتحاد النوع: لكل نوع نأخذ count من byType (المجموع) و override و helpful
+    const fairnessByType = byType.map((bt) => {
+      const total = bt.count;
+      const override = overrideByType.find((o) => o.type === bt.type)?.override_count || 0;
+      const helpful = helpfulByTypeMap[bt.type] || 0;
+      const overrideRate = total >= AI_DISCLOSURE_FLOOR && override > 0 ? Math.round((override / total) * 100) : null;
+      const helpfulRate = total >= AI_DISCLOSURE_FLOOR && helpful > 0 ? Math.round((helpful / total) * 100) : null;
+      return { type: bt.type, label: bt.label, total, override, helpful, override_rate: overrideRate, helpful_rate: helpfulRate, suppressed: total < AI_DISCLOSURE_FLOOR };
+    }).filter((f) => f.total > 0);
+
+    // ── الاتجاه الزمني (٦ أشهر) ── مخرجات شهرية + حوادث شهرية
+    const trendAgg = await safeAggregate(
+      { query: { committee_id: committeeId }, dateBucket: { field: 'generated_at', unit: 'month' } },
+      'AIOutputLedger (monthly trend)'
+    );
+    const trendRows = asArray(trendAgg?.rows || trendAgg || []);
+    const trend = trendRows.slice(-6).map((r: any) => ({
+      bucket: r.bucket || r._id || r.date || null,
+      outputs: r.count || 0,
+    }));
+
     const summary = {
       total_outputs: total,
       reviewed_outputs: reviewed,
@@ -110,9 +168,25 @@ export default async function (req) {
         types_declared: Object.keys(AI_OUTPUT_TYPES).length,
       },
       summary,
+      incidents: {
+        open: incidentsOpen,
+        critical_open: incidentsCritical,
+        by_severity: incidentsBySeverity,
+        by_type: incidentsByType,
+        severity_labels: AI_INCIDENT_SEVERITY,
+        status_labels: AI_INCIDENT_STATUS,
+      },
+      fairness_by_output_type: fairnessByType,
+      trend: {
+        buckets: trend,
+        window_months: 6,
+        direction: trend.length >= 2
+          ? (trend[trend.length - 1].outputs >= trend[0].outputs ? 'stable_or_rising' : 'declining')
+          : 'insufficient',
+      },
       unread_sources: unread,
-      counts_performed: 6,
-      aggregations_performed: 2,
+      counts_performed: 8,
+      aggregations_performed: 5,
       registry_self_check: selfCheckAI(),
       honesty_note: {
         ar: 'هذا التقرير إفصاح محسوب خادميًا من سجل مخرجات الذكاء. ما هو تحت أرضية الإفصاح (٥) يُكتم ولا يُعرض كنسبة. لا يدّعي هذا التقرير «دقة» الذكاء بل يفصح عن أدائه ازاء المراجع البشري — والحكم النهائي بشري.',

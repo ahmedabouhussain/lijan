@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import {
   RefreshCw, AlertTriangle, ShieldCheck, Bot, Gauge, ThumbsUp, ThumbsDown, AlertCircle,
-  CheckCircle2, Info, Lock, FileCheck2,
+  CheckCircle2, Info, Lock, FileCheck2, Siren, Scale, TrendingUp, TrendingDown, Minus, PlusCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -185,6 +185,21 @@ export default function AIAccountabilityPanel({ committeeId }) {
         </div>
       )}
 
+      {/* سجل الحوادث — NIST AI RMF MEASURE/MANAGE */}
+      {data.incidents && (
+        <IncidentsSection incidents={data.incidents} lang={lang} t={t} />
+      )}
+
+      {/* العدالة عبر أنواع المخرجات — OECD Fairness */}
+      {data.fairness_by_output_type?.length > 0 && (
+        <FairnessSection rows={data.fairness_by_output_type} lang={lang} t={t} floor={data.disclosure_floor} />
+      )}
+
+      {/* الاتجاه الزمني */}
+      {data.trend?.buckets?.length > 0 && (
+        <TrendSection trend={data.trend} lang={lang} t={t} />
+      )}
+
       {/* مصادر غير مقروءة */}
       {unread.length > 0 && (
         <div className="rounded-md border border-state-warning-ink/30 bg-state-warning-surface px-3 py-2">
@@ -211,6 +226,168 @@ export default function AIAccountabilityPanel({ committeeId }) {
         </p>
       )}
     </section>
+  );
+}
+
+function IncidentsSection({ incidents, lang, t }) {
+  const open = incidents.open ?? 0;
+  const critical = incidents.critical_open ?? 0;
+  const sevLabels = incidents.severity_labels || {};
+  const bySev = incidents.by_severity || [];
+  const byType = incidents.by_type || [];
+  if (open === 0 && bySev.length === 0) return null;
+
+  return (
+    <div className="raqeem-card p-4 space-y-3">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Siren className={cn("w-4 h-4", open > 0 ? "text-state-danger-ink" : "text-muted-foreground")} />
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("سجل حوادث الذكاء", "AI Incident Register")}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-state-danger-surface text-state-danger-ink">
+            {t("مفتوحة", "Open")}: {open}
+          </span>
+          {critical > 0 && (
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-state-danger-ink text-white animate-pulse">
+              {t("حرج", "Critical")}: {critical}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {bySev.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {bySev.map((s) => {
+            const label = sevLabels[s.severity] || { ar: s.severity, en: s.severity };
+            return (
+              <span key={s.severity} className={cn("px-2 py-0.5 rounded text-[10px] font-medium", `bg-${label.tone}-surface text-${label.tone}-ink`)}>
+                {lang === "ar" ? label.ar : label.en}: {s.count}
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      {byType.length > 0 && (
+        <div className="space-y-1.5 border-t border-border pt-2">
+          <p className="text-[10px] font-medium text-muted-foreground">{t("حسب نوع الحادثة", "By incident type")}</p>
+          {byType.map((it) => (
+            <div key={it.type} className="flex items-start justify-between gap-2 text-[11px]">
+              <div className="min-w-0">
+                <span className="text-foreground font-medium">{lang === "ar" ? it.label.ar : it.label.en}</span>
+                {it.standard && <span className="text-muted-foreground/70 block text-[10px]">{it.standard}</span>}
+              </div>
+              <span className="text-muted-foreground shrink-0">{it.count}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p className="text-[10px] text-muted-foreground border-t border-border pt-2 leading-relaxed">
+        {t(
+          "كل حادثة سجل قابلاً للتدقيق وفق NIST AI RMF (MEASURE/MANAGE). الحادثة المُتدارَكة تُغلق بأساس مكتوب، ولا تُمحى.",
+          "Every incident is an auditable record per NIST AI RMF (MEASURE/MANAGE). A mitigated incident closes on a written basis and is never erased."
+        )}
+      </p>
+    </div>
+  );
+}
+
+function FairnessSection({ rows, lang, t, floor }) {
+  return (
+    <div className="raqeem-card p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Scale className="w-4 h-4 text-primary" />
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("العدالة عبر أنواع المخرجات", "Fairness across output types")}
+          </p>
+          <p className="text-[10px] text-muted-foreground/80">
+            {t("هل يفشل الذكاء في نوع دون آخر؟ OECD AI Principle 1.2 (Fairness).", "Does the AI fail more on some output classes? OECD AI Principle 1.2 (Fairness).")}
+          </p>
+        </div>
+      </div>
+      <div className="space-y-2.5">
+        {rows.map((r) => (
+          <div key={r.type} className="space-y-1">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-foreground">{lang === "ar" ? r.label.ar : r.label.en}</span>
+              <span className="text-muted-foreground">{t("إجمالي", "Total")}: {r.total}</span>
+            </div>
+            {r.suppressed ? (
+              <p className="text-[10px] text-muted-foreground italic">{t("أقل من حد الإفصاح — يُكتم.", "Below disclosure floor — withheld.")}</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5">
+                    <span>{t("تجاوز الإنسان", "Human override")}</span>
+                    <span>{r.override_rate === null ? "—" : `${r.override_rate}%`}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                    <div className="h-full bg-state-warning-ink rounded-full" style={{ width: `${r.override_rate || 0}%` }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5">
+                    <span>{t("مفيد", "Helpful")}</span>
+                    <span>{r.helpful_rate === null ? "—" : `${r.helpful_rate}%`}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                    <div className="h-full bg-state-success-ink rounded-full" style={{ width: `${r.helpful_rate || 0}%` }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrendSection({ trend, lang, t }) {
+  const buckets = trend.buckets || [];
+  if (buckets.length === 0) return null;
+  const max = Math.max(...buckets.map((b) => b.outputs || 0), 1);
+  const direction = trend.direction || "insufficient";
+  const DirIcon = direction === "rising" || direction === "stable_or_rising" ? TrendingUp : direction === "declining" ? TrendingDown : Minus;
+
+  return (
+    <div className="raqeem-card p-4 space-y-3">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <DirIcon className="w-4 h-4 text-primary" />
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("الاتجاه الزمني", "Trend over time")}
+          </p>
+        </div>
+        <span className="text-[10px] text-muted-foreground">
+          {t("آخر", "Last")} {trend.window_months || 6} {t("أشهر", "months")}
+        </span>
+      </div>
+      <div className="flex items-end justify-between gap-1.5 h-20">
+        {buckets.map((b, i) => {
+          const h = Math.max((b.outputs / max) * 100, 4);
+          return (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full bg-primary/70 rounded-t" style={{ height: `${h}%` }} title={`${b.outputs}`} />
+              <span className="text-[9px] text-muted-foreground">{String(b.bucket || "").slice(0, 7)}</span>
+              <span className="text-[10px] font-medium text-foreground">{b.outputs}</span>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-muted-foreground leading-relaxed">
+        {direction === "declining"
+          ? t("الاتجاه تنازلي — انخفاض مخرجات الذكاء. قد يعكس صحة سجل المقاييس لا تحسنًا.", "Declining trend — fewer AI outputs. This may reflect register health, not improvement.")
+          : direction === "stable_or_rising"
+            ? t("الاتجاه مستقر/صاعد — اللجنة تستخدم الذكاء بانتظام.", "Stable or rising trend — the committee uses AI regularly.")
+            : t("بيانات غير كافية لقراءة الاتجاه.", "Insufficient data to read a trend.")}
+      </p>
+    </div>
   );
 }
 
