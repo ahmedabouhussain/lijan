@@ -95,8 +95,9 @@ export default async function (req) {
 
     // التسجيل في AIOutputLedger — كل مخرج ذكاء يُسجَّل: النوع · المصدر · النموذج · الوقت · الفاعل.
     // الكتابة الوحيدة هنا هي سجل التدقيق هذا؛ لا تُمَس حالة القرار.
+    let ledger = null;
     try {
-      await sr.entities.AIOutputLedger.create({
+      ledger = await sr.entities.AIOutputLedger.create({
         organization_id: decision.organization_id || allowed.committee?.organization_id || null,
         output_type: 'record_risk_scan',
         source_entity_type: 'Decision',
@@ -123,6 +124,9 @@ export default async function (req) {
       decision_id,
       committee_id: decision.committee_id,
       decision_status: decision.status,
+      ledger_id: ledger?.id || null,
+      confidence_score: typeof ledger?.confidence_score === 'number' ? ledger.confidence_score : null,
+      confidence_basis: ledger?.confidence_basis || null,
       flags,
       flag_count: flags.length,
       high_count: highCount,

@@ -3,6 +3,7 @@ import { ShieldAlert, RefreshCw, AlertTriangle, Loader2, Info } from "lucide-rea
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
+import AIFeedbackPanel from "@/components/raqeem/AIFeedbackPanel";
 
 // RecordRiskPanel — فاحص المخاطر قبل الاعتماد (استشاري بحت).
 // يعرض المخاطر القانونية/الامتثالية/التشغيلية في نص مقترح القرار قبل إصداره.
@@ -151,6 +152,11 @@ export default function RecordRiskPanel({ decisionId }) {
               <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
                 {lang === "ar" ? data.advisory_note?.ar : data.advisory_note?.en}
               </p>
+              <AIFeedbackPanel
+                ledgerId={data.ledger_id}
+                confidenceScore={data.confidence_score}
+                confidenceBasis={data.confidence_basis}
+              />
             </>
           )}
         </>

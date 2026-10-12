@@ -90,8 +90,9 @@ export default async function (req) {
     const { sections, dropped } = parsePackDraft(parsed || { sections: [] });
 
     const now = new Date().toISOString();
+    let ledger = null;
     try {
-      await sr.entities.AIOutputLedger.create({
+      ledger = await sr.entities.AIOutputLedger.create({
         organization_id: auth.organization_id || null,
         output_type: 'meeting_pack_draft',
         source_entity_type: 'Meeting',
@@ -114,6 +115,9 @@ export default async function (req) {
 
     return Response.json({
       status: 'ok', contract_version: PACK_DRAFT_VERSION, committee_id, meeting_id,
+      ledger_id: ledger?.id || null,
+      confidence_score: typeof ledger?.confidence_score === 'number' ? ledger.confidence_score : null,
+      confidence_basis: ledger?.confidence_basis || null,
       sections, dropped,
       source_doc_count: sourceDocs.length,
       advisory: true, ai_generated: true, generated_at: now, model_used: 'automatic',

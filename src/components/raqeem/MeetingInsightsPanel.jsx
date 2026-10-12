@@ -3,6 +3,7 @@ import { Sparkles, FileText, RefreshCw, AlertTriangle, Loader2, Info, HelpCircle
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
+import AIFeedbackPanel from "@/components/raqeem/AIFeedbackPanel";
 
 // MeetingInsightsPanel — التحضير الذكي + ملخص الحزمة (استشاري بحت).
 // تبويبان: «التحضير» (أسئلة محتملة لكل بند + تناقضات + فروقات عن آخر حزمة)
@@ -160,6 +161,11 @@ export default function MeetingInsightsPanel({ meetingId }) {
               <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
                 {lang === "ar" ? prep.advisory_note?.ar : prep.advisory_note?.en}
               </p>
+              <AIFeedbackPanel
+                ledgerId={prep.ledger_id}
+                confidenceScore={prep.confidence_score}
+                confidenceBasis={prep.confidence_basis}
+              />
             </>
           )}
         </>
@@ -194,6 +200,11 @@ export default function MeetingInsightsPanel({ meetingId }) {
               <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
                 {lang === "ar" ? summary.advisory_note?.ar : summary.advisory_note?.en}
               </p>
+              <AIFeedbackPanel
+                ledgerId={summary.ledger_id}
+                confidenceScore={summary.confidence_score}
+                confidenceBasis={summary.confidence_basis}
+              />
             </>
           )}
         </>

@@ -3,6 +3,7 @@ import { BookOpen, RefreshCw, AlertTriangle, Loader2, Info, FileText, Copy, Chec
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
+import AIFeedbackPanel from "@/components/raqeem/AIFeedbackPanel";
 
 // PackDraftPanel — تجميع مسودة حزمة الاجتماع من ملفات المصدر (استشاري بحت).
 // يعرض أقسامًا موسومة آليًا، كل قسم بمصدره. لا يُنشئ حزمة: الأمين ينسّق ثم ينشر بأمر محكوم.
@@ -136,6 +137,11 @@ export default function PackDraftPanel({ meetingId, committeeId, sourceDocuments
               <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
                 {lang === "ar" ? data.advisory_note?.ar : data.advisory_note?.en}
               </p>
+              <AIFeedbackPanel
+                ledgerId={data.ledger_id}
+                confidenceScore={data.confidence_score}
+                confidenceBasis={data.confidence_basis}
+              />
             </>
           )}
         </>

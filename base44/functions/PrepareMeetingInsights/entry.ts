@@ -58,8 +58,9 @@ export default async function (req) {
     const { items, cross_item_inconsistencies, deltas_from_last, dropped } = parsePrepInsights(parsed || { items: [] });
 
     const now = new Date().toISOString();
+    let ledger = null;
     try {
-      await sr.entities.AIOutputLedger.create({
+      ledger = await sr.entities.AIOutputLedger.create({
         organization_id: meeting.organization_id || allowed.committee?.organization_id || null,
         output_type: 'meeting_prep_insights',
         source_entity_type: 'Meeting',
@@ -82,6 +83,9 @@ export default async function (req) {
 
     return Response.json({
       status: 'ok', contract_version: MEETING_INSIGHTS_VERSION, meeting_id,
+      ledger_id: ledger?.id || null,
+      confidence_score: typeof ledger?.confidence_score === 'number' ? ledger.confidence_score : null,
+      confidence_basis: ledger?.confidence_basis || null,
       items, cross_item_inconsistencies, deltas_from_last, dropped,
       advisory: true, ai_generated: true, generated_at: now, model_used: 'automatic',
       advisory_note: {
