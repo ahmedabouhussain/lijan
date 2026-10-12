@@ -38,6 +38,7 @@ import SovereignStandards from '@/pages/SovereignStandards';
 import ActivityLog from '@/pages/ActivityLog';
 import AuditTrail from '@/pages/AuditTrail';
 import PublicCommittees from '@/pages/PublicCommittees';
+import PublicAIRegister from '@/pages/PublicAIRegister';
 import NationalAdoptionShowcase from '@/pages/NationalAdoptionShowcase';
 import LegacyCommitteeRedirect from '@/components/routing/LegacyCommitteeRedirect';
 import LegacyRecordRedirect from '@/components/routing/LegacyRecordRedirect';
@@ -143,6 +144,7 @@ const AuthenticatedApp = () => {
       <Route path="/governance-policies" element={<GovernancePolicies />} />
       <Route path="/sovereign-standards" element={<SovereignStandards />} />
       <Route path="/committees-registry" element={<PublicCommittees />} />
+      <Route path="/ai-register" element={<PublicAIRegister />} />
       <Route path="/verify/:type/:id" element={<VerifyRecord />} />
       {/* Item-scoped guest invitation link — no account, no app role: the token is the capability. */}
       <Route path="/guest/:token" element={<GuestItemView />} />

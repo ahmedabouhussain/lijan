@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Users, Search, Building2, Calendar, Loader2, Globe } from "lucide-react";
+import { ArrowRight, ArrowLeft, Users, Search, Building2, Calendar, Loader2, Globe, Bot } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Image } from "@/components/ui/image";
@@ -121,7 +121,7 @@ export default function PublicCommittees() {
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10">
               <Globe className="w-5 h-5 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 {isAr ? "السجل العمومي للجان" : "Public Committees Registry"}
               </h1>
@@ -131,6 +131,13 @@ export default function PublicCommittees() {
                   : "Browse active public committees from institutions"}
               </p>
             </div>
+            <button
+              onClick={() => navigate("/ai-register")}
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary-dark hover:bg-primary/5 px-3 py-1.5 rounded-md border border-primary/20 font-medium transition-colors shrink-0"
+            >
+              <Bot className="w-4 h-4" />
+              {isAr ? "سجل الذكاء" : "AI Register"}
+            </button>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
