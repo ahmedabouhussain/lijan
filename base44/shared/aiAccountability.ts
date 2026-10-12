@@ -168,6 +168,49 @@ export function selfCheckAI() {
   return { contract_version: AI_ACCOUNTABILITY_VERSION, ok: problems.length === 0, metrics: Object.keys(AI_METRICS).length, problems };
 }
 
+/**
+ * سجل حوادث الذكاء — NIST AI RMF (MEASURE/MANAGE) + OECD Accountability.
+ * حادثة الذكاء حدثٌ أدى أو كاد يؤدي إلى ضرر على فعل حوكمة: قرار خاطئ، إجراء ضائع،
+ * محضر منحرف، أو إفصاح مكسور. ليست لومًا، بل سجل قابلاً للتدقيق.
+ */
+export const AI_INCIDENT_TYPES = {
+  harm: { ar: 'ضرر وقع', en: 'Harm occurred', weight: 4 },
+  near_miss: { ar: 'كاد يقع', en: 'Near miss', weight: 3 },
+  correction: { ar: 'تصحيح بشري', en: 'Human correction', weight: 2 },
+  bias_finding: { ar: 'إيجاد انحياز', en: 'Bias finding', weight: 3 },
+  model_failure: { ar: 'فشل النموذج', en: 'Model failure', weight: 3 },
+  data_provenance_failure: { ar: 'فشل مصدر البيانات', en: 'Data provenance failure', weight: 3 },
+  unauthorized_use: { ar: 'استخدام غير مصرّح', en: 'Unauthorized use', weight: 4 },
+  disclosure_failure: { ar: 'فشل الإفصاح', en: 'Disclosure failure', weight: 2 },
+};
+
+export const AI_INCIDENT_SEVERITY = {
+  low: { ar: 'منخفض', en: 'Low', tone: 'state-info', order: 1 },
+  medium: { ar: 'متوسط', en: 'Medium', tone: 'state-progress', order: 2 },
+  high: { ar: 'عالٍ', en: 'High', tone: 'state-warning', order: 3 },
+  critical: { ar: 'حرج', en: 'Critical', tone: 'state-danger', order: 4 },
+};
+
+export const AI_INCIDENT_STATUS = {
+  open: { ar: 'مفتوح', en: 'Open', tone: 'state-danger' },
+  under_review: { ar: 'قيد المراجعة', en: 'Under review', tone: 'state-warning' },
+  mitigated: { ar: 'مُتدارك', en: 'Mitigated', tone: 'state-progress' },
+  closed: { ar: 'مُغلق', en: 'Closed', tone: 'state-success' },
+  accepted_risk: { ar: 'مُقبل كخطر', en: 'Accepted risk', tone: 'state-info' },
+};
+
+/** المرجع المعياري لكل نوع حادثة — أي مبدأ OECD/NIST يختبره. */
+export const INCIDENT_STANDARD_MAP = {
+  harm: 'OECD AI Principle 1.4 (Accountability) · NIST AI RMF MANAGE',
+  near_miss: 'NIST AI RMF MEASURE 2.3 (incident tracking)',
+  correction: 'OECD AI Principle 1.3 (Transparency) · Human-in-the-loop',
+  bias_finding: 'OECD AI Principle 1.2 (Fairness) · NIST AI RMF MEASURE 2.2',
+  model_failure: 'NIST AI RMF MEASURE 2.1 (validity/reliability)',
+  data_provenance_failure: 'OECD AI Principle 1.2 (Privacy) · ISO 42001 §7.3',
+  unauthorized_use: 'OECD AI Principle 1.2 (Rule of law) · NIST AI RMF GOVERN',
+  disclosure_failure: 'OECD AI Principle 1.3 (Transparency) · EU AI Act Art. 13',
+};
+
 /** عقد «الاستشاري فقط»: لا نوع ذكاء يُغيّر حالة قرار أو اجتماع أو إجراء. */
 export const ADVISORY_ONLY_CLAUSE = {
   ar: 'كل أنواع مخرجات الذكاء على هذه المنصة استشارية بحتة: لا تُغيّر حالة قرار ولا توقف إصدارًا ولا تُغلق إجراءًا. الإنسان في الحلقة، والحكم النهائي بشري.',

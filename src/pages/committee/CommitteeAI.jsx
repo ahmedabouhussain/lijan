@@ -9,7 +9,7 @@ import { base44 } from "@/api/base44Client";
 import { Bot, Loader2, Sparkles, CheckCircle, XCircle } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import AIAccuracyDashboard from "@/components/raqeem/AIAccuracyDashboard";
+import AIAccountabilityPanel from "@/components/raqeem/AIAccountabilityPanel";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 
@@ -108,8 +108,8 @@ export default function CommitteeAI() {
         <EmptyState icon={Bot} title={t("لا توجد مخرجات", "No AI Outputs")} description={t("لم يتم إنشاء مخرجات ذكاء اصطناعي لهذه اللجنة.", "No AI outputs generated for this committee.")} />
       ) : (
         <>
-        {/* AI Accuracy Dashboard — Section 15 */}
-        <AIAccuracyDashboard records={records} />
+        {/* AI Accountability Report — server-computed (OECD AI / NIST AI RMF) */}
+        <AIAccountabilityPanel committeeId={committeeId} />
         <div className="space-y-2">
           {records.map((r) => {
             const ti = OUTPUT_TYPE[r.output_type] || OUTPUT_TYPE.other;

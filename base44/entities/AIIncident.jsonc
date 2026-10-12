@@ -1,0 +1,218 @@
+{
+  "name": "AIIncident",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID"
+    },
+    "output_ledger_id": {
+      "type": "string",
+      "title": "AI Output Ledger ID (the output this incident concerns, when it concerns one)"
+    },
+    "output_type": {
+      "type": "string",
+      "title": "Output Type (the class of AI output involved)"
+    },
+    "incident_type": {
+      "type": "string",
+      "title": "Incident Type (NIST AI RMF \u2014 MEASURE/MANAGE): the class of event, never a blame",
+      "enum": [
+        "harm",
+        "near_miss",
+        "correction",
+        "bias_finding",
+        "model_failure",
+        "data_provenance_failure",
+        "unauthorized_use",
+        "disclosure_failure"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "title": "Severity (national-grade scale: a critical incident reaches the oversight body)",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "standard_reference": {
+      "type": "string",
+      "title": "Standard Reference (which principle or framework this incident tests \u2014 OECD / NIST / ISO 42001)"
+    },
+    "title": {
+      "type": "string",
+      "title": "Incident Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description (what happened, what was affected, what was the impact)"
+    },
+    "affected_entity_type": {
+      "type": "string",
+      "title": "Affected Entity Type"
+    },
+    "affected_entity_id": {
+      "type": "string",
+      "title": "Affected Entity ID"
+    },
+    "root_cause_category": {
+      "type": "string",
+      "title": "Root Cause Category (prompt / model / data / oversight / integration)",
+      "enum": [
+        "prompt",
+        "model",
+        "data",
+        "oversight",
+        "integration",
+        "external",
+        "undetermined"
+      ]
+    },
+    "detected_by_user_id": {
+      "type": "string",
+      "title": "Detected By (user id)"
+    },
+    "detected_by_name": {
+      "type": "string",
+      "title": "Detected By (display only)"
+    },
+    "detected_at": {
+      "type": "string",
+      "title": "Detected At",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (an accepted risk is still recorded, never silently closed)",
+      "enum": [
+        "open",
+        "under_review",
+        "mitigated",
+        "closed",
+        "accepted_risk"
+      ],
+      "default": "open"
+    },
+    "remediation_action": {
+      "type": "string",
+      "title": "Remediation Action (what was done or will be done)"
+    },
+    "mitigated_at": {
+      "type": "string",
+      "title": "Mitigated At",
+      "format": "date-time"
+    },
+    "mitigated_by_user_id": {
+      "type": "string",
+      "title": "Mitigated By (user id)"
+    },
+    "mitigated_by_name": {
+      "type": "string",
+      "title": "Mitigated By (display only)"
+    },
+    "closed_at": {
+      "type": "string",
+      "title": "Closed At",
+      "format": "date-time"
+    },
+    "closed_by_user_id": {
+      "type": "string",
+      "title": "Closed By (user id)"
+    },
+    "closed_by_name": {
+      "type": "string",
+      "title": "Closed By (display only)"
+    },
+    "resolution_note": {
+      "type": "string",
+      "title": "Resolution Note (the basis for closure or acceptance)"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "AI Accountability Contract Version in Force"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "incident_type",
+    "severity",
+    "title",
+    "description",
+    "status",
+    "detected_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
