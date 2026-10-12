@@ -20,6 +20,7 @@ import { L } from "@/lib/l10n";
 import useCommitteeRecord from "@/hooks/useCommitteeRecord";
 import ExplorationNotice from "@/components/raqeem/ExplorationNotice";
 import RegisterStatePanel from "@/components/raqeem/RegisterStatePanel";
+import MeetingInsightsPanel from "@/components/raqeem/MeetingInsightsPanel";
 import { SURFACE_STATE } from "@/lib/governedState";
 
 const MEETING_MODES = {
@@ -368,6 +369,9 @@ export default function MeetingDetail() {
           )}
         </div>
       </div>
+
+      {/* Smart prep & pack summary — advisory only, AI-generated, labelled, logged. */}
+      <MeetingInsightsPanel meetingId={id} />
 
       {/* Live Attendance & Quorum */}
       <AttendancePanel meeting={meeting} members={members} attendance={attendance} canCertify={canCertify} onChanged={load} />

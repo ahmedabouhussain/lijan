@@ -10,6 +10,7 @@ import IssuanceIntegrityPanel from "@/components/raqeem/IssuanceIntegrityPanel";
 import DossierExportPanel from "@/components/raqeem/DossierExportPanel";
 import AuditChainPanel from "@/components/raqeem/AuditChainPanel";
 import RatificationPanel from "@/components/raqeem/RatificationPanel";
+import RecordRiskPanel from "@/components/raqeem/RecordRiskPanel";
 import ProofChainDrawer from "@/components/raqeem/ProofChainDrawer";
 import DecisionDocuments from "@/components/raqeem/DecisionDocuments";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -108,6 +109,9 @@ export default function DecisionDetail() {
 
       {/* Issuance integrity — verified server-side on every read (P0-01) */}
       <IssuanceIntegrityPanel decisionId={decision.id} />
+
+      {/* Pre-approval risk scan — advisory only, runs before issuance. AI-generated, labelled, logged. */}
+      <RecordRiskPanel decisionId={decision.id} />
 
       {/* The whole trail as ONE readable document, assembled on the server from the records themselves. */}
       <DossierExportPanel decision={decision} />
