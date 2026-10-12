@@ -34,8 +34,12 @@ export default async function (req) {
       try { const n = await sr.entities.AIOutputLedger.count(query); return typeof n === 'number' ? n : null; }
       catch (e) { unread.push({ source: label, reason: (e as Error)?.message || 'read failed' }); return null; }
     };
-    const safeAggregate = async (opts: any, label: string) => {
-      try { return await sr.entities.AIOutputLedger.aggregate(opts); }
+    const safeAggregate = async (opts: any, label: string, entity: any = sr.entities.AIOutputLedger) => {
+      try { return await entity.aggregate(opts); }
+      catch (e) { unread.push({ source: label, reason: (e as Error)?.message || 'read failed' }); return null; }
+    };
+    const safeCountIncident = async (query: any, label: string) => {
+      try { const n = await sr.entities.AIIncident.count(query); return typeof n === 'number' ? n : null; }
       catch (e) { unread.push({ source: label, reason: (e as Error)?.message || 'read failed' }); return null; }
     };
 
@@ -80,10 +84,10 @@ export default async function (req) {
     const advisoryOnlyOk = Object.values(AI_OUTPUT_TYPES).every((t: any) => t.advisory === true);
 
     // ── سجل الحوادث (NIST AI RMF — MEASURE/MANAGE) ──
-    const incidentsOpen = await safeCount({ committee_id: committeeId, status: { $in: ['open', 'under_review'] } }, 'AIIncident (open)');
-    const incidentsCritical = await safeCount({ committee_id: committeeId, severity: 'critical', status: { $in: ['open', 'under_review'] } }, 'AIIncident (critical open)');
-    const incidentsBySeverityAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'severity' }, 'AIIncident (by severity)');
-    const incidentsByTypeAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'incident_type' }, 'AIIncident (by type)');
+    const incidentsOpen = await safeCountIncident({ committee_id: committeeId, status: { $in: ['open', 'under_review'] } }, 'AIIncident (open)');
+    const incidentsCritical = await safeCountIncident({ committee_id: committeeId, severity: 'critical', status: { $in: ['open', 'under_review'] } }, 'AIIncident (critical open)');
+    const incidentsBySeverityAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'severity' }, 'AIIncident (by severity)', sr.entities.AIIncident);
+    const incidentsByTypeAgg = await safeAggregate({ query: { committee_id: committeeId }, groupBy: 'incident_type' }, 'AIIncident (by type)', sr.entities.AIIncident);
     const incidentsBySeverity = asArray(incidentsBySeverityAgg?.rows || incidentsBySeverityAgg || []).map((r: any) => ({
       severity: r.severity || r._id || 'unknown',
       count: r.count || 0,
@@ -127,7 +131,7 @@ export default async function (req) {
 
     // ── الاتجاه الزمني (٦ أشهر) ── مخرجات شهرية + حوادث شهرية
     const trendAgg = await safeAggregate(
-      { query: { committee_id: committeeId }, dateBucket: { field: 'generated_at', unit: 'month' } },
+      { query: { committee_id: committeeId }, dateBucket: { field: 'created_date', unit: 'month' } },
       'AIOutputLedger (monthly trend)'
     );
     const trendRows = asArray(trendAgg?.rows || trendAgg || []);
