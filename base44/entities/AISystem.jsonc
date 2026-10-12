@@ -1,0 +1,201 @@
+{
+  "name": "AISystem",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (blank when the system serves the whole organization)"
+    },
+    "system_name": {
+      "type": "string",
+      "title": "AI System Name (Arabic)"
+    },
+    "system_name_en": {
+      "type": "string",
+      "title": "AI System Name (English)"
+    },
+    "purpose": {
+      "type": "string",
+      "title": "Purpose (what this AI system does \u2014 one paragraph)"
+    },
+    "purpose_en": {
+      "type": "string",
+      "title": "Purpose (English)"
+    },
+    "model_used": {
+      "type": "string",
+      "title": "Model Used (e.g. gpt_5_mini \u00b7 gemini_3_flash \u00b7 automatic)"
+    },
+    "risk_tier": {
+      "type": "string",
+      "title": "Risk Tier (EU AI Act classification \u2014 never 'prohibited' on this platform)",
+      "enum": [
+        "high_risk",
+        "limited_risk",
+        "minimal_risk"
+      ]
+    },
+    "approved_use_cases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Approved Use Cases (keys from ai-system-registry-1.0.0 \u2014 every one is advisory only)"
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Data Sources Read (what records this system reads \u2014 the boundary of its knowledge)"
+    },
+    "human_oversight_required": {
+      "type": "boolean",
+      "title": "Human Oversight Required (always true on this platform \u2014 no AI acts alone)",
+      "default": true
+    },
+    "impact_assessment": {
+      "type": "string",
+      "title": "Impact Assessment (ISO 42001 \u00a78.3 \u2014 canonical JSON of the four assessment fields)"
+    },
+    "affected_parties": {
+      "type": "string",
+      "title": "Affected Parties (who is in the scope of impact)"
+    },
+    "identified_risks": {
+      "type": "string",
+      "title": "Identified Risks (what could go wrong)"
+    },
+    "mitigation_measures": {
+      "type": "string",
+      "title": "Mitigation Measures (human oversight, disclosure, logging, input bounds)"
+    },
+    "human_oversight_basis": {
+      "type": "string",
+      "title": "Human Oversight Basis (who reviews, when, with what authority)"
+    },
+    "standard_reference": {
+      "type": "string",
+      "title": "Standard Reference (which standard this register satisfies \u2014 ISO 42001 \u00a76.1.2/\u00a78.3 \u00b7 EU AI Act)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (a retired system is preserved, never deleted \u2014 its outputs keep their provenance)",
+      "enum": [
+        "draft",
+        "under_review",
+        "approved",
+        "retired"
+      ],
+      "default": "draft"
+    },
+    "deployed_at": {
+      "type": "string",
+      "title": "Deployed At (first production use)",
+      "format": "date-time"
+    },
+    "reviewed_by_user_id": {
+      "type": "string",
+      "title": "Reviewed By (user id)"
+    },
+    "reviewed_by_name": {
+      "type": "string",
+      "title": "Reviewed By (display only)"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "title": "Reviewed At",
+      "format": "date-time"
+    },
+    "approved_by_user_id": {
+      "type": "string",
+      "title": "Approved By (user id \u2014 the authority that authorized this system into use)"
+    },
+    "approved_by_name": {
+      "type": "string",
+      "title": "Approved By (display only)"
+    },
+    "approved_at": {
+      "type": "string",
+      "title": "Approved At",
+      "format": "date-time"
+    },
+    "retired_at": {
+      "type": "string",
+      "title": "Retired At (a retired system stops generating, but its ledger stays)",
+      "format": "date-time"
+    },
+    "retired_reason": {
+      "type": "string",
+      "title": "Retired Reason (why the system was taken out of use)"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "AI System Registry Contract Version in Force"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "system_name",
+    "purpose",
+    "risk_tier",
+    "status",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@ import { Bot, Loader2, Sparkles, CheckCircle, XCircle } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import AIAccountabilityPanel from "@/components/raqeem/AIAccountabilityPanel";
+import AISystemInventoryPanel from "@/components/raqeem/AISystemInventoryPanel";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 
@@ -108,6 +109,8 @@ export default function CommitteeAI() {
         <EmptyState icon={Bot} title={t("لا توجد مخرجات", "No AI Outputs")} description={t("لم يتم إنشاء مخرجات ذكاء اصطناعي لهذه اللجنة.", "No AI outputs generated for this committee.")} />
       ) : (
         <>
+        {/* AI Systems Register & Impact Assessment — ISO 42001 §6.1.2/§8.3 · EU AI Act */}
+        <AISystemInventoryPanel committeeId={committeeId} />
         {/* AI Accountability Report — server-computed (OECD AI / NIST AI RMF) */}
         <AIAccountabilityPanel committeeId={committeeId} />
         <div className="space-y-2">
