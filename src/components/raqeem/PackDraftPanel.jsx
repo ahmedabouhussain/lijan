@@ -7,15 +7,24 @@ import { cn } from "@/lib/utils";
 // PackDraftPanel — تجميع مسودة حزمة الاجتماع من ملفات المصدر (استشاري بحت).
 // يعرض أقسامًا موسومة آليًا، كل قسم بمصدره. لا يُنشئ حزمة: الأمين ينسّق ثم ينشر بأمر محكوم.
 
-export default function PackDraftPanel({ meetingId, committeeId, sourceDocuments = [] }) {
+export default function PackDraftPanel({ meetingId, committeeId, sourceDocuments }) {
   const { t, lang } = useLanguage();
   const [outline, setOutline] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(null);
+  const [docs, setDocs] = useState(Array.isArray(sourceDocuments) ? sourceDocuments : []);
 
-  const docIds = (sourceDocuments || []).map((d) => d.id).filter(Boolean);
+  useEffect(() => {
+    if (Array.isArray(sourceDocuments) || !committeeId) return;
+    base44.entities.Document.filter({ committee_id: committeeId, status: { $in: ["draft", "published", "approved"] } }, { limit: 50 })
+      .then((res) => setDocs(Array.isArray(res) ? res : (res?.items || [])))
+      .catch(() => setDocs([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [committeeId]);
+
+  const docIds = (docs || []).map((d) => d.id).filter(Boolean);
 
   const generate = async () => {
     setLoading(true); setError(null);

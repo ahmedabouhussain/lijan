@@ -11,6 +11,7 @@ import { Package, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import PackDraftPanel from "@/components/raqeem/PackDraftPanel";
 
 export default function CommitteePacks() {
   const { data, reload } = useCommittee();
@@ -70,6 +71,9 @@ export default function CommitteePacks() {
             </div>
           ))}
         </div>
+      )}
+      {canManageMinutes && upcoming.length > 0 && (
+        <PackDraftPanel meetingId={upcoming[0].id} committeeId={committeeId} />
       )}
     </div>
   );
