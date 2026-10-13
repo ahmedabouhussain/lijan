@@ -1,31 +1,17 @@
 import React, { useState, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Printer, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowLeft, Printer, ChevronDown, ChevronRight, Languages } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 
 // PlatformSpecification — وثيقة المواصفات الفنية الشاملة (تسليم لشركة تطوير).
-// نسختان كاملتان منفصلتان لكل قسم: العربية كاملة (RTL) ثم الإنجليزية كاملة (LTR).
+// مستندان منفصلان تمامًا: النسخة العربية الكاملة (RTL) ثم النسخة الإنجليزية الكاملة (LTR).
 
-/* ── سياق اللغة الثنائي: كل قسم يُعرض مرتين داخل <Bilingual> ── */
+/* سياق لغة المستند — كل نسخة تُعرض بلغة واحدة فقط */
 const LangCtx = createContext("ar");
-const useLang = () => useContext(LangCtx);
-const useT = () => { const l = useLang(); return (ar, en) => (l === "ar" ? ar : en); };
-
-function Bilingual({ children }) {
-  return (
-    <>
-      <LangCtx.Provider value="ar">
-        <div dir="rtl" className="border-e-2 border-primary/15 ps-4 mb-6 print:mb-4">{children}</div>
-      </LangCtx.Provider>
-      <LangCtx.Provider value="en">
-        <div dir="ltr" className="border-s-2 border-primary/15 ps-4">{children}</div>
-      </LangCtx.Provider>
-    </>
-  );
-}
+const useT = () => { const l = useContext(LangCtx); return (ar, en) => (l === "ar" ? ar : en); };
 
 const FUNCTION_GROUPS = [
   { ar: "المؤسسات والبوابات المؤسسية", en: "Institutions & Institutional Portals",
@@ -99,7 +85,6 @@ const ENTITY_FAMILIES = [
   { ar: "الإشعارات والمراجعة والتدقيق", en: "Notifications, review & audit", items: ["NotificationOutbox","NotificationTemplate","NotificationConfig","NotificationPreference","AuditEvent","AuditLog","DocumentationAsset","DocumentationRelease","DocumentationDownloadLog"] },
 ];
 
-/* جدول المكدّس التقني — صفوف ثنائية */
 const STACK_ROWS = [
   { ar: "الواجهة الأمامية", en: "Frontend", dAr: "React 18 · Vite · Tailwind CSS · shadcn/ui (Radix) · React Router", dEn: "React 18 · Vite · Tailwind CSS · shadcn/ui (Radix) · React Router" },
   { ar: "الخلفية والبيانات", en: "Backend & data", dAr: "Base44 (BaaS): كيانات · دوال خلفية · مسارات عمل · وكلاء · مصادقة", dEn: "Base44 (BaaS): entities · backend functions · workflows · agents · auth" },
@@ -145,8 +130,6 @@ export default function PlatformSpecification() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
   const isAr = lang === "ar";
-  const [openGroups, setOpenGroups] = useState(() => Object.fromEntries(FUNCTION_GROUPS.map((_, i) => [i, true])));
-  const toggle = (i) => setOpenGroups((s) => ({ ...s, [i]: !s[i] }));
 
   return (
     <div className="min-h-app bg-background" dir={isAr ? "rtl" : "ltr"}>
@@ -170,12 +153,29 @@ export default function PlatformSpecification() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 print:py-0">
-        <div className="text-center mb-8 print:mb-6">
-          <BrandLogo className="h-14 w-44 mx-auto mb-4" />
-          <Bilingual><IntroBlock /></Bilingual>
-        </div>
+        {/* فاصل + النسخة العربية الكاملة */}
+        <LangDivider icon={Languages} ar="النسخة العربية الكاملة" en="Full Arabic Version" lang="ar" />
+        <DocBody lang="ar" />
 
-        {/* 1 — رؤية المنصة */}
+        {/* فاصل + النسخة الإنجليزية الكاملة */}
+        <LangDivider icon={Languages} ar="النسخة الإنجليزية الكاملة" en="Full English Version" lang="en" />
+        <DocBody lang="en" />
+
+        <div className="mt-10 flex justify-center print:mt-6">
+          <PoweredByConnection variant="dark" />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+/* ── مستند كامل بلغة واحدة ── */
+function DocBody({ lang }) {
+  const isAr = lang === "ar";
+  return (
+    <LangCtx.Provider value={lang}>
+      <div dir={isAr ? "rtl" : "ltr"} className="space-y-4">
+        <IntroBlock />
         <Section n="1" ar="رؤية المنصة" en="Platform Vision">
           <P ar={<>لِجان™ |LIJAN™ نظام تشغيل وطني متكامل لإدارة المجالس واللجان، من التأسيس والتشكيل إلى الاجتماعات والمحاضر والقرارات والتنفيذ والمتابعة والإغلاق، ضمن بيئة مؤسسية آمنة قابلة للتدقيق تحفظ الذاكرة المؤسسية وتدعم اتخاذ القرار بذكاء منضبط. Powered by CONNECTION™.</>}
             en={<>LIJAN™ is an integrated national operating system for managing councils and committees — from founding and formation to meetings, minutes, decisions, execution, follow-up and closure — within a secure, auditable institutional environment that preserves institutional memory and supports disciplined, AI-assisted decision-making. Powered by CONNECTION™.</>} />
@@ -185,12 +185,10 @@ export default function PlatformSpecification() {
             en={<>Four governance pillars: clear governance, documented decisions, trackable execution, and sustained institutional memory. Every governance act rests on a frozen, versioned contract; every official record is append-only (never edited, never deleted).</>} />
         </Section>
 
-        {/* 2 — المكدّس التقني */}
         <Section n="2" ar="المكدّس التقني والبنية التحتية" en="Technical Stack & Infrastructure">
           <Grid rows={STACK_ROWS} />
         </Section>
 
-        {/* 3 — المعمارية */}
         <Section n="3" ar="معمارية التطبيق" en="Application Architecture">
           <P ar={<>ثلاثة مستويات للتنقّل، يُحمَّل كل مستوى بالتقسيم البرمجي (code-splitting) عند فتحه فقط:</>} en={<>Three navigation levels, each code-split and loaded only when opened:</>} />
           <Grid rows={ARCH_ROWS} />
@@ -198,7 +196,6 @@ export default function PlatformSpecification() {
             en={<>Auth is platform-owned (tokens, sessions, email verification); protected routes are gated by ProtectedRoute. No custom auth backend. All surfaces are bilingual with RTL/LTR switching.</>} />
         </Section>
 
-        {/* 4 — نموذج البيانات */}
         <Section n="4" ar="نموذج البيانات والحوكمة" en="Data & Governance Model">
           <P ar={<>أكثر من 100 كيان (مخططات JSON) منظَّمة في عائلات. كل سجل يحمل سمات مدمجة (id · created_date · updated_date · created_by_id). الأمان على مستوى الصف (RLS) يُطبَّق على كل كيان: قراءة مقيَّدة بالجهة الفاعلة، وكتابة للمالك أو المسؤول، وبعض السجلات (المصادقة · لقطة الإصدار · تعيين المقعد) «إلحاقي فقط» — لا تحديث ولا حذف.</>}
             en={<>Over 100 entities (JSON schemas) organized in families. Every record carries built-in attributes (id · created_date · updated_date · created_by_id). Row-Level Security (RLS) is applied to every entity: read scoped by the acting organization, write for the owner or admin, and certain records (ratification, issue snapshot, seat appointment) are "append-only" — no update, no delete.</>} />
@@ -207,16 +204,12 @@ export default function PlatformSpecification() {
             en={<>Core governance principles: evaluation at the instant of the act (effective-time), not just recorded status; seat identity over person identity (seats compared by identifier, never by name); mandatory human oversight for all AI; every AI output is advisory and never changes governance state; scanning occurs before data enters the official record (pre-record).</>} />
         </Section>
 
-        {/* 5 — فهرس الدوال */}
         <Section n="5" ar={`فهرس الدوال الخلفية (${TOTAL_FNS} دالة)`} en={`Backend Functions Catalog (${TOTAL_FNS} functions)`}>
           <P ar={<>كل دوال المنصّة (base44/functions) مرتبة حسب المجال. كل دالة مُصادَق عليها، مقيَّدة النطاق، وتُعيد استجابة JSON. الدوال الإدارية تتحقق من role === admin. الدوال العمومية (السجل العمومي للذكاء) لا تتطلب تسجيل دخول — الإفصاح التزام.</>}
             en={<>All platform functions (base44/functions) grouped by domain. Each is authenticated, scope-bounded, and returns a JSON response. Admin functions verify role === admin. Public functions (public AI register) require no sign-in — disclosure is an obligation.</>} />
-          <div className="space-y-1.5">
-            {FUNCTION_GROUPS.map((g, i) => <FunctionGroupBlock key={i} g={g} i={i} open={openGroups[i]} onToggle={toggle} />)}
-          </div>
+          <FunctionGroupsList />
         </Section>
 
-        {/* 6 — التكاملات */}
         <Section n="6" ar="التكاملات والوظائف من طرف ثالث" en="Integrations & Third-Party Functions">
           <Sub ar="دمج Core المدمج (منصة Base44)" en="Built-in Core integration (Base44)">
             <ul className="text-[12px] text-muted-foreground space-y-1 leading-relaxed">
@@ -247,7 +240,6 @@ export default function PlatformSpecification() {
           </Sub>
         </Section>
 
-        {/* 7 — الذكاء المحكوم */}
         <Section n="7" ar="الذكاء الاصطناعي المحكوم" en="Governed AI">
           <P ar={<>خمسة شروط سيادية للذكاء: (1) استشاري فقط، (2) مُسمَّى بوضوح، (3) مُسجَّل في AIOutputLedger، (4) اللجنة اختيارية في التفعيل، (5) يحدث قبل السجل لا داخله (pre-record). كل مخرج يحمل confidence_score وأساسها، ومراجعًا بشريًا، وحكم بشري نهائي عبر AIFeedbackPanel.</>}
             en={<>Five sovereign conditions for AI: (1) advisory only, (2) clearly labelled, (3) logged in AIOutputLedger, (4) committee-optional, (5) occurs before the record, not within it (pre-record). Every output carries a confidence_score and its basis, a human reviewer, and a final human verdict via AIFeedbackPanel.</>} />
@@ -255,31 +247,26 @@ export default function PlatformSpecification() {
             en={<>The AI systems register (AISystem) satisfies ISO 42001 §6.1.2/§8.3 and the EU AI Act; impact assessment discloses affected parties, risks, mitigations and oversight. The public AI register (GetPublicAIRegister) discloses to citizens without sign-in. Incidents (AIIncident) are recorded per NIST AI RMF (MEASURE/MANAGE). The accountability report is server-computed (OECD/NIST).</>} />
         </Section>
 
-        {/* 8 — الأمان */}
         <Section n="8" ar="الأمان والصلاحيات" en="Security & Authority">
           <Grid rows={SECURITY_ROWS} />
         </Section>
 
-        {/* 9 — المعايير */}
         <Section n="9" ar="معايير السيادة والامتثال المعتمدة" en="Adopted Sovereignty & Compliance Standards">
           <div className="space-y-2">
             {STANDARDS.map((s, i) => <StandardRow key={i} ar={s.ar} en={s.en} scope={s.scope} />)}
           </div>
         </Section>
 
-        {/* 10 — العقود */}
         <Section n="10" ar="العقود التشغيلية المُصدَّرة" en="Versioned Operational Contracts">
           <P ar={<>كل فعل حوكمة يستند إلى عقد بإصدار مُجمَّد يُسجَّل في السجل عند الفعل ولا يُعاد كتابته. هذه قائمة العقود المُصدَّرة في المنصة:</>}
             en={<>Every governance act rests on a frozen, versioned contract recorded on the record at the moment of the act and never rewritten. These are the contracts issued by the platform:</>} />
           <p className="text-[11px] text-muted-foreground font-mono leading-relaxed" dir="ltr">{CONTRACTS.join(" · ")}</p>
         </Section>
 
-        {/* 11 — النشر */}
         <Section n="11" ar="النشر والواجهات البرمجية" en="Deployment & APIs">
           <Grid rows={DEPLOY_ROWS} />
         </Section>
 
-        {/* 12 — اتفاقيات التطوير */}
         <Section n="12" ar="اتفاقيات التطوير وملاحظات التسليم" en="Development Conventions & Handover Notes">
           <ul className="text-[12px] text-muted-foreground space-y-1.5 leading-relaxed list-disc ps-5 rtl:ps-0 rtl:pe-5">
             <Li ar="كل ملف جديد مكوّن مستقل صغير (≤50 سطرًا) — لا إضافة لملفات كبيرة." en="Every new file is a small focused component (≤50 lines) — never appended to large files." />
@@ -295,32 +282,44 @@ export default function PlatformSpecification() {
           </ul>
         </Section>
 
-        <div className="mt-10 flex justify-center print:mt-6">
-          <PoweredByConnection variant="dark" />
-        </div>
-        <Bilingual><FooterBlock /></Bilingual>
-      </main>
+        <FooterBlock />
+      </div>
+    </LangCtx.Provider>
+  );
+}
+
+/* ── فاصل بين المستندين ── */
+function LangDivider({ icon: Icon, ar, en, lang }) {
+  return (
+    <div className="my-8 print:my-4" dir={lang === "ar" ? "rtl" : "ltr"}>
+      <div className="flex items-center gap-3">
+        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground shrink-0">
+          <Icon className="w-4 h-4" />
+        </span>
+        <h2 className="text-lg font-bold text-primary">{lang === "ar" ? ar : en}</h2>
+        <div className="flex-1 h-px bg-border" />
+      </div>
     </div>
   );
 }
 
-/* ── مكوّنات العرض الثنائية (تقرأ سياق اللغة من <Bilingual>) ── */
-
+/* ── مكوّنات العرض (تقرأ لغة المستند من السياق) ── */
 function IntroBlock() {
   const t = useT();
   return (
-    <>
+    <div className="text-center mb-6 print:mb-4">
+      <BrandLogo className="h-14 w-44 mx-auto mb-4" />
       <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{t("وثيقة المواصفات الفنية الشاملة", "Comprehensive Technical Specification")}</h1>
       <p className="text-sm text-muted-foreground mt-2">{t("رؤية المنصة · المعمارية · نموذج البيانات · الدوال الخلفية · التكاملات · معايير السيادة", "Vision · Architecture · Data Model · Backend Functions · Integrations · Sovereignty Standards")}</p>
       <p className="text-[11px] text-muted-foreground/70 mt-1">{t("وثيقة تسليم لشركة تطوير — من الألف إلى الياء", "Handover document for a development company — from A to Z")}</p>
-    </>
+    </div>
   );
 }
 
 function FooterBlock() {
   const t = useT();
   return (
-    <p className="text-center text-[10px] text-muted-foreground/70 pt-3 pb-8 print:pb-0">
+    <p className="text-center text-[10px] text-muted-foreground/70 pt-3 pb-2 print:pb-0">
       {t("لِجان™ — وثيقة المواصفات الفنية", "LIJAN™ — Technical Specification")} · {new Date().toLocaleDateString("en")}
     </p>
   );
@@ -328,11 +327,9 @@ function FooterBlock() {
 
 function Section({ n, ar, en, children }) {
   return (
-    <section className="raqeem-card p-5 sm:p-6 mb-4 print:break-inside-avoid print:shadow-none print:border-border">
-      <Bilingual>
-        <SecHeading n={n} ar={ar} en={en} />
-        <div className="space-y-2.5">{children}</div>
-      </Bilingual>
+    <section className="raqeem-card p-5 sm:p-6 print:break-inside-avoid print:shadow-none print:border-border">
+      <SecHeading n={n} ar={ar} en={en} />
+      <div className="space-y-2.5 mt-3">{children}</div>
     </section>
   );
 }
@@ -340,7 +337,7 @@ function Section({ n, ar, en, children }) {
 function SecHeading({ n, ar, en }) {
   const t = useT();
   return (
-    <h2 className="flex items-center gap-2 text-base sm:text-lg font-bold text-foreground mb-3 pb-2 border-b border-border">
+    <h2 className="flex items-center gap-2 text-base sm:text-lg font-bold text-foreground pb-2 border-b border-border">
       <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary text-xs font-bold shrink-0">{n}</span>
       <span>{t(ar, en)}</span>
     </h2>
@@ -390,6 +387,16 @@ function FamilyRow({ ar, en, items }) {
     <div className="mb-2">
       <p className="text-xs font-semibold text-foreground mb-1">{t(ar, en)}</p>
       <p className="text-[11px] text-muted-foreground leading-relaxed" dir="ltr">{items.join(" · ")}</p>
+    </div>
+  );
+}
+
+function FunctionGroupsList() {
+  const [openGroups, setOpenGroups] = useState(() => Object.fromEntries(FUNCTION_GROUPS.map((_, i) => [i, true])));
+  const toggle = (i) => setOpenGroups((s) => ({ ...s, [i]: !s[i] }));
+  return (
+    <div className="space-y-1.5">
+      {FUNCTION_GROUPS.map((g, i) => <FunctionGroupBlock key={i} g={g} i={i} open={openGroups[i]} onToggle={toggle} />)}
     </div>
   );
 }
