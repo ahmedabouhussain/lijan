@@ -18,6 +18,7 @@ export const TEMPLATE_REGISTRY = {
   executive_report: { key: "executive_report", ar: "تقرير تنفيذي", en: "Executive Report", default_format: "pdf", sheet_based: false },
   institutional_dataset: { key: "institutional_dataset", ar: "بيانات مؤسسية", en: "Institutional Dataset", default_format: "xlsx", sheet_based: true },
   raw_data_csv: { key: "raw_data_csv", ar: "بيانات خام", en: "Raw Data", default_format: "csv", sheet_based: false },
+  product_document: { key: "product_document", ar: "مستند منتج", en: "Product Document", default_format: "pdf", sheet_based: false },
 };
 
 // The ONE approved wording — never varied between files.

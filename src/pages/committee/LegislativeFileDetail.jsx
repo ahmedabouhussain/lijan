@@ -167,7 +167,12 @@ export default function LegislativeFileDetail() {
       {/* Two-column: comparison table + report editor */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ComparisonTable file={file} isAr={isAr} t={t} />
-        <LegislativeReportPanel file={file} onUpdated={load} />
+        <LegislativeReportPanel
+          file={file}
+          onUpdated={load}
+          committee={committee}
+          organizationName={committee?.organization_name ? { ar: committee.organization_name, en: committee.organization_name } : null}
+        />
       </div>
 
       {/* Related meetings + hearings */}

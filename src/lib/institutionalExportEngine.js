@@ -5,6 +5,8 @@ import { BRAND_LOGO_URL, CONNECTION_LOGO_URL, BRAND } from "@/lib/brand";
 import { buildDocumentMetadata, templateFor, IDENTITY_TEXT } from "@/lib/exportTemplates";
 import { WORK_EXPORT_COLUMNS, buildWorkExportRows } from "@/lib/workExport";
 import { renderXlsx } from "@/lib/exportRenderers";
+import { renderPdf } from "@/lib/exportPdfRenderer";
+import { renderDocx } from "@/lib/exportDocxRenderer";
 
 export async function resolveBrandAssets({ organizationId, language }) {
   const isAr = language === "ar";
@@ -84,6 +86,10 @@ export async function exportInstitutionalDocument({
     const rows = productType === "personal_work_report" ? buildWorkExportRows(data?.items || [], language) : data?.rows;
     const csv = renderCsv({ productType, language, rows, columns: productColumns(productType, language) });
     blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  } else if (fmt === "pdf") {
+    blob = await renderPdf({ productType, metadata, data, brandAssets, language });
+  } else if (fmt === "docx") {
+    blob = await renderDocx({ productType, metadata, data, language });
   } else {
     throw new Error('Engine format "' + fmt + '" not yet implemented for "' + productType + '"');
   }
