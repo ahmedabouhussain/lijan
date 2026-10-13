@@ -3,6 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Send, RefreshCw, AlertTriangle, Check, X, Clock, Ban, UserX, Gavel, CalendarClock, Trash2 } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { useLanguage } from "@/lib/LanguageContext";
+import { L } from "@/lib/l10n";
+import { CIRCULATION_ROUND_STATE, CIRCULATION_RULE, CIRCULATION_DISPATCH_STATE, CIRCULATION_RESPONSE } from "@/lib/raqeemUtils";
 
 // CirculationPanel — decisions by written resolution (brief rev 5 §4C), the secretary's route.
 //
@@ -173,11 +175,11 @@ export default function CirculationPanel({ decision, capabilities, onChanged }) 
       {round && (
         <div className="rounded-md border border-border divide-y divide-border">
           <div className="flex flex-wrap items-center gap-2 p-2.5">
-            <StatusBadge label={`${t("الدورة", "Round")} ${round.round_number || 1} · ${round.state}`}
+            <StatusBadge label={`${t("الدورة", "Round")} ${round.round_number || 1} · ${L.label(CIRCULATION_ROUND_STATE, round.state, round.state)}`}
               colorClass={round.state === "approved" ? "text-state-success-ink bg-state-success-surface"
                 : ["rejected", "not_carried", "expired"].includes(round.state) ? "text-state-danger-ink bg-state-danger-surface"
                 : "text-state-progress-ink bg-state-progress-surface"} />
-            <span className="text-[11px] text-muted-foreground">{t("القاعدة", "Rule")}: {round.rule}</span>
+            <span className="text-[11px] text-muted-foreground">{t("القاعدة", "Rule")}: {L.label(CIRCULATION_RULE, round.rule, round.rule)}</span>
             <span className="text-[11px] text-muted-foreground">{t("المهلة", "Deadline")}: {round.deadline_at ? new Date(round.deadline_at).toLocaleString(lang === "ar" ? "ar" : "en-GB") : "—"}</span>
             {Number(round.extension_count || 0) > 0 && (
               <span className="text-[11px] text-state-warning-ink">{t("تمدّدت", "Extended")} {round.extension_count}×</span>
@@ -211,7 +213,7 @@ export default function CirculationPanel({ decision, capabilities, onChanged }) 
           {row && live && (
             <div className="p-2.5 space-y-2">
               <p className="text-[11px] text-muted-foreground">
-                {t("صفّك في هذه الدورة", "Your row in this round")}: {row.seat_id} · {row.dispatch_state}
+                {t("صفّك في هذه الدورة", "Your row in this round")}: {row.seat_id} · {L.label(CIRCULATION_DISPATCH_STATE, row.dispatch_state, row.dispatch_state)}
                 {row.opened_at ? ` · ${t("فُتح", "opened")}` : ""}{row.acknowledged_at ? ` · ${t("أُقرّ بالاستلام", "acknowledged")}` : ""}
                 {" · "}{t("الاستلام والإقرار ليسا موافقة.", "receipt and acknowledgment are not approval.")}
               </p>
@@ -232,7 +234,7 @@ export default function CirculationPanel({ decision, capabilities, onChanged }) 
                 </div>
               ) : (
                 <p className="text-[11px]">
-                  {t("ردّك المسجّل", "Your recorded response")}: <b>{row.response}</b>{row.responded_at ? ` · ${new Date(row.responded_at).toLocaleString(lang === "ar" ? "ar" : "en-GB")}` : ""}
+                  {t("ردّك المسجّل", "Your recorded response")}: <b>{L.label(CIRCULATION_RESPONSE, row.response, row.response)}</b>{row.responded_at ? ` · ${new Date(row.responded_at).toLocaleString(lang === "ar" ? "ar" : "en-GB")}` : ""}
                   {" · "}{t("لا يُكتب الرد مرتين.", "a response is written once.")}
                 </p>
               )}

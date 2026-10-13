@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import OrganizationMark from "@/components/workgroups/OrganizationMark";
 import { Progress } from "@/components/ui/progress";
-import { ACTION_STATUS, INITIATIVE_STATUS, PRIORITY } from "@/lib/raqeemUtils";
+import { ACTION_STATUS, INITIATIVE_STATUS, PRIORITY, DECISION_STATUS } from "@/lib/raqeemUtils";
 import { L } from "@/lib/l10n";
 
 function Board({ icon: Icon, title, count, children, empty }) {
@@ -87,7 +87,7 @@ export default function DecisionActionBoard({ initiatives = [], decisions = [], 
             <li key={d.id} className="px-4 py-3">
               <p className="text-sm text-foreground leading-snug">{isAr ? d.title_ar || d.title : d.title}</p>
               <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                <StatusBadge label={d.status} colorClass="bg-secondary text-muted-foreground" />
+                <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={L.color(DECISION_STATUS, d.status, "bg-secondary text-muted-foreground")} />
                 {d.decision_date && <span className="text-xs text-muted-foreground arabic-figures">{L.date(d.decision_date)}</span>}
               </div>
             </li>

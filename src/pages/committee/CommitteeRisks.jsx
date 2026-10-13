@@ -10,7 +10,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { Network, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatDate, isOverdue } from "@/lib/raqeemUtils";
+import { formatDate, isOverdue, DELEGATION_STATUS } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { L } from "@/lib/l10n";
 
@@ -112,7 +112,7 @@ export default function CommitteeRisks() {
                       <div className="text-sm font-medium text-foreground">{d.from_member_name} → {d.to_member_name}</div>
                       <div className="text-xs text-muted-foreground">{d.scope || d.reason}</div>
                     </div>
-                    <span className="text-xs text-muted-foreground">{d.status}</span>
+                    <span className="text-xs text-muted-foreground">{L.label(DELEGATION_STATUS, d.status, d.status)}</span>
                   </div>
                 ))}
               </div>

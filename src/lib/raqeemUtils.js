@@ -242,6 +242,48 @@ export const DOCUMENT_STATUS = {
   archived: { ar: "مؤرشف", en: "Archived", color: "bg-state-neutral-surface text-state-neutral-ink" },
 };
 
+export const DELEGATION_STATUS = {
+  active: { ar: "سارية", en: "Active", color: S.success },
+  expired: { ar: "منتهية", en: "Expired", color: S.neutral },
+  revoked: { ar: "ملغاة", en: "Revoked", color: S.danger },
+  completed: { ar: "مكتملة", en: "Completed", color: S.neutral },
+};
+
+export const CIRCULATION_ROUND_STATE = {
+  draft: { ar: "مسودة", en: "Draft", color: S.neutral },
+  dispatched: { ar: "مُرسلة", en: "Dispatched", color: S.info },
+  collecting: { ar: "جمع الردود", en: "Collecting", color: S.progress },
+  ready: { ar: "جاهزة", en: "Ready", color: S.warning },
+  approved: { ar: "معتمدة", en: "Approved", color: S.success },
+  rejected: { ar: "مرفوضة", en: "Rejected", color: S.danger },
+  not_carried: { ar: "لم تتحقق", en: "Not Carried", color: S.danger },
+  expired: { ar: "منتهية", en: "Expired", color: S.neutral },
+  withdrawn: { ar: "مسحوبة", en: "Withdrawn", color: S.neutral },
+  cancelled: { ar: "ملغاة", en: "Cancelled", color: S.danger },
+  superseded: { ar: "مُستبدلة", en: "Superseded", color: S.neutral },
+};
+
+export const CIRCULATION_RULE = {
+  unanimous: { ar: "إجماع", en: "Unanimous", color: S.ceremonial },
+  simple_majority_of_eligible: { ar: "أغلبية المؤهلين", en: "Simple majority of eligible", color: S.info },
+  two_thirds_of_eligible: { ar: "ثلثا المؤهلين", en: "Two-thirds of eligible", color: S.ceremonial },
+  majority_of_responses: { ar: "أغلبية الردود", en: "Majority of responses", color: S.info },
+};
+
+export const CIRCULATION_DISPATCH_STATE = {
+  queued: { ar: "في الانتظار", en: "Queued", color: S.warning },
+  dispatched: { ar: "مُرسلة", en: "Dispatched", color: S.info },
+  failed: { ar: "فشل الإرسال", en: "Failed", color: S.danger },
+};
+
+export const CIRCULATION_RESPONSE = {
+  pending: { ar: "بانتظار", en: "Pending", color: S.warning },
+  approve: { ar: "موافقة", en: "Approve", color: S.success },
+  reject: { ar: "رفض", en: "Reject", color: S.danger },
+  abstain: { ar: "امتناع", en: "Abstain", color: S.neutral },
+  recuse: { ar: "تنحٍّ", en: "Recuse", color: S.ceremonial },
+};
+
 export function formatDate(dateStr) {
   if (!dateStr) return "—";
   try {
@@ -265,6 +307,8 @@ const BILINGUAL_LABEL_MAPS = [
   DEPENDENCY_TYPE, DEPENDENCY_STATUS, SCENARIO_TYPE, SCENARIO_STATUS,
   AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE, FIRST_MEETING_STATUS,
   INITIATIVE_STATUS,
+  DELEGATION_STATUS, CIRCULATION_ROUND_STATE, CIRCULATION_RULE,
+  CIRCULATION_DISPATCH_STATE, CIRCULATION_RESPONSE,
 ];
 
 function bindEntryToActiveLanguage(entry) {
