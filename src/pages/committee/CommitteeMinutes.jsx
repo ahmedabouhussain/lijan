@@ -7,9 +7,19 @@ import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
 import { useCrudAction } from "@/hooks/useCrudAction";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { FileText, Plus, CheckCircle, ArrowLeftCircle, Loader2, ShieldCheck } from "lucide-react";
+import { FileText, Plus, CheckCircle, ArrowLeftCircle, Loader2, ShieldCheck, FileDown, FileType2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { exportInstitutionalDocument, saveExportResult } from "@/lib/institutionalExportEngine";
+
+const STATUS_EXPORT_LABEL = {
+  draft: { ar: "مسودة", en: "Draft" },
+  in_review: { ar: "قيد المراجعة", en: "In Review" },
+  approved: { ar: "معتمد", en: "Approved" },
+  issued: { ar: "صادر", en: "Issued" },
+  amended: { ar: "معدّل", en: "Amended" },
+  superseded: { ar: "مُستبدل", en: "Superseded" },
+};
 
 const STATUS_LABELS = {
   draft: { ar: "مسودة", en: "Draft", color: "bg-secondary text-muted-foreground" },
@@ -31,10 +41,45 @@ export default function CommitteeMinutes() {
   const [showCreate, setShowCreate] = useState(false);
   const [actionId, setActionId] = useState(null);
   const [, setActionType] = useState("");
+  const [exportingId, setExportingId] = useState(null);
 
   if (!data) return <TableSkeleton rows={4} />;
   const minutes = data.registers?.minutes || [];
   const meetings = [...(data.meetings?.upcoming || []), ...(data.meetings?.previous || [])];
+
+  const handleExport = async (minutesRecord, format) => {
+    setExportingId(minutesRecord.id);
+    try {
+      const meeting = meetings.find((mt) => mt.id === minutesRecord.meeting_id) || {};
+      const st = STATUS_EXPORT_LABEL[minutesRecord.status] || { ar: minutesRecord.status, en: minutesRecord.status };
+      const committeeName = {
+        ar: data.committee?.name_ar || data.committee?.name,
+        en: data.committee?.name_en || data.committee?.name_ar || data.committee?.name,
+      };
+      const result = await exportInstitutionalDocument({
+        productType: "committee_minutes",
+        organizationId: minutesRecord.organization_id || data.committee?.organization_id || null,
+        organizationName: data.organization?.name_ar ? { ar: data.organization.name_ar, en: data.organization.name_en || data.organization.name_ar } : null,
+        committeeId: minutesRecord.committee_id || data.committee?.id,
+        committeeName,
+        language: lang,
+        classification: "internal",
+        format: format === "word" ? "docx" : "pdf",
+        referenceNumber: minutesRecord.minutes_number || minutesRecord.id,
+        data: {
+          minutes: minutesRecord,
+          meeting,
+          committee_name_ar: committeeName.ar,
+          committee_name_en: committeeName.en,
+          status_label: t(st.ar, st.en),
+        },
+      });
+      await saveExportResult(result);
+    } catch (e) {
+      // surfaced inline via the row; no global toast to keep the surface calm
+    }
+    setExportingId(null);
+  };
 
   const handleAction = async (minutesId, type) => {
     const fn = type === "approve" ? "ApproveMinutes" : "ReturnCommitteeRecordForCorrection";
@@ -144,6 +189,18 @@ export default function CommitteeMinutes() {
                     {t("سجل محمي — استخدم الاستبدال الرسمي للتصحيح", "Protected record — use formal supersession for corrections")}
                   </div>
                 )}
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  <button onClick={() => handleExport(m, "pdf")} disabled={exportingId === m.id}
+                    className="inline-flex items-center gap-1 border border-border px-2.5 py-1 rounded-md text-[11px] hover:bg-secondary/50 disabled:opacity-50">
+                    {exportingId === m.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileDown className="w-3 h-3" />}
+                    {t("PDF", "PDF")}
+                  </button>
+                  <button onClick={() => handleExport(m, "word")} disabled={exportingId === m.id}
+                    className="inline-flex items-center gap-1 border border-border px-2.5 py-1 rounded-md text-[11px] hover:bg-secondary/50 disabled:opacity-50">
+                    <FileType2 className="w-3 h-3" />
+                    {t("Word", "Word")}
+                  </button>
+                </div>
               </div>
             );
           })}

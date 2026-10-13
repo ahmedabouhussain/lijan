@@ -70,6 +70,40 @@ function productDocument({ data, language }) {
   };
 }
 
+function committeeMinutes({ data, language }) {
+  const m = data?.minutes || {};
+  const meeting = data?.meeting || {};
+  const isAr = language === "ar";
+  const t = (ar, en) => (isAr ? ar : en);
+  const yn = (b) => (b ? t("نعم", "Yes") : b === false ? t("لا", "No") : "—");
+  const meta = [
+    { label: t("رقم المحضر", "Minutes No."), value: m.minutes_number || "—" },
+    { label: t("اللجنة", "Committee"), value: isAr ? (data.committee_name_ar || "—") : (data.committee_name_en || data.committee_name_ar || "—") },
+    { label: t("الحالة", "Status"), value: data?.status_label || m.status || "—" },
+    { label: t("النصاب", "Quorum"), value: yn(m.quorum_met) },
+    { label: t("الحضور", "Present"), value: m.present_count != null ? String(m.present_count) : "—" },
+    { label: t("الغياب", "Absent"), value: m.absent_count != null ? String(m.absent_count) : "—" },
+    { label: t("أُعدّ بواسطة", "Drafted by"), value: isAr ? (m.drafted_by_name || "—") : (m.drafted_by_name_en || m.drafted_by_name || "—") },
+    { label: t("اعتمد بواسطة", "Approved by"), value: isAr ? (m.approved_by_name || "—") : (m.approved_by_name_en || m.approved_by_name || "—") },
+  ];
+  if (m.call_to_order) meta.push({ label: t("افتتاح", "Call to order"), value: m.call_to_order });
+  if (m.adjournment) meta.push({ label: t("رفع الجلسة", "Adjournment"), value: m.adjournment });
+  if (m.approved_date) meta.push({ label: t("تاريخ الاعتماد", "Approval date"), value: m.approved_date });
+
+  const sections = [];
+  const summary = isAr ? (m.summary_ar || m.summary_en) : (m.summary_en || m.summary_ar);
+  if (summary) sections.push({ heading: t("الملخص", "Summary"), body: summary });
+  const body = isAr ? (m.body || m.body_en) : (m.body_en || m.body);
+  if (body) sections.push({ heading: t("نص المحضر", "Minutes Body"), body });
+  if (m.next_meeting_date) sections.push({ heading: t("الاجتماع القادم", "Next Meeting"), body: m.next_meeting_date });
+
+  return {
+    title: t("محضر اجتماع اللجنة", "Committee Meeting Minutes"),
+    subtitle: isAr ? (meeting.title_ar || meeting.title || m.minutes_number || "") : (meeting.title_en || meeting.title || meeting.title_ar || m.minutes_number || ""),
+    meta, sections,
+  };
+}
+
 function generic({ data, language }) {
   return {
     title: data?.title || "",
@@ -82,5 +116,6 @@ function generic({ data, language }) {
 export function buildExportContent({ productType, data, metadata, language }) {
   if (productType === "legislative_dossier") return legislativeDossier({ data, language });
   if (productType === "product_document") return productDocument({ data, language });
+  if (productType === "committee_minutes") return committeeMinutes({ data, language });
   return generic({ data, language });
 }
