@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Printer, ChevronDown, ChevronRight, Languages } from "lucide-react";
+import { ArrowRight, ArrowLeft, Printer, ChevronDown, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
@@ -153,13 +153,8 @@ export default function PlatformSpecification() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 print:py-0">
-        {/* فاصل + النسخة العربية الكاملة */}
-        <LangDivider icon={Languages} ar="النسخة العربية الكاملة" en="Full Arabic Version" lang="ar" />
-        <DocBody lang="ar" />
-
-        {/* فاصل + النسخة الإنجليزية الكاملة */}
-        <LangDivider icon={Languages} ar="النسخة الإنجليزية الكاملة" en="Full English Version" lang="en" />
-        <DocBody lang="en" />
+        {/* مستند واحد بلغة الواجهة المختارة فقط — عربي كامل أو إنجليزي كامل */}
+        <DocBody key={lang} lang={isAr ? "ar" : "en"} />
 
         <div className="mt-10 flex justify-center print:mt-6">
           <PoweredByConnection variant="dark" />
@@ -285,21 +280,6 @@ function DocBody({ lang }) {
         <FooterBlock />
       </div>
     </LangCtx.Provider>
-  );
-}
-
-/* ── فاصل بين المستندين ── */
-function LangDivider({ icon: Icon, ar, en, lang }) {
-  return (
-    <div className="my-8 print:my-4" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <div className="flex items-center gap-3">
-        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground shrink-0">
-          <Icon className="w-4 h-4" />
-        </span>
-        <h2 className="text-lg font-bold text-primary">{lang === "ar" ? ar : en}</h2>
-        <div className="flex-1 h-px bg-border" />
-      </div>
-    </div>
   );
 }
 
