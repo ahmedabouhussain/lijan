@@ -10,6 +10,7 @@ import {
 import BrandLogo from "@/components/raqeem/BrandLogo";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
+import LegislativeReportPanel from "@/components/raqeem/LegislativeReportPanel";
 import {
   CLASSIFICATION_LABELS, DELIVERY_STATUS_LABELS, REPORT_STAGE_LABELS, INTEGRATION_POSTURE_LABELS,
 } from "@/lib/legislativeFileLabels";
@@ -163,10 +164,10 @@ export default function LegislativeFileDetail() {
       {/* Journey timeline — the through-line */}
       <Timeline file={file} stageContext={stage_context} isAr={isAr} t={t} />
 
-      {/* Two-column: comparison table + report */}
+      {/* Two-column: comparison table + report editor */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ComparisonTable file={file} isAr={isAr} t={t} />
-        <ReportCard file={file} reportDocument={report_document} reportStage={reportStage} isAr={isAr} t={t} />
+        <LegislativeReportPanel file={file} onUpdated={load} />
       </div>
 
       {/* Related meetings + hearings */}

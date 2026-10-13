@@ -98,7 +98,7 @@
     },
     "operational_deadline": {
       "type": "string",
-      "title": "Operational Deadline (\u0627\u0644\u0645\u0647\u0644\u0629 \u0627\u0644\u062a\u0634\u063a\u064a\u0644\u064a\u0629)",
+      "title": "Operational Deadline (\u0627\u0644\u0645\u0647\u0644\u0629 \u0627\u0644\u062a\u0634\u062a\u064a\u0644\u062a\u064a\u0629)",
       "format": "date"
     },
     "assigned_at": {
@@ -210,7 +210,7 @@
           },
           "final_wording": {
             "type": "string",
-            "title": "Final Wording (\u0627\u0644\u0635\u064a\u0627\u063a\u0629 \u0627\u0644\u0646\u0647\u0627\u0626\u064a\u0629)"
+            "title": "Final Wording (\u0627\u0644\u0635\u062a\u0627\u063a\u0629 \u0627\u0644\u0646\u0647\u0627\u0626\u064a\u0629)"
           }
         }
       },
@@ -219,6 +219,14 @@
     "report_document_id": {
       "type": "string",
       "title": "Committee Report Document ID (the Document of type 'report' linked to this file)"
+    },
+    "report_conclusions": {
+      "type": "string",
+      "title": "Report Conclusions (\u0646\u062a\u0627\u0626\u062c \u0627\u0644\u0644\u062c\u0646\u0629 \u2014 the drafted conclusions section of the committee report)"
+    },
+    "report_recommendations": {
+      "type": "string",
+      "title": "Report Recommendations (\u0627\u0644\u062a\u0648\u0635\u064a\u0627\u062a \u2014 the drafted recommendations section of the committee report)"
     },
     "report_stage": {
       "type": "string",
@@ -235,6 +243,15 @@
         "archived"
       ],
       "default": "not_started"
+    },
+    "report_last_updated_at": {
+      "type": "string",
+      "title": "Report Last Updated At (\u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b \u0644\u0645\u0633\u0648\u062f\u0629 \u0627\u0644\u062a\u0639\u062f\u064a\u0644)",
+      "format": "date-time"
+    },
+    "report_last_updated_by_name": {
+      "type": "string",
+      "title": "Report Last Updated By (display only)"
     },
     "legal_opinions": {
       "type": "array",

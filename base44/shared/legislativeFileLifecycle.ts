@@ -94,3 +94,61 @@ export function buildReferenceNumber(seq: number, now = new Date()): string {
   const year = now.getUTCFullYear();
   return `LEG-${year}-${String(seq).padStart(4, '0')}`;
 }
+
+// ── Report lifecycle ──
+// The report's own lifecycle is distinct from the file's journey stage. A report may be
+// returned for amendments and resubmitted; the forward map encodes the allowed next stages so
+// the editor never offers an illegal move.
+
+export const REPORT_STAGE_ORDER = [
+  'not_started', 'draft', 'under_review', 'amendments_required',
+  'resubmitted', 'approved', 'issued', 'amended_new_version', 'archived',
+] as const;
+
+export const REPORT_STAGE_LABELS_AR: Record<string, string> = {
+  not_started: 'لم يبدأ',
+  draft: 'مسودة',
+  under_review: 'قيد المراجعة',
+  amendments_required: 'تعديلات مطلوبة',
+  resubmitted: 'معاد التقديم',
+  approved: 'معتمد',
+  issued: 'صادر',
+  amended_new_version: 'معدل بإصدار جديد',
+  archived: 'مؤرشف',
+};
+
+export const REPORT_STAGE_LABELS_EN: Record<string, string> = {
+  not_started: 'Not Started',
+  draft: 'Draft',
+  under_review: 'Under Review',
+  amendments_required: 'Amendments Required',
+  resubmitted: 'Resubmitted',
+  approved: 'Approved',
+  issued: 'Issued',
+  amended_new_version: 'Amended (New Version)',
+  archived: 'Archived',
+};
+
+// Forward-allowed transitions: a report may never move backwards silently; a return for
+// amendments is a forward move into amendments_required, then resubmitted, then back to
+// under_review — each a distinct, audited act.
+export const REPORT_STAGE_FORWARD: Record<string, string[]> = {
+  not_started: ['draft'],
+  draft: ['under_review'],
+  under_review: ['approved', 'amendments_required'],
+  amendments_required: ['resubmitted'],
+  resubmitted: ['under_review'],
+  approved: ['issued'],
+  issued: ['amended_new_version', 'archived'],
+  amended_new_version: ['issued', 'archived'],
+  archived: [],
+};
+
+export function canTransitionReportStage(from: string, to: string): boolean {
+  const allowed = REPORT_STAGE_FORWARD[from] || [];
+  return allowed.includes(to);
+}
+
+export function nextReportStagesOf(stage: string): string[] {
+  return REPORT_STAGE_FORWARD[stage] || [];
+}
