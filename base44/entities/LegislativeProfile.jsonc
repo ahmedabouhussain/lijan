@@ -1,0 +1,251 @@
+{
+  "name": "LegislativeProfile",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (the council this profile configures)"
+    },
+    "profile_key": {
+      "type": "string",
+      "title": "Profile Key (extensible operating profile \u2014 legislative_council is the first)",
+      "enum": [
+        "legislative_council"
+      ],
+      "default": "legislative_council"
+    },
+    "profile_name_ar": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0646\u0645\u0648\u0630\u062c (\u0639\u0631\u0628\u064a)",
+      "default": "\u0646\u0645\u0648\u0630\u062c \u062a\u0634\u063a\u064a\u0644 \u0627\u0644\u0645\u062c\u0644\u0633 \u0627\u0644\u062a\u0634\u0631\u064a\u0639\u064a"
+    },
+    "profile_name_en": {
+      "type": "string",
+      "title": "Profile Name (English)",
+      "default": "Legislative Council Operating Profile"
+    },
+    "enabled": {
+      "type": "boolean",
+      "title": "Enabled (when true, legislative vocabulary and the file journey activate for this organization)",
+      "default": false
+    },
+    "enabled_at": {
+      "type": "string",
+      "title": "Enabled At",
+      "format": "date-time"
+    },
+    "enabled_by_user_id": {
+      "type": "string",
+      "title": "Enabled By (user id)"
+    },
+    "enabled_by_name": {
+      "type": "string",
+      "title": "Enabled By (display only)"
+    },
+    "legislative_body_type": {
+      "type": "string",
+      "title": "Legislative Body Type (describes the council, never a claim of official adoption)",
+      "enum": [
+        "advisory_council",
+        "shura_council",
+        "parliament",
+        "municipal_council",
+        "federal_council",
+        "national_assembly",
+        "other"
+      ],
+      "default": "advisory_council"
+    },
+    "standing_committees_enabled": {
+      "type": "boolean",
+      "title": "Standing Committees Enabled",
+      "default": true
+    },
+    "temporary_committees_enabled": {
+      "type": "boolean",
+      "title": "Temporary / Special Committees Enabled",
+      "default": true
+    },
+    "subcommittees_enabled": {
+      "type": "boolean",
+      "title": "Subcommittees Enabled",
+      "default": true
+    },
+    "working_groups_enabled": {
+      "type": "boolean",
+      "title": "Working Groups Enabled",
+      "default": true
+    },
+    "hearing_sessions_enabled": {
+      "type": "boolean",
+      "title": "Hearing Sessions Enabled",
+      "default": true
+    },
+    "bill_referrals_enabled": {
+      "type": "boolean",
+      "title": "Bill Referrals Enabled (the legislative file journey)",
+      "default": true
+    },
+    "session_cycles_enabled": {
+      "type": "boolean",
+      "title": "Session Cycles Enabled (\u062f\u0648\u0631\u0627\u062a \u0627\u0644\u0627\u0646\u0639\u0642\u0627\u062f)",
+      "default": true
+    },
+    "subject_classifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Subject Classifications (configurable taxonomy \u2014 bill \u00b7 proposed_law \u00b7 discussion_request \u00b7 wish_proposal \u00b7 oversight_matter \u00b7 treaty \u00b7 budget_report \u00b7 other)",
+      "default": [
+        "bill",
+        "proposed_law",
+        "discussion_request",
+        "wish_proposal",
+        "oversight_matter",
+        "treaty",
+        "budget_report",
+        "other"
+      ]
+    },
+    "default_legal_deadline_days": {
+      "type": "number",
+      "title": "Default Legal Deadline (days)",
+      "default": 45
+    },
+    "delivery_channels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Delivery Channels (the official handoff channels \u2014 no claim of live integration)",
+      "default": [
+        "messaging_system",
+        "cabinet_channel",
+        "document_management",
+        "manual_governed_handoff"
+      ]
+    },
+    "integration_posture": {
+      "type": "string",
+      "title": "Integration Posture (never 'connected' unless a tested connector is live)",
+      "enum": [
+        "connected",
+        "configured_not_connected",
+        "awaiting_technical_integration",
+        "manual_governed_handoff",
+        "integration_unavailable"
+      ],
+      "default": "manual_governed_handoff"
+    },
+    "secretariat_units": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Secretariat Units (general_secretariat \u00b7 sessions_and_committees \u00b7 legislative_and_legal \u00b7 information_systems \u00b7 planning_and_quality \u00b7 coordination_and_followup)",
+      "default": [
+        "general_secretariat",
+        "sessions_and_committees",
+        "legislative_and_legal",
+        "information_systems",
+        "planning_and_quality",
+        "coordination_and_followup"
+      ]
+    },
+    "vocabulary_active": {
+      "type": "boolean",
+      "title": "Vocabulary Active (legislative terms appear in UI only when true \u2014 never imposed on other LIJAN users)",
+      "default": true
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Legislative Profile Contract Version in Force",
+      "default": "legislative-profile-1.0.0"
+    },
+    "policy_version": {
+      "type": "string",
+      "title": "Policy Revision Stated by the Institution"
+    },
+    "recorded_by_user_id": {
+      "type": "string",
+      "title": "Recorded By (user id)"
+    },
+    "recorded_by_name": {
+      "type": "string",
+      "title": "Recorded By (display only)"
+    },
+    "recorded_at": {
+      "type": "string",
+      "title": "Recorded At (server clock)",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status (a superseded profile is preserved, never rewritten)",
+      "enum": [
+        "active",
+        "superseded"
+      ],
+      "default": "active"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "profile_key",
+    "profile_name_ar",
+    "profile_name_en",
+    "enabled",
+    "integration_posture",
+    "contract_version",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

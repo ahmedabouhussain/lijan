@@ -1,0 +1,201 @@
+{
+  "name": "HearingSession",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (the committee holding the hearing)"
+    },
+    "legislative_file_id": {
+      "type": "string",
+      "title": "Legislative File ID (the matter this hearing concerns)"
+    },
+    "meeting_id": {
+      "type": "string",
+      "title": "Meeting ID (optional \u2014 when the hearing is held within a scheduled meeting)"
+    },
+    "title_ar": {
+      "type": "string",
+      "title": "\u0639\u0646\u0648\u0627\u0646 \u062c\u0644\u0633\u0629 \u0627\u0644\u0627\u0633\u062a\u0645\u0627\u0639"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Hearing Title (English)"
+    },
+    "summoned_party_name": {
+      "type": "string",
+      "title": "Summoned Party Name (\u0627\u0644\u062c\u0647\u0629 \u0623\u0648 \u0627\u0644\u0634\u062e\u0635 \u0627\u0644\u0645\u0633\u062a\u062f\u0639\u0649)"
+    },
+    "summoned_party_name_en": {
+      "type": "string",
+      "title": "Summoned Party Name (English)"
+    },
+    "summoned_organization": {
+      "type": "string",
+      "title": "Summoned Organization (\u0627\u0644\u062c\u0647\u0629 \u0627\u0644\u0645\u064f\u0645\u062b\u064e\u0651\u0644\u0629)"
+    },
+    "summoned_role": {
+      "type": "string",
+      "title": "Summoned Party Role (\u0627\u0644\u0635\u0641\u0629 \u0627\u0644\u062a\u064a \u064a\u064f\u0633\u062a\u062f\u0639\u0649 \u0628\u0647\u0627)"
+    },
+    "approved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Approved Questions (\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u0645\u0639\u062a\u0645\u062f\u0629 \u2014 set before the hearing, never edited during)"
+    },
+    "testimony_summary": {
+      "type": "string",
+      "title": "Testimony Summary (\u0627\u0644\u0625\u0641\u0627\u062f\u0629 \u2014 what the summoned party stated)"
+    },
+    "testimony_document_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Testimony Attachments (\u0627\u0644\u0645\u0631\u0641\u0642\u0627\u062a)"
+    },
+    "attendance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Attendance (seat_id | user_id | role | present)"
+    },
+    "confidentiality": {
+      "type": "string",
+      "title": "Confidentiality (\u0627\u0644\u0633\u0631\u064a\u0629 \u2014 governs document distribution)",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "highly_restricted"
+      ],
+      "default": "internal"
+    },
+    "hearing_minutes": {
+      "type": "string",
+      "title": "Hearing Minutes (\u0645\u062d\u0636\u0631 \u0627\u0644\u062c\u0644\u0633\u0629 \u2014 text or linked minutes id)"
+    },
+    "committee_findings": {
+      "type": "string",
+      "title": "Committee Findings (\u0645\u0627 \u0627\u0633\u062a\u062e\u0644\u0635\u062a\u0647 \u0627\u0644\u0644\u062c\u0646\u0629)"
+    },
+    "findings_for_report": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Findings For Report (\u0627\u0644\u0628\u0646\u0648\u062f \u0627\u0644\u062a\u064a \u0633\u062a\u0638\u0647\u0631 \u0641\u064a \u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u0644\u062c\u0646\u0629)"
+    },
+    "held_at": {
+      "type": "string",
+      "title": "Held At",
+      "format": "date-time"
+    },
+    "recorded_by_user_id": {
+      "type": "string",
+      "title": "Recorded By (user id)"
+    },
+    "recorded_by_name": {
+      "type": "string",
+      "title": "Recorded By (display only)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "scheduled",
+        "held",
+        "cancelled",
+        "minutes_pending"
+      ],
+      "default": "scheduled"
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Hearing Session Contract Version in Force",
+      "default": "hearing-session-1.0.0"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "committee_id",
+    "legislative_file_id",
+    "summoned_party_name",
+    "status",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

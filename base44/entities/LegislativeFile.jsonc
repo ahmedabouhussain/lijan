@@ -1,0 +1,425 @@
+{
+  "name": "LegislativeFile",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization ID (the council)"
+    },
+    "committee_id": {
+      "type": "string",
+      "title": "Committee ID (the assigned committee \u2014 blank until assigned)"
+    },
+    "profile_id": {
+      "type": "string",
+      "title": "Legislative Profile ID (the operating profile in force at opening)"
+    },
+    "reference_number": {
+      "type": "string",
+      "title": "Reference Number (\u0627\u0644\u0645\u0631\u062c\u0639 \u0627\u0644\u0631\u0633\u0645\u064a \u2014 assigned on receipt, never reused)"
+    },
+    "referring_body": {
+      "type": "string",
+      "title": "Referring Body (\u0627\u0644\u062c\u0647\u0629 \u0627\u0644\u0645\u062d\u064a\u0644\u0629)"
+    },
+    "referring_body_en": {
+      "type": "string",
+      "title": "Referring Body (English)"
+    },
+    "referral_received_at": {
+      "type": "string",
+      "title": "Referral Received At (\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645)",
+      "format": "date-time"
+    },
+    "referral_document_id": {
+      "type": "string",
+      "title": "Referral Document ID (the instrument of referral)"
+    },
+    "subject_title_ar": {
+      "type": "string",
+      "title": "Subject Title (\u0639\u0631\u0628\u064a)"
+    },
+    "subject_title_en": {
+      "type": "string",
+      "title": "Subject Title (English)"
+    },
+    "subject_classification": {
+      "type": "string",
+      "title": "Subject Classification (from the profile taxonomy)",
+      "enum": [
+        "bill",
+        "proposed_law",
+        "discussion_request",
+        "wish_proposal",
+        "oversight_matter",
+        "treaty",
+        "budget_report",
+        "other"
+      ],
+      "default": "other"
+    },
+    "subject_summary": {
+      "type": "string",
+      "title": "Subject Summary"
+    },
+    "subject_summary_en": {
+      "type": "string",
+      "title": "Subject Summary (English)"
+    },
+    "completeness_verified": {
+      "type": "boolean",
+      "title": "File Completeness Verified",
+      "default": false
+    },
+    "completeness_checked_at": {
+      "type": "string",
+      "title": "Completeness Checked At",
+      "format": "date-time"
+    },
+    "completeness_checked_by_user_id": {
+      "type": "string",
+      "title": "Completeness Checked By (user id)"
+    },
+    "completeness_checked_by_name": {
+      "type": "string",
+      "title": "Completeness Checked By (display only)"
+    },
+    "completeness_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Completeness Gaps (what is missing before the file can proceed)"
+    },
+    "legal_deadline": {
+      "type": "string",
+      "title": "Legal Deadline (\u0627\u0644\u0645\u0647\u0644\u0629 \u0627\u0644\u0642\u0627\u0646\u0648\u0646\u064a\u0629)",
+      "format": "date"
+    },
+    "operational_deadline": {
+      "type": "string",
+      "title": "Operational Deadline (\u0627\u0644\u0645\u0647\u0644\u0629 \u0627\u0644\u062a\u0634\u063a\u064a\u0644\u064a\u0629)",
+      "format": "date"
+    },
+    "assigned_at": {
+      "type": "string",
+      "title": "Assigned To Committee At",
+      "format": "date-time"
+    },
+    "assigned_by_user_id": {
+      "type": "string",
+      "title": "Assigned By (user id)"
+    },
+    "assigned_by_name": {
+      "type": "string",
+      "title": "Assigned By (display only)"
+    },
+    "current_owner_user_id": {
+      "type": "string",
+      "title": "Current Owner (user id \u2014 the seat responsible at this instant)"
+    },
+    "current_owner_name": {
+      "type": "string",
+      "title": "Current Owner (display only)"
+    },
+    "current_owner_role": {
+      "type": "string",
+      "title": "Current Owner Capacity (the role the owner acts in for this file)"
+    },
+    "stage": {
+      "type": "string",
+      "title": "Journey Stage (the connected through-line from referral to closure)",
+      "enum": [
+        "referral_received",
+        "completeness_check",
+        "assigned_to_committee",
+        "study_underway",
+        "documents_requested",
+        "on_agenda",
+        "under_discussion",
+        "hearing_held",
+        "amendments_recorded",
+        "comparison_table_built",
+        "report_draft",
+        "report_review",
+        "report_chair_review",
+        "voting",
+        "report_approved",
+        "delivered",
+        "delivery_confirmed",
+        "follow_up",
+        "closed"
+      ],
+      "default": "referral_received"
+    },
+    "stage_history": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Stage History (stage | at | by | note \u2014 an append-only trail, never rewritten)"
+    },
+    "related_meeting_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Related Meeting IDs (the meetings where the subject was discussed)"
+    },
+    "related_agenda_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Related Agenda Item IDs"
+    },
+    "hearing_session_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Hearing Session IDs (independent hearings attached to this file)"
+    },
+    "requested_documents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Requested Documents (memos/studies requested from concerned bodies \u2014 id | body | requested_at | received)"
+    },
+    "comparison_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "article_no": {
+            "type": "string",
+            "title": "Article No"
+          },
+          "referred_text": {
+            "type": "string",
+            "title": "Referred Text (\u0627\u0644\u0646\u0635 \u0627\u0644\u0645\u062d\u0627\u0644)"
+          },
+          "proposed_text": {
+            "type": "string",
+            "title": "Proposed Text (\u0627\u0644\u0646\u0635 \u0627\u0644\u0645\u0642\u062a\u0631\u062d)"
+          },
+          "committee_note": {
+            "type": "string",
+            "title": "Committee Note (\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0644\u062c\u0646\u0629)"
+          },
+          "final_wording": {
+            "type": "string",
+            "title": "Final Wording (\u0627\u0644\u0635\u064a\u0627\u063a\u0629 \u0627\u0644\u0646\u0647\u0627\u0626\u064a\u0629)"
+          }
+        }
+      },
+      "title": "Comparison Table (article-by-article \u2014 embedded for Phase 1; a dedicated entity may follow)"
+    },
+    "report_document_id": {
+      "type": "string",
+      "title": "Committee Report Document ID (the Document of type 'report' linked to this file)"
+    },
+    "report_stage": {
+      "type": "string",
+      "title": "Report Stage (the report's own lifecycle, distinct from the file's stage)",
+      "enum": [
+        "not_started",
+        "draft",
+        "under_review",
+        "amendments_required",
+        "resubmitted",
+        "approved",
+        "issued",
+        "amended_new_version",
+        "archived"
+      ],
+      "default": "not_started"
+    },
+    "legal_opinions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Legal Opinions (linked document ids or summaries \u2014 never a final legal verdict by AI)"
+    },
+    "correspondence_outgoing": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Outgoing Correspondence (id | to | subject | date)"
+    },
+    "correspondence_incoming": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Incoming Correspondence (id | from | subject | date)"
+    },
+    "delivery_channel": {
+      "type": "string",
+      "title": "Delivery Channel (the official handoff channel \u2014 from the profile)",
+      "enum": [
+        "messaging_system",
+        "cabinet_channel",
+        "document_management",
+        "manual_governed_handoff",
+        "other"
+      ],
+      "default": "manual_governed_handoff"
+    },
+    "delivery_status": {
+      "type": "string",
+      "title": "Delivery Status (delivery is not receipt, and receipt is not approval)",
+      "enum": [
+        "not_delivered",
+        "delivered",
+        "delivery_confirmed"
+      ],
+      "default": "not_delivered"
+    },
+    "delivered_at": {
+      "type": "string",
+      "title": "Delivered At",
+      "format": "date-time"
+    },
+    "delivered_by_user_id": {
+      "type": "string",
+      "title": "Delivered By (user id)"
+    },
+    "delivered_by_name": {
+      "type": "string",
+      "title": "Delivered By (display only)"
+    },
+    "delivery_proof_reference": {
+      "type": "string",
+      "title": "Delivery Proof Reference (\u0625\u062b\u0628\u0627\u062a \u0627\u0644\u062a\u0633\u0644\u064a\u0645)"
+    },
+    "delivery_confirmed_at": {
+      "type": "string",
+      "title": "Delivery Confirmed At (\u0625\u062b\u0628\u0627\u062a \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645)",
+      "format": "date-time"
+    },
+    "delivery_confirmed_by_name": {
+      "type": "string",
+      "title": "Delivery Confirmed By (display only)"
+    },
+    "follow_up_action_id": {
+      "type": "string",
+      "title": "Follow-up Action ID (the action tracking what followed the report/decision)"
+    },
+    "closed_at": {
+      "type": "string",
+      "title": "Closed At (closure preserves the full institutional history)",
+      "format": "date-time"
+    },
+    "closed_by_user_id": {
+      "type": "string",
+      "title": "Closed By (user id)"
+    },
+    "closed_by_name": {
+      "type": "string",
+      "title": "Closed By (display only)"
+    },
+    "closure_notes": {
+      "type": "string",
+      "title": "Closure Notes"
+    },
+    "integrity_preserved": {
+      "type": "boolean",
+      "title": "Integrity Preserved (the full history is retained on closure, never truncated)",
+      "default": true
+    },
+    "contract_version": {
+      "type": "string",
+      "title": "Legislative File Contract Version in Force",
+      "default": "legislative-file-1.0.0"
+    },
+    "correlation_id": {
+      "type": "string",
+      "title": "Correlation ID"
+    },
+    "status": {
+      "type": "string",
+      "title": "High-level Status",
+      "enum": [
+        "open",
+        "in_progress",
+        "closed"
+      ],
+      "default": "open"
+    },
+    "data_origin": {
+      "type": "string",
+      "title": "Data Origin (internal provenance)",
+      "enum": [
+        "source_based",
+        "synthetic_presentational",
+        "operational"
+      ],
+      "default": "operational"
+    },
+    "is_demo_data": {
+      "type": "boolean",
+      "title": "Is Demo Data (showcase legislative data is tagged, never presented as official)",
+      "default": false
+    },
+    "demo_dataset": {
+      "type": "string",
+      "title": "Demo Dataset Key"
+    }
+  },
+  "required": [
+    "organization_id",
+    "reference_number",
+    "subject_title_ar",
+    "subject_classification",
+    "stage",
+    "status",
+    "contract_version"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.active_org_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
