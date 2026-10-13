@@ -65,6 +65,43 @@
 - Committee status `draft`/`pending_activation` remains without a seated-readiness
   activation validator on the published path (see `CommitteeActivationPanel`).
 
+## Named live/preview defects — investigation (2026-10-13)
+Traced from the Phase 1 brief; recorded as found, not fabricated:
+
+- **Arabic in English mode / English titles in Arabic mode:** no raw-enum leak found
+  after D-130..D-136. Interface translation uses one canonical map bound to active
+  language. Visual confirmation NOT TESTED. → status: IMPLEMENTED — NOT BROWSER TESTED.
+- **AMEEN wrong selected language:** `AmeenContext` selects `ameen_message_ar/en` by
+  active `lang` (L-GAP-1). NOT TESTED in browser.
+- **Members count vs appointments/continuity:** `CommitteeAppointments` shows a "no
+  seats" empty state when no `SeatAppointmentEvent` exists; `SeatedReadinessPanel`
+  measures seat→membership→person and declares what cannot be read (never shows zero
+  on a denied read). This is the honest-state contract, not a defect. → by-design.
+- **"Record not available" inside accessible meeting details:** the phrase appears
+  only in `VerifyRecord.jsx` (a legitimate public-verification error), not in
+  MeetingDetail. → NOT REPRODUCED.
+- **Duplicate showcase source documents:** grouped under canonical `Document`
+  records via `DocumentVersion`; no silent deletion. No duplicate detected in audit.
+  → NOT REPRODUCED (monitor in browser).
+- **Raw values "in_review"/"archived":** no raw literal renders found after fixes.
+  → IMPLEMENTED — NOT BROWSER TESTED.
+- **Invalid org-logo placeholders (repeated letters):** no `charAt(0).repeat()` found
+  in `OrganizationMark` / `CommitteeLogoSection`. → NOT REPRODUCED.
+- **Actions in read-only exploration without explanation:** exploration hides/
+  disables write controls (I-030); `DocumentAnnotationsPanel` states notes need an
+  authenticated account. → IMPLEMENTED — NOT BROWSER TESTED.
+- **Aggregate vote results without individual evidence:** governed by I-GAP-2 rule
+  (honest display, no fabrication). DecisionDetail display NOT TESTED in browser.
+- **Review cards not leading to a reviewable version:** to verify in browser
+  (I-GAP-3). NOT TESTED.
+- **Empty reports/memory/attendance from blocked reads:** governed-state contract
+  distinguishes EMPTY (after successful zero-read) from denied read. NOT TESTED.
+- **Broken/duplicated committee URLs:** single canonical `/o/:orgRef/c/:committeeRef`
+  pattern; `LegacyCommitteeRedirect` resolves legacy. → NOT REPRODUCED.
+- **`/documents` vs `/documentation` inconsistency:** distinct purpose split
+  (D-ROUTE-1): official record library vs product documentation hub. Clarify labels.
+  → P3 open.
+
 ## Pending Phase 1 investigations (not yet defects)
 - Raw status string audit across `src/pages/committee/ReportCenter.jsx`,
   `CommitteeHandover.jsx`, `WorkstreamDetail.jsx` — these use status enums in *logic*
