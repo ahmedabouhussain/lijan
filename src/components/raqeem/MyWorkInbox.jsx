@@ -3,14 +3,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Inbox, RefreshCw, AlertTriangle, ShieldCheck, BadgeCheck, Vote, Gavel,
   ScrollText, Handshake, FileSearch, CalendarClock, ClipboardList, ChevronLeft, Ban, Building2,
-  Download, Printer,
+  Download, Printer, FileSpreadsheet,
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { cn } from "@/lib/utils";
-import { workExportCsv, downloadCsv, openWorkPrintView } from "@/lib/workExport";
+import { openWorkPrintView } from "@/lib/workExport";
+import { exportInstitutionalDocument, saveExportResult } from "@/lib/institutionalExportEngine";
 
 // MyWorkInbox — «مساحتي»: what is required of ME now.
 //
@@ -111,8 +112,50 @@ export default function MyWorkInbox() {
   const exportScopeLabel = filtered
     ? t("المعروض بالتصفية الحالية", "The rows shown under the current filter")
     : t("كل ما هو مطلوب مني", "Everything required of me");
-  const exportFilename = `lijan-my-work-${new Date().toISOString().slice(0, 10)}.csv`;
-  const handleExportCsv = () => downloadCsv(exportFilename, workExportCsv({ data, items: visible, scopeLabel: exportScopeLabel, lang }));
+  const [exporting, setExporting] = useState(false);
+  // The owning organization and actor travel from the SAME assembled response the screen renders,
+  // so the branded report never disagrees with what the person sees.
+  const primaryOrg = data?.scope?.committees?.[0]?.organization || null;
+  const orgName = primaryOrg?.name ? { ar: primaryOrg.name.ar, en: primaryOrg.name.en } : null;
+  const orgId = primaryOrg?.id || null;
+  const requestedBy = data?.actor?.display_name || null;
+
+  const handleExportReport = async () => {
+    setExporting(true);
+    try {
+      const result = await exportInstitutionalDocument({
+        productType: "personal_work_report",
+        organizationId: orgId,
+        organizationName: orgName,
+        language: lang,
+        classification: "internal",
+        format: "xlsx",
+        requestedBy,
+        purpose: exportScopeLabel,
+        data: { workData: data, items: visible, scopeLabel: exportScopeLabel },
+      });
+      await saveExportResult(result);
+    } catch (e) { /* export best-effort */ }
+    setExporting(false);
+  };
+  const handleExportCsvRaw = async () => {
+    setExporting(true);
+    try {
+      const result = await exportInstitutionalDocument({
+        productType: "personal_work_report",
+        organizationId: orgId,
+        organizationName: orgName,
+        language: lang,
+        classification: "internal",
+        format: "csv",
+        requestedBy,
+        purpose: exportScopeLabel,
+        data: { workData: data, items: visible, scopeLabel: exportScopeLabel },
+      });
+      await saveExportResult(result);
+    } catch (e) { /* export best-effort */ }
+    setExporting(false);
+  };
   const handlePrint = () => openWorkPrintView({ data, items: visible, scopeLabel: exportScopeLabel, lang });
 
   if (loading) {
@@ -181,12 +224,22 @@ export default function MyWorkInbox() {
             <span className="hidden sm:inline">{t("تحديث", "Refresh")}</span>
           </button>
           <button
-            onClick={handleExportCsv}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary"
-            title={t("تصدير CSV بالأرقام المعروضة", "Export CSV with the numbers shown")}
+            onClick={handleExportReport}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary-dark disabled:opacity-50"
+            title={t("تصدير تقرير عملي (Excel مؤسسي)", "Export My Work Report (branded Excel)")}
           >
             <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{t("تصدير", "Export")}</span>
+            <span className="hidden sm:inline">{t("تصدير تقرير عملي", "My Work Report")}</span>
+          </button>
+          <button
+            onClick={handleExportCsvRaw}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50"
+            title={t("تنزيل البيانات الخام (CSV) — للتحليل أو التكامل، بلا تصميم أو شعارات", "Download raw data (CSV) — for analysis or integration, no design or logos")}
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t("CSV خام", "Raw CSV")}</span>
           </button>
           <button
             onClick={handlePrint}
