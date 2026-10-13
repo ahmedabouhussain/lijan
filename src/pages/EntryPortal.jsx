@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn, Compass, ShieldCheck, LogOut, Activity, Check, Loader2 } from "lucide-react";
+import { LogIn, Compass, ShieldCheck, LogOut, Activity, Check, Loader2, FileText } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
@@ -160,13 +160,21 @@ export default function EntryPortal() {
             </button>
           </div>
 
-          <div className="mt-5 text-center">
+          <div className="mt-5 text-center space-y-1.5">
             <button
               type="button"
               onClick={() => navigate("/committees-registry")}
-              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors"
+              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors block"
             >
               {t("سجل اللجان العامة", "Public Committees Registry")}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/platform-specification")}
+              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors inline-flex items-center gap-1"
+            >
+              <FileText className="w-3 h-3" />
+              {t("المواصفات الفنية للمنصة", "Platform Technical Specification")}
             </button>
           </div>
 
