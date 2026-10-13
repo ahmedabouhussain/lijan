@@ -38,6 +38,24 @@
 - **Fix:** added `CIRCULATION_RESPONSE` map; rendered via `L.label`.
 - **Status:** FIXED-UNVERIFIED.
 
+## D-135 — Amendment status rendered raw in formation page
+- **Surface:** `src/pages/committee/CommitteeFormation.jsx` (proposed amendments list)
+- **Symptom:** `<StatusBadge label={a.status} />` rendered raw English amendment statuses
+  (`draft`, `secretary_review`, `pending_approval`, `effective`...).
+- **Fix:** added `AMENDMENT_STATUS` to `raqeemUtils.js`, registered in `BILINGUAL_LABEL_MAPS`;
+  rendered via `L.label(AMENDMENT_STATUS, a.status, a.status)`. Color kept from local
+  `STATUS_COLORS` (unchanged).
+- **Status:** FIXED-UNVERIFIED. Build green.
+
+## D-136 — Handover item status rendered raw in handover page
+- **Surface:** `src/pages/committee/CommitteeHandover.jsx` (item row meta line)
+- **Symptom:** `{i.status}` rendered raw (`pending`, `accepted`, `returned`, `reassigned`,
+  `not_transferred`) inline beside the obligation type.
+- **Fix:** added `HANDOVER_ITEM_STATUS` to `structureLabels.js`; rendered via
+  `label(HANDOVER_ITEM_STATUS, i.status, lang)` (same `label` helper already used for
+  obligation types on the same line).
+- **Status:** FIXED-UNVERIFIED. Build green.
+
 ## Pre-existing known issues (carried forward)
 - **D-106:** Concurrency containment exists in application logic, not the storage layer
   (two writes can both succeed). Mitigated by compare-and-set revision fields; not

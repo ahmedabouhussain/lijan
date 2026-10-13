@@ -61,6 +61,14 @@ export const HANDOVER_STATUS = {
   accepted: { ar: "مقبول", en: "Accepted" },
 };
 
+export const HANDOVER_ITEM_STATUS = {
+  pending: { ar: "بانتظار", en: "Pending" },
+  accepted: { ar: "مُسند", en: "Assigned" },
+  returned: { ar: "أُعيد", en: "Returned" },
+  reassigned: { ar: "أُعيد الإسناد", en: "Reassigned" },
+  not_transferred: { ar: "لم يُنقل", en: "Not transferred" },
+};
+
 export const EXCLUDED_FROM_HANDOVER = {
   private_notes: { ar: "الملاحظات الخاصة", en: "Private notes" },
   personal_delegations: { ar: "التفويضات الشخصية", en: "Personal delegations" },

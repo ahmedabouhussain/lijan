@@ -242,6 +242,22 @@ export const DOCUMENT_STATUS = {
   archived: { ar: "مؤرشف", en: "Archived", color: "bg-state-neutral-surface text-state-neutral-ink" },
 };
 
+export const AMENDMENT_STATUS = {
+  draft: { ar: "مسودة", en: "Draft" },
+  ai_processing: { ar: "معالجة آلية", en: "AI Processing" },
+  secretary_review: { ar: "مراجعة الأمين", en: "Secretary Review" },
+  governance_review: { ar: "مراجعة الحوكمة", en: "Governance Review" },
+  legal_review: { ar: "مراجعة قانونية", en: "Legal Review" },
+  returned: { ar: "أُعيد للتعديل", en: "Returned" },
+  pending_approval: { ar: "بانتظار الاعتماد", en: "Pending Approval" },
+  approved: { ar: "معتمد", en: "Approved" },
+  scheduled: { ar: "مجدول", en: "Scheduled" },
+  effective: { ar: "نافذ", en: "Effective" },
+  rejected: { ar: "مرفوض", en: "Rejected" },
+  cancelled: { ar: "ملغى", en: "Cancelled" },
+  superseded: { ar: "ملغى بقرار لاحق", en: "Superseded" },
+};
+
 export const DELEGATION_STATUS = {
   active: { ar: "سارية", en: "Active", color: S.success },
   expired: { ar: "منتهية", en: "Expired", color: S.neutral },
@@ -308,7 +324,7 @@ const BILINGUAL_LABEL_MAPS = [
   AI_OUTPUT_TYPE, AI_OUTPUT_STATUS, WORKSTREAM_STATUS, WORKSTREAM_ROLE, FIRST_MEETING_STATUS,
   INITIATIVE_STATUS,
   DELEGATION_STATUS, CIRCULATION_ROUND_STATE, CIRCULATION_RULE,
-  CIRCULATION_DISPATCH_STATE, CIRCULATION_RESPONSE,
+  CIRCULATION_DISPATCH_STATE, CIRCULATION_RESPONSE, AMENDMENT_STATUS,
 ];
 
 function bindEntryToActiveLanguage(entry) {

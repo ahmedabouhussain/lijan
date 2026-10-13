@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import FormationImpactPreview from "@/components/raqeem/FormationImpactPreview";
-import { MEMBER_ROLE } from "@/lib/raqeemUtils";
+import { MEMBER_ROLE, AMENDMENT_STATUS } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { L } from "@/lib/l10n";
 
@@ -260,7 +260,7 @@ export default function CommitteeFormation() {
                   </div>
                 )}
               </div>
-              <StatusBadge label={a.status} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
+              <StatusBadge label={L.label(AMENDMENT_STATUS, a.status, a.status)} colorClass={STATUS_COLORS[a.status] || "bg-secondary"} />
             </div>
           ))
         )}

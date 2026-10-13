@@ -9,7 +9,7 @@ import EmptyState from "@/components/raqeem/EmptyState";
 import CrudFormDialog from "@/components/raqeem/CrudFormDialog";
 import { Button } from "@/components/ui/button";
 import { Handshake, Plus } from "lucide-react";
-import { HANDOVER_DISPOSITIONS, HANDOVER_STATUS, OBLIGATION_TYPES, EXCLUDED_FROM_HANDOVER, label } from "@/lib/structureLabels";
+import { HANDOVER_DISPOSITIONS, HANDOVER_STATUS, HANDOVER_ITEM_STATUS, OBLIGATION_TYPES, EXCLUDED_FROM_HANDOVER, label } from "@/lib/structureLabels";
 
 // CommitteeHandover — what the institution must settle before a seat changes hands.
 //
@@ -177,7 +177,7 @@ export default function CommitteeHandover() {
                           <span className="text-muted-foreground">
                             {label(OBLIGATION_TYPES, i.obligation_type, lang)}
                             {i.due_date ? ` · ${t("الاستحقاق", "due", lang)} ${i.due_date}` : ""}
-                            {i.status !== "pending" ? ` · ${i.status}` : ""}
+                            {i.status !== "pending" ? ` · ${label(HANDOVER_ITEM_STATUS, i.status, lang)}` : ""}
                           </span>
                         </div>
                         <label className="text-xs text-muted-foreground block">
