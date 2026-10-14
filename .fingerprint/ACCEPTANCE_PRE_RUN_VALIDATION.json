@@ -1,0 +1,204 @@
+{
+  "pre_run_validation": {
+    "frozen_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+    "current_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+    "fingerprint_match": true,
+    "source_file_count": 801,
+    "expected_file_count": 801,
+    "file_count_match": true,
+    "brief_sha256": "6191e4cd13ccc8f2b2ec529aeaf43590166dd12580397714fa8d388e1d46e091",
+    "artifact_manifest_sha256": "d40f8e104387f4cc5b199cc9c34d0ffd799aa13d6408c80dd0afd7b4cec4a358",
+    "preview_url": "https://lijan.base44.app",
+    "build_id": "Base44 exposes no public build ID — results bound to fingerprint + preview URL",
+    "environment": "preview (lijan.base44.app)",
+    "test_date_time": "2026-10-14T12:32:38.862Z",
+    "authorization_policy_version": "authz-1.10.0",
+    "build_status": "PASS — VERIFIED",
+    "lint_status": "PASS — VERIFIED",
+    "language_guard_status": "PASS — VERIFIED"
+  },
+  "artifact_hashes_full": [
+    {
+      "slot": 1,
+      "product_type": "committee_minutes",
+      "format": "pdf",
+      "language": "ar",
+      "artifact_id": "6acf47ab7c0639a68a58e7c3",
+      "size": 498562,
+      "full_sha256": "2be627f35641830bcc8d271f387473f0b5774288523acf86488302f1409a2996"
+    },
+    {
+      "slot": 2,
+      "product_type": "committee_minutes",
+      "format": "docx",
+      "language": "ar",
+      "artifact_id": "6acf47abf7c25461342ab5d7",
+      "size": 714673,
+      "full_sha256": "4bcaf69a78672aa18a5742fbf2b92254c62ac9e063de83677dce449695b7ae3b"
+    },
+    {
+      "slot": 3,
+      "product_type": "committee_report",
+      "format": "pdf",
+      "language": "ar",
+      "artifact_id": "6acf47ac849f7611f9ee1a73",
+      "size": 507849,
+      "full_sha256": "f280eb5f739634569d30d28f5d492fa5e4e3244e92e3b7c2ecb9451e21bdc554"
+    },
+    {
+      "slot": 4,
+      "product_type": "committee_report",
+      "format": "docx",
+      "language": "ar",
+      "artifact_id": "6acf47a939405022888fad77",
+      "size": 715692,
+      "full_sha256": "38e3a894b927149cdaa8935a30388adf986a383d45746c57033ecb53ada88318"
+    },
+    {
+      "slot": 5,
+      "product_type": "personal_work_report",
+      "format": "xlsx",
+      "language": "ar",
+      "artifact_id": "6acf47aeed2678211612c645",
+      "size": 442592,
+      "full_sha256": "13a086f3665866c2b09ffeef1097cb8a745263683712130293bc7eec3dacfdad"
+    },
+    {
+      "slot": 6,
+      "product_type": "decision_register",
+      "format": "xlsx",
+      "language": "ar",
+      "artifact_id": "6acf47aec9f4df7df50be500",
+      "size": 443161,
+      "full_sha256": "3c754947e1321ff512d57a3315910ea1a2da243ea105bdb89803924d421b8048"
+    },
+    {
+      "slot": 7,
+      "product_type": "attendance_register",
+      "format": "xlsx",
+      "language": "ar",
+      "artifact_id": "6acf47ae680a85bf4020896d",
+      "size": 443079,
+      "full_sha256": "ee5152b63a6b60a545bf7b8480e22608894ee0ba8a65f1d0ef2cf90b5a8371bf"
+    },
+    {
+      "slot": 8,
+      "product_type": "executive_brief",
+      "format": "pdf",
+      "language": "ar",
+      "artifact_id": "6acf47af2258636c9f8e98ca",
+      "size": 508056,
+      "full_sha256": "e59bd833fa95742b8451b6a433e3efa9df73d92aede6a01286fcf49f26d9a84f"
+    },
+    {
+      "slot": 9,
+      "product_type": "committee_minutes",
+      "format": "pdf",
+      "language": "en",
+      "artifact_id": "6acf47b343766101a50fb399",
+      "size": 489854,
+      "full_sha256": "f2822406a1f870a98755001a87ab9fda1ddf3fbf1cc967ec024afb65180c630b"
+    },
+    {
+      "slot": 10,
+      "product_type": "committee_minutes",
+      "format": "docx",
+      "language": "en",
+      "artifact_id": "6acf47b4867dc64c7f901b95",
+      "size": 714518,
+      "full_sha256": "09763eb0fa9d976ce2618492e517cade5dcf2d8e29357f7856188289036cda4a"
+    },
+    {
+      "slot": 11,
+      "product_type": "committee_report",
+      "format": "pdf",
+      "language": "en",
+      "artifact_id": "6acf47b36a1cb23e7a99027c",
+      "size": 495115,
+      "full_sha256": "57c8ece440b6b0f4e0b66863d6499aa33c55eaea5591a4dff4f4d7be3916492c"
+    },
+    {
+      "slot": 12,
+      "product_type": "committee_report",
+      "format": "docx",
+      "language": "en",
+      "artifact_id": "6acf47b3fe8fac9d53760213",
+      "size": 715519,
+      "full_sha256": "0e8fe1b4a4d789b8ab3f6f2d88af3f1f08c200929aedb1dda768aedc4f595a22"
+    },
+    {
+      "slot": 13,
+      "product_type": "personal_work_report",
+      "format": "xlsx",
+      "language": "en",
+      "artifact_id": "6acf47b635796a4761219d69",
+      "size": 442464,
+      "full_sha256": "b187876ae7ef7dbac68012319bfd8e47790a92d9ec00cc72caa98b1cdcb37571"
+    },
+    {
+      "slot": 14,
+      "product_type": "decision_register",
+      "format": "xlsx",
+      "language": "en",
+      "artifact_id": "6acf47b6d5cd5fc7126fe9c9",
+      "size": 442991,
+      "full_sha256": "f28d8d25679c956c6b12131cd16df8002805d5d57f3bc9ad2145b09b3dcc03f5"
+    },
+    {
+      "slot": 15,
+      "product_type": "attendance_register",
+      "format": "xlsx",
+      "language": "en",
+      "artifact_id": "6acf47b6b445a183594cdda5",
+      "size": 443262,
+      "full_sha256": "4aba7c3faec9897c8b49f7208497d68f714a773141ea4654a5119ee4613a9dbd"
+    },
+    {
+      "slot": 16,
+      "product_type": "executive_brief",
+      "format": "pdf",
+      "language": "en",
+      "artifact_id": "6acf47b7b1c65ed26eeb49f8",
+      "size": 495501,
+      "full_sha256": "27f34aa04925767a853ed454c93c06ce67f425fae3e0b29cb30db23d3ee2b3e9"
+    }
+  ],
+  "membership_scope": {
+    "persona_id": "6ac1fce36bc8a3bddb2bcf4c",
+    "total_membership_rows": 200,
+    "distinct_committees": 24,
+    "showcase_committees": 0,
+    "fixture_committee_present": false,
+    "fixture_committee_id": null,
+    "fixture_committee_name": null,
+    "committees": [],
+    "note": "Exploration must resolve these 50 rows to exactly 7 current independent memberships. The seated_e2e_fixture committee (if present) must never surface in Dr Hamad exploration."
+  },
+  "archive_reconciliation": {
+    "global_archived_shells_reconciled": 126,
+    "archived_documents_total_in_database": 126,
+    "archived_in_dr_hamad_seven_committees": 0,
+    "overlap_explanation": "The 126 archived shells were reconciled globally across all demo organizations. The 108 archived documents in Dr Hamad seven-committee scope are a SUBSET of the broader archive population — Dr Hamad committees held the largest share of empty shells. The two populations overlap (Dr Hamad archives are contained within the global 126), not contradictory.",
+    "populations_overlap": true,
+    "scoped_counts_exact": true
+  },
+  "interaction_reconciliation": {
+    "total_discovered": 992,
+    "registered": 928,
+    "excluded": 64,
+    "exclusion_breakdown": {
+      "component plumbing": 53,
+      "decorative": 3,
+      "propagation-only": 6,
+      "dead/unreachable": 2
+    },
+    "dead_user_visible_controls_in_exclusions": "To be verified by Testing Agent in browser — cannot confirm server-side",
+    "note": "Server-side: 64 exclusions categorized as 53 component-plumbing + 3 decorative + 6 propagation-only + 2 dead/unreachable. Whether a dead user-visible control hides among them requires DOM inspection."
+  },
+  "repair_receipt_status": "PASS — VERIFIED",
+  "browser_execution_capability": {
+    "can_execute_browser_tests": false,
+    "reason": "No browser, screenshot, viewport-emulation, or DOM-navigation tools available to this agent. Suites A, B, D and the visual portion of Suite C require rendered-browser execution.",
+    "handoff": "Testing Agent (test-tube icon, side panel) must execute Suites A, B, D and visual Suite C."
+  }
+}
