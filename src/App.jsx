@@ -33,6 +33,7 @@ import NotificationPreferences from '@/pages/NotificationPreferences';
 import VerifyRecord from '@/pages/VerifyRecord';
 import GuestItemView from '@/pages/GuestItemView';
 import ActionExtractView from '@/pages/ActionExtractView';
+import OAuthConsent from '@/pages/OAuthConsent';
 import GovernancePolicies from '@/pages/GovernancePolicies';
 import SovereignStandards from '@/pages/SovereignStandards';
 import ActivityLog from '@/pages/ActivityLog';
@@ -153,6 +154,8 @@ const AuthenticatedApp = () => {
       <Route path="/guest/:token" element={<GuestItemView />} />
       {/* Obligation-scoped execution extract — one act of execution, reached by a capability link. */}
       <Route path="/extract/:token" element={<ActionExtractView />} />
+      {/* Platform-level MCP OAuth consent page — reached by MCP server redirect, not app navigation. */}
+      <Route path="/oauth-consent" element={<OAuthConsent />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
