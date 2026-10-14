@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-10-14T09:16:35.899Z",
+  "existing_fixture": {
+    "organization_id": "6ac60a3217ef59ec92de0347",
+    "committee_id": "6ac60a3d8ce548ea29bf0cc7",
+    "dataset": "seated_e2e_fixture_v1",
+    "status": "draft"
+  },
+  "existing_seats": [
+    {
+      "id": "6ac60a558872d07575218206",
+      "user_id": "6a9d36242531acd3247a8009",
+      "role": "member",
+      "synthetic_auth_account_established": false
+    },
+    {
+      "id": "6ac60a5596b1aa9b631847dc",
+      "user_id": "6a97ed6875d5a3b0e9a276f0",
+      "role": "member",
+      "synthetic_auth_account_established": false
+    },
+    {
+      "id": "6ac60a3e227e58ca92ef6da2",
+      "user_id": "6a9926062b05cfe1ef31e6f8",
+      "role": "secretary",
+      "synthetic_auth_account_established": false
+    },
+    {
+      "id": "6ac60a3e5c7d17c614fb6e8f",
+      "user_id": "6a96a0e0cd5dac701b62b7f7",
+      "role": "committee_administrator",
+      "synthetic_auth_account_established": false
+    },
+    {
+      "id": "6ac60a3e9cfb42dfb075df5f",
+      "user_id": "6a9955e52d689c66c18b47ec",
+      "role": "chair",
+      "synthetic_auth_account_established": false
+    }
+  ],
+  "synthetic_auth_candidates": [],
+  "status": "BLOCKED",
+  "reason": "Existing isolated committee is bound to real users, not a verified authorized synthetic account. No auth account was fabricated or invited without an approved identity and role."
+}

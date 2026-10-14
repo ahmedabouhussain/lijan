@@ -110,7 +110,13 @@
         "identity": true,
         "generation_date": true,
         "reference_version": true,
-        "no_raw_enum": "PASS — VERIFIED"
+        "no_raw_enum": "PASS — VERIFIED",
+        "font_binary_matches": {
+          "regular": true,
+          "bold": true
+        },
+        "bidi_enabled": true,
+        "direction_matches": true
       }
     },
     {
@@ -257,7 +263,13 @@
         "identity": true,
         "generation_date": true,
         "reference_version": true,
-        "no_raw_enum": "PASS — VERIFIED"
+        "no_raw_enum": "PASS — VERIFIED",
+        "font_binary_matches": {
+          "regular": true,
+          "bold": true
+        },
+        "bidi_enabled": true,
+        "direction_matches": true
       }
     },
     {
@@ -297,7 +309,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": true,
         "reading_order_rtl": true,
@@ -307,7 +319,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {
@@ -356,7 +369,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": true,
         "reading_order_rtl": true,
@@ -366,7 +379,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {
@@ -438,7 +452,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": true,
         "reading_order_rtl": true,
@@ -448,7 +462,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {
@@ -631,7 +646,13 @@
         "identity": true,
         "generation_date": true,
         "reference_version": true,
-        "no_raw_enum": "PASS — VERIFIED"
+        "no_raw_enum": "PASS — VERIFIED",
+        "font_binary_matches": {
+          "regular": true,
+          "bold": true
+        },
+        "bidi_enabled": false,
+        "direction_matches": true
       }
     },
     {
@@ -778,7 +799,13 @@
         "identity": true,
         "generation_date": true,
         "reference_version": true,
-        "no_raw_enum": "PASS — VERIFIED"
+        "no_raw_enum": "PASS — VERIFIED",
+        "font_binary_matches": {
+          "regular": true,
+          "bold": true
+        },
+        "bidi_enabled": false,
+        "direction_matches": true
       }
     },
     {
@@ -818,7 +845,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": false,
         "reading_order_rtl": false,
@@ -828,7 +855,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {
@@ -877,7 +905,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": false,
         "reading_order_rtl": false,
@@ -887,7 +915,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {
@@ -959,7 +988,7 @@
         "visual_open": "NOT TESTED",
         "searchable_arabic": "NOT TESTED",
         "unauthorized_access": "NOT TESTED",
-        "font": "NOT TESTED",
+        "font": "FONT DECLARED — EMBEDDING NOT ESTABLISHED",
         "structural_parse": "PASS — VERIFIED",
         "right_to_left": false,
         "reading_order_rtl": false,
@@ -969,7 +998,8 @@
         "page_number_fields": true,
         "generation_date": true,
         "no_raw_enum": "PASS — VERIFIED",
-        "expected_direction": true
+        "expected_direction": true,
+        "column_presentation": "PASS — VERIFIED"
       }
     },
     {

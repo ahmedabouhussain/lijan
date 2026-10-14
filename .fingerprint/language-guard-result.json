@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-10-14T09:16:35.435Z",
+  "script": "scripts/lang-guard.mjs",
+  "method": "Existing script executed in Node sandbox with built-in imports adapted to CommonJS; guard logic unchanged",
+  "exit_code": 0,
+  "output": [
+    "LGUARD-1: no unresolved raw governed-enum renders found."
+  ],
+  "status": "PASS — VERIFIED"
+}
