@@ -1,0 +1,4628 @@
+{
+  "dataset": "DR_HAMAD_GOVERNED_DEMO_V1",
+  "plan_hash": "85954c0a1cbb3b69c3a8a2f31e9fa92557fc6665b13876c831b412286e56e7a9",
+  "correlation": "bilingual-85954c0a1cbb3b69",
+  "timestamp": "2026-10-14T06:18:40.560Z",
+  "records": [
+    {
+      "entity": "AgendaItem",
+      "id": "6ac15c130c543f4afa3dfabb",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Completion of the existing and proposed initiatives (Access to Knowledge)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac15c13cf31a6205742bfe7",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow-up of the Unicorn project and the capital allocation plan"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac15c13fec16feb00692fb4",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Completion of the SME impact measurement on non-hydrocarbon GDP"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac15c13f89ac959df2f1594",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Update on initiative progress and working-group formation"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac15c129751915c5c4f6254",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Adoption of the minimum SME lending study findings"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac136080081450373332b6a",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation agenda"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac1360820459e657633c4ad",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital service development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13608ce8b5874a380c935",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Meeting pack and action follow-up"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac136067d03b6790f1705ff",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Institutional risk register"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13606b9055431f77a8a7d",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Recovery scenarios"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13606a8c29cb96809ef07",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Continuity of critical services"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13605eea90ae97c44f066",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment opportunities under review"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac136059fd61dd57e9a649b",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Strategic partnerships"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13605899a3c339c7f66e1",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Alignment with national priorities"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13604b9c8596c7d18edb0",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Guarantee and pricing policies"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac1360435c9539b3f605e4b",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME finance portfolio"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac1360434a1914761699b17",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Quarterly lending indicators"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13603a529954ddc618d42",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital transformation plan 2026"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac136032a07092611e96827",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Data readiness indicators"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac136032ae95519737d3852",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Institutional intelligence governance"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac13601357f53b80977916f",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Executive approvals"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac135ffa6365c5bcab7063e",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Unified SME definition"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac135fffe3c57102656b0be",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Access to markets"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "AgendaItem",
+      "id": "6ac135ff19fa0390249c9baf",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Finance, capital and knowledge"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6acf1c69b903f7f741dbbf41",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Group performance and financial forecast"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6ac13608ad1cddfd9f35cec7",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Innovation agenda"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6ac1360724760957432333ba",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Institutional risk register"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6ac1360516c30f80c5b0884e",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Investment opportunities under review"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6ac13603b3f7b44b6ea311f5",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Digital transformation plan 2026"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Decision",
+      "id": "6ac1360160e11af687b1c842",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Decision on Group performance and financial forecast"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6acf1c6a1584f0148a49e8d1",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6acf1c693d916d0c7fc5cccc",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Executive approvals"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac21cdad3f6473d649f40e6",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac15c127688bd0b63b086c4",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up the start-up definition and link it to national innovation indicators"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587c8ca37e084b1369f3",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "تقييم مبادرات الوصول إلى المعرفة المنصوص عليها في الاستراتيجية وإطلاع اللجنة على نسب التنفيذ"
+      },
+      "after": {
+        "title": "Evaluating knowledge access initiatives stipulated in the strategy and updating the Committee on execution rates."
+      },
+      "rollback": {
+        "title": "تقييم مبادرات الوصول إلى المعرفة المنصوص عليها في الاستراتيجية وإطلاع اللجنة على نسب التنفيذ"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587c9e95f4faf376d657",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "عرض دراسة بنك قطر للتنمية بشأن رأس المال الجريء (Unicorn)"
+      },
+      "after": {
+        "title": "Presentation of the Qatar Development Bank study on venture capital (Unicorn)."
+      },
+      "rollback": {
+        "title": "عرض دراسة بنك قطر للتنمية بشأن رأس المال الجريء (Unicorn)"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587c300bc604fddb16b4",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "تحديث وعرض الدراسة المرجعية المتعلقة بوضع متطلبات الحد الأدنى لإقراض البنوك للشركات الصغيرة والمتوسطة"
+      },
+      "after": {
+        "title": "Updating and presenting the benchmark study on establishing minimum lending requirements for SMEs."
+      },
+      "rollback": {
+        "title": "تحديث وعرض الدراسة المرجعية المتعلقة بوضع متطلبات الحد الأدنى لإقراض البنوك للشركات الصغيرة والمتوسطة"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587b80a31161bedd9362",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "تقديم عرض حول برنامج التفرغ لريادة الأعمال 2.0 ومستجدات التقدم المحرز"
+      },
+      "after": {
+        "title": "Presentation on the Entrepreneurship Sabbatical Program 2.0 and progress updates."
+      },
+      "rollback": {
+        "title": "تقديم عرض حول برنامج التفرغ لريادة الأعمال 2.0 ومستجدات التقدم المحرز"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587b1a5a07dfabc31442",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "حصر جميع المبادرات والمنح والمزايا المقدمة للشركات الصغيرة والمتوسطة على مستوى الدولة"
+      },
+      "after": {
+        "title": "Inventory of all initiatives, grants, and benefits provided to SMEs at the national level."
+      },
+      "rollback": {
+        "title": "حصر جميع المبادرات والمنح والمزايا المقدمة للشركات الصغيرة والمتوسطة على مستوى الدولة"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587b01650935aa499369",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "قياس أثر الشركات الصغيرة والمتوسطة على الناتج المحلي الإجمالي غير الهيدروكربوني"
+      },
+      "after": {
+        "title": "Measuring the impact of SMEs on the non-hydrocarbon GDP."
+      },
+      "rollback": {
+        "title": "قياس أثر الشركات الصغيرة والمتوسطة على الناتج المحلي الإجمالي غير الهيدروكربوني"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1587be41598a47f95a584",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title": "إعداد ودراسة التعريف المقترح للشركات الصغيرة والمتوسطة وعرضها على لجنة الإحصاء الاستشارية"
+      },
+      "after": {
+        "title": "Preparing and reviewing the proposed SME definition for submission to the Advisory Statistics Committee."
+      },
+      "rollback": {
+        "title": "إعداد ودراسة التعريف المقترح للشركات الصغيرة والمتوسطة وعرضها على لجنة الإحصاء الاستشارية"
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac14585e08adc1bfba37b51",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac145820b2b856f8bef820c",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac145808b64b9708d78deb6",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1457ed438637f6d4400e5",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1457d08e56809f218f0cd",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1457c935ecb9f4b38934e",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Provide required evidence"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac13609da8fba9c56d0a501",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Innovation agenda"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac136075fa2c3039b7b75fb",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Institutional risk register"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac136056f8ae3cbf5c8e112",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Investment opportunities under review"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac13604828d52f27b857769",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on SME finance portfolio"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac1360302a663556ca9fd34",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Digital transformation plan 2026"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Action",
+      "id": "6ac13602d2cca15d1b2df281",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Follow up on Group performance and financial forecast"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac147754ec18dabf33b7751",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Upcoming Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac1360782ce89b3b538fbef",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac13606f60de952a6b5eb77",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac13605a506bf260199402e",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac13604ca3020baacab122a",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac13602607cf2411203e375",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac13600615762f75c4e6fe6",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — Session"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Meeting",
+      "id": "6ac135ff100e2989f9d07322",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "National Committee for SME Development — Third Meeting"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c6901cd9b9d5e83fbe0",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c67153115bbbeeb15e5",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c6617c65913a09541a1",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c64ec40677f3cf057b2",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c62dcc59f24b8badb1a",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c60d515671634c7548e",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acf1c5f15058c4b0aaefc5b",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d7fb2ac8a3c6ab4a7be",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d7d3e9bb3c3e249d9b9",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d7bbceeefccaa4d6422",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d7590bdafe9119f98d5",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d70ec0a927bb7f3ff51",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d6c2e4bfe0fe25223a5",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ace1d6790526a2879e0e4e4",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd980bb4320616bac0899",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd97edbaf930c6c85928d",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd97d14da131641d503e8",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd97bb75d0b47465dbd8c",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd979243603d005d170c1",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd977564ea2625be3ea5b",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acdd972f2723c20445ade41",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd6868adea303b30d6d4a",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd68504b9136f41fd7d49",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd6833418fd5b1f363737",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd68142ef6f0fb2eb1aa1",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd6800935eb92419f452d",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd67e03b7d476944f55e1",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6accd67c76695260a80ec22d",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc636a906228f415fee167",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc6368acba3fa314067684",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc63675c911f7b3adb6922",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc6365d0fe07469504c2f6",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc6364ba6401a5cb38c79e",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc63621d7f0565d9a4637e",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acc636101514414f7e830d0",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a39db7710dc934b35da",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a38af50d055fc39e355",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a36e1be7ad96d823c58",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a356900c38d856cf3a6",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a340fc64fbc3069cbd2",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a32480e9f93361b7a5c",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb5a3100886d93aae7b3fb",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58ef5f44047d914044fa",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58eea6261f96ecad8692",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58ea06620050ff8e2388",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58e76847e9aa3087d231",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58e66199921697e30414",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58e4d272910f646b8e62",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6acb58e3928220f593c0297d",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca4636630dc67ec1f85842",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca46358d1f6cd490cb043e",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca462d09871d23e5f70861",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca462beecb306b9b216875",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca462a3db2e78ce0538239",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca462817caf5dce94bc9b5",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6aca4626c4f5baac00221907",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8b353359bb971bb3e1d",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8b1e0a2f5c326e3c125",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8b05fdfe3330f4b3f33",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8ae90877f087425b346",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8ad2360ac2eae6fe6e2",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8ab2df84f32569cdca2",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4d8aafbc3cd784b864ec0",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad0f46f62116883bec3b",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad0ca565918cc942070c",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad0a7b06d164648eb3dc",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad086581fe449f19d32c",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad064409ac7f4b143e2e",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4ad014157a6e746c820c2",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac4acff0923a0a5a50f40ec",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d7f7c1d276488cc1a28",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d7ef002ac54bb48ac90",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d7cdad4813f973423e3",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d7b7ab009a2e6ffc15e",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d7ae5fad814352b9c10",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d78b9117b294b30a43c",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac48d77f0b9a0e016e73e21",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac39991f26477093865b3bc",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3998fa10f98f4f564db25",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3998d9086364f30d3cd79",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3998c179ffc2d67522c50",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3998ac4e9ce469078e749",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac39988ec5d52e6c49f2760",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac39987bbb5af4009269aa4",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370f0732586b5d68d66fb",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370ee896b83f1c5726a62",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370ed5b76cc272370293d",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370ebb7c4f894ad7ac2a8",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370ea02576ee7fdc78e08",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370e92933ac1365b13868",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac370e78babc5acd4eb28f6",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac34276b562c5919dd1a96d",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac342741fb33c11a426da67",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac34272f81d117308342db6",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac342710fa85c198eb41c1e",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3426fd055b37d8bc51645",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3426d080831a201ca02ff",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac3426b5cfe86c65ae1885b",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cbbfa8b35a77f079208",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb9196ba1baa49bb427",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb8fa66801156f9d281",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb7780c40ddf031eb24",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb526b981cfa3c65dd8",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb42d59b50b53e0c156",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac23cb3d20875215228e3d4",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230c2bd95ecd9d39e1127",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230c1f5becca55b937d9d",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230bf2ca740efbc1238e0",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230bea36e17f99453b745",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230bccdd67aef8a178138",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230bbca7199c7c281b4a8",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac230ba8ef9c8aba2d2e8ba",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d123da3ef806afcd331",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d0f5a0cec6ba71f73ba",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d0bf22708f257ed4b71",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d09ee8c565191609d32",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d0703cbd037cc2e63b6",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21d06adfff5ef283dcb7e",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cdc20224aae197ba7e1",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cd824991f5980996bb5",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cd3b61a25740d0f6add",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cd21789b8d72dfde033",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cd0a18b426134a5adb2",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac21cce6b6fb5e096b1845e",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1476e416c002c7b95b012",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1476d75aeaf0d05e21a2c",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1476bd71a7771df18dba7",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1476a39cc592b5529d7c0",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14768e7179d0f34afe266",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14767214d3f1ca7cf0c22",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14766be534a1105964afc",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1458568386c4a8dd8558f",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1458313decdb9fcd38ece",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1458123df948a3271f556",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac145806941775d56de6d10",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1457ebabfb15447968285",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1457dca10145d1747aedc",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1457c9a516b1e3b95ca5e",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac145607f04a8209069c9c9",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1455f78fb45ffe8052bf0",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1455c8419edb9dcc6dfc0",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1455bd0764284b64d9034",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14559ee045618ff9e311c",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14558020d0571938275d8",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac14556c7a8cf20800878c1",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144f58360bf33817d138e",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — BEC agenda (reference document)"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144f3da9cd4699d6f0ec8",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Source-based demonstration material — SME development"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144f15d264c86636a2c9e",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144eff8e9db72740a7791",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144ed36d0f2e795b9b858",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144ece0e639a68ec4ce8e",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac144eae78e758c2ffa9ac3",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac13609ff49f5ce4f8b066d",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Innovation and Service Development Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac13607a45c10cf006b8970",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Risk and Business Continuity Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac13606a4ed4062e0f705d9",
+      "committee_id": "6ac13605726965c591ea015a",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Investment and Strategic Partnerships Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac13604486436a2b6af34cb",
+      "committee_id": "6ac13603531124962afac370",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "SME Finance Steering Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac136039e03355edb4d69b8",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "organization_id": "6ac135fe0e5016f1af6c3d95",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac1360238890425b18e3e46",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "organization_id": "6ac135fec66c64208cf80433",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "ELAN Executive Committee — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    },
+    {
+      "entity": "Document",
+      "id": "6ac13600ba11d9658e2084f7",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "organization_id": "6ac144e8042bf45d71173358",
+      "before": {
+        "title_en": null
+      },
+      "after": {
+        "title_en": "National Committee for Small and Medium Enterprise Development — Briefing Note"
+      },
+      "rollback": {
+        "title_en": null
+      },
+      "reason": "Align active showcase language fields without changing Arabic text, lifecycle, or evidence.",
+      "timestamp": "2026-10-14T06:18:40.560Z",
+      "actor": "6a96a0e0cd5dac701b62b7f7",
+      "classification": "EXECUTED DATA MUTATION",
+      "verification": "VERIFIED PERSISTED RESULT",
+      "rollback_status": "NOT TESTED"
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import {
 } from "@/lib/ameenLocale";
 import { ameenName } from "@/lib/ameenIdentity";
 import { useAmeen } from "@/lib/AmeenContext";
+import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 
 /**
  * AgentChatPanel — the single «أمين» chat surface.
@@ -48,6 +49,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
 
   // One identity, two data scopes: the exploration experience reads sandbox data only.
   const agentName = isDemo ? AMEEN_SANDBOX_AGENT_NAME : AMEEN_AGENT_NAME;
+  const { showcaseToken } = useEffectiveActor();
+  const sendLock = useRef(false);
+  const [sendError, setSendError] = useState(null);
 
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -201,7 +205,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
 
   const send = async (text) => {
     const content = (text ?? input).trim();
-    if (!content || !conversation || sending) return;
+    if (!content || !conversation || sendLock.current) return;
+    sendLock.current = true;
+    setSendError(null);
     setInput("");
     setSending(true);
     // Every consultation is recorded — «أمين» is never a silent channel.
@@ -214,14 +220,13 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
       demo_persona_key: demoPersonaKey,
     }).catch(() => {});
     try {
-      // The locale travels WITH the question: locale, ui_locale, response_language,
-      // direction and the binding contract, all ahead of the user's own words.
-      await base44.agents.addMessage(conversation, {
-        role: "user",
-        content: `${ameenDirective(lang)}\n${content}`,
-      });
-    } catch {}
-    setSending(false);
+      await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, committee_id: committee?.id || null, showcase_token: isDemo ? showcaseToken : null });
+    } catch {
+      setSendError(t('تعذّر إرسال الطلب إلى أمين.', 'The request to AMEEN could not be sent.'));
+    } finally {
+      sendLock.current = false;
+      setSending(false);
+    }
   };
 
   // A contextual quick action asks «أمين» a question: open the surface and send it in the
@@ -300,7 +305,8 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
           )}
         </div>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background" dir="auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+          {sendError && <p role="alert" className="text-sm text-destructive">{sendError}</p>}
           {!isActive ? (
             <div className="text-center py-12 space-y-2">
               <Lock className="w-7 h-7 text-muted-foreground/50 mx-auto" />

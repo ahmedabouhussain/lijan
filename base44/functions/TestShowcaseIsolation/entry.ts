@@ -28,6 +28,8 @@ const PERSONA_KEY = 'DR_HAMAD_MAJEEGHEER';
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
+    const caller = await base44.auth.me().catch(() => null);
+    if (!caller || caller.role !== 'admin') return Response.json({ code: 'forbidden' }, { status: 403 });
     const sr = base44.asServiceRole;
     const results: any[] = [];
     const created: string[] = [];
@@ -112,6 +114,13 @@ export default async function (req) {
     // ── 1. A real user asks for a showcase committee's record ───────────────────────────
     const t1 = await authorizeRead({ base44, sr, principal: realPrincipal, record: showcaseMeeting });
     record('1_real_user_showcase_record', 'مستخدم حقيقي يطلب سجل لجنة عرض', 'not_found', t1.reason || (t1.allowed ? 'allowed' : 'unknown'));
+
+    const administrator = await authorizeRead({ base44, sr, principal: { kind: 'user', user: caller }, record: showcaseMeeting });
+    record('11_administrator_direct', 'Administrator direct read', 'not_found', administrator.reason || 'allowed');
+    const modified = await principalFor(live.token.slice(0, -1) + (live.token.endsWith('a') ? 'b' : 'a'));
+    record('12_modified_token', 'Modified token', 'no_session', modified.reason || 'accepted');
+    const missing = await principalFor(null);
+    record('13_missing_token', 'Missing token', 'unauthenticated', missing.reason || 'accepted');
 
     // ── 2. A showcase session asks for a production record ──────────────────────────────
     if (productionMeeting) {
@@ -223,7 +232,10 @@ export default async function (req) {
       allowed_scope_count: scope.committee_ids.length,
       allowed_committee_public_ids: scope.committee_public_ids,
       governance_types_covered: GOVERNED_READ_TYPES,
-      tests: results,
+      execution_boundary: 'Actual stored records/session tokens; ordinary-user principal is synthetic, not an impersonated authenticated HTTP session',
+      tests: results.map(r => ({ ...r, expected_http: ['session_expired','session_revoked','no_session','unauthenticated'].includes(r.expected) ? 401 : r.expected === 'write_not_permitted' ? 403 : r.expected === 'not_found' || r.expected === 'out_of_scope' ? 404 : null,
+        actual_http: ['session_expired','session_revoked','no_session','unauthenticated'].includes(r.actual) ? 401 : r.actual === 'write_not_permitted' ? 403 : r.actual === 'not_found' || r.actual === 'out_of_scope' ? 404 : null,
+        persisted_effect: 'No business-record writes', audit_effect: 'No access-denial audit asserted; session fixtures only' })),
       summary: { total: results.length, passed, failed: results.length - passed },
       refusal_contract: 'uniform_body_uniform_status_no_existence_disclosure',
       cleanup: { revoked_test_sessions: created.length },
