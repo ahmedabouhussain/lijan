@@ -124,12 +124,13 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
   }, [open, conversation, metadataKey, isActive, accessDenied, agentName, name, scopeName, contextLabel, roleLabel]);
 
   useEffect(() => {
-    if (!conversation) return;
-    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) =>
-      setMessages(data.messages || [])
-    );
+    if (!conversation || conversation.metadata?.scope !== scopeKey) return;
+    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) => {
+      if (data.metadata?.scope && data.metadata.scope !== scopeKey) return;
+      setMessages(data.messages || []);
+    });
     return unsub;
-  }, [conversation]);
+  }, [conversation, scopeKey]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
