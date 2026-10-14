@@ -9,13 +9,7 @@ import { cn } from "@/lib/utils";
 import { AMEEN_AGENT_NAME } from "@/lib/ameenAgent";
 import { AMEEN_SANDBOX_AGENT_NAME } from "@/lib/ameenContext";
 import { nameOf } from "@/lib/l10n";
-import {
-  ameenDirective,
-  stripAmeenDirective,
-  isAmeenReloadMessage,
-  isReplyInActiveLanguage,
-  AMEEN_LANGUAGE_FALLBACK,
-} from "@/lib/ameenLocale";
+import { stripAmeenDirective, isAmeenReloadMessage } from "@/lib/ameenLocale";
 import { ameenName } from "@/lib/ameenIdentity";
 import { useAmeen } from "@/lib/AmeenContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
@@ -75,16 +69,11 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
       ? nameOf(organization, lang, "name")
       : null;
 
-  // Isolation key: conversations never cross actor / organization / committee / context.
-  // The interface language is part of the key: each language keeps its own thread, so the
-  // reply language «أمين» is told to use always matches the language the reader is seeing.
-  const metadata = useMemo(() => {
-    // The locale is part of the session too: a thread belongs to the language it was
-    // opened in, and every message below re-states it.
-    const m = { scope: scopeKey, context_key: contextKey, ui_locale: lang, response_language: lang };
-    if (scopeName) m.scope_name = scopeName;
-    return m;
-  }, [scopeKey, contextKey, scopeName, lang]);
+  // Locale changes continue the same scope-bound conversation; older messages stay intact.
+  const metadata = useMemo(() => ({
+    scope: scopeKey, context_key: contextKey,
+    committee_id: committee?.id || null, organization_id: organization?.id || null,
+  }), [scopeKey, contextKey, committee?.id, organization?.id]);
   const metadataKey = JSON.stringify(metadata);
 
   // Crossing into another context starts a clean, non-mixing thread.
@@ -96,18 +85,11 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     setScopeNotice(contextLabel);
   }, [scopeKey, contextLabel]);
 
-  // Changing the interface language starts a clean thread in that language —
-  // «أمين» answers in the language of the interface.
-  const prevLangRef = useRef(lang);
-  useEffect(() => {
-    if (prevLangRef.current === lang) return;
-    prevLangRef.current = lang;
-    setConversation(null);
-    setMessages([]);
-  }, [lang]);
+  // The next request carries the current UI locale; changing it never clears history.
 
   useEffect(() => {
     if (!open || conversation || !isActive || accessDenied) return;
+    let cancelled = false;
     (async () => {
       setLoading(true);
       try {
@@ -115,9 +97,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
         const meta = JSON.parse(metadataKey);
         const existing = (list || []).find((c) => {
           if (!c.metadata) return false;
-          return Object.entries(meta).every(([k, v]) => c.metadata[k] === v);
+          return c.metadata.scope === meta.scope && c.metadata.context_key === meta.context_key;
         });
-        const conv = existing || await base44.agents.createConversation({
+        const conv = existing ? await base44.agents.getConversation(existing.id) : await base44.agents.createConversation({
           agent_name: agentName,
           metadata: {
             name: `${name} · ${scopeName || contextLabel}`,
@@ -125,14 +107,20 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
               lang === "ar"
                 ? `السياق: ${contextLabel} · الدور: ${roleLabel} · لغة الرد: العربية الفصحى الرسمية`
                 : `Context: ${contextLabel} · Role: ${roleLabel} · Reply language: English only — write the entire reply in English, including headings, labels and table columns.`,
-            ...meta,
+            ...meta, ui_locale: lang, response_language: lang,
           },
         });
-        setConversation(conv);
-        setMessages(conv.messages || []);
-      } catch {}
-      setLoading(false);
+        if (!cancelled) {
+          setConversation(conv);
+          setMessages(conv.messages || []);
+          setSendError(null);
+        }
+      } catch {
+        if (!cancelled) setSendError(t('تعذّر فتح محادثة أمين.', 'The AMEEN conversation could not be opened.'));
+      }
+      if (!cancelled) setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, [open, conversation, metadataKey, isActive, accessDenied, agentName, name, scopeName, contextLabel, roleLabel]);
 
   useEffect(() => {
@@ -147,65 +135,15 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
-  // ── Pre-display language gate ───────────────────────────────────────────────
-  // The active locale governs the reply, so a reply that ignored it is never shown as
-  // written. It is regenerated once under the same contract; if the engine fails again,
-  // the reader gets a localized notice instead of the wrong language.
-  const guardRef = useRef(new Set());
-  const [languageFallback, setLanguageFallback] = useState(false);
-
-  // A new thread starts with a clean language state.
-  useEffect(() => {
-    guardRef.current = new Set();
-    setLanguageFallback(false);
-  }, [conversation?.id]);
-
-  const reloadDirective = ameenDirective(lang, { reload: true });
-  const messageId = (m, i) => m.id || `${m.created_date || i}:${String(m.content || "").slice(0, 40)}`;
-
-  useEffect(() => {
-    if (!conversation || messages.length === 0) return;
-    const offenders = [];
-    messages.forEach((m, i) => {
-      if (m.role !== "assistant" || !m.content) return;
-      if (isReplyInActiveLanguage(lang, m.content)) return;
-      offenders.push(messageId(m, i));
-    });
-    if (offenders.length === 0) return;
-    const fresh = offenders.filter((id) => !guardRef.current.has(id));
-    if (fresh.length === 0) {
-      // The engine ignored the contract even after a rewrite — stop showing the leak.
-      setLanguageFallback(true);
-      return;
-    }
-    fresh.forEach((id) => guardRef.current.add(id));
-    base44.agents
-      .addMessage(conversation, { role: "user", content: reloadDirective })
-      .catch(() => {});
-  }, [messages, conversation, lang, reloadDirective]);
-
-  // The reader sees their own question and the reply — never the governing block, and
-  // never the engine-only rewrite turn.
-  const displayMessages = useMemo(
-    () =>
-      messages
-        .filter((m) => !isAmeenReloadMessage(m.content))
-        .map((m) => {
-          const mustReplace =
-            languageFallback && m.role === "assistant" && !isReplyInActiveLanguage(lang, m.content);
-          return {
-            ...m,
-            content: mustReplace
-              ? AMEEN_LANGUAGE_FALLBACK[lang === "ar" ? "ar" : "en"]
-              : stripAmeenDirective(m.content),
-          };
-        }),
-    [messages, lang, languageFallback]
-  );
+  // History is evidence: never regenerate or replace previous-language replies.
+  // The server adds the active locale contract only to the next consultation.
+  const displayMessages = useMemo(() => messages
+    .filter((m) => !isAmeenReloadMessage(m.content))
+    .map((m) => ({ ...m, content: stripAmeenDirective(m.content) })), [messages]);
 
   const send = async (text) => {
     const content = (text ?? input).trim();
-    if (!content || !conversation || sendLock.current) return;
+    if (!content || !conversation || conversation.metadata?.scope !== scopeKey || sendLock.current) return;
     sendLock.current = true;
     setSendError(null);
     setInput("");
@@ -218,9 +156,11 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
       question: content,
       demo_mode: isDemo,
       demo_persona_key: demoPersonaKey,
+      language: lang,
+      showcase_token: isDemo ? showcaseToken : null,
     }).catch(() => {});
     try {
-      await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, committee_id: committee?.id || null, showcase_token: isDemo ? showcaseToken : null });
+      await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, scope_key: scopeKey, context_key: contextKey, committee_id: committee?.id || null, organization_id: organization?.id || null, showcase_token: isDemo ? showcaseToken : null });
     } catch {
       setSendError(t('تعذّر إرسال الطلب إلى أمين.', 'The request to AMEEN could not be sent.'));
     } finally {
@@ -240,7 +180,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     consumeAmeenPrompt();
   }, [pendingPrompt, conversation, loading, isActive, accessDenied]);
 
-  const disabled = !isActive || accessDenied || sending;
+  const disabled = !isActive || accessDenied || sending || loading || !conversation || conversation.metadata?.scope !== scopeKey;
 
   const panel = (children) => (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -314,7 +254,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
                 {t("«أمين» متاح للمستخدمين المسجّلين.", "AMEEN is available to registered users.")}
               </p>
               <p className="text-xs text-muted-foreground">
-                {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use Ameen in this context.")}
+                {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use AMEEN in this context.")}
               </p>
             </div>
           ) : accessDenied ? (

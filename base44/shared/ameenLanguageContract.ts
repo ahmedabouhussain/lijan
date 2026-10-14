@@ -1,4 +1,4 @@
-export const AMEEN_LANGUAGE_VERSION = 'ameen-language-1.1.0';
+export const AMEEN_LANGUAGE_VERSION = 'ameen-language-1.2.0';
 export function buildAmeenLanguageContract(language) {
   if (!['ar', 'en'].includes(language)) throw new Error('language_required');
   const ar = language === 'ar';
