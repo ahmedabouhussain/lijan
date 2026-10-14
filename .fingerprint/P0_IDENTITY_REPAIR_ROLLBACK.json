@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-10-14T12:40:04.927Z",
+  "repair_type": "P0_IDENTITY_ISOLATION_REPAIR",
+  "dr_hamad_user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+  "fahad_user_id": "DEMO-USER-FAHAD-AL-FIHAIDI",
+  "total_contaminated_rows": 7,
+  "all_rows_before": [
+    {
+      "id": "6ac13916aa77a68bdf6c66f0",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "secretary",
+      "status": "active"
+    },
+    {
+      "id": "6ac139160dae2757b6c4f4a0",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "member",
+      "status": "active"
+    },
+    {
+      "id": "6ac13914c0a7024f4d6b3273",
+      "committee_id": "6ac13605726965c591ea015a",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "member",
+      "status": "active"
+    },
+    {
+      "id": "6ac1391473cbf1c47f67626b",
+      "committee_id": "6ac13603531124962afac370",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "vice_chair",
+      "status": "active"
+    },
+    {
+      "id": "6ac13913a34df7bb046c89b4",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "chair",
+      "status": "active"
+    },
+    {
+      "id": "6ac139123db947b61bcf3297",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "chair",
+      "status": "active"
+    },
+    {
+      "id": "6ac139112efdd3e404a85aae",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "role": "member",
+      "status": "active"
+    }
+  ],
+  "keep_for_dr_hamad": [
+    {
+      "id": "6ac13913a34df7bb046c89b4",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "role": "chair",
+      "previous_role": "chair"
+    },
+    {
+      "id": "6ac1391473cbf1c47f67626b",
+      "committee_id": "6ac13603531124962afac370",
+      "role": "vice_chair",
+      "previous_role": "vice_chair"
+    },
+    {
+      "id": "6ac13914c0a7024f4d6b3273",
+      "committee_id": "6ac13605726965c591ea015a",
+      "role": "member",
+      "previous_role": "member"
+    },
+    {
+      "id": "6ac139160dae2757b6c4f4a0",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "role": "member",
+      "previous_role": "member"
+    },
+    {
+      "id": "6ac13916aa77a68bdf6c66f0",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "role": "secretary",
+      "previous_role": "secretary"
+    },
+    {
+      "id": "6ac139112efdd3e404a85aae",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "role": "member",
+      "previous_role": "member"
+    },
+    {
+      "id": "6ac139123db947b61bcf3297",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "role": "chair",
+      "previous_role": "chair"
+    }
+  ],
+  "keep_for_fahad": [],
+  "keep_for_fixture": [],
+  "dr_hamad_expected_roles": {
+    "6ac136029bdc0684e26491f1": "chair",
+    "6ac13603531124962afac370": "vice_chair",
+    "6ac13605726965c591ea015a": "member",
+    "6ac136066f4a078a2606d45a": "member",
+    "6ac1360718fad7d60565ccd4": "secretary",
+    "6ac135fe15c0e0749681e65b": "member",
+    "6ac13600152beda145cdbd92": "chair"
+  }
+}
