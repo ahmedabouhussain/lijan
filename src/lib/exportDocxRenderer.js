@@ -2,7 +2,7 @@
 // Uses the docx library with RTL section properties for Arabic, a maroon title block,
 // metadata paragraphs, headed sections, and comparison tables. One shape (buildExportContent)
 // feeds both PDF and DOCX, so the two never disagree on content.
-import { buildExportContent } from "@/lib/exportContent";
+import { buildExportContent } from "./exportContent.js";
 
 const loc = (lang, ar, en) => (lang === "ar" ? ar : en);
 

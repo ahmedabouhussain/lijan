@@ -1,11 +1,11 @@
 // exportRenderers.js — the XLSX renderer for the Institutional Export Engine.
 // A branded multi-sheet workbook: cover, executive summary, the data as a real Excel Table
 // (filters, frozen header, RTL, maroon header), slices, and a field-definitions sheet.
-import { BRAND } from "@/lib/brand";
-import { ENGINE_PALETTE } from "@/lib/exportTemplates";
+import { BRAND } from "./brand.js";
+import { ENGINE_PALETTE } from "./exportTemplates.js";
 import {
   WORK_EXPORT_COLUMNS, buildWorkExportRows, buildWorkExportMeta,
-} from "@/lib/workExport";
+} from "./workExport.js";
 
 const loc = (lang, ar, en) => (lang === "ar" ? ar : en);
 const ink = (c) => c.slice(2);

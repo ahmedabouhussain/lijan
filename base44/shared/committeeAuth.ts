@@ -85,7 +85,8 @@ export async function resolvePersonaCapabilities(base44, persona, committee) {
     role: effectiveRole,
     membership: membership,
     grant: grant,
-    capabilities: evaluateCommitteeAuthority({ role: effectiveRole, delegationActive: delegationActive }),
+    capabilities: Object.fromEntries(Object.entries(evaluateCommitteeAuthority({ role: effectiveRole, delegationActive })).map(([key,value]) => [key, key === 'can_view_committee' || key === 'effective_committee_role' ? value : typeof value === 'boolean' ? false : value])),
+    write_scope: 'none',
     authority_context: {
       principal: persona.user_id,
       persona_id: persona.persona_id || null,

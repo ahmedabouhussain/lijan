@@ -11,6 +11,7 @@ import {
   describeCommittee,
 } from '../../shared/ameenScopeResolver.ts';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
+import { verifyShowcaseSession } from '../../shared/showcaseSession.ts';
 import { assessScopeInForce, assessSeatStanding, assessShowcaseSession, assessRetrieval } from '../../shared/ameenRetrievalGuard.ts';
 import { DR_HAMAD_COMMITTEES, DR_HAMAD_AMEEN_GENERAL, DR_HAMAD_PERSONA } from '../../shared/drHamadDataset.ts';
 import { drHamadContextPath } from '../../shared/drHamadExperience.ts';
@@ -38,6 +39,8 @@ export default async function (req) {
     });
 
     if (demo_mode === true) {
+      const session = await verifyShowcaseSession(base44.asServiceRole, showcase_token, { committeeId: committee?.id });
+      if (!session.ok || session.persona.key !== demo_persona_key) return Response.json({ error: 'Record not available', code: 'no_session' }, { status: 401 });
       return await resolveSandboxContext({
         base44,
         organization,
