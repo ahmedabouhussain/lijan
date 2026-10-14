@@ -64,6 +64,8 @@ export default function MyWorkInbox() {
       const res = await base44.functions.invoke("GetMyWork", {
         demo_mode: isDemoMode,
         demo_persona: demoPersonaKey,
+        showcase_token: showcaseToken,
+        language: lang,
       });
       const d = res?.data || res;
       if (d?.error) { setError(d.error); setData(null); }
@@ -75,7 +77,7 @@ export default function MyWorkInbox() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [isDemoMode, demoPersonaKey]);
+  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [isDemoMode, demoPersonaKey, showcaseToken, lang]);
 
   const activeGroups = (searchParams.get("groups") || "").split(",").filter(Boolean);
   const committeeFilter = searchParams.get("committee") || "all";

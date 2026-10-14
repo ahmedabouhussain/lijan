@@ -125,8 +125,7 @@ export default function CommitteeMinutes() {
               required: true,
               options: meetings.map((m) => ({
                 value: m.id,
-                label_ar: m.title_ar || m.title, label_en: m.title || m.title_ar,
-                label_en: m.title || m.title_ar,
+                label_ar: m.title_ar || m.title, label_en: m.title_en || m.title,
               })),
             },
           ]}
