@@ -79,8 +79,20 @@
 - No production/institutional record fabricated.
 - No permission expanded for convenience.
 
+## Phase 1 implementation status (2026-10-14)
+- Bilingual showcase repair: 220 records persisted (220/220 verified).
+- Showcase session token enforcement: GetMyWork + ResolveAmeenContext gated.
+- Institutional export engine v2: PDF/DOCX/XLSX generation live, artifacts persisted.
+- CommitteeAuth write capabilities zeroed for showcase (write_scope: 'none').
+- useCrudAction write-locked in demo mode; useCommitteeAdmin returns empty caps.
+- AMEEN language contract: SendAmeenMessage enforces ui_locale match.
+- Interaction inventory: 504 occurrences catalogued (390 user-visible, 24 plumbing).
+- Route reconciliation: 99 routes, 7 hubs, 4 work-group routes, 1 fallback.
+- Build: green. Static enum guard: PASS (1 new fix D-141).
+
 ## Publication recommendation
-NOT ready for publication. Gate 1 (Showcase Ready) is PARTIAL: registers exist and
-build is green, but browser acceptance is NOT TESTED, Dr Hamad bilingual fields are
-incomplete (P-GAP-1), and generated outputs are not visually inspected. Recommend
-completing browser acceptance + P-GAP-1 + render inspection before publication review.
+NOT ready for publication. Gate 1 (Showcase Ready) is PARTIAL: registers exist,
+build is green, bilingual repair is persisted (220/220), and showcase isolation
+tests now pass. However browser acceptance is NOT TESTED, and generated outputs
+(PDF/DOCX/XLSX) are not visually inspected. Recommend completing browser acceptance
++ render inspection before publication review.

@@ -113,15 +113,37 @@ Traced from the Phase 1 brief; recorded as found, not fabricated:
 | D-139 | P1 | CommitteeNotifications.jsx:164 | raw `tmpl.priority` in row | routed via `PRIORITY` | IMPLEMENTED — NOT BROWSER TESTED |
 | D-140 | P1 | CommitteeDocuments.jsx:119 | raw `d.status` in StatusBadge | routed via `DOCUMENT_STATUS` | IMPLEMENTED — NOT BROWSER TESTED |
 
-## Backend regression (2026-10-14)
+## D-141 — ReportCenter classification rendered raw
+- **Surface:** `src/pages/committee/ReportCenter.jsx` (artifact list row)
+- **Symptom:** `{inst.classification}` rendered the raw English enum (`internal`, `public`...) in both modes.
+- **Fix:** routed through `CLASSIFICATION` map via `L.label`.
+- **Status:** FIXED-UNVERIFIED. Build green.
+
+## Showcase session token enforcement (2026-10-14)
+- `GetMyWork` and `ResolveAmeenContext` now require a valid `showcase_token` for demo mode.
+- Without a token: 401 `no_session`. With a valid token: 200 and the governed persona's data.
+- `EnterExploration` issues the token; `verifyShowcaseSession` validates it.
+- **Status:** IMPLEMENTED — backend test passes with fresh token.
+
+## Bilingual showcase repair (2026-10-14)
+- 220 records across 6 entities verified and persisted with bilingual `_ar`/`_en` field parity.
+- Evidence: `.fingerprint/bilingual-repair-executed.json` (220/220 VERIFIED PERSISTED RESULT).
+- **Status:** EXECUTED. Browser visual confirmation still pending.
+
+## Institutional export engine v2 (2026-10-14)
+- `GenerateInstitutionalExport` generates PDF/DOCX/XLSX from governed records.
+- `GetInstitutionalExportAccess` gates file download by showcase session or requester ownership.
+- Test: executive_brief PDF, 495KB, SHA256 `64de80e8…`, artifact persisted.
+- **Status:** IMPLEMENTED — NOT BROWSER TESTED.
+
+## Backend regression (2026-10-14
 - TestVoteEligibility: PASS 12/12, 0 writes — identity-by-identifier, recusal, term.
 - TestPrincipalRepresentation: PASS 24/24, 0 writes — one-person/seven-seats invariant.
 - TestAuthorizationGuard: 200, policy `authz-1.10.0` (effective-time gate, fail-closed).
-- TestShowcaseIsolation: **REPRODUCED — OPEN.** Sub-test 1 ("real user requests
-  showcase committee record") expected `not_found`, actual `showcase_scope` (pass:
-  false). Likely an artifact of the admin test context (test_backend_function runs as
-  builder/admin), but not disproved in a rendered non-admin browser session. Browser
-  verification required before closing.
+- TestShowcaseIsolation: **ALL TESTS PASS.** 13/13 pass (sub-test 1 now returns
+  `not_found` as expected). Administrator-direct, modified-token and missing-token
+  boundary tests added. Browser verification of a non-admin session still pending
+  before final closure.
 
 ## Pending Phase 1 investigations (not yet defects)
 - Raw status string audit across `src/pages/committee/ReportCenter.jsx`,
