@@ -133,5 +133,11 @@
   "previous_category_sum": 99,
   "extra_routes": [],
   "missing_routes": [],
-  "resolution": "Previous total 99 was arithmetic/reporting error; actual source route count must equal fresh JSX AST count."
+  "resolution": "Fresh JSX AST proves 99 unique paths and category sum 99. No missing route. The four auth paths already exist; omitting that category produces 95.",
+  "four_paths_explaining_95": [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password"
+  ]
 }
