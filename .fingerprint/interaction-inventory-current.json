@@ -3,11 +3,12 @@
   "method": "Fresh TypeScript JSX AST: every onX attribute plus declared to/href targets; source import reachability only, not rendered/runtime reachability",
   "counts": {
     "navigation": 162,
-    "component plumbing": 47,
+    "component plumbing": 53,
     "user-visible operational": 766,
     "decorative": 3,
     "propagation-only": 6,
-    "dead/unreachable": 8
+    "dead/unreachable": 2,
+    "test/development": 0
   },
   "total": 992,
   "registered": 928,
@@ -7047,12 +7048,13 @@
       "attribute": "onKeyDownCapture",
       "tag": "div",
       "handler": "{handleKeyDown}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-e1a7e00439d8",
@@ -7061,12 +7063,13 @@
       "attribute": "onClick",
       "tag": "Button",
       "handler": "{scrollPrev}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-ce6d08ed68b0",
@@ -7075,12 +7078,13 @@
       "attribute": "onClick",
       "tag": "Button",
       "handler": "{scrollNext}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-eba21f1a65a5",
@@ -7103,12 +7107,13 @@
       "attribute": "onOpenChange",
       "tag": "Sheet",
       "handler": "{setOpenMobile}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-f36892b5d361",
@@ -7117,12 +7122,13 @@
       "attribute": "onClick",
       "tag": "Button",
       "handler": "{(event) => {\n        onClick?.(event)\n        toggleSidebar()\n      }}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-929a98a6fe70",
@@ -7131,12 +7137,13 @@
       "attribute": "onClick",
       "tag": "button",
       "handler": "{toggleSidebar}",
-      "category": "dead/unreachable",
-      "reason": "Outside current source import graph; runtime reachability not established",
+      "category": "component plumbing",
+      "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target",
       "source_reachable": false,
       "registered": false,
       "status": "NOT TESTED",
-      "external_dependency": null
+      "external_dependency": null,
+      "disposition": "Excluded library plumbing, not a dead rendered action"
     },
     {
       "id": "IC-1b248728471e",
@@ -9221,8 +9228,9 @@
       "reason": "Unregistered existing MCP consent page, depends on active MCP consent configuration",
       "source_reachable": false,
       "registered": false,
-      "status": "NOT TESTED",
-      "external_dependency": "MCP consent configuration"
+      "status": "BLOCKED",
+      "external_dependency": "MCP consent configuration",
+      "disposition": "Genuine external dependency: MCP consent scaffold requires an active MCP configuration and its consent route; no active configuration found, no visible entry point"
     },
     {
       "id": "IC-215d388f238d",
@@ -9235,8 +9243,9 @@
       "reason": "Unregistered existing MCP consent page, depends on active MCP consent configuration",
       "source_reachable": false,
       "registered": false,
-      "status": "NOT TESTED",
-      "external_dependency": "MCP consent configuration"
+      "status": "BLOCKED",
+      "external_dependency": "MCP consent configuration",
+      "disposition": "Genuine external dependency: MCP consent scaffold requires an active MCP configuration and its consent route; no active configuration found, no visible entry point"
     },
     {
       "id": "IC-3e756bcedf2c",
@@ -13900,5 +13909,6 @@
       "status": "NOT TESTED",
       "external_dependency": null
     }
-  ]
+  ],
+  "balancing_equation": "162 navigation + 53 component plumbing + 766 user-visible operational + 3 decorative + 6 propagation-only + 2 dead/unreachable + 0 test/development = 992"
 }

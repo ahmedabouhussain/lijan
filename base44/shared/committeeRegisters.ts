@@ -25,7 +25,7 @@ export async function loadRegister(sr: any, key: string, committeeId: string) {
   const def = COMMITTEE_REGISTERS[key];
   if (!def || !committeeId) return { items: [] as any[], has_more: false };
   const page = await sr.entities[def.entity]
-    .filter({ committee_id: committeeId }, { sort: def.sort, limit: def.limit });
+    .filter({ committee_id: committeeId, ...(key === 'documents' ? { status: { $ne: 'archived' } } : {}) }, { sort: def.sort, limit: def.limit });
   const items = arr(page);
   return { items, has_more: !!(page && !Array.isArray(page) && page.has_more) };
 }
