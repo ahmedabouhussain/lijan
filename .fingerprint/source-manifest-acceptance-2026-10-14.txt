@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-10-14T09:22:18.728Z",
+  "scope": "All runtime/frontend/backend source, public assets/fonts, scripts and root build configuration; src/docs acceptance narratives, .fingerprint evidence, dependency directories and git metadata excluded to avoid self-referential digests",
+  "source_file_count": 802,
+  "aggregate_sha256": "4ff676b02994e3b0053cf994970d7ec982494ac1ace970cb83fd09b15ea8bfb7",
+  "aggregation": "SHA256 of lexically sorted UTF-8 path + NUL + file SHA256 + LF entries",
+  "route_count": 99,
+  "entity_count": 107,
+  "backend_function_count": 216,
+  "active_authorization_policy_version": "authz-1.10.0",
+  "build": {
+    "status": "PASS — VERIFIED",
+    "exit_code": 0
+  },
+  "lint": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "error_count": 8,
+    "errors": "Unused imports in six untouched source surfaces"
+  },
+  "static_language_guard": {
+    "timestamp": "2026-10-14T09:16:35.435Z",
+    "script": "scripts/lang-guard.mjs",
+    "method": "Existing script executed in Node sandbox with built-in imports adapted to CommonJS; guard logic unchanged",
+    "exit_code": 0,
+    "output": [
+      "LGUARD-1: no unresolved raw governed-enum renders found."
+    ],
+    "status": "PASS — VERIFIED"
+  },
+  "evidence_boundary": "Fresh source identity, not browser or operational acceptance"
+}

@@ -1,0 +1,4044 @@
+{
+  "timestamp": "2026-10-14T09:22:18.728Z",
+  "scope": "All runtime/frontend/backend source, public assets/fonts, scripts and root build configuration; src/docs acceptance narratives, .fingerprint evidence, dependency directories and git metadata excluded to avoid self-referential digests",
+  "source_file_count": 802,
+  "aggregate_sha256": "4ff676b02994e3b0053cf994970d7ec982494ac1ace970cb83fd09b15ea8bfb7",
+  "aggregation": "SHA256 of lexically sorted UTF-8 path + NUL + file SHA256 + LF entries",
+  "route_count": 99,
+  "entity_count": 107,
+  "backend_function_count": 216,
+  "active_authorization_policy_version": "authz-1.10.0",
+  "build": {
+    "status": "PASS — VERIFIED",
+    "exit_code": 0
+  },
+  "lint": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "error_count": 8,
+    "errors": "Unused imports in six untouched source surfaces"
+  },
+  "static_language_guard": {
+    "timestamp": "2026-10-14T09:16:35.435Z",
+    "script": "scripts/lang-guard.mjs",
+    "method": "Existing script executed in Node sandbox with built-in imports adapted to CommonJS; guard logic unchanged",
+    "exit_code": 0,
+    "output": [
+      "LGUARD-1: no unresolved raw governed-enum renders found."
+    ],
+    "status": "PASS — VERIFIED"
+  },
+  "evidence_boundary": "Fresh source identity, not browser or operational acceptance",
+  "entries": [
+    {
+      "path": "base44/agents/ameen.jsonc",
+      "bytes": 40749,
+      "sha256": "e678a43d4496fc35da41972654e86d4a77d34064bd19da30166825817d52c1a0"
+    },
+    {
+      "path": "base44/agents/ameen_demo.jsonc",
+      "bytes": 31454,
+      "sha256": "427e3364cd38def70aa95af3d4801703770a9ff312beb1c3879745b4034a727e"
+    },
+    {
+      "path": "base44/config.jsonc",
+      "bytes": 181,
+      "sha256": "d375d020b81be405d63e1a2ff1235cda4d21121a647b4fc93cbc357ea483458d"
+    },
+    {
+      "path": "base44/entities/AIExtractionJob.jsonc",
+      "bytes": 2582,
+      "sha256": "84ce6dc4fad885b6525260813aa10f2f39f44832c992211095ee9a65bec5999b"
+    },
+    {
+      "path": "base44/entities/AIIncident.jsonc",
+      "bytes": 5049,
+      "sha256": "f8c574e3bec58f81ccbfad492ef1cc0768ad267621302442312ad949b91d8f27"
+    },
+    {
+      "path": "base44/entities/AIOutputLedger.jsonc",
+      "bytes": 4158,
+      "sha256": "2cc8da1f832c85cca086089d75f78c3e253b9f6859559eefe1dd5bf9c0989363"
+    },
+    {
+      "path": "base44/entities/AISystem.jsonc",
+      "bytes": 5205,
+      "sha256": "6b700e4e24c139fa0383428c96aaee4cfc8238b4e5182fb7313441ed34445130"
+    },
+    {
+      "path": "base44/entities/Action.jsonc",
+      "bytes": 9329,
+      "sha256": "2c61283f4cfd7d9d322803681a49b3f72388c72eeb1cdeda755a33cd62d4f772"
+    },
+    {
+      "path": "base44/entities/ActionClarification.jsonc",
+      "bytes": 3018,
+      "sha256": "2fd0399144d953b48b9322e14be3e553dc09c3347a70cc4bc03733abadb55872"
+    },
+    {
+      "path": "base44/entities/ActionExtractGrant.jsonc",
+      "bytes": 5321,
+      "sha256": "07060c27672e13a5b52775233c2dfbe869ff805e369d1faa0d15a63e86488c35"
+    },
+    {
+      "path": "base44/entities/AgendaItem.jsonc",
+      "bytes": 2959,
+      "sha256": "62dd547716b1f9f39147426eca0190523f82c7998ed0cbb7a808b0092f2081b8"
+    },
+    {
+      "path": "base44/entities/AgendaItemEvidenceRequirement.jsonc",
+      "bytes": 2293,
+      "sha256": "b5285858873e7a3d0a40fc592707f79508e1178f12711eb36af315225885d38c"
+    },
+    {
+      "path": "base44/entities/AgendaItemGuest.jsonc",
+      "bytes": 4249,
+      "sha256": "4cb3a9de33c94c3a5033f1972b1d8c4a627922f510b3cb49123fa4b0227adbf5"
+    },
+    {
+      "path": "base44/entities/AlternateActivation.jsonc",
+      "bytes": 1986,
+      "sha256": "bf5d1b03b8b56ac118a9595d1172b75edb6e0d8e05aef500a106839e5728fcdf"
+    },
+    {
+      "path": "base44/entities/AmendmentReviewStage.jsonc",
+      "bytes": 2141,
+      "sha256": "c045a3f09bb5f5c5aa3c1edd1ed490a3748d300ddc39db31760e75af829dada5"
+    },
+    {
+      "path": "base44/entities/Annotation.jsonc",
+      "bytes": 3412,
+      "sha256": "8690d5653fbaed043a1d71c68f1a864a3774c54c9d51f9af1d39850a33ce6146"
+    },
+    {
+      "path": "base44/entities/Attendance.jsonc",
+      "bytes": 1950,
+      "sha256": "b9a39a4e087d89c2b734c51aa2cbc3caade081657a64e588acd58571e98f4310"
+    },
+    {
+      "path": "base44/entities/AuditEvent.jsonc",
+      "bytes": 2132,
+      "sha256": "8cda389622ed561bdd8d62c1ad97821fd0055af140403f0806ac55d1d3fb9d68"
+    },
+    {
+      "path": "base44/entities/AuditLog.jsonc",
+      "bytes": 1898,
+      "sha256": "d3169a43412e61b5228b1f4c6cc629ed182d33190805bbb0495c789b965c5b8f"
+    },
+    {
+      "path": "base44/entities/AuthorityDelegation.jsonc",
+      "bytes": 2103,
+      "sha256": "89318c8db0e7e464dcf62a145a112309ceb8cb6d335cf2a6e5ff9c5eb46c68b3"
+    },
+    {
+      "path": "base44/entities/AuthorityGrant.jsonc",
+      "bytes": 3121,
+      "sha256": "febec8fc826ca0aa31245a101f8add66ac8b4b4e905dc1563ddcdd714533ccf7"
+    },
+    {
+      "path": "base44/entities/BrandTheme.jsonc",
+      "bytes": 1727,
+      "sha256": "b4f825f4a84aa43eb186227c7cee137d9c6a94ec8b2cbd8898fb29c016501eb9"
+    },
+    {
+      "path": "base44/entities/BreakGlassAccess.jsonc",
+      "bytes": 2059,
+      "sha256": "c7916ae71f6425d0403b26d8224a609789cd8df5ecb1580fd0a79b8b605c231c"
+    },
+    {
+      "path": "base44/entities/ChangeDisposition.jsonc",
+      "bytes": 4581,
+      "sha256": "4cad3237c1a70eec8ada8cd846aa26bd91b0a18c04ea23afd46352cc96b50b3b"
+    },
+    {
+      "path": "base44/entities/CirculationResponse.jsonc",
+      "bytes": 4615,
+      "sha256": "f103cb5c8d0fbe7c30eba724954f3f2eeb1f7f527f42a947318676addbb4daf3"
+    },
+    {
+      "path": "base44/entities/CirculationRound.jsonc",
+      "bytes": 9677,
+      "sha256": "453e4c285ce33a254d161fd3ed4e3f6e2a66672444e0950a26f9ad1e934dbe4c"
+    },
+    {
+      "path": "base44/entities/Committee.jsonc",
+      "bytes": 7009,
+      "sha256": "e300b3fb2f075b582ea78efbfa6a9110e157db3b2ba207fceeabbfc84698acde"
+    },
+    {
+      "path": "base44/entities/CommitteeAmendment.jsonc",
+      "bytes": 3173,
+      "sha256": "75d817f953ee4df2fa3f0634d6e989b90e55a5805496a32cfa7c8ead2e7ef410"
+    },
+    {
+      "path": "base44/entities/CommitteeFormationVersion.jsonc",
+      "bytes": 2331,
+      "sha256": "cdfe787f292fc221d9645d72ba1ca08589055b4adbefaedad2d27f715f479677"
+    },
+    {
+      "path": "base44/entities/CommitteeLifecycleEvent.jsonc",
+      "bytes": 1957,
+      "sha256": "2aa2175544fe34d49c05ad2f90c7ce7f33f5ae1897731f300c80f380c9043a35"
+    },
+    {
+      "path": "base44/entities/CommitteeMandate.jsonc",
+      "bytes": 3181,
+      "sha256": "db187606e9782bec28701241ebe63f8bc1f71cb90c8f328318264bb04a78746b"
+    },
+    {
+      "path": "base44/entities/CommitteeMember.jsonc",
+      "bytes": 2119,
+      "sha256": "05dbb9c23762ae1db93d9abbdc30df062e8e80b928000e5af97a7b5c61fac2ec"
+    },
+    {
+      "path": "base44/entities/CommitteeMembership.jsonc",
+      "bytes": 5721,
+      "sha256": "4ac18710bd7304a2e94db172dfd11a5761a65a2e7db5d2286fe4304e927067d1"
+    },
+    {
+      "path": "base44/entities/CommitteeRelationship.jsonc",
+      "bytes": 5000,
+      "sha256": "f606c9034f2bc9abe77cabb2798759aa16abb53df9a88b28e5a02d0708bbce46"
+    },
+    {
+      "path": "base44/entities/ConflictDeclaration.jsonc",
+      "bytes": 2726,
+      "sha256": "165d3e87f921f8da243cbbccf27ff506a02f1683f53666e93ce950b5498da2fd"
+    },
+    {
+      "path": "base44/entities/CrossEntityDependency.jsonc",
+      "bytes": 2177,
+      "sha256": "746f8d8e5e8cb2b6205bda35b918bf32d1bf5061e854c2b1f5aa3aeb600f75b3"
+    },
+    {
+      "path": "base44/entities/Decision.jsonc",
+      "bytes": 4056,
+      "sha256": "57de1a7cc86a32cdc29cfa84db18658b803bddbbf42732fd7fdefdbd378834be"
+    },
+    {
+      "path": "base44/entities/Delegation.jsonc",
+      "bytes": 2888,
+      "sha256": "e6590529d95362b262d46935ee14dbac95d588f8700556d169e25772910e74ef"
+    },
+    {
+      "path": "base44/entities/Deliberation.jsonc",
+      "bytes": 1933,
+      "sha256": "fab9c7b954123d922fef03425dc6c5de7d6b58acd9d5964ba9c80be66743b6ca"
+    },
+    {
+      "path": "base44/entities/DemoPersonaProfile.jsonc",
+      "bytes": 2468,
+      "sha256": "6327ff9b52d94be3439ac87e99448add0ed6e7cac69d60ac039070158c66aca1"
+    },
+    {
+      "path": "base44/entities/Document.jsonc",
+      "bytes": 3010,
+      "sha256": "d88a7465a533a9e726e05045f8af649aa1efaff8ff47fc4dc88c8874e3d4154e"
+    },
+    {
+      "path": "base44/entities/DocumentAccessGrant.jsonc",
+      "bytes": 2006,
+      "sha256": "705de110a5fd8f8759f6bad59a840560e10aed3f768933b8aedbfe033bed4ed0"
+    },
+    {
+      "path": "base44/entities/DocumentVersion.jsonc",
+      "bytes": 2368,
+      "sha256": "8b87ab50caa3f3a271d37314df8996a3beb7fb9b45185ab5e0628c88b29a94ea"
+    },
+    {
+      "path": "base44/entities/DocumentationAsset.jsonc",
+      "bytes": 2935,
+      "sha256": "ceb15cbb5b948cad28e554021b37f5715cbb24850de4655aa8776eca02a4bae3"
+    },
+    {
+      "path": "base44/entities/DocumentationDownloadLog.jsonc",
+      "bytes": 2687,
+      "sha256": "522ce9761c463153726cd59ef2eb80ff9241e457bfe26c5847cc41e62c94991b"
+    },
+    {
+      "path": "base44/entities/DocumentationRelease.jsonc",
+      "bytes": 3913,
+      "sha256": "6b9bc4235bbf169a0919393aab36db3b38938ab45cb913997d348cff047615b6"
+    },
+    {
+      "path": "base44/entities/EligibleVoterSnapshot.jsonc",
+      "bytes": 5745,
+      "sha256": "693e4aef9c1b7dfd273b757920450859bc8c112e2ea5d48c68fb7d050ff76d28"
+    },
+    {
+      "path": "base44/entities/EvidenceSubmissionEntry.jsonc",
+      "bytes": 3234,
+      "sha256": "f04d007f4a264ae05073a0a8ed6c4018b872bd2a5cbc7e9cc30b5efe323ceb7d"
+    },
+    {
+      "path": "base44/entities/ExternalReference.jsonc",
+      "bytes": 2562,
+      "sha256": "60944e7ff362009c4922befa3afd8c3bc820a9a7a6860cfa2fc4df745cd28854"
+    },
+    {
+      "path": "base44/entities/ExtractedInstrumentField.jsonc",
+      "bytes": 2672,
+      "sha256": "ba8120089b389baccbb550b0ac60c2400b38cd70663d69e61f98ce1c84d200d8"
+    },
+    {
+      "path": "base44/entities/FeatureFlag.jsonc",
+      "bytes": 750,
+      "sha256": "7894846e7fcfbad2da24542724c9f7a9a1e197693ee496257668b15bbbf99c96"
+    },
+    {
+      "path": "base44/entities/FounderVaultEntry.jsonc",
+      "bytes": 1694,
+      "sha256": "67f9ef576c453e66ad0cb5035ead15d544a295b6340fa1a39a766438aae44a5e"
+    },
+    {
+      "path": "base44/entities/FoundingInstrument.jsonc",
+      "bytes": 5937,
+      "sha256": "9aad32c3d72d85bd2d0feae081e31bf9c74d37163a01057c663ac0e12a991465"
+    },
+    {
+      "path": "base44/entities/GovernanceConfig.jsonc",
+      "bytes": 653,
+      "sha256": "636696ba3e384a14e6efb7d8d3a2932c25bc5c5a42fd436e6b7e40d48cc8f29d"
+    },
+    {
+      "path": "base44/entities/HandoverItem.jsonc",
+      "bytes": 3783,
+      "sha256": "6316a4f2a798d0ba2925b97ac934e86679b2fe277c594c728c31ad0a3135e773"
+    },
+    {
+      "path": "base44/entities/HandoverPack.jsonc",
+      "bytes": 4875,
+      "sha256": "089cd1b19f25e98a65528700921b084aabfbb60502373ea1398b0a5b08e37acc"
+    },
+    {
+      "path": "base44/entities/HearingSession.jsonc",
+      "bytes": 5538,
+      "sha256": "a1ff58c9401e09b2549acea9e3cda601b200ce209a13ed5bbeb9211949c63fa1"
+    },
+    {
+      "path": "base44/entities/Initiative.jsonc",
+      "bytes": 4735,
+      "sha256": "37ecfad5de5e2b8c838e2cb68ed63c31fd1283cd3d38ba20716c4d6bf6c1dd45"
+    },
+    {
+      "path": "base44/entities/Institution.jsonc",
+      "bytes": 2079,
+      "sha256": "bfb20d3b87dbff1b8de8dcd1cd61e079c5dd5dbeb1ce4b6ff9264d174722a84e"
+    },
+    {
+      "path": "base44/entities/InstitutionalExportArtifact.jsonc",
+      "bytes": 1788,
+      "sha256": "cc5e979089c70fa1573ffdbb62efad0b9eb7afd38ac2bd92b8c32912ad0ebc53"
+    },
+    {
+      "path": "base44/entities/InstrumentVersion.jsonc",
+      "bytes": 2365,
+      "sha256": "5dc9a2b0af43a48a59bc82c61b52ef646779e529179a56d5b91efcfa4b0758d9"
+    },
+    {
+      "path": "base44/entities/IntegrationConfig.jsonc",
+      "bytes": 1711,
+      "sha256": "770ff9baa004132d6c72a8759d9a5e9202372ad9cf1084baf575c6f4a4469a78"
+    },
+    {
+      "path": "base44/entities/Invitation.jsonc",
+      "bytes": 2205,
+      "sha256": "f257cf251534f7f77fabed81bfd304a41dc37728d2834b259c82984be70ecd11"
+    },
+    {
+      "path": "base44/entities/IssueSnapshot.jsonc",
+      "bytes": 7384,
+      "sha256": "523885bc1bfe54645294569a82358d3899dae4c959cce3e4354cd071dd451b9d"
+    },
+    {
+      "path": "base44/entities/LegislativeFile.jsonc",
+      "bytes": 12732,
+      "sha256": "7a1228dba1787c5e5204ae6aba1230739fcb3ef52b1019a178af5d989b019f55"
+    },
+    {
+      "path": "base44/entities/LegislativeProfile.jsonc",
+      "bytes": 6950,
+      "sha256": "70c89b8754c088d894df56917693263e8891e4f23ea89b14f3656b71a7994a11"
+    },
+    {
+      "path": "base44/entities/MandateReference.jsonc",
+      "bytes": 2058,
+      "sha256": "ecf9515cb038b43bf76adf6d616f88156965db5ce78643d636ae1d7d5bc84a2f"
+    },
+    {
+      "path": "base44/entities/Meeting.jsonc",
+      "bytes": 4179,
+      "sha256": "8d63adac182d6d08ee53c1f6e145d3e14945f896bf157c19b0c7f0924209d93c"
+    },
+    {
+      "path": "base44/entities/MeetingMinutes.jsonc",
+      "bytes": 2963,
+      "sha256": "30583ae1013ccaad2c61f4a5df831615b71d726a186bce594b122e703866f75d"
+    },
+    {
+      "path": "base44/entities/MeetingPack.jsonc",
+      "bytes": 2617,
+      "sha256": "4f5aac1c07bfe41cd2959d950c809f5835c2a263bc98243952d187e6fef5eef8"
+    },
+    {
+      "path": "base44/entities/MemberAcknowledgement.jsonc",
+      "bytes": 2556,
+      "sha256": "ba413049844671c8b062033b0e8b59d0b40357a0cbc52e0c056d3f0e90a01f70"
+    },
+    {
+      "path": "base44/entities/MembershipEffectPolicy.jsonc",
+      "bytes": 2980,
+      "sha256": "f0593cef89d1f5c6452ca5c5f8aad3ff648b65655330a0e19519f26fb95db208"
+    },
+    {
+      "path": "base44/entities/NotificationConfig.jsonc",
+      "bytes": 645,
+      "sha256": "6d142b3129c6874a91fb3163450cfcee5a177c88f380544e756519fd82bfa0d5"
+    },
+    {
+      "path": "base44/entities/NotificationOutbox.jsonc",
+      "bytes": 4201,
+      "sha256": "f5e419900fc8e488ed8955091b9d022f034e245ebf34d7d174074020eceb7fbe"
+    },
+    {
+      "path": "base44/entities/NotificationPreference.jsonc",
+      "bytes": 1673,
+      "sha256": "ea5c18ecc217a3078c3245a18f5cacf3bbba9829feb57fa1a296d68775ec25c1"
+    },
+    {
+      "path": "base44/entities/NotificationTemplate.jsonc",
+      "bytes": 3429,
+      "sha256": "40d79a295a1f885bf6d32b7066ab41c5b54cdcb0f17192bd68dc04ead58613b2"
+    },
+    {
+      "path": "base44/entities/Organization.jsonc",
+      "bytes": 4488,
+      "sha256": "ba31f47f5e3f3bc1b2c80b80a46b02eb3af0a4c60f2a271fd00cf8573e1ec8a2"
+    },
+    {
+      "path": "base44/entities/OrganizationAccessRequest.jsonc",
+      "bytes": 2780,
+      "sha256": "cbbbceb1ae48ee9da25bd6655da6f51fa572109328e4f7a10f001366746be57e"
+    },
+    {
+      "path": "base44/entities/OrganizationAsset.jsonc",
+      "bytes": 2847,
+      "sha256": "ad7cd14320f54cc19ddf797c982514ddd6ea9ed1478451e8ab0046f67d0df88a"
+    },
+    {
+      "path": "base44/entities/OrganizationDirectory.jsonc",
+      "bytes": 2440,
+      "sha256": "0a00e2b741d3497b2f2ce04573d3dd2bfaf0742538433c95a38c6fb06e207a1b"
+    },
+    {
+      "path": "base44/entities/OrganizationMembership.jsonc",
+      "bytes": 2228,
+      "sha256": "0c2451b4acc048ee336734fc6aaf7b79c6e5555b0357a1ec16e1ea93bcf0793b"
+    },
+    {
+      "path": "base44/entities/OrganizationPortal.jsonc",
+      "bytes": 1825,
+      "sha256": "cf2224c856cad3cf855991b1ce687d957528c4bef9a1d68931ecfaf98ae8d4ca"
+    },
+    {
+      "path": "base44/entities/OrganizationVerification.jsonc",
+      "bytes": 1387,
+      "sha256": "77670f5599a3ae9782a31898e97a5caa87378418dde4e0cc673337937c49ba58"
+    },
+    {
+      "path": "base44/entities/PageConfiguration.jsonc",
+      "bytes": 4099,
+      "sha256": "47347ff003934853856dbf2787025e6a8c24049c5c08237ff1f975a8751d503d"
+    },
+    {
+      "path": "base44/entities/PageConfigurationVersion.jsonc",
+      "bytes": 2018,
+      "sha256": "02611e7c1e1d8d95ad8030a98c00e0879dacadaeb6b30fe04ddc990999490056"
+    },
+    {
+      "path": "base44/entities/PolicyScenario.jsonc",
+      "bytes": 2408,
+      "sha256": "aa035c533d46d5934264f23a1277161bf231126cd912eb1e927be55dc1851428"
+    },
+    {
+      "path": "base44/entities/ProductInstance.jsonc",
+      "bytes": 5673,
+      "sha256": "7aeaeeae6e5293ac0925329004c385c28599692f85115a3950968c37c6ab68b6"
+    },
+    {
+      "path": "base44/entities/ProductTemplate.jsonc",
+      "bytes": 3417,
+      "sha256": "35a24ad2b3c69b79641609ad870a6acb67561659ffd0138b429732eddf9d7b4c"
+    },
+    {
+      "path": "base44/entities/QuorumRule.jsonc",
+      "bytes": 2082,
+      "sha256": "0e05eca73bafdfc5f7ceeac9ccc155518fa62206fcbaeac14f635fa68c2d894d"
+    },
+    {
+      "path": "base44/entities/RatificationRecord.jsonc",
+      "bytes": 5201,
+      "sha256": "e14618ccb88ac0df4d47abea887fdf99861a83f3cd4c23fbb28cb185a5a1ee40"
+    },
+    {
+      "path": "base44/entities/RatificationRoute.jsonc",
+      "bytes": 5376,
+      "sha256": "6ff4332dff70ba50867dc26509d7a07b9841b0dfe1af4a4fe5a0f97215d38f11"
+    },
+    {
+      "path": "base44/entities/Recusal.jsonc",
+      "bytes": 2242,
+      "sha256": "6496e3dfc8527145202c65d8c3ecf988e7789555c1756dcd4788f178cfdccbb2"
+    },
+    {
+      "path": "base44/entities/Representation.jsonc",
+      "bytes": 2131,
+      "sha256": "8078f7f0c5338e1b0c7e5fd7a0fd9ef7a45c0807e5155fb6b113fe80f97f3c04"
+    },
+    {
+      "path": "base44/entities/RetentionRule.jsonc",
+      "bytes": 4583,
+      "sha256": "61052c617ad22f1869b18204bb4b8d1d5d3e16493b213378b3380c771dce78e6"
+    },
+    {
+      "path": "base44/entities/ReviewRequest.jsonc",
+      "bytes": 2450,
+      "sha256": "762feba3c241ec97b9891f30955743cfd8831963abb96a3bfe6c862d04c45141"
+    },
+    {
+      "path": "base44/entities/ReviewResponse.jsonc",
+      "bytes": 2095,
+      "sha256": "1d9bbc769bf881868c6228b97f89b046f0a3d6858ea6c8d248ec1b6e1ba98bef"
+    },
+    {
+      "path": "base44/entities/RoleAssignment.jsonc",
+      "bytes": 2381,
+      "sha256": "e727114c625de04bad8d993cdc4bd672157e5211332a5bd38b64cd7924103edf"
+    },
+    {
+      "path": "base44/entities/RoleDefinition.jsonc",
+      "bytes": 1646,
+      "sha256": "d00fd02a258d234da03e13511b80c00d78c0cc869b4ea799d0271ce2fc8e025a"
+    },
+    {
+      "path": "base44/entities/SeatAppointmentEvent.jsonc",
+      "bytes": 5762,
+      "sha256": "bb04d37b0fe1ec55b49b7676d0536dcd83f69119453e8ce17f40fc9400b19f12"
+    },
+    {
+      "path": "base44/entities/SharedComment.jsonc",
+      "bytes": 2086,
+      "sha256": "9fd4a4b586f85ff7355090a0143a5ea932b0e08ed9b85eb11a45ad369ee333d3"
+    },
+    {
+      "path": "base44/entities/ShowcaseSession.jsonc",
+      "bytes": 3101,
+      "sha256": "80fcfdb0cd4dfd832a5eec441485a1e4f7abe774e36741558ccd0ba2c2f8d48b"
+    },
+    {
+      "path": "base44/entities/Signature.jsonc",
+      "bytes": 2265,
+      "sha256": "59423b4b10540072816faed0f9d96d44ee9096d9bd05dcba3508bb789c975a57"
+    },
+    {
+      "path": "base44/entities/TransitionClaim.jsonc",
+      "bytes": 1738,
+      "sha256": "e5483595d6b48df1adad85a9f18bda4caaf04efb0c44049bc99dd5dfde4578e5"
+    },
+    {
+      "path": "base44/entities/TranslationGap.jsonc",
+      "bytes": 1774,
+      "sha256": "46ecea5d0b309edc6e5bbb67eee4a889b5709c360fb5381e86a7bea5f613d2e2"
+    },
+    {
+      "path": "base44/entities/User.jsonc",
+      "bytes": 1976,
+      "sha256": "8b009d7ccab3a5c48782cdcbf84494384a4f93d1b176e3d5e0eb1d6117891c6e"
+    },
+    {
+      "path": "base44/entities/UserProfile.jsonc",
+      "bytes": 1406,
+      "sha256": "2cccadff2fb89bebaea00a7f3a77f966f654717c854839311f28764829278760"
+    },
+    {
+      "path": "base44/entities/Vote.jsonc",
+      "bytes": 2100,
+      "sha256": "a9b432871a6b12e87f1f03b89e7a2dbb9451692eb3196693d235de557461618e"
+    },
+    {
+      "path": "base44/entities/VotingRule.jsonc",
+      "bytes": 2227,
+      "sha256": "8de3084b8365323347426999a46c90b8e07e03d2cc9bd75d59de7df8697c987a"
+    },
+    {
+      "path": "base44/entities/Workstream.jsonc",
+      "bytes": 4082,
+      "sha256": "066b9233b2d385c908f1122b0821690cd466a39a5b347cee231227783f7dfb57"
+    },
+    {
+      "path": "base44/entities/WorkstreamMembership.jsonc",
+      "bytes": 2680,
+      "sha256": "20c52fc6ae0afbde95288b6a6d52720728c1fa825040ac0bca36f68a63b21fe2"
+    },
+    {
+      "path": "base44/functions/AcceptHandover/entry.ts",
+      "bytes": 8768,
+      "sha256": "03af6ac1a10c8bca89da55e0c9a55df10f2740d28ca42ab7e0efbd84f005f7f6"
+    },
+    {
+      "path": "base44/functions/AcknowledgeCommitteeChange/entry.ts",
+      "bytes": 3549,
+      "sha256": "6f4f43df585ed315cfe93f9c23dd50df04d0c931160b960704c999662bf8000c"
+    },
+    {
+      "path": "base44/functions/ActivateAlternate/entry.ts",
+      "bytes": 2717,
+      "sha256": "7bff98e448a78f48d3308e2b6859edd9e25efed3bf85226055e707880f5b01da"
+    },
+    {
+      "path": "base44/functions/ActivateCommittee/entry.ts",
+      "bytes": 5879,
+      "sha256": "926b26330674ea9d7bb99f89696ad00e6a6d7a4c7959b70248f29cec828c90bf"
+    },
+    {
+      "path": "base44/functions/AdjournMeeting/entry.ts",
+      "bytes": 2094,
+      "sha256": "dfe6c45b194b4e76db26cd750c21a996bbd1d6768d08cfad679aff3505ac7ad4"
+    },
+    {
+      "path": "base44/functions/AdministerOrganizationMembership/entry.ts",
+      "bytes": 4731,
+      "sha256": "f32857e7a57b436ed0676a6330602ee77284d9c14ba2014accb22aac3d69ff34"
+    },
+    {
+      "path": "base44/functions/AnnotateDocument/entry.ts",
+      "bytes": 7081,
+      "sha256": "23677fd94da75fe5c032cb4e2be4933123b086fcc256fb48fb2ed648c3acaa8c"
+    },
+    {
+      "path": "base44/functions/AnswerActionClarification/entry.ts",
+      "bytes": 3413,
+      "sha256": "e58cf4df8d7978dc91cd2ed5558f069f5b650b78fa205d22b37fbd993faa25df"
+    },
+    {
+      "path": "base44/functions/ApplyScheduledAmendments/entry.ts",
+      "bytes": 3939,
+      "sha256": "c410ef1ee480d6351bbb5fedee07a8ac3027f141d7dcfdfef0c317bd82b7c8d6"
+    },
+    {
+      "path": "base44/functions/ApproveCommitteeAmendment/entry.ts",
+      "bytes": 9171,
+      "sha256": "ac61dbeafe3235ce16dac81efbe6a72c487aa8e8939dea2f243d69496acabe56"
+    },
+    {
+      "path": "base44/functions/ApproveMinutes/entry.ts",
+      "bytes": 4492,
+      "sha256": "ffb79c8b7cd2dd1074ea4c20fd82704b5b8f5ba5c6b110d84069144ebf7176b1"
+    },
+    {
+      "path": "base44/functions/ArchiveAgendaItem/entry.ts",
+      "bytes": 3231,
+      "sha256": "c032503b5867e22c76d36c2f95120dbe130f43b55b5dc08b72cfb076a62b9c63"
+    },
+    {
+      "path": "base44/functions/ArchivePermittedRecord/entry.ts",
+      "bytes": 3274,
+      "sha256": "9daa05cd139cc1e806a035d8b7581fefa56262d942c7cf201bd015529feb2c60"
+    },
+    {
+      "path": "base44/functions/AuthorizeCommitteeAction/entry.ts",
+      "bytes": 3750,
+      "sha256": "baa9af06325d3bebe991564f40ebe3cd4a0f20958b40b75a48aadef338a610f8"
+    },
+    {
+      "path": "base44/functions/CancelMeeting/entry.ts",
+      "bytes": 1882,
+      "sha256": "260e7e9e7956e31b6e3441704b18501ed802c6eee57c3426c78f46f8526bd3b7"
+    },
+    {
+      "path": "base44/functions/CastVote/entry.ts",
+      "bytes": 10304,
+      "sha256": "7631bd94fa013d47de494d96b8b900a1b3d069a81d6a160f55fcc8ecc3012557"
+    },
+    {
+      "path": "base44/functions/CertifyAttendance/entry.ts",
+      "bytes": 3453,
+      "sha256": "6468e5f9f92605ad88ac305ae4e48b7b1c35721f6fa2d98539f23d99df58bd5d"
+    },
+    {
+      "path": "base44/functions/CheckExistingPortal/entry.ts",
+      "bytes": 2156,
+      "sha256": "a56a909771b7591267f73433a118811c1b781a4a25478d5df37b0ccbd72ffb4d"
+    },
+    {
+      "path": "base44/functions/CheckRecordConsistency/entry.ts",
+      "bytes": 4323,
+      "sha256": "a27e3bcc6d9dd37bab9cbf8f5cff557f6faeac0b85a4c0bb14cbcea88175d368"
+    },
+    {
+      "path": "base44/functions/CheckUserRegistration/entry.ts",
+      "bytes": 738,
+      "sha256": "65f891de05ec7948e0de1f597ae8a944d3e219ab653c031fcb3ed3641ca1600c"
+    },
+    {
+      "path": "base44/functions/CloseAction/entry.ts",
+      "bytes": 7274,
+      "sha256": "000ef785d299f5c9af6ad052f1c9d722869875d37d3c5c2ffbbadb55bf293cd7"
+    },
+    {
+      "path": "base44/functions/CloseCommittee/entry.ts",
+      "bytes": 5948,
+      "sha256": "34242341a743ff89a319546c8dbdf0c0c8f9cf6eb71a2ce4c721fcbaea584827"
+    },
+    {
+      "path": "base44/functions/CloseVote/entry.ts",
+      "bytes": 4564,
+      "sha256": "306ccb3bcb40990aa5282a3986d89ec5bdae298f369386495b17e96f9d5ddf36"
+    },
+    {
+      "path": "base44/functions/CompileChangeInventory/entry.ts",
+      "bytes": 6960,
+      "sha256": "c334caf5f50f7791128cdda1339cab6570ab2c8df925c595fb819318885ab780"
+    },
+    {
+      "path": "base44/functions/CompileCommitteeMemory/entry.ts",
+      "bytes": 4400,
+      "sha256": "3352d660bf4a8d148d8671f02c097b69a016c47be14a67d35f0a8f6210c4edfa"
+    },
+    {
+      "path": "base44/functions/ConfirmExtractedInstrumentFields/entry.ts",
+      "bytes": 3134,
+      "sha256": "d97b8664f007ec5164b86ba0e7d916b4588cb4dbefec796bcf7406594f5f3f6b"
+    },
+    {
+      "path": "base44/functions/CreateCommittee/entry.ts",
+      "bytes": 9275,
+      "sha256": "a68cb00f1375de8b394f1e63910875e65b76f3a9da7f803e77a7ee65e8b01eb6"
+    },
+    {
+      "path": "base44/functions/CreateCommitteeDraftFromInstrument/entry.ts",
+      "bytes": 7943,
+      "sha256": "d3976ae7fbd19afc0b5bf52c2c94afb335593839e3d1b7b77fbe27d6f48cbe16"
+    },
+    {
+      "path": "base44/functions/CreateCommitteeRecord/entry.ts",
+      "bytes": 2311,
+      "sha256": "4cfd6cd1bcf45aaa82f807bd79b1c91b3698e0c5282d127e80cf7bbb7cd16c10"
+    },
+    {
+      "path": "base44/functions/CreateCommitteeRelationship/entry.ts",
+      "bytes": 7407,
+      "sha256": "d59cdd99f5cace5cedb1e556d8e060219031cf22d4e7fb291c7fab37a353c2a5"
+    },
+    {
+      "path": "base44/functions/CreateDecisionDraft/entry.ts",
+      "bytes": 3047,
+      "sha256": "fb6d4c11025102db5cdd63fb2247da1d503d60dfba05392b3c442c5e8fe5b115"
+    },
+    {
+      "path": "base44/functions/CreateMeeting/entry.ts",
+      "bytes": 6691,
+      "sha256": "c0fbc877e2082a0bebbe3d1b05bed1973481ee22b769f8c46a3760d9fb1240a9"
+    },
+    {
+      "path": "base44/functions/DeclareConflict/entry.ts",
+      "bytes": 2396,
+      "sha256": "b4bf8dd5e4522395f8d4a6e941e0c5a724ae0fc1bc3fb2885b099a1377985dbe"
+    },
+    {
+      "path": "base44/functions/DelegateAuthority/entry.ts",
+      "bytes": 2306,
+      "sha256": "688b21ec91d9371a5201e33abc211fdc7be82fa70a608c1dc6e20521b2dd8710"
+    },
+    {
+      "path": "base44/functions/DispatchNotification/entry.ts",
+      "bytes": 1721,
+      "sha256": "04ff488e0bc0e71bf90d0915f1f20af372ad911ae6d256593fcbfe633b87e412"
+    },
+    {
+      "path": "base44/functions/EndCommitteeMembership/entry.ts",
+      "bytes": 5053,
+      "sha256": "628f68c749c455db7cef6d0f8f91a4f5a08a2f349dd12f2593ebf2dde28104b0"
+    },
+    {
+      "path": "base44/functions/EnterExploration/entry.ts",
+      "bytes": 5857,
+      "sha256": "a7383c84d0a9473821fe23452a6906b0c136797281aa057853c6df0200897fec"
+    },
+    {
+      "path": "base44/functions/EnterOrganizationPortal/entry.ts",
+      "bytes": 4154,
+      "sha256": "1450a871b737a94348a49b5eab7fb6034c1614675a9812a974677c4fb6bb0555"
+    },
+    {
+      "path": "base44/functions/EvaluateAgendaReadiness/entry.ts",
+      "bytes": 2196,
+      "sha256": "2e25bcf0bac7dc3663c49a3edd4043aa640f2b7525f483ad78e6d5d072cec988"
+    },
+    {
+      "path": "base44/functions/ExtendTerm/entry.ts",
+      "bytes": 2673,
+      "sha256": "8c1698fdee171ed15f45a8efd4f902e2e6937c0d0ca4ec70cc6d08bd56c94d6d"
+    },
+    {
+      "path": "base44/functions/ExtractCommitteeCharter/entry.ts",
+      "bytes": 4794,
+      "sha256": "1a27274961aecdd0d9c00290aed5c794f56c698725604fc38103e85fbd833ea4"
+    },
+    {
+      "path": "base44/functions/ExtractInstrumentData/entry.ts",
+      "bytes": 10326,
+      "sha256": "17dc53478e30555a960e0dbba7e70e8b614e354bbe6e00f0e75fa8d4080d3a19"
+    },
+    {
+      "path": "base44/functions/FinalizeCirculation/entry.ts",
+      "bytes": 16835,
+      "sha256": "38945af38229c039d87c0b023e7405000d13c694805bf49c5b2ec8d1587beae6"
+    },
+    {
+      "path": "base44/functions/GenerateCommitteeGovernance/entry.ts",
+      "bytes": 5531,
+      "sha256": "3c09dab7f6f62bac8f16d18c37ea8945f1535c4a49f984ead22f42d78da2893c"
+    },
+    {
+      "path": "base44/functions/GenerateInstitutionalExport/entry.ts",
+      "bytes": 3292,
+      "sha256": "95873e8b22ad4e9b0d26a5fb39ab1e8cfbbc0b67628cd24cfd945c7f3f28f08b"
+    },
+    {
+      "path": "base44/functions/GenerateInstitutionalMemory/entry.ts",
+      "bytes": 3408,
+      "sha256": "b7cfb712095c9f7f4ecb475a2a283656ffe879d7819a8ccf488c4d7cbcdca279"
+    },
+    {
+      "path": "base44/functions/GenerateMeetingInstances/entry.ts",
+      "bytes": 4158,
+      "sha256": "d540cbd6ff9668dfb18bfb73b515247a3b82a6d43689959b1990230e801b8e12"
+    },
+    {
+      "path": "base44/functions/GenerateMeetingMinutes/entry.ts",
+      "bytes": 11528,
+      "sha256": "2118a10a5e366a7e0ceb73ef7b7654042ed23026c94aabe821f2d7d5d3ec8e99"
+    },
+    {
+      "path": "base44/functions/GenerateMeetingPackDraft/entry.ts",
+      "bytes": 7694,
+      "sha256": "2ea9336893187753742ae2b982c8cc4447f9dc6a98a684a8f02a15468f8a271f"
+    },
+    {
+      "path": "base44/functions/GeneratePolicyScenarioAI/entry.ts",
+      "bytes": 3853,
+      "sha256": "e878a5ff367406a84c22093b5e61c284a7554bf9438c411cf6c613c4c5758dba"
+    },
+    {
+      "path": "base44/functions/GenerateProduct/entry.ts",
+      "bytes": 9260,
+      "sha256": "c2f577682a720ea204f3b465dad21091c47968c9167903dc8287c9aefc829009"
+    },
+    {
+      "path": "base44/functions/GetAIAccountabilityReport/entry.ts",
+      "bytes": 12174,
+      "sha256": "e8b1a7200cbf616acc93ad96ba4cb12edd83b5f70772167b880d9a5c0f94bc4d"
+    },
+    {
+      "path": "base44/functions/GetAISystems/entry.ts",
+      "bytes": 3093,
+      "sha256": "7c7be136dd57fcfa1c0d438afdac79e79a6c9d50907d8c0a33228d3c3a0255dc"
+    },
+    {
+      "path": "base44/functions/GetActionExtractView/entry.ts",
+      "bytes": 5663,
+      "sha256": "b90efdda57e105a7038c40cdaf6d8fc6fdd3203e9c52eb769b282f8f0b261866"
+    },
+    {
+      "path": "base44/functions/GetAmeenSandboxData/entry.ts",
+      "bytes": 13953,
+      "sha256": "7fc7e415c081a4805ec39898e87f58a26633032abea101f01345a515b379d106"
+    },
+    {
+      "path": "base44/functions/GetCalendarConnection/entry.ts",
+      "bytes": 1078,
+      "sha256": "8c74aa112f898066464aa414462934d3d56ad47e416c1a4491ff7228e09b8a4e"
+    },
+    {
+      "path": "base44/functions/GetCirculationState/entry.ts",
+      "bytes": 5294,
+      "sha256": "bb6d5cd167b4303724cbbb183eb84fdfcb4b9398bb42148d732eb63c0b1409d0"
+    },
+    {
+      "path": "base44/functions/GetCommitteeCapabilities/entry.ts",
+      "bytes": 4106,
+      "sha256": "d62212cdfbf9441f957711e8514d22d10bc8c640c99673ed71c0f9492ebf2057"
+    },
+    {
+      "path": "base44/functions/GetCommitteeMetrics/entry.ts",
+      "bytes": 7135,
+      "sha256": "eb9e587a0195f759c53fef6ffa36af2cec93ec65c87bbceaa57681463bfd1a71"
+    },
+    {
+      "path": "base44/functions/GetCommitteeMiniPortal/entry.ts",
+      "bytes": 21043,
+      "sha256": "bc3a3cf2cf85d0ebe5bf07499123dcf73db5707148b088a4da146f5c97be9272"
+    },
+    {
+      "path": "base44/functions/GetCommitteeRecord/entry.ts",
+      "bytes": 13247,
+      "sha256": "345a493b1fdfcbc5822e05591aa8ace39e67dd7d29c6bf3861ee28dba39e7930"
+    },
+    {
+      "path": "base44/functions/GetDecisionDossier/entry.ts",
+      "bytes": 6456,
+      "sha256": "70b73a29bcdb58abe588b415f2309f75bab2f201df75898b03821042e57adc14"
+    },
+    {
+      "path": "base44/functions/GetDecisionEffectState/entry.ts",
+      "bytes": 4852,
+      "sha256": "fc36eb73dd82d64e4e8a569e5ad2d8ba910b4db5def65064ec7e671b33fb1b9b"
+    },
+    {
+      "path": "base44/functions/GetDocumentAnnotations/entry.ts",
+      "bytes": 4513,
+      "sha256": "d73d21c63358f07e93822948a75b1562cc3704fbb8093ce5a205aba3a5b68972"
+    },
+    {
+      "path": "base44/functions/GetDrHamadExperience/entry.ts",
+      "bytes": 13501,
+      "sha256": "e257b014ae0cee901f333022107aedd8e35691a5491d4307e430fc3fa9fa7dbf"
+    },
+    {
+      "path": "base44/functions/GetEffectivePageConfiguration/entry.ts",
+      "bytes": 3253,
+      "sha256": "024ac9c996e2857ba9a81bf47bda7f393a5639e74c9f92e94538d8535ed122f5"
+    },
+    {
+      "path": "base44/functions/GetExceptionCatalogue/entry.ts",
+      "bytes": 3273,
+      "sha256": "d1da31de811159a1a5b20ca97314b6a15475456b03c12228004c83d5e904d5be"
+    },
+    {
+      "path": "base44/functions/GetGovernanceSurfaces/entry.ts",
+      "bytes": 5497,
+      "sha256": "462d8c99361ad13a05c6bb2061a786b1727e1a73728fedc8539cfaa9f6d7ad36"
+    },
+    {
+      "path": "base44/functions/GetGuestItemView/entry.ts",
+      "bytes": 3967,
+      "sha256": "6eef197dc358578af0ed25c9454e6d40749d284cda0243dcf61752b7ffa6473e"
+    },
+    {
+      "path": "base44/functions/GetInstitutionalExportAccess/entry.ts",
+      "bytes": 1441,
+      "sha256": "49aa9f525fe51199677fb0e5e2384e0b501dbdcd4a728e699f4e07012fc5a43d"
+    },
+    {
+      "path": "base44/functions/GetIntegrationHealth/entry.ts",
+      "bytes": 1702,
+      "sha256": "4cc3714af95384ecbf92e2a17cbd7e39e7e5b264d7d18d8196932f15c507f5aa"
+    },
+    {
+      "path": "base44/functions/GetLegislativeFile/entry.ts",
+      "bytes": 3570,
+      "sha256": "5e0f8292dbf9f71e127d06da8bcf8b0df0ed856d9aec230f5d22cb3022aa2362"
+    },
+    {
+      "path": "base44/functions/GetMyOrganizations/entry.ts",
+      "bytes": 11118,
+      "sha256": "148adadece40ed540017b39d3c5065657687678a15e247af4e692c228532ae36"
+    },
+    {
+      "path": "base44/functions/GetMyWork/entry.ts",
+      "bytes": 19748,
+      "sha256": "a42d980985c7945bd7e08fa144d912cf1fdcd8465faaee7e9c99615038209e34"
+    },
+    {
+      "path": "base44/functions/GetOrganizationPortal/entry.ts",
+      "bytes": 8614,
+      "sha256": "38e0e53889b04da3e608ebc914b15dca400733a1d6587fc3561b668798f3dcf0"
+    },
+    {
+      "path": "base44/functions/GetOutlookCalendarConnection/entry.ts",
+      "bytes": 1071,
+      "sha256": "7e12fb294fb1d22171b2eab0488075db828b780a4c030131e329bb221eb62c31"
+    },
+    {
+      "path": "base44/functions/GetParticipationMatrix/entry.ts",
+      "bytes": 8014,
+      "sha256": "e70d6ac8c753bf1a305ba0797219c9bd4df2b0fea27764f51ccfb82183c86f06"
+    },
+    {
+      "path": "base44/functions/GetPrincipalBasis/entry.ts",
+      "bytes": 4482,
+      "sha256": "201a317aef0b611bdf3b924674cdc283345c704c680d323d7d27a8fc3ed5f672"
+    },
+    {
+      "path": "base44/functions/GetProposalChanges/entry.ts",
+      "bytes": 5616,
+      "sha256": "ce144b582d07aa508ba010705cde6c4a57acae4caff6912fca3dcbd34af28836"
+    },
+    {
+      "path": "base44/functions/GetPublicAIRegister/entry.ts",
+      "bytes": 6632,
+      "sha256": "3f48faf4856e1ff02bc6c45e6de32af72154932b688ae0537685ab306b0db93b"
+    },
+    {
+      "path": "base44/functions/GetRatificationState/entry.ts",
+      "bytes": 9807,
+      "sha256": "fc9456ae1bda323f09d9cf69a7f1bb73b17063cbca6b61ad05a5202d02e82b87"
+    },
+    {
+      "path": "base44/functions/GetRecordAuditTrail/entry.ts",
+      "bytes": 4594,
+      "sha256": "ed2ad49d4d296f2844a24d8b5fb4813bda98d103c2aa6d52c35cd33d7e354cb1"
+    },
+    {
+      "path": "base44/functions/GetRetentionState/entry.ts",
+      "bytes": 6402,
+      "sha256": "56f583885e02fda387878a16d94c81f87fefc9b7e6517d7f55c551318283407d"
+    },
+    {
+      "path": "base44/functions/GetSeatedActorReadiness/entry.ts",
+      "bytes": 8196,
+      "sha256": "cd5d2a0232359b44d5bee515f7c041f79b92ced9d34a428d931b0e8d79d02327"
+    },
+    {
+      "path": "base44/functions/GetSovereignStandards/entry.ts",
+      "bytes": 3363,
+      "sha256": "c8d6e6d24e23e7e1927cba5bda742bf6a300db5d540a8866f65549b1d69190e4"
+    },
+    {
+      "path": "base44/functions/ImportOrganizationAsset/entry.ts",
+      "bytes": 5475,
+      "sha256": "2b5743426926da07ba5753bbb07d715c1a3362e4fd009f2fb4d8f084bddbf5b6"
+    },
+    {
+      "path": "base44/functions/ImportOrganizationAssetPack/entry.ts",
+      "bytes": 7749,
+      "sha256": "864e4641b11f2654b8fcd3816b7fbcdea5238e96e51b0de6880287888e5b1401"
+    },
+    {
+      "path": "base44/functions/InitiateHandover/entry.ts",
+      "bytes": 10263,
+      "sha256": "6eaa49db1c03e874fb9076552a571c1deae9b35ea8bae73ed08ec62c394ee2b6"
+    },
+    {
+      "path": "base44/functions/InviteAgendaItemGuest/entry.ts",
+      "bytes": 8853,
+      "sha256": "d6d8ac8b0036bea7c27db6c16b3285de8bd9eeb5ee124229713239aaecbdd479"
+    },
+    {
+      "path": "base44/functions/InviteCommitteeMember/entry.ts",
+      "bytes": 2368,
+      "sha256": "4f730b5e2c1008e22844ffa9315c636e27e00effa97a1138e49c95d84464a37a"
+    },
+    {
+      "path": "base44/functions/IssueDecision/entry.ts",
+      "bytes": 31246,
+      "sha256": "f391315fbd0f1faef2bfaa78e6434b870f45e6a554e8e8be2fb533839efdf3a2"
+    },
+    {
+      "path": "base44/functions/IssueShowcaseSession/entry.ts",
+      "bytes": 1536,
+      "sha256": "2ff5dd0c8f5b93f3a0f81d43e4ed088e8a1f0f33b6902d03a07ca260dcb5e737"
+    },
+    {
+      "path": "base44/functions/JoinOrganization/entry.ts",
+      "bytes": 3583,
+      "sha256": "a4017d8fc6b7bbb110c1a99171741b2d39f50ff3cf25d66dcd2bfe93f1d7ceb5"
+    },
+    {
+      "path": "base44/functions/ListActionExtracts/entry.ts",
+      "bytes": 6330,
+      "sha256": "1aa233aed9b2dcb8ed8489f6962ec10c135605d56746433522af3d506aee06d1"
+    },
+    {
+      "path": "base44/functions/ListCommitteeRegister/entry.ts",
+      "bytes": 2895,
+      "sha256": "01313b64aa303112e3246112e931ac0bdeacd9d60c4cd3f5e824c46140b997c3"
+    },
+    {
+      "path": "base44/functions/LogAmeenAction/entry.ts",
+      "bytes": 3451,
+      "sha256": "5a9c9bc5e7408372a55446dab08eac9c322588e8ff37ed28ef9a2efba1a41257"
+    },
+    {
+      "path": "base44/functions/LogDocumentationDownload/entry.ts",
+      "bytes": 5293,
+      "sha256": "35fae2dd9ba8add5d0a828e780ad4b175a5f52aef5fd445d6a248c263bcec2a0"
+    },
+    {
+      "path": "base44/functions/LogFileAccess/entry.ts",
+      "bytes": 3148,
+      "sha256": "1b44e17deca6c72f91b9ec2732b10dca2695e09ce4f12257fc0f87f8113a9857"
+    },
+    {
+      "path": "base44/functions/LogInstitutionalExport/entry.ts",
+      "bytes": 2054,
+      "sha256": "4f68db1138138d0c11e35ec5f4cd24555a00c24e12e2c7539fd82cbaaecf57bf"
+    },
+    {
+      "path": "base44/functions/MergeDuplicateOrganizations/entry.ts",
+      "bytes": 8182,
+      "sha256": "be6c87939a09dc093b6bed4d45602bc561686e0630c9c231c8c907d59b922431"
+    },
+    {
+      "path": "base44/functions/NotifyAffectedMembers/entry.ts",
+      "bytes": 4048,
+      "sha256": "cc223352a19d8de2523f3cf7a1683b801e07507b9c87358b7ced5f48b206a283"
+    },
+    {
+      "path": "base44/functions/OpenCirculation/entry.ts",
+      "bytes": 13731,
+      "sha256": "0ef201571f89086d2a4f1d971075ad328ca5dd41f1ef788cf8af05c9f69a1add"
+    },
+    {
+      "path": "base44/functions/OpenLegislativeFile/entry.ts",
+      "bytes": 5368,
+      "sha256": "9fa79d73aec830e7ee430d232e0a469857540b832d185a15b68ce134b63c9972"
+    },
+    {
+      "path": "base44/functions/OpenVote/entry.ts",
+      "bytes": 13850,
+      "sha256": "8e6b56d85c6c58fb4d48b65f8864db197e05039535f4a4138794b45c9ee76823"
+    },
+    {
+      "path": "base44/functions/PrepareMeetingInsights/entry.ts",
+      "bytes": 5778,
+      "sha256": "60547d2b3d3e8c0000f2a412a9791fbd6fad6167cc5f5ce7766ec41c0099c172"
+    },
+    {
+      "path": "base44/functions/PrepareMinutes/entry.ts",
+      "bytes": 4165,
+      "sha256": "6f01e7d994c96da71d6205b153605ec9e09efe390ee5ec302c033441166af372"
+    },
+    {
+      "path": "base44/functions/PreviewGuestAccess/entry.ts",
+      "bytes": 4981,
+      "sha256": "64e93e717efa4e45b8a6d77b78b19ed8adc34b62aca6dec0c7f7c99797459897"
+    },
+    {
+      "path": "base44/functions/ProcessEscalation/entry.ts",
+      "bytes": 17429,
+      "sha256": "7b37d092ceb0a0e64972375914b9d5642703f2554913cc72720be47db7ebbb4a"
+    },
+    {
+      "path": "base44/functions/ProposeCommitteeAmendment/entry.ts",
+      "bytes": 5150,
+      "sha256": "d562774d69e2f851751b89ebec6ed10787b2cdde72e4b24c08afb9ddbec1fda8"
+    },
+    {
+      "path": "base44/functions/ProvisionCommitteeOperationalData/entry.ts",
+      "bytes": 17059,
+      "sha256": "15bd3b3ad804e8971f7bb1bbb799076e5e2319866c67e1d675ba8fd2467d1f04"
+    },
+    {
+      "path": "base44/functions/ProvisionDrHamadDemoData/entry.ts",
+      "bytes": 12437,
+      "sha256": "c2a5744d267c37e75c4d1b68337bfa52aa03f1853f64337bee0f1f228204ac9c"
+    },
+    {
+      "path": "base44/functions/ProvisionFahadDemoData/entry.ts",
+      "bytes": 34586,
+      "sha256": "b9bfe143d4df881e95e4fb08a733c9f5d5d0c6c198df184e8dbafa1eacf8ca28"
+    },
+    {
+      "path": "base44/functions/ProvisionOrganizationPortal/entry.ts",
+      "bytes": 9950,
+      "sha256": "204456d672216f6ee576afdaa992e6ca6b0fff2da1be9cf31e90d3e1c37221e1"
+    },
+    {
+      "path": "base44/functions/PublishCommitteeRecord/entry.ts",
+      "bytes": 3107,
+      "sha256": "24161111c669cdd1f8c24d4b11835a8a4e0fd531e7856fcc9d4945d9a5100840"
+    },
+    {
+      "path": "base44/functions/PublishDocumentationRelease/entry.ts",
+      "bytes": 4365,
+      "sha256": "211473c459b3b9fb6485eedf6c0946b0f9fc38b55fe6fe0287a2da490b7efbf1"
+    },
+    {
+      "path": "base44/functions/PublishMeetingPack/entry.ts",
+      "bytes": 4553,
+      "sha256": "dc0a38024e16d9c3820fd583d62f5c935f105050af77ebce07e510e69fc01576"
+    },
+    {
+      "path": "base44/functions/PublishPageConfiguration/entry.ts",
+      "bytes": 6170,
+      "sha256": "8d46c73f6964005dd103c4e4ab65ad578b95c392ab07c0b177ced06248082565"
+    },
+    {
+      "path": "base44/functions/RecordAIFeedback/entry.ts",
+      "bytes": 2982,
+      "sha256": "a83878e77066a42274a00c82a097e6f6f9e6bd95987cd09a4bb51bb4db791d96"
+    },
+    {
+      "path": "base44/functions/RecordAIIncident/entry.ts",
+      "bytes": 4193,
+      "sha256": "4e83a407c506f3c6d700006ac7b5a46dc28f8e0b1124d7024d5858ff29d7d65c"
+    },
+    {
+      "path": "base44/functions/RecordAppointmentEvent/entry.ts",
+      "bytes": 9834,
+      "sha256": "2500e9c6220cdc4c51fa52a7c5820972e83eed637feb8184e826542251d3778d"
+    },
+    {
+      "path": "base44/functions/RecordChangeDisposition/entry.ts",
+      "bytes": 9538,
+      "sha256": "37f938f1c7183aeb11857b3845d4457c9ac667be4144c5ffa98c1532ed9c3af2"
+    },
+    {
+      "path": "base44/functions/RecordCirculationResponse/entry.ts",
+      "bytes": 8229,
+      "sha256": "115e7556e6942d2b1ceba16e42e73a74606e33898c53db6c6a9f5ef90a98d5be"
+    },
+    {
+      "path": "base44/functions/RecordRatification/entry.ts",
+      "bytes": 8404,
+      "sha256": "e27d4cb02f1f0fa47011955e2e94517b38f67d1aa427d4c0116df4041267d39a"
+    },
+    {
+      "path": "base44/functions/RecordRecusal/entry.ts",
+      "bytes": 2256,
+      "sha256": "53a066f0b7740c3491d2fc7e908ba55d34db6a8298f50702a4e70bc4df06a0c3"
+    },
+    {
+      "path": "base44/functions/RegisterAISystem/entry.ts",
+      "bytes": 5616,
+      "sha256": "c0cc164845ab24d19b87869ecac4475cc6d75aa12023437f95c01979366f072c"
+    },
+    {
+      "path": "base44/functions/RenewCommittee/entry.ts",
+      "bytes": 3023,
+      "sha256": "d288e79ec65b146e1549b3c0ce41c8d5a210e63dc41889cde3db8b2059bfaaa9"
+    },
+    {
+      "path": "base44/functions/RepairDrHamadDemoExperienceV3/entry.ts",
+      "bytes": 24344,
+      "sha256": "56fb885b173cebcdfe2963e24e9d04cfc971180773c55a0c0613d44e68f650ec"
+    },
+    {
+      "path": "base44/functions/RequestActionExtension/entry.ts",
+      "bytes": 2291,
+      "sha256": "ff67182a760a8319df62548ea9631cc3dbfbaef5e110812b011e2b25ea1f43c6"
+    },
+    {
+      "path": "base44/functions/RequestFileAccess/entry.ts",
+      "bytes": 11235,
+      "sha256": "a2894c68203a30bc652d21ee7ca6d2ba8b3ff94f819db0733a86bf0f532761a0"
+    },
+    {
+      "path": "base44/functions/RequestOrganizationAccess/entry.ts",
+      "bytes": 6237,
+      "sha256": "8e03ec20e9613dc0224162ea8781296066ee9ca4c110acf243ef459d17cc50b1"
+    },
+    {
+      "path": "base44/functions/RequestReview/entry.ts",
+      "bytes": 2494,
+      "sha256": "714a33ac364fca48000686fa0b797384c48322f365dbc3c6727e1a76f7d6e2bf"
+    },
+    {
+      "path": "base44/functions/ResetPageConfigurationToOrganization/entry.ts",
+      "bytes": 3121,
+      "sha256": "a3b4c0c159a29ba0c69e2d11b412c34b9f6f936660461feb44e587be4ed277cd"
+    },
+    {
+      "path": "base44/functions/ResolveAmeenContext/entry.ts",
+      "bytes": 12223,
+      "sha256": "6cea85fdc0e86ddb3804f5900ffc3a050eeff43b3617088be626173fbd08b435"
+    },
+    {
+      "path": "base44/functions/ResolveOrganizationIdentity/entry.ts",
+      "bytes": 6075,
+      "sha256": "4e7414db41ffc1b0978185f468dbd7ec83048f8f393dd9eadcb10113af391797"
+    },
+    {
+      "path": "base44/functions/RespondToActionExtract/entry.ts",
+      "bytes": 6618,
+      "sha256": "0b8b58b9f34b7990232cb99e8a8c107c34c0d8140634141515d9cdce3d3e91a8"
+    },
+    {
+      "path": "base44/functions/RespondToInvitation/entry.ts",
+      "bytes": 2634,
+      "sha256": "1533d3f4d1dd76396ef1295826439284a241bee5b90ae77a191208d314f43684"
+    },
+    {
+      "path": "base44/functions/RespondToReview/entry.ts",
+      "bytes": 4013,
+      "sha256": "30abec6f34f7fa3694be5f1ec71633d09e39697b9579fd1995b77f9b50569391"
+    },
+    {
+      "path": "base44/functions/RestorePageConfigurationVersion/entry.ts",
+      "bytes": 5902,
+      "sha256": "6b116ffdd296f6f8f8de1a5ab73f97297942412567b2d885e41cd669fd76542a"
+    },
+    {
+      "path": "base44/functions/RetryEscalationNotice/entry.ts",
+      "bytes": 6212,
+      "sha256": "cbe16d1dcfabf5a12807d81bf9c5744c768a193a937fa71633af80b2322b988a"
+    },
+    {
+      "path": "base44/functions/ReturnCommitteeRecordForCorrection/entry.ts",
+      "bytes": 2869,
+      "sha256": "fa1207982a92a0a2ba0d83f757032fdbf11db74078c63365541eb5c28ad0253e"
+    },
+    {
+      "path": "base44/functions/ReviewActionEvidence/entry.ts",
+      "bytes": 7597,
+      "sha256": "fa3ed77afe248b0ac415976205da1217e4db18ed43b24b1b1a930d3a479c6c1a"
+    },
+    {
+      "path": "base44/functions/ReviewActionExtension/entry.ts",
+      "bytes": 2613,
+      "sha256": "850ed20f9432d93a15182c0bbf539e9339ad2913562d6add09398577a8184577"
+    },
+    {
+      "path": "base44/functions/ReviewMemoryRecord/entry.ts",
+      "bytes": 4151,
+      "sha256": "4a4b02e542bf1e99b52efa8c46ea38bcb1e7dfc1893a7aa76c2385bae4d9fb48"
+    },
+    {
+      "path": "base44/functions/RevokeShowcaseSession/entry.ts",
+      "bytes": 1623,
+      "sha256": "c2b0b63a2808b32ba097019c2cfb8342db1ad8649d371cf80753aa62e239144a"
+    },
+    {
+      "path": "base44/functions/RunAmeenExecutionFollowUp/entry.ts",
+      "bytes": 14846,
+      "sha256": "16d713ef0b1cb061d154f9be27e0d3a81b62fdcf5c907ffe1fdc03e34629ead9"
+    },
+    {
+      "path": "base44/functions/RunExecutionReminders/entry.ts",
+      "bytes": 10713,
+      "sha256": "7b3892ff63cf3339a4fd5d67e8e1f554fc1235e560ee2ac5f0217fedf439e315"
+    },
+    {
+      "path": "base44/functions/SavePageConfigurationDraft/entry.ts",
+      "bytes": 4657,
+      "sha256": "715a3de371c469866d0aa83ee0e61499b7ef295dd25801a94553110ec5db4a23"
+    },
+    {
+      "path": "base44/functions/ScanRecordRisks/entry.ts",
+      "bytes": 7826,
+      "sha256": "0604f326efcc5e97e0d2043053fcf6ccf6eb2b462ef9c6a568998da0a4e34807"
+    },
+    {
+      "path": "base44/functions/SeedNSDCShowcase/entry.ts",
+      "bytes": 15021,
+      "sha256": "4c8988bfb62a15fe1514f41515050182a33ad083a02550084863504f8a5af870"
+    },
+    {
+      "path": "base44/functions/SendAmeenMessage/entry.ts",
+      "bytes": 3824,
+      "sha256": "e47a68d43cc9729ea970889895180b8157c8af9deec895458e315917aaf923f5"
+    },
+    {
+      "path": "base44/functions/SetCirculationPolicy/entry.ts",
+      "bytes": 5691,
+      "sha256": "b0b3463f98e0837dcb59684a866fd666ca509b6828e23df3694784fb48b3edb1"
+    },
+    {
+      "path": "base44/functions/SetMembershipEffectPolicy/entry.ts",
+      "bytes": 4332,
+      "sha256": "de60082945b5cedb3639b0ab1d36b70a92baa5010c79e5262ab53e49bbf574e7"
+    },
+    {
+      "path": "base44/functions/SetOrganizationStatus/entry.ts",
+      "bytes": 4102,
+      "sha256": "c0c7769482182a3b85d3b6f6f0f0a9c972957ec7a95a14b95fce377b247d05e1"
+    },
+    {
+      "path": "base44/functions/SetPrincipalBasis/entry.ts",
+      "bytes": 4740,
+      "sha256": "ac8803ad3d23acc8e7fa7d96fc8fbfaab2e85e3550402bf815bfadbea73ade9e"
+    },
+    {
+      "path": "base44/functions/SetRatificationRoute/entry.ts",
+      "bytes": 4699,
+      "sha256": "80f5e7955d6cac29a81c8b9a751c01d31240e2715d0d3c77b482f90e0ba1a2fd"
+    },
+    {
+      "path": "base44/functions/SetRetentionRule/entry.ts",
+      "bytes": 4501,
+      "sha256": "5a16fd99e83d5afb7ec4252b680d86b893c3d5fdbd83535a50c1c473f84f4f7c"
+    },
+    {
+      "path": "base44/functions/ShareActionExtract/entry.ts",
+      "bytes": 8144,
+      "sha256": "7f17e5fb892c245c97d1a57952c90d1dd6dec48fa83db63c22c4a86da17656b7"
+    },
+    {
+      "path": "base44/functions/SignRecord/entry.ts",
+      "bytes": 4116,
+      "sha256": "e5e900e2f41c063f133fb4e7edb295ec46f1ef18dd1c93308d6868b9f6faf695"
+    },
+    {
+      "path": "base44/functions/StartMeeting/entry.ts",
+      "bytes": 1851,
+      "sha256": "2e486fc2b37d161f952bfbb728d898b56c868ad575d32408a7fbc954a73ea386"
+    },
+    {
+      "path": "base44/functions/SubmitActionEvidence/entry.ts",
+      "bytes": 7890,
+      "sha256": "44fcccf543e3c91efaba5e86629d29ddbe5e2bbd787fcb01e988ee79b9f75542"
+    },
+    {
+      "path": "base44/functions/SubmitAgendaItem/entry.ts",
+      "bytes": 3033,
+      "sha256": "f82529991f0bad6a3c11d747581e59131eea65b804b98fa501943444482e3ba9"
+    },
+    {
+      "path": "base44/functions/SubmitCommitteeRecord/entry.ts",
+      "bytes": 2728,
+      "sha256": "26289203d74218c0a30700f349e4bca7008f534ebfba8a087b2abb898aca878b"
+    },
+    {
+      "path": "base44/functions/SummarizeMeetingPack/entry.ts",
+      "bytes": 5429,
+      "sha256": "9bf5addbf502e53d7d27b30bd830a7fdb9c754cace1026973af2dfaba5a5b171"
+    },
+    {
+      "path": "base44/functions/SupersedeOfficialRecord/entry.ts",
+      "bytes": 3774,
+      "sha256": "07c1984f1a9cb6de4f220b0916c9f9a93abb05637ae2750bbf4f5b309b9f7d09"
+    },
+    {
+      "path": "base44/functions/SuspendCommittee/entry.ts",
+      "bytes": 4260,
+      "sha256": "3115ba725fdf856352ce70baa10e5ba7b2a85da2901d50de07f4485efb2f671a"
+    },
+    {
+      "path": "base44/functions/SyncMeetingToCalendar/entry.ts",
+      "bytes": 4032,
+      "sha256": "71c0a48d9aa68b84c3fcb2d3855d7cd19e96d53738baed1f024584d25b97b9dc"
+    },
+    {
+      "path": "base44/functions/SyncMeetingToOutlook/entry.ts",
+      "bytes": 4387,
+      "sha256": "c0afa51dce906118ef0aac907cacac073a4705d9943b1c3e80c7be1174d52fb1"
+    },
+    {
+      "path": "base44/functions/TestAmeenRetrievalGuard/entry.ts",
+      "bytes": 10253,
+      "sha256": "cb74df3f4a820b00393b983b8b7a9e33a023686c54d2811bbe4661e5207e778d"
+    },
+    {
+      "path": "base44/functions/TestAnnotationContinuity/entry.ts",
+      "bytes": 7196,
+      "sha256": "46ccd819671da202c5d7cb95f068abe6de8ccff805722d76a0ab2d12a956098b"
+    },
+    {
+      "path": "base44/functions/TestAuditChain/entry.ts",
+      "bytes": 8854,
+      "sha256": "a494d7a601908605199f093a4ba981e344cbd6ecc6cd796a147d97a5da79cdb0"
+    },
+    {
+      "path": "base44/functions/TestAuthorizationGuard/entry.ts",
+      "bytes": 35763,
+      "sha256": "a772023113257f090cec740519efda62a410e4739e3c120accf9432b3f175484"
+    },
+    {
+      "path": "base44/functions/TestAuthorizationMatrix/entry.ts",
+      "bytes": 4209,
+      "sha256": "fb46ae26d3d24311647a1423e11c15e5ad1655e8dbe3a6f3abbd0a4fb608f9f3"
+    },
+    {
+      "path": "base44/functions/TestCirculationApproval/entry.ts",
+      "bytes": 10070,
+      "sha256": "c83a84745cbc4412eade7bc99596bd2c8fecfb3f8c0a912bd361d3c9065087ad"
+    },
+    {
+      "path": "base44/functions/TestContinuityContract/entry.ts",
+      "bytes": 20579,
+      "sha256": "26a5e20c05d9c9173d09fcae8f3fd940432aba79ab4bd72eb36ca463c817ffe1"
+    },
+    {
+      "path": "base44/functions/TestDecisionIntegrity/entry.ts",
+      "bytes": 30315,
+      "sha256": "bf6d0deb6d7ea4ea14b335066aa8eb593056b304adc28353340d548a92e004d1"
+    },
+    {
+      "path": "base44/functions/TestDecisionLifecycle/entry.ts",
+      "bytes": 10460,
+      "sha256": "98c898e08330a2969ceb9f617c96c249092d71493d32cd482e0485f60271c666"
+    },
+    {
+      "path": "base44/functions/TestEvidenceAcceptance/entry.ts",
+      "bytes": 9924,
+      "sha256": "cb5b45ec06beced690dc29711b3715214b0a83cab50f394fc9f0b7efd5c51a6c"
+    },
+    {
+      "path": "base44/functions/TestEvidenceDossier/entry.ts",
+      "bytes": 11553,
+      "sha256": "b57c1894028ebb99f81412ae89ef9a521a9eaf8c4b289704952b772f3d144d77"
+    },
+    {
+      "path": "base44/functions/TestExceptionCatalogue/entry.ts",
+      "bytes": 8823,
+      "sha256": "13d5e773e6962693e00e623290fa25dc18c6817aa977b90ed72c830905b09833"
+    },
+    {
+      "path": "base44/functions/TestExecutionExtract/entry.ts",
+      "bytes": 14523,
+      "sha256": "a6602f25bffbb0f02e8885174effefbf296e5a4fc5d2088833be0a99c51cdd23"
+    },
+    {
+      "path": "base44/functions/TestFileAccessPolicy/entry.ts",
+      "bytes": 6638,
+      "sha256": "98640beecfefcc7b4b9882e8ff330111792e7be706687b06c58ed46d428e4313"
+    },
+    {
+      "path": "base44/functions/TestGovernanceSurfaces/entry.ts",
+      "bytes": 9005,
+      "sha256": "ae58a4f6a08232b11b27f48e0930d798750b06173e34373743e724cb39153037"
+    },
+    {
+      "path": "base44/functions/TestGovernedSurfaces/entry.ts",
+      "bytes": 12073,
+      "sha256": "c29853d07370c1d5e9c9c8095e820def11c4259fbbd55217689ed5fa27272854"
+    },
+    {
+      "path": "base44/functions/TestGuestAccess/entry.ts",
+      "bytes": 10890,
+      "sha256": "6866c4e3484f28f03f7afa541dd8d774a8b172eb5b53fee0a93446a849098d08"
+    },
+    {
+      "path": "base44/functions/TestInstitutionalChange/entry.ts",
+      "bytes": 10559,
+      "sha256": "6234ff7cd631b2f2d629ce582f04dadc34b6ce2d56129276ea6383ab5de6e2a8"
+    },
+    {
+      "path": "base44/functions/TestMaterialChange/entry.ts",
+      "bytes": 11471,
+      "sha256": "c635611e4a8cc2c82d92795e14c0a7cc9e0818a400e6f5367d7bdab91a85b672"
+    },
+    {
+      "path": "base44/functions/TestMeetingInsights/entry.ts",
+      "bytes": 4943,
+      "sha256": "45bf5d73d375ab642854681a62edc18878e3ef0863f2b50368a829fdaa3fc7ee"
+    },
+    {
+      "path": "base44/functions/TestMeetingLifecycle/entry.ts",
+      "bytes": 11320,
+      "sha256": "58bc6f8a3a83563d429a43ee221da09cf703f412e4eb9018a9a2616b97ee8bd4"
+    },
+    {
+      "path": "base44/functions/TestMembershipEffect/entry.ts",
+      "bytes": 18326,
+      "sha256": "9fc87e022570289859a167c3d4454dddfe42ea4f6f17a24e350e8a34c5f88683"
+    },
+    {
+      "path": "base44/functions/TestMetricDefinitions/entry.ts",
+      "bytes": 8287,
+      "sha256": "272b8e58c275afc147aa4d1ed9744daa4125fd5da95cbf8da3ea8ac3f8f4df82"
+    },
+    {
+      "path": "base44/functions/TestPackDraft/entry.ts",
+      "bytes": 3305,
+      "sha256": "84a0e7a013c3bc698cfe9e2b224cb009f342da5e944526d63edf99906ea98942"
+    },
+    {
+      "path": "base44/functions/TestParticipationMatrix/entry.ts",
+      "bytes": 11403,
+      "sha256": "447aac4c6c7946c0a9664313b6f4fec7cb23a436884a9670756f07d4203608f3"
+    },
+    {
+      "path": "base44/functions/TestPrincipalRepresentation/entry.ts",
+      "bytes": 15312,
+      "sha256": "d8c39d15fe00f390bd82ec54c74067a69c273482d180f8fa7494c9564a731722"
+    },
+    {
+      "path": "base44/functions/TestProposalContent/entry.ts",
+      "bytes": 10275,
+      "sha256": "4f5cf6e122abb9e8eaed813664d8990c5fa77c5b4f374457c1cb442849ebba25"
+    },
+    {
+      "path": "base44/functions/TestRatificationRoute/entry.ts",
+      "bytes": 11287,
+      "sha256": "4a87acb32fb051c9b0d1917e03cef0daa50539df2874e66db9a5a3c255a5219d"
+    },
+    {
+      "path": "base44/functions/TestRecordConsistency/entry.ts",
+      "bytes": 10454,
+      "sha256": "d46ba1d385c0037501fcd7c8a28c4c1ffb59ec257e338fef47406437f16b095c"
+    },
+    {
+      "path": "base44/functions/TestRecordRiskScan/entry.ts",
+      "bytes": 5169,
+      "sha256": "bda0d88149a91c55fa3fbf6c59cc7ba8cf1baa0d7418a7d90e69363eebf17fe2"
+    },
+    {
+      "path": "base44/functions/TestRetentionSchedule/entry.ts",
+      "bytes": 7160,
+      "sha256": "c67ad18d202a162a07deeef3e88fdacc539d6a8f6bfb2bac8da189a8c8b856f8"
+    },
+    {
+      "path": "base44/functions/TestSeatedReadiness/entry.ts",
+      "bytes": 14862,
+      "sha256": "821ff95d7b1752da51ec36be34a2bd3991a1bafc7e399ac07ccd808ef9b82162"
+    },
+    {
+      "path": "base44/functions/TestShowcaseIsolation/entry.ts",
+      "bytes": 13877,
+      "sha256": "9044545b37970991dcd96fe1f4fa1382d3415aa2bc1991fbbfb22a33dc2476ef"
+    },
+    {
+      "path": "base44/functions/TestSovereignStandards/entry.ts",
+      "bytes": 1524,
+      "sha256": "a7a50a106b498518105eeb3980d122728dada1ab7cac249f5584e56ab17b51da"
+    },
+    {
+      "path": "base44/functions/TestVoteEligibility/entry.ts",
+      "bytes": 7172,
+      "sha256": "d5f0e46c424178cc234d465230b4d26ee8eb8c988489fee3cdf4e03eee1309ea"
+    },
+    {
+      "path": "base44/functions/TestWorkReach/entry.ts",
+      "bytes": 7135,
+      "sha256": "be05e652a6cf295bfb0b9212fc71cb6457fa7b11a928eb69ce38a064072bdf40"
+    },
+    {
+      "path": "base44/functions/TransitionAgendaItem/entry.ts",
+      "bytes": 4288,
+      "sha256": "1dee257723b8b521654a9451e12213cf19562a34f52ab18fe4e0fb1e6478d6d4"
+    },
+    {
+      "path": "base44/functions/TransitionAmendmentStatus/entry.ts",
+      "bytes": 3762,
+      "sha256": "ace8da33d5a11dd1f498498fc8ec98c7f2ea589c154825bf6329432bdae3352c"
+    },
+    {
+      "path": "base44/functions/TransitionCommitteeStatus/entry.ts",
+      "bytes": 5235,
+      "sha256": "691249e38fb2772ed6c716b26b49913c6093d42e7dd43168372997a3f3697636"
+    },
+    {
+      "path": "base44/functions/TransitionDecision/entry.ts",
+      "bytes": 4567,
+      "sha256": "771921b1930a2684ebb98abb61e35932fc604f327021f22dd174a53fa6ef537e"
+    },
+    {
+      "path": "base44/functions/TransitionLegislativeFile/entry.ts",
+      "bytes": 4516,
+      "sha256": "8cb42023f07350a873ab04a101d1c7a30210c6b39a4798d66e66b061a8ec845f"
+    },
+    {
+      "path": "base44/functions/TransitionMinutes/entry.ts",
+      "bytes": 5097,
+      "sha256": "97428ace3082b3de75dda8f8a537953ebbde3ab2172e45a497a7b67bd9bd0a44"
+    },
+    {
+      "path": "base44/functions/UpdateActionProgress/entry.ts",
+      "bytes": 4554,
+      "sha256": "531c419f9dcf98840e2e6fbbe539db37bbf1fc95728bf053a6f2b3adb90ded16"
+    },
+    {
+      "path": "base44/functions/UpdateCommitteeDraftRecord/entry.ts",
+      "bytes": 3458,
+      "sha256": "b89318858e30c2907a78af3e48d1f9a4a22f6ab91ca8891f40977c96cb038172"
+    },
+    {
+      "path": "base44/functions/UpdateCommitteeFormation/entry.ts",
+      "bytes": 1887,
+      "sha256": "5a6ea460d6e325ccb36384a1c80d4f02ed1e9069bfe3426ebc1cae39e9e56ac7"
+    },
+    {
+      "path": "base44/functions/UpdateLegislativeReport/entry.ts",
+      "bytes": 4283,
+      "sha256": "5a3d0bf880258f9834a9da45820d00a4ce1901fe80ee8c0a0f872464d875c9ea"
+    },
+    {
+      "path": "base44/functions/UploadDocumentVersion/entry.ts",
+      "bytes": 4703,
+      "sha256": "d7f20656caf3435f0f972efd6423ce5e054e4ff53d94c2dc81390aca85f35c20"
+    },
+    {
+      "path": "base44/functions/UploadFoundingInstrument/entry.ts",
+      "bytes": 5039,
+      "sha256": "b0f66386245cd77c3b09c3c58e503b78c034455d15409899c373166fb7eaf399"
+    },
+    {
+      "path": "base44/functions/VerifyProductInstance/entry.ts",
+      "bytes": 3476,
+      "sha256": "6cfc51e7894f7e5199467401bcf95b05693863c6fe2bdb93fac6fe55fb524ba6"
+    },
+    {
+      "path": "base44/shared/actionState.ts",
+      "bytes": 1957,
+      "sha256": "3cd235438de32872d9a17e9052be7ae1911f2c79fd6c6022d3dabfd8e25e65ae"
+    },
+    {
+      "path": "base44/shared/aiAccountability.ts",
+      "bytes": 14399,
+      "sha256": "7a298927234fe41bb17cb1b5e5b33ec43bc16e56104b6bca983ec9915ea195d1"
+    },
+    {
+      "path": "base44/shared/aiSystemRegistry.ts",
+      "bytes": 7759,
+      "sha256": "4a268cec8f3c9808fbf4a49c8779ddab131742e776499f266d0366eec3d7903c"
+    },
+    {
+      "path": "base44/shared/ameenContextKernel.ts",
+      "bytes": 2432,
+      "sha256": "577a441603392c408111443891f0f29d876e416129f7e21d6d1b862649c9692e"
+    },
+    {
+      "path": "base44/shared/ameenLanguageContract.ts",
+      "bytes": 1156,
+      "sha256": "527de21bf6ddd1a6ce30cbc7d218459b426e72674946c8a18e5f8b0a559df558"
+    },
+    {
+      "path": "base44/shared/ameenRetrievalGuard.ts",
+      "bytes": 9956,
+      "sha256": "4087b864ecbcc5667911f08708da7239643e50de96a67d9f233a4c19d248a04f"
+    },
+    {
+      "path": "base44/shared/ameenScopeResolver.ts",
+      "bytes": 5731,
+      "sha256": "e96260965e2bfe7de7c0d22b3f634c4e4c93c4a717755ae24ce607c3655e4242"
+    },
+    {
+      "path": "base44/shared/amendmentApplier.ts",
+      "bytes": 5662,
+      "sha256": "6c7ba6c45a7cb92d9c35a72c4069dad8f873a643396253a2fed8e00ee2d05220"
+    },
+    {
+      "path": "base44/shared/annotationContinuity.ts",
+      "bytes": 8810,
+      "sha256": "a4ad569f74f4ea56cf1f738bd13d472651878791a4628729563eee5fbd7dd1cd"
+    },
+    {
+      "path": "base44/shared/auditChain.ts",
+      "bytes": 10690,
+      "sha256": "06ff6eefa19101f48eb9fd79f0dfac125de3f7eec8b4703f3b3498411f612bff"
+    },
+    {
+      "path": "base44/shared/authorityKernel.ts",
+      "bytes": 34314,
+      "sha256": "b8d45a189fbd3e4770ad71cee53c18b72020e9a844bf3c070751888ffaeb5dcc"
+    },
+    {
+      "path": "base44/shared/authorityPolicyManifest.json",
+      "bytes": 41922,
+      "sha256": "b9c5bdaa65b1560d8d812dc1681bc286b5b13a47494ef76ff180b7f3d66be8a5"
+    },
+    {
+      "path": "base44/shared/brandHeader.ts",
+      "bytes": 854,
+      "sha256": "2d4c531d3285ce4bafcfc4017d5c3877c90648c16c31a4f17f76c31d0d249354"
+    },
+    {
+      "path": "base44/shared/capabilityKernel.ts",
+      "bytes": 3404,
+      "sha256": "329485194c6451701948f1523c293eef8b073134e0f81770725ff5de186bd30d"
+    },
+    {
+      "path": "base44/shared/circulationApproval.ts",
+      "bytes": 16164,
+      "sha256": "2f121eecca4222ce4b789b923b1d60aa67ef53b37056ff8c2f73ba7a8d421baa"
+    },
+    {
+      "path": "base44/shared/circulationRoundContext.ts",
+      "bytes": 5488,
+      "sha256": "a9a2412d0835cac778968672a91de46f7cd4c4fb0046ddafff5449960bd3223f"
+    },
+    {
+      "path": "base44/shared/commandGuard.ts",
+      "bytes": 23848,
+      "sha256": "1e3b2abc87d274155f6fd2e322765c262a6ee3c7d186aaf19f82c6efae6ffb65"
+    },
+    {
+      "path": "base44/shared/committeeAuth.ts",
+      "bytes": 6383,
+      "sha256": "d1d6127c7e21b29c8a272594b971332af53f31fa1fda0a8593dbc236615ec61b"
+    },
+    {
+      "path": "base44/shared/committeeRegisters.ts",
+      "bytes": 1930,
+      "sha256": "26d9b5d5f596847eae897c42abb3caeda576500817e66d68d6c859c8578bd719"
+    },
+    {
+      "path": "base44/shared/committeeStructure.ts",
+      "bytes": 12419,
+      "sha256": "08e3745b12bd6003969a95c7cb9b743e5607ffcc1da2ead3d4d973115f1e530e"
+    },
+    {
+      "path": "base44/shared/continuityContract.ts",
+      "bytes": 21124,
+      "sha256": "2b7f42948c4ffddb7b1efff7b47db99cead65681a96062863575cf7bce833f1c"
+    },
+    {
+      "path": "base44/shared/decisionIntegrity.ts",
+      "bytes": 23594,
+      "sha256": "a3ce3c7321890a2d57fddf4f97321f1d3f3ef6c21c20317b15c495c2c7bd106d"
+    },
+    {
+      "path": "base44/shared/decisionLifecycle.ts",
+      "bytes": 10998,
+      "sha256": "923bf3c971a8df4ebaa4049e871a7e5bd631429da365dd9e850da8e8bf3d56f9"
+    },
+    {
+      "path": "base44/shared/demoDataset.ts",
+      "bytes": 13882,
+      "sha256": "ba077e6258439d7081b871587769d29e6c2bec04fb5c5f1914d42dc925938c7d"
+    },
+    {
+      "path": "base44/shared/demoPersonas.ts",
+      "bytes": 6425,
+      "sha256": "cbf040c738204a1a8ecd432e4fb232b70c1fef3458f104522c43760f9b61deaf"
+    },
+    {
+      "path": "base44/shared/documentationPackV11.ts",
+      "bytes": 20673,
+      "sha256": "0078470a8eb5d63292164f204c02394ca3c212680be2846a05ce041d472cde3a"
+    },
+    {
+      "path": "base44/shared/drHamadDataset.ts",
+      "bytes": 16988,
+      "sha256": "1718a655fa896c9e5a0aa9fc4056017a98da7a2a2e756083de82bc75991f4f9c"
+    },
+    {
+      "path": "base44/shared/drHamadExperience.ts",
+      "bytes": 9854,
+      "sha256": "bbc4ba9638539d859d0f88a138a9d448dd4408c3cf9d75d5dc004c21d8f81939"
+    },
+    {
+      "path": "base44/shared/emailEngine.ts",
+      "bytes": 6467,
+      "sha256": "c2557d5ea8cc03df48174b943d4c451277d2c04c8fabd22e5d04b242be84bdf7"
+    },
+    {
+      "path": "base44/shared/evidenceAcceptance.ts",
+      "bytes": 6715,
+      "sha256": "6a7078b15b15884fa765cbc29d5f4340554bfe2615a7d1fa630adff101f13ad3"
+    },
+    {
+      "path": "base44/shared/evidenceDossier.ts",
+      "bytes": 23140,
+      "sha256": "1de59a7d3124a7d7ef803eac206175ae63cd358424aafad3ef9e782f0e208427"
+    },
+    {
+      "path": "base44/shared/exceptionCatalogue.ts",
+      "bytes": 107039,
+      "sha256": "5eaa43bd052b51ab9288821c259de5b5ed8ea152ac50825c5d0adc975f52d08f"
+    },
+    {
+      "path": "base44/shared/executionExtract.ts",
+      "bytes": 18855,
+      "sha256": "1c8bcbe3be44bbf3c740e9e9b30858f8a6849506eda4f5124cfcc0dad6821fab"
+    },
+    {
+      "path": "base44/shared/executionReminderEngine.ts",
+      "bytes": 15114,
+      "sha256": "8709bf56c3b25a57928b62d5fae4a5ee8e7a5642eae3b4779a213f1d7436c345"
+    },
+    {
+      "path": "base44/shared/fileAccessPolicy.ts",
+      "bytes": 7800,
+      "sha256": "e3d7127d96bc3307261336832176a5d2c1d1ff2de56133827ad6cb1555a6401a"
+    },
+    {
+      "path": "base44/shared/formationVersioner.ts",
+      "bytes": 2634,
+      "sha256": "ac6dfe0a0b6fab4485063ed42b9631e6ede4b9dce8996e5a950c6305e52b44c5"
+    },
+    {
+      "path": "base44/shared/governanceSurfaceRegistry.ts",
+      "bytes": 71509,
+      "sha256": "9eede8331ea87149112a37cc9e930043e18f9b4eaca755573f8f7f3a299bd52c"
+    },
+    {
+      "path": "base44/shared/governedReadPolicy.ts",
+      "bytes": 14786,
+      "sha256": "fb85cd433715819a2d71b87065d9228956c7cc2347dd1c4a9e6e461d90d89e98"
+    },
+    {
+      "path": "base44/shared/guestAccess.ts",
+      "bytes": 11875,
+      "sha256": "ec71902c06c9723fd5305e724f98952c082b5afb997c5a0aea331ac77ffa14a7"
+    },
+    {
+      "path": "base44/shared/institutionalChange.ts",
+      "bytes": 16023,
+      "sha256": "e892d1463eefcfdea0f6a605b63866ebdebbfe0cc95cbc266273dd8183c8c1a4"
+    },
+    {
+      "path": "base44/shared/institutionalDocx.ts",
+      "bytes": 4098,
+      "sha256": "56edff9aed55cc8a565a167a2577ec1b049e3435f2fa528841faa9ced7e0908e"
+    },
+    {
+      "path": "base44/shared/institutionalExportAssets.ts",
+      "bytes": 1507,
+      "sha256": "bb63031bd91af9c517165c96c18c64896440bb4735f71290634f32301dac6837"
+    },
+    {
+      "path": "base44/shared/institutionalExportModel.ts",
+      "bytes": 7538,
+      "sha256": "caebe7efc40c0aabd3b8b06f525805ad57a1f624cce0bb0fbc825b33a27f966c"
+    },
+    {
+      "path": "base44/shared/institutionalPdf.ts",
+      "bytes": 2631,
+      "sha256": "cbff29351af0b3b76f14f2e2dcb171ec724eb45faf474dc4f8a5c3e50e7dae48"
+    },
+    {
+      "path": "base44/shared/institutionalXlsx.ts",
+      "bytes": 1772,
+      "sha256": "82bccb8de99b34000615488e5bc87d99c2878e627c8da4d6b4cf4bf978460f5b"
+    },
+    {
+      "path": "base44/shared/integrationGateway.ts",
+      "bytes": 7277,
+      "sha256": "255a998cbf4c9d8189f4602b99dfeea23b6549a9c69ea1ce32ac81c2695993d4"
+    },
+    {
+      "path": "base44/shared/legislativeFileLifecycle.ts",
+      "bytes": 5562,
+      "sha256": "e9f4c8984277db225bca15556f3be951467bafffbd5d553304aa11411ac89aa8"
+    },
+    {
+      "path": "base44/shared/malwareScanner.ts",
+      "bytes": 8091,
+      "sha256": "ce5ed091f3182c19f2848f0a3d12cd0ed020fcfb55a7b1811ccf78a5073316c2"
+    },
+    {
+      "path": "base44/shared/materialChange.ts",
+      "bytes": 17861,
+      "sha256": "3b37e6fcc6b333bbe79be4e12e01f238848d3ac1181acd75ff5a77c9acd29c97"
+    },
+    {
+      "path": "base44/shared/meetingInsights.ts",
+      "bytes": 10575,
+      "sha256": "dc3909b04fc4fcd6ab11ecab0a6f843dd46235c615658976fcdfec283d5f344d"
+    },
+    {
+      "path": "base44/shared/meetingLifecycle.ts",
+      "bytes": 10433,
+      "sha256": "2302a3180bcf5f4d9e1a5b0ee8417fa31fe1041816b9598395d7b4628012593d"
+    },
+    {
+      "path": "base44/shared/membershipEffect.ts",
+      "bytes": 27931,
+      "sha256": "4d6f15cb15883f6cab67beaa4553b655a129760a8aed143eb1e449abc326bb2d"
+    },
+    {
+      "path": "base44/shared/memoryCompiler.ts",
+      "bytes": 6213,
+      "sha256": "ecedc355c53dcb9c20419414328a642fc5e00cd0e22e22965cdba0d57edee845"
+    },
+    {
+      "path": "base44/shared/metricDefinitions.ts",
+      "bytes": 16494,
+      "sha256": "205d1e2cf6315fe7380eaa599f3944bbe6c92ad425769cca27acb62d99ece99a"
+    },
+    {
+      "path": "base44/shared/microsoft365Engine.ts",
+      "bytes": 11550,
+      "sha256": "d16bacff56af3e70e69023980be2799886201b1e0fb84017111de5fc3ae4db64"
+    },
+    {
+      "path": "base44/shared/notificationEngine.ts",
+      "bytes": 12063,
+      "sha256": "350cb71546e4c3a96ec90b13dfb7272cd11af53172f9df71dd6bd887debcb7d6"
+    },
+    {
+      "path": "base44/shared/ocrEngine.ts",
+      "bytes": 7061,
+      "sha256": "d7e7a476495d03d372b1f19c3c237115556e9fa136c99b2f7ceeb1c8e114cd34"
+    },
+    {
+      "path": "base44/shared/operationalPack.ts",
+      "bytes": 22438,
+      "sha256": "63f577c83cd8f7e5db6b3d6011ac016c0b06e75046229811a338fa5171fa69c5"
+    },
+    {
+      "path": "base44/shared/orgAssetIntake.ts",
+      "bytes": 8055,
+      "sha256": "5e0dd5b18b388b18246a3d0189bf2d5e6e6d6d4c44cf5ba7480d00e35cd8bdab"
+    },
+    {
+      "path": "base44/shared/orgAssets.ts",
+      "bytes": 2443,
+      "sha256": "ed216357cc78c3210e25e3bc1a16b295a07fb03677aa9ecbb2e440bc478bf39a"
+    },
+    {
+      "path": "base44/shared/orgIdentityResolver.ts",
+      "bytes": 2921,
+      "sha256": "5638095066a25748de55ef8a3a12d9338f958ee744fe34c148725dc902501caf"
+    },
+    {
+      "path": "base44/shared/organizationAuthority.ts",
+      "bytes": 11400,
+      "sha256": "52134a48ea29bd4e3d0520ccffc1330a7a28f653b9d60d78cd08401cf76f758a"
+    },
+    {
+      "path": "base44/shared/packDraft.ts",
+      "bytes": 5414,
+      "sha256": "ba4fac94b93dcbc941e255a4aaf1e68740911fc92411f59cce9200be9b52554a"
+    },
+    {
+      "path": "base44/shared/participationMatrix.ts",
+      "bytes": 27655,
+      "sha256": "7ef6bed43f957344dd8a1fac7ebfb4e80f1dcb6e9b85aee36e2583e7c6ed8302"
+    },
+    {
+      "path": "base44/shared/personalWork.ts",
+      "bytes": 28975,
+      "sha256": "2ce6672bcf33933bf2979225abc2bcb5cfc2c465d0d71ea90b3981dece7891ed"
+    },
+    {
+      "path": "base44/shared/principalRepresentation.ts",
+      "bytes": 11292,
+      "sha256": "5e4027c4bd3604153955cb94b7a542f45a68512d9e59d4151efea37dd37e750b"
+    },
+    {
+      "path": "base44/shared/proposalContent.ts",
+      "bytes": 14292,
+      "sha256": "59554bc79a8df7ad5bda6e437bf13856999f299786b58ff9f8abedccc00e9c84"
+    },
+    {
+      "path": "base44/shared/ratificationRoute.ts",
+      "bytes": 12711,
+      "sha256": "c705bac7acc67a6b15c7fbdb13a73ae9a34b1866ddf37c75a80d904b733027e0"
+    },
+    {
+      "path": "base44/shared/recordConsistency.ts",
+      "bytes": 14716,
+      "sha256": "d0043a7c51895ed3553c8f4cc9ce135c892c610e6f5ef7017fa546fbc55ae70f"
+    },
+    {
+      "path": "base44/shared/recordGovernance.ts",
+      "bytes": 3929,
+      "sha256": "3fc44d6b1436d0609df6207a29d44c7975ffe0e38e07765a1823cd8bb69eb616"
+    },
+    {
+      "path": "base44/shared/recordRiskScan.ts",
+      "bytes": 11011,
+      "sha256": "90f8257806b4b4ee46089d46fa04771f894a3731ef2074d8417b242350eac4af"
+    },
+    {
+      "path": "base44/shared/retentionSchedule.ts",
+      "bytes": 10135,
+      "sha256": "8d2d505061064dc572f4aec28535da3d1b1ab97c9cf2b2aa2b14fdfc2949c34c"
+    },
+    {
+      "path": "base44/shared/reviewTasks.ts",
+      "bytes": 3319,
+      "sha256": "ba5fb5637e3056ee46bff1e05c9b047dac432f1d9ac9c007e926b2c9586f03ac"
+    },
+    {
+      "path": "base44/shared/roundContext.ts",
+      "bytes": 6970,
+      "sha256": "af18817174339346923293be1fc8a7c4c1abef2461599801ee10f9327bf2635d"
+    },
+    {
+      "path": "base44/shared/rruleGenerator.ts",
+      "bytes": 6280,
+      "sha256": "9d9a73e8f8e60bddabe1638ee4d1bc29ad7396cf4f216cd5b10874ce1c7e87e1"
+    },
+    {
+      "path": "base44/shared/seatedReadiness.ts",
+      "bytes": 25169,
+      "sha256": "90f49b9fabb9b444b7acd0e00c8a94840bd7c9d67c722217f5293cb94284bc31"
+    },
+    {
+      "path": "base44/shared/serverRichText.ts",
+      "bytes": 1416,
+      "sha256": "beb9587393d8b7fb35095946a5bd10363ce0123423972e7f6a0c30f5ac18674e"
+    },
+    {
+      "path": "base44/shared/showcaseSession.ts",
+      "bytes": 9794,
+      "sha256": "cc841425294dab090195d1d52706db8945171b4d607a3222b54aad9b90de5d93"
+    },
+    {
+      "path": "base44/shared/signatureEngine.ts",
+      "bytes": 6618,
+      "sha256": "3fbdb4e645dddbb09fa03204bcfc40999959b9f641be8f24452cdaf5df957d52"
+    },
+    {
+      "path": "base44/shared/sovereignStandards.ts",
+      "bytes": 26773,
+      "sha256": "504fcd33832a536d887dc711c5e77931384b4ded977a198c5a2ad7054df7b677"
+    },
+    {
+      "path": "base44/shared/transitionClaim.ts",
+      "bytes": 8287,
+      "sha256": "5953cd9a1a6f17d3cffca42ba8f51694724e6cae4fbd2ff42742dd10b80160aa"
+    },
+    {
+      "path": "base44/shared/voteEligibility.ts",
+      "bytes": 3178,
+      "sha256": "a181fe9b89dce338bdb64c0a4e058460ff36dae7c6c9e43b2ebaf8ef517cc439"
+    },
+    {
+      "path": "base44/workflows/Ameen Execution Reminders.jsonc",
+      "bytes": 3260,
+      "sha256": "46957a6c61757e3177f53262aaf326bfa0daddc3cf3caafc7decdea590640be0"
+    },
+    {
+      "path": "base44/workflows/Auto Meeting Minutes.jsonc",
+      "bytes": 1358,
+      "sha256": "76906613366d45b3f7251e3df803e5002191381375e14fa205e22c4d8d8eccaf"
+    },
+    {
+      "path": "base44/workflows/Scheduled Amendment Effectivation.jsonc",
+      "bytes": 1728,
+      "sha256": "866e02b762ece192fc78b2d1de7c6d859936b33a11bcfbc8f362d0e469d33e59"
+    },
+    {
+      "path": "components.json",
+      "bytes": 444,
+      "sha256": "73e1334afce0f20f01500532e3b63a7cc36238d8a05addef40c476fadf9dc349"
+    },
+    {
+      "path": "eslint.config.js",
+      "bytes": 2285,
+      "sha256": "15cab2bd36df078c29c6ecaf6c2313c380ae2a18760271f6cf31071bfa6a5757"
+    },
+    {
+      "path": "index.html",
+      "bytes": 2855,
+      "sha256": "4b41f71b833bc51763663d2fcb8e2efc4e7e271ac3a05cc565a9d4c325531ad8"
+    },
+    {
+      "path": "jsconfig.json",
+      "bytes": 583,
+      "sha256": "e73e9adf0fcd9194c496670efb5251825685314475c9548c3ec4d74056ccc75b"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 421793,
+      "sha256": "6a60a70e87aa4d98a2579c57402c6ead486790f57ebece23d7464c67ff837cdd"
+    },
+    {
+      "path": "package.json",
+      "bytes": 3394,
+      "sha256": "18c252e303a0bfd9ee4be360384651db4bbeac7b79bb8fae4ef35295c4f1728e"
+    },
+    {
+      "path": "postcss.config.js",
+      "bytes": 80,
+      "sha256": "190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/FONT_LICENSE_NOTICE.txt",
+      "bytes": 548,
+      "sha256": "446c410c3ca3a35879b9305f888371d7a1a555be53010e5c9a75588e8a69de6e"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/NotoNaskhArabic-Bold.ttf",
+      "bytes": 325232,
+      "sha256": "d328b92b6bb762fd61d6438dddb7b00dd0663115afb292a358101808efe117b2"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/NotoNaskhArabic-Medium.ttf",
+      "bytes": 199892,
+      "sha256": "99d036853b6bebb0e4f0943e9a315c255a0ab74da5c946999c208b2acce4eb8b"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf",
+      "bytes": 291980,
+      "sha256": "c9a039ce48a477243c1eb7d561b13de115cfd651d8a83fa42e2f4d63c2e11b00"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/NotoNaskhArabic-SemiBold.ttf",
+      "bytes": 199912,
+      "sha256": "20fe1526e7e1af9f230f27383dfed3fd264eb78da219fc289d3fcbf52e441c82"
+    },
+    {
+      "path": "public/fonts/NotoNaskhArabic/OFL.txt",
+      "bytes": 4475,
+      "sha256": "fa27a4641d00020ca4522b71d7e9d2eddafcd5031a2e55b4cfb3eedfe33a865a"
+    },
+    {
+      "path": "public/lijan-sw.js",
+      "bytes": 1602,
+      "sha256": "06bce23d04235d88f6ccff5b2e51e4e7961a43e42d8d123097e73caefe4b8dfb"
+    },
+    {
+      "path": "public/manifest.json",
+      "bytes": 1014,
+      "sha256": "a7e30545ae35801fd985bb50abc73d6818841567036aa41b4664bb13a2195d05"
+    },
+    {
+      "path": "public/offline.html",
+      "bytes": 2920,
+      "sha256": "c140c4161db6c785d47a036e1226f1045b88c6bdf73da66f899107b786fcf2f4"
+    },
+    {
+      "path": "scripts/authority-guardrails.mjs",
+      "bytes": 11556,
+      "sha256": "c0b45c87d590753e91346785cadb5ba00e6027412e5e8b5af643629c85abdf39"
+    },
+    {
+      "path": "scripts/authority-policy-manifest.mjs",
+      "bytes": 5221,
+      "sha256": "8376ba1883ca63d45b05458f28bffd91621d6b9c8c78bb72742745b32ab85391"
+    },
+    {
+      "path": "scripts/lang-check.mjs",
+      "bytes": 3480,
+      "sha256": "5cfa17bb3fa652b61a406a43694c2341979da6b9c0f3cd34bde5df87ae99a1b8"
+    },
+    {
+      "path": "scripts/lang-guard.mjs",
+      "bytes": 4138,
+      "sha256": "7f01c58ee9d23adeacc1aad338ae55f012e8a14398a3ad5fd6bfd9265a503962"
+    },
+    {
+      "path": "src/App.jsx",
+      "bytes": 19300,
+      "sha256": "b7eb525d7b1fc6d4d1dc1007704129d534fa03bd49ee90da97554b058dd1fbe8"
+    },
+    {
+      "path": "src/api/base44Client.js",
+      "bytes": 337,
+      "sha256": "35647ef13677f2b23399843531e82cb49521bcd6cd09f00e23888b0d7973cf2e"
+    },
+    {
+      "path": "src/components/AuthLayout.jsx",
+      "bytes": 1188,
+      "sha256": "24a2f5568c028449f39f5d6958ea3602d67a7131f24550349b20b7a0d98a048b"
+    },
+    {
+      "path": "src/components/AutoFullscreen.jsx",
+      "bytes": 1567,
+      "sha256": "d2a7e7adb4114294d2943809772c56eeb85fe0c4e904f5ecf1db5b8603f22105"
+    },
+    {
+      "path": "src/components/GoogleIcon.jsx",
+      "bytes": 833,
+      "sha256": "4d5d7b5c6a368f8246fe088eaa158b2cd0872bfafa8e5c495ec39ebb697c4f6b"
+    },
+    {
+      "path": "src/components/NativeAppShell.jsx",
+      "bytes": 1691,
+      "sha256": "e0cdcdc7c68fa0e168ef8f301e8d7e59664041ea5df8ab65bbec9afcb1d50591"
+    },
+    {
+      "path": "src/components/ProtectedRoute.jsx",
+      "bytes": 1392,
+      "sha256": "2dde2c1734b3fd9598d6c543d750b48a5a252361d11f471ce820744047802235"
+    },
+    {
+      "path": "src/components/ScrollToTop.jsx",
+      "bytes": 805,
+      "sha256": "56f6ecc5d3f0bd692e7d4bb6d89f73ddac4148150718388ef8cf996a985f6138"
+    },
+    {
+      "path": "src/components/UserNotRegisteredError.jsx",
+      "bytes": 1592,
+      "sha256": "5cecb11fe2fb3a03a73e5845b5ee9d26c9255e80feda689b3dfc70822ba288f1"
+    },
+    {
+      "path": "src/components/ameen/AmeenEmblem.jsx",
+      "bytes": 2433,
+      "sha256": "a743955185162efa0e0e9cdb46f359c03ab5365fec85f3c405d6375d8f8bbfe5"
+    },
+    {
+      "path": "src/components/ameen/AmeenLauncher.jsx",
+      "bytes": 1139,
+      "sha256": "cc74c50620273912e655616edfaacbf0fc0acf76cb35078609545894c03b64ae"
+    },
+    {
+      "path": "src/components/brand/BrandWordmark.jsx",
+      "bytes": 1510,
+      "sha256": "851872c01de12755bbf435e8f8a8f36b29624f766f14df8d28d239b37212ddbb"
+    },
+    {
+      "path": "src/components/brand/PoweredByConnection.jsx",
+      "bytes": 1893,
+      "sha256": "c578ddcfed57866532c3b3f48374de718db98585d74fea1c01cdea71d4335913"
+    },
+    {
+      "path": "src/components/demo/CommitteeRow.jsx",
+      "bytes": 3370,
+      "sha256": "0c2553120334fa2bc103676623864f6d559219ffaaf39b22ab50a2ea35a479a4"
+    },
+    {
+      "path": "src/components/demo/DrHamadExperience.jsx",
+      "bytes": 5377,
+      "sha256": "32eea1f33e7aacf59638665fc9f29443f20db3a06382152a2db59a3db727c325"
+    },
+    {
+      "path": "src/components/demo/ExplorationGate.jsx",
+      "bytes": 4687,
+      "sha256": "1c926b3855633f9078a6c95143f4e913ca329f1132006a88e6586f3cac9c6c0f"
+    },
+    {
+      "path": "src/components/demo/NextStepJourney.jsx",
+      "bytes": 4394,
+      "sha256": "10dfe6508de922850fab96cc572c1c57cbadbab74b521e7b14b3d0da7b98b7b6"
+    },
+    {
+      "path": "src/components/demo/OrganizationGroup.jsx",
+      "bytes": 2156,
+      "sha256": "03355dd9e4fc7e93e90817f8b65fc3ebcc40cead282d59b48a3e37146993ff88"
+    },
+    {
+      "path": "src/components/demo/PersonaContextPath.jsx",
+      "bytes": 2781,
+      "sha256": "861e504c7a8773c52b288065275d2867936494e1c80a5cf5a79be3456b583c2c"
+    },
+    {
+      "path": "src/components/demo/RoleFilterBar.jsx",
+      "bytes": 1591,
+      "sha256": "6ca01413b60ac515c75bad5aafc1194c4c43be69327256deb9d3ee6611015037"
+    },
+    {
+      "path": "src/components/demo/RoleLensSection.jsx",
+      "bytes": 2556,
+      "sha256": "62a004d52606aaabccbdaa196d4f98063d60a18e2cd58eac7b5bd0fc1d64c6c0"
+    },
+    {
+      "path": "src/components/demo/meetingDate.js",
+      "bytes": 348,
+      "sha256": "59dfa929de12ef04401fa8449b0a5b62effbef1e558dcf883b6d2c6464e30ef9"
+    },
+    {
+      "path": "src/components/docs/DocumentCard.jsx",
+      "bytes": 4085,
+      "sha256": "e8b72391dfde5125710b79cf71b5f9f1973afdbd0948e5bb64665de28df104c4"
+    },
+    {
+      "path": "src/components/docs/DocumentLibrary.jsx",
+      "bytes": 6544,
+      "sha256": "ab5c70055754507e1b18576df7cee920fc7baed45a96c4c2c8e90bd372d6f9a8"
+    },
+    {
+      "path": "src/components/docs/DocumentationPackHero.jsx",
+      "bytes": 3910,
+      "sha256": "b8f829755e6c5393cde24b017dc4502abda88c05c735f6089853bcc05f1b712d"
+    },
+    {
+      "path": "src/components/docs/DocumentationQualityPanel.jsx",
+      "bytes": 2409,
+      "sha256": "d6e24bb4320e41f480fbc306a175ab0c07e18007c19739335c45a8d8ad30b7d6"
+    },
+    {
+      "path": "src/components/docs/DocumentationSummary.jsx",
+      "bytes": 1692,
+      "sha256": "a3ff247ff0099719a87ff08447d42b5bc20d42b954acd896ae03872b3b86a34b"
+    },
+    {
+      "path": "src/components/nav/AppShell.jsx",
+      "bytes": 4622,
+      "sha256": "705cc73c98f1c37587d85dd1abf7577bd50d52f02c9dfc827002f33e8984fa84"
+    },
+    {
+      "path": "src/components/nav/AppSidebar.jsx",
+      "bytes": 4105,
+      "sha256": "0e1889a50636ea80ea20ed146c84c29aeb4ada95398fc0dfcf5a4c2489b3f8a1"
+    },
+    {
+      "path": "src/components/nav/SidebarBottom.jsx",
+      "bytes": 3640,
+      "sha256": "0a21a99cfe5bd7935c9392503bb5f11f1424b8b5df84bae7c0d26aa817ca13da"
+    },
+    {
+      "path": "src/components/nav/SidebarContextCard.jsx",
+      "bytes": 4566,
+      "sha256": "10970b08dbeb5e11736796aa3a49b4753ade91c27cd9e51e133cdb4e72e2a830"
+    },
+    {
+      "path": "src/components/nav/SidebarNav.jsx",
+      "bytes": 3040,
+      "sha256": "960b2063bb5d21156df412d6db5a5685a048d4ec45ddeadc9714c21953276738"
+    },
+    {
+      "path": "src/components/nav/SidebarSkeleton.jsx",
+      "bytes": 2554,
+      "sha256": "1643fb4f7bbdbee6a152e6e0ce087eed40e20cfe0c4ed05be095a641f8474179"
+    },
+    {
+      "path": "src/components/nav/useSidebarShell.js",
+      "bytes": 2544,
+      "sha256": "fb75f605b77a5a379cd83de031e4eb19982e5e373d5240c7013bb62a3da797c4"
+    },
+    {
+      "path": "src/components/raqeem/AIAccountabilityPanel.jsx",
+      "bytes": 20486,
+      "sha256": "3e914ba2c7e0d03d6ef03f6a5940d66e8b34fb78e9754c9bbf538b63f4c2be8d"
+    },
+    {
+      "path": "src/components/raqeem/AIAccuracyDashboard.jsx",
+      "bytes": 12171,
+      "sha256": "8dff93a43d572189cd8ca570ec90b9cf940b96f7ef1eabe9e4d074dabf1b07f9"
+    },
+    {
+      "path": "src/components/raqeem/AIFeedbackPanel.jsx",
+      "bytes": 6546,
+      "sha256": "40030dfc2ca65def9a49e7ea8187c6e708912489acc1e194126664620b4c548a"
+    },
+    {
+      "path": "src/components/raqeem/AIGovernancePostureBanner.jsx",
+      "bytes": 3927,
+      "sha256": "2e2d6ca07e99d96deb8a2fa01356da3ceeefb0dc6f6de36d649ee6d045272af2"
+    },
+    {
+      "path": "src/components/raqeem/AISystemInventoryPanel.jsx",
+      "bytes": 9912,
+      "sha256": "6389952acbd1344cbca0c63cd77cc935f7260cdd7ea6f9967df407f4a8251020"
+    },
+    {
+      "path": "src/components/raqeem/ActionEvidencePanel.jsx",
+      "bytes": 8930,
+      "sha256": "99d5bfb34a7121befe9d8d7a7a6c3e1d40bb0320670af55ad17cd07ec392b48e"
+    },
+    {
+      "path": "src/components/raqeem/ActionExtractPanel.jsx",
+      "bytes": 17554,
+      "sha256": "01f1dc15638fcbe78dcba84be8806727c9604618061ace2c65e032d971177867"
+    },
+    {
+      "path": "src/components/raqeem/AgendaGuestPanel.jsx",
+      "bytes": 14780,
+      "sha256": "71d25f2740156993cf3b58bfb4b241be8dc9d60c0f19089acaf4d84962fe7728"
+    },
+    {
+      "path": "src/components/raqeem/AgendaManager.jsx",
+      "bytes": 14555,
+      "sha256": "1d515741e71fcee472a405290dfaf867093d5e1ca976be33c6aa7167ec969473"
+    },
+    {
+      "path": "src/components/raqeem/AgentChatPanel.jsx",
+      "bytes": 17328,
+      "sha256": "af7b0b9e5b0bfc0c5294b3bf1a2f830ad872aa3c9e8696de6964673f444f8791"
+    },
+    {
+      "path": "src/components/raqeem/AmendmentFormBuilder.jsx",
+      "bytes": 11587,
+      "sha256": "2075433f1c8318d48acc5df39fb484e5396b8ed947eb36920dba45173ca575a5"
+    },
+    {
+      "path": "src/components/raqeem/AttendancePanel.jsx",
+      "bytes": 8025,
+      "sha256": "bad11eb9b3a63dec3f1f77ee4f3ff5fa08fcbb5f231824db7abebe942d5b3ceb"
+    },
+    {
+      "path": "src/components/raqeem/AuditChainPanel.jsx",
+      "bytes": 7561,
+      "sha256": "a6f0abbf75c2ab6a34d5d2777f72e65f0d05f570807800434bd686eb76edc282"
+    },
+    {
+      "path": "src/components/raqeem/AuthorityLens.jsx",
+      "bytes": 6041,
+      "sha256": "4ca3487f4ef9aa4a214bc6932a473198c00b06b077a147a83a9511891602a9c0"
+    },
+    {
+      "path": "src/components/raqeem/BrandLogo.jsx",
+      "bytes": 587,
+      "sha256": "9b3b573d181aa910256034faa78e392f122b0081dd6f61b3983f04700e8ba9d2"
+    },
+    {
+      "path": "src/components/raqeem/CalendarSyncButton.jsx",
+      "bytes": 3058,
+      "sha256": "f3d71345f209d70d523d6950d9a71d90fd349ae2d5a67717784e918952abdb24"
+    },
+    {
+      "path": "src/components/raqeem/ChairBrief.jsx",
+      "bytes": 3708,
+      "sha256": "d97236cf0106c846dafec0ab13ea49b74abe7f2f80126c32df8e419188fa85a4"
+    },
+    {
+      "path": "src/components/raqeem/ChangeInventoryPanel.jsx",
+      "bytes": 15432,
+      "sha256": "fc7a2de9fd6e17de2fe62990ce41201a2a1e0864e391383325f4ad9d43725935"
+    },
+    {
+      "path": "src/components/raqeem/CirculationPanel.jsx",
+      "bytes": 23042,
+      "sha256": "1063926027d1a5bf629eb23f150c721f340e3e91bb96793a215210e4eea20d8f"
+    },
+    {
+      "path": "src/components/raqeem/CommitteeActivationPanel.jsx",
+      "bytes": 8016,
+      "sha256": "c1550cf987d29268dd051b3b890ef6deceb329e671b81cd20af58e2a6d49a679"
+    },
+    {
+      "path": "src/components/raqeem/CommitteeChairCard.jsx",
+      "bytes": 2886,
+      "sha256": "ba253d17ec1e0866ca0b92fbfd0a976fc2247207ec4712eab482569c2c335dfa"
+    },
+    {
+      "path": "src/components/raqeem/CommitteeHubTabs.jsx",
+      "bytes": 2763,
+      "sha256": "b1d032767e0f261242808a2b6e73ae399ad00a5695bf9883e07d1e338eb359f7"
+    },
+    {
+      "path": "src/components/raqeem/CommitteeLayout.jsx",
+      "bytes": 13332,
+      "sha256": "4019b3d94fc68dca8736fc63f82ccc0761c6270fe85182d4e335b680ecc6ff8c"
+    },
+    {
+      "path": "src/components/raqeem/CommitteeLogoSection.jsx",
+      "bytes": 5585,
+      "sha256": "8e8ffc58f42d5984255759e8ca7de2138b33f3486001ef32062ade4a19ac4cac"
+    },
+    {
+      "path": "src/components/raqeem/CompletionLedger.jsx",
+      "bytes": 7142,
+      "sha256": "ddaf5f6a296893e53928a814f16e5e14e44b77bc1d4b84bbe8bf63e31f750ab5"
+    },
+    {
+      "path": "src/components/raqeem/ConsistencyCheckPanel.jsx",
+      "bytes": 7057,
+      "sha256": "80eac643dfc51adc746a2ca3622322cd2fbe712e6b65014d19032222d51595c6"
+    },
+    {
+      "path": "src/components/raqeem/CrudFormDialog.jsx",
+      "bytes": 5048,
+      "sha256": "e986b57dade54b80307cec2738e0513119c43a5320e5765da23fec9c0f1a3b9f"
+    },
+    {
+      "path": "src/components/raqeem/DecisionDocuments.jsx",
+      "bytes": 7616,
+      "sha256": "94572e16b45642ea520ba5b3a6e4ea85cef4b46ce6f4db3d84531824df8ebbb6"
+    },
+    {
+      "path": "src/components/raqeem/DecisionWorkflow.jsx",
+      "bytes": 14894,
+      "sha256": "b2926d71159882da640ce3ece88cf8d1cb9629809d64014bde37308d99a80645"
+    },
+    {
+      "path": "src/components/raqeem/DeliberationCard.jsx",
+      "bytes": 3274,
+      "sha256": "9dab496a60c388acce0fe3c1928a584d4c4d60fb624e6d8a2b56e76dd5844009"
+    },
+    {
+      "path": "src/components/raqeem/DeliberationFormDialog.jsx",
+      "bytes": 5803,
+      "sha256": "e26c6e514467b74ffdfb5c42e7583db7878de2e4a3e84549100bc4be20f0168f"
+    },
+    {
+      "path": "src/components/raqeem/DossierExportPanel.jsx",
+      "bytes": 7995,
+      "sha256": "f6f344d3ce8104a641c2f87bb0e035c6ef65fb860696c538880c1a7b1c90a638"
+    },
+    {
+      "path": "src/components/raqeem/EmptyState.jsx",
+      "bytes": 786,
+      "sha256": "1b4c9ee367e1181a364bd8058e8eca38430bdf86857eb00d340623f9d6aa817b"
+    },
+    {
+      "path": "src/components/raqeem/EntitySearchSelect.jsx",
+      "bytes": 12365,
+      "sha256": "7717b082329e8262d77881b99921987faa325ad587cc7ec95782b2e8af5a703c"
+    },
+    {
+      "path": "src/components/raqeem/EscalationAction.jsx",
+      "bytes": 8310,
+      "sha256": "bed75fd3348fedf7c760f0ff6ccd09888d04f9e058e2483f372fc42850a73970"
+    },
+    {
+      "path": "src/components/raqeem/EstablishingDocumentSection.jsx",
+      "bytes": 7258,
+      "sha256": "136117628f26ddc457e2c8db85f937e86f06916655cd22203ebb635d11e1e4a0"
+    },
+    {
+      "path": "src/components/raqeem/ExceptionCataloguePanel.jsx",
+      "bytes": 7797,
+      "sha256": "16cba970eab8a3b93d8b190a9088ccd89082ba3418939f250187b4224449e869"
+    },
+    {
+      "path": "src/components/raqeem/ExplorationNotice.jsx",
+      "bytes": 1698,
+      "sha256": "062262e4bfc0d95d0e1d61eadc902b4889a6bb572b8080f6bba73427ac2abf8a"
+    },
+    {
+      "path": "src/components/raqeem/FormationAndAmendments.jsx",
+      "bytes": 1453,
+      "sha256": "cae23f41c4fb9c18e9ca28f5c8910067290f5620ae89fa615fc8c7929727352e"
+    },
+    {
+      "path": "src/components/raqeem/FormationDiff.jsx",
+      "bytes": 5474,
+      "sha256": "6dbe22e5b272ccbbe836091435d44d3a82bb617451bd86af146f628cb58ac605"
+    },
+    {
+      "path": "src/components/raqeem/FormationImpactPreview.jsx",
+      "bytes": 8997,
+      "sha256": "95399eefe88a045214c91bc19092112ca25c0420fd20c9339635184dcfa46ac0"
+    },
+    {
+      "path": "src/components/raqeem/GenerateWizard.jsx",
+      "bytes": 15838,
+      "sha256": "5b543a7514b48521ca9fbd39c2a91f2b8b6749ca6ea2c28563e6b879653bd20d"
+    },
+    {
+      "path": "src/components/raqeem/InstitutionalTimeMachine.jsx",
+      "bytes": 10883,
+      "sha256": "bef7726eb2a3873c7bee593a63c165e578abf84f227fd383c1bcc954d1258124"
+    },
+    {
+      "path": "src/components/raqeem/IntegrationHealthPanel.jsx",
+      "bytes": 10518,
+      "sha256": "109153d7280dc52522b149de3a8cdd2a0d4c4a6497276a4d7125054d37a7b4a5"
+    },
+    {
+      "path": "src/components/raqeem/IssuanceIntegrityPanel.jsx",
+      "bytes": 5107,
+      "sha256": "4694a8ed8c23885b1d9b3e1c95935ab0c6ffee0c42d01ecf8e6acbe21d459056"
+    },
+    {
+      "path": "src/components/raqeem/LanguageSwitcher.jsx",
+      "bytes": 1035,
+      "sha256": "431ae5fd21c188f548b04d700dd0435d73c8c7028ba8da488c896efd7f98f0af"
+    },
+    {
+      "path": "src/components/raqeem/LegislativeReportPanel.jsx",
+      "bytes": 7906,
+      "sha256": "e1928b4e9a8d57b1e4ae9dda5c5bfdc9aad45e1402230691ffae49e312108c7d"
+    },
+    {
+      "path": "src/components/raqeem/LiveVotingWidget.jsx",
+      "bytes": 5523,
+      "sha256": "3c22380eb682d20e67450a5afb9cc543362765ad9e9ed6e8ce7d3d4359e526a3"
+    },
+    {
+      "path": "src/components/raqeem/LivingProductDelta.jsx",
+      "bytes": 8418,
+      "sha256": "55a24519163292afa9f428b55ad4fa05f6923a76aef6a22d0a79b2355087c30a"
+    },
+    {
+      "path": "src/components/raqeem/LoadingSkeleton.jsx",
+      "bytes": 4637,
+      "sha256": "874012f7d3c9c820baff6bc78ca4450403620fe965e6ebb7189b17bb0876a1d7"
+    },
+    {
+      "path": "src/components/raqeem/LocalizedDatePicker.jsx",
+      "bytes": 1887,
+      "sha256": "5421cecf5eac063575a9c61919519644a620e6bfc4d0e8c9f2051a4d17ce51c4"
+    },
+    {
+      "path": "src/components/raqeem/LocalizedField.jsx",
+      "bytes": 798,
+      "sha256": "b6ccfdf49caa505de77588b496805708889b0757805e4dc2a3605901c5eac5b1"
+    },
+    {
+      "path": "src/components/raqeem/LocalizedFileUpload.jsx",
+      "bytes": 3577,
+      "sha256": "9617fcc7faff3e799dce11e6956e6e99b4ad7e7fd0cdd74dcbc82cff78eb795f"
+    },
+    {
+      "path": "src/components/raqeem/MeetingInsightsPanel.jsx",
+      "bytes": 11116,
+      "sha256": "7271f32f0918b4f437c935b8f09d85be700c8ca93f61e99e8f53386ff7ebcf69"
+    },
+    {
+      "path": "src/components/raqeem/MemoryReviewPanel.jsx",
+      "bytes": 5542,
+      "sha256": "04e04a9d3366d24ab6ffe29d97aa29b1c5c9cd9bd86299aef7f8af9b95ea44c3"
+    },
+    {
+      "path": "src/components/raqeem/MemorySectionRenderer.jsx",
+      "bytes": 4572,
+      "sha256": "8997740a175cd0818ec212589a1ed8311feb1910e07b022d70e3a09bc5c68ecb"
+    },
+    {
+      "path": "src/components/raqeem/MetricsPanel.jsx",
+      "bytes": 9357,
+      "sha256": "6f5e8ab17718b731f3e60cd3ffd87fbd6bea129c55f413ca93665ed7ea41334e"
+    },
+    {
+      "path": "src/components/raqeem/MinutesManager.jsx",
+      "bytes": 21617,
+      "sha256": "e4964ec2515428aacd89f5b09e780a303ca6b522253fc7fb8357812a3932874c"
+    },
+    {
+      "path": "src/components/raqeem/MissingValue.jsx",
+      "bytes": 1057,
+      "sha256": "5d4effa9570733021c592010f3c680498c727786451f38fa2cee533ac9ae1d97"
+    },
+    {
+      "path": "src/components/raqeem/MyWorkInbox.jsx",
+      "bytes": 23545,
+      "sha256": "e81dfea81858a994c09f9ff9ff951c10136cce2b18d77f01b922505fc1fafada"
+    },
+    {
+      "path": "src/components/raqeem/NextActionCard.jsx",
+      "bytes": 2006,
+      "sha256": "c6cc64dee55b0c8fd7453e1454906ab68d5bb9570a315423375acd8e807ebe8d"
+    },
+    {
+      "path": "src/components/raqeem/NoticeDeliveryStatus.jsx",
+      "bytes": 4453,
+      "sha256": "ac52ca6bcf7637fa197bf85f4bc608d5e576c0ff3e1c0f76e333952b11de8a23"
+    },
+    {
+      "path": "src/components/raqeem/NotificationCenter.jsx",
+      "bytes": 7589,
+      "sha256": "c779dc8c1024cbd5e7d70de25a75259509a4f7c4d93a9366afa6717a588751f3"
+    },
+    {
+      "path": "src/components/raqeem/OrgLayout.jsx",
+      "bytes": 3751,
+      "sha256": "b6086d544d4e218cc9f98388cd84f08df288e5d97b19a0fe6c777c7ba398e3c4"
+    },
+    {
+      "path": "src/components/raqeem/OrganizationIdentity.jsx",
+      "bytes": 1252,
+      "sha256": "68d5b0cbeed2c5ba94d9cc6c5f28cca1471aab3c422ae33e85bf4c28d2b86a84"
+    },
+    {
+      "path": "src/components/raqeem/OutlookSyncButton.jsx",
+      "bytes": 3048,
+      "sha256": "58986f54593f6d8b18794074e5a2e551a1a6171ebfc174636ca52b55c9b89beb"
+    },
+    {
+      "path": "src/components/raqeem/PackDraftPanel.jsx",
+      "bytes": 7659,
+      "sha256": "a5ef0abdc0e296aca114ada423c2e01a06565d6ce6f52273690dca8ef9cd6be2"
+    },
+    {
+      "path": "src/components/raqeem/PageHeader.jsx",
+      "bytes": 1026,
+      "sha256": "98a116a2448ecb96d5233dbd386e849bc9d7aab7a367a5865299d111e295e73a"
+    },
+    {
+      "path": "src/components/raqeem/PageNav.jsx",
+      "bytes": 5877,
+      "sha256": "e5bdf57789020cb3fd720fb5d3724ec5328e98527814d6d62edc0445612ba351"
+    },
+    {
+      "path": "src/components/raqeem/ParticipationMatrixPanel.jsx",
+      "bytes": 10874,
+      "sha256": "ead462dad5b8a6e77e84625505c14053a18b3114947b4e5ce29ab8edea3fa83b"
+    },
+    {
+      "path": "src/components/raqeem/PasswordInput.jsx",
+      "bytes": 1769,
+      "sha256": "440d5e035f7f24a305b641a8b2b9b1ef82060e64e2a20f1dbc54c889c4319d8c"
+    },
+    {
+      "path": "src/components/raqeem/PreflightChecklist.jsx",
+      "bytes": 8013,
+      "sha256": "55656a522bc7695bb63c2df743c6a252fdcaaeb5645d72a081f1a411261adcf5"
+    },
+    {
+      "path": "src/components/raqeem/PrincipalBasisPanel.jsx",
+      "bytes": 10116,
+      "sha256": "62a0237afaf892222396857fa9d85ecd9e44ec765982073b8bb3b7d8e61cbe3c"
+    },
+    {
+      "path": "src/components/raqeem/ProductViewer.jsx",
+      "bytes": 9447,
+      "sha256": "eec4c0627123c52f32856deaabb5b448e0dd72d9c19af0ef95b689f7e45baeb0"
+    },
+    {
+      "path": "src/components/raqeem/ProofChain.jsx",
+      "bytes": 7774,
+      "sha256": "8f3df7b7dbdb27ecb1226420266d85a3b86573517155ae90b26b1b857112e012"
+    },
+    {
+      "path": "src/components/raqeem/ProofChainDrawer.jsx",
+      "bytes": 10344,
+      "sha256": "34b34095ed6f3cca00a0e929e69dcf3117c85678a5fed955379f54cd5b5a0b27"
+    },
+    {
+      "path": "src/components/raqeem/ProofChainSnapshot.jsx",
+      "bytes": 5412,
+      "sha256": "d60386c54b99f892f6fdebc8531e05c479064baf36ab8bcd2ee39d9bdf883131"
+    },
+    {
+      "path": "src/components/raqeem/ProofChainVotes.jsx",
+      "bytes": 1039,
+      "sha256": "32eb3a16565f1dab14eccfeffc3d8e20f2659c4deb349b13e4789d6c55147a17"
+    },
+    {
+      "path": "src/components/raqeem/ProposalIntegrityPanel.jsx",
+      "bytes": 11999,
+      "sha256": "52323c78ace25e3b1cf2702a7d663ea3f93f5fb994479e3b4f2a1cee0799a792"
+    },
+    {
+      "path": "src/components/raqeem/QRCode.jsx",
+      "bytes": 882,
+      "sha256": "a1290c8ef93fa025f727f125cadf9feff67972ef20afe91f0b93fe2ba9d65e1a"
+    },
+    {
+      "path": "src/components/raqeem/RatificationPanel.jsx",
+      "bytes": 10405,
+      "sha256": "0de4badddb81187aff7867c8328f3584de86dfb1a1de9e3bbf28e9b282fe656c"
+    },
+    {
+      "path": "src/components/raqeem/RecordRiskPanel.jsx",
+      "bytes": 8352,
+      "sha256": "54a4a0d6fb97062b21a9206f05700bf16f58d7c88f000d1e38ada98202ddcc0e"
+    },
+    {
+      "path": "src/components/raqeem/RecurrenceConfig.jsx",
+      "bytes": 5437,
+      "sha256": "df8d79c678407144ac1a44d50a6a83b426ed1851faba59d887d087ca1f55e2c3"
+    },
+    {
+      "path": "src/components/raqeem/RegisterStatePanel.jsx",
+      "bytes": 7922,
+      "sha256": "d8e7250d2bf1fc3637493bf5ec5aac6567e7fd262b0291b6d342df6bdf4971fa"
+    },
+    {
+      "path": "src/components/raqeem/RetentionPanel.jsx",
+      "bytes": 11633,
+      "sha256": "6fceab64053aa5bc0ac0c5f30de88ac45cf67c5d357792f99f0ee29442d30e7d"
+    },
+    {
+      "path": "src/components/raqeem/RoundEffectPanel.jsx",
+      "bytes": 8785,
+      "sha256": "cdb02bb853ef358ab80f9c58fa8cd1abee4a48312b3763237d753d92a009f3ae"
+    },
+    {
+      "path": "src/components/raqeem/SeatedReadinessPanel.jsx",
+      "bytes": 7075,
+      "sha256": "e39949a398736c4db93b4c886ee20bb404e206532443c40e3a571ca262ae72eb"
+    },
+    {
+      "path": "src/components/raqeem/SecretaryOperations.jsx",
+      "bytes": 3801,
+      "sha256": "d5100fb8cee4f38db57a5ed1bb580fd221dd880d7f0b893a770b5a20e2b9aaf8"
+    },
+    {
+      "path": "src/components/raqeem/SecureFileImage.jsx",
+      "bytes": 1569,
+      "sha256": "70b61edde9f0f2e8bfbcb47edc980db80d3f5a6520ce94a0a2ccd244368b2639"
+    },
+    {
+      "path": "src/components/raqeem/SecureFileLink.jsx",
+      "bytes": 2374,
+      "sha256": "66f0616c7113f1dfe24fa77b1b1cd03ef5fb3576a59937e06789b2c2e26b1616"
+    },
+    {
+      "path": "src/components/raqeem/SignaturePad.jsx",
+      "bytes": 6502,
+      "sha256": "3f96b9651e53f0e39aab61bb13bd03ec85de7c46c7573a8e6d18b5552022e57f"
+    },
+    {
+      "path": "src/components/raqeem/SilentFailureRadar.jsx",
+      "bytes": 9234,
+      "sha256": "0474fd782e5783e851ab0f532b8ce4a70b67c1ab6b6bf089b2533417891ba32a"
+    },
+    {
+      "path": "src/components/raqeem/SmartFormAssist.jsx",
+      "bytes": 8372,
+      "sha256": "74fb60277fff336f3e2bafe6efd386da021a71b08f760156d0cea4819f628509"
+    },
+    {
+      "path": "src/components/raqeem/SovereignCard.jsx",
+      "bytes": 4309,
+      "sha256": "43b8f6938c72d91592fe2a73d53d60d7c85e4e395a3d557f35cfec32c4649584"
+    },
+    {
+      "path": "src/components/raqeem/SplashScreen.jsx",
+      "bytes": 5161,
+      "sha256": "52a87eedc22bbba2b116c539f689a554815dc69126b46ea320890e5f587781a1"
+    },
+    {
+      "path": "src/components/raqeem/StatusBadge.jsx",
+      "bytes": 400,
+      "sha256": "c609de28a2e340ee5175ebfb1ebd38623e7f650f9ac673e33573f9ac9cf3dc01"
+    },
+    {
+      "path": "src/components/raqeem/StickyPageNav.jsx",
+      "bytes": 3042,
+      "sha256": "338566ba1188688db014a28d84eaaf7217e1791e0496eab1be63f97abe6abe1d"
+    },
+    {
+      "path": "src/components/raqeem/SupportingDocumentsSection.jsx",
+      "bytes": 5822,
+      "sha256": "d209ec7ceea1232eebf076c0d125295eed0c6f1bbd4760630b316565863f2bc7"
+    },
+    {
+      "path": "src/components/raqeem/TraceabilityMatrix.jsx",
+      "bytes": 8319,
+      "sha256": "760bf5cf9f08a8d0e4fc50e490c4fdf192fad95877fbafa0b493d47a63fc6cea"
+    },
+    {
+      "path": "src/components/raqeem/UnifiedWorkspace.jsx",
+      "bytes": 13681,
+      "sha256": "74652d9a67b9a0a3c0896b77cbacb228411a8d0e31d52732bf7878f2412a69fe"
+    },
+    {
+      "path": "src/components/raqeem/VaultEntryForm.jsx",
+      "bytes": 3403,
+      "sha256": "70311a86f9c295dd58a1766bc8862f3b088de8186209140486a06a9df836f63f"
+    },
+    {
+      "path": "src/components/raqeem/WorkInbox.jsx",
+      "bytes": 11074,
+      "sha256": "ab3a697688dd686036d619c075fc772cbd8d0dc34e2ad8a892fab2aefbc4e1e7"
+    },
+    {
+      "path": "src/components/raqeem/admin/AdminEditForm.jsx",
+      "bytes": 7637,
+      "sha256": "7f9cabb60e9799a40bf1059ac01eabaac9b0c0df58865996ded1ffadddbb6eef"
+    },
+    {
+      "path": "src/components/raqeem/admin/AdminEditMode.jsx",
+      "bytes": 20282,
+      "sha256": "4c313bcbafc1b53207c9bada74d2fd262cd7b17b1dd75c1cf9c1e5f75e01e012"
+    },
+    {
+      "path": "src/components/raqeem/admin/AdminVersionHistory.jsx",
+      "bytes": 3779,
+      "sha256": "571044e5f8a4d57acd83cba461f2481aed127d500ba2af1f8a16d6a15df3ea18"
+    },
+    {
+      "path": "src/components/raqeem/annotations/AnnotationComposer.jsx",
+      "bytes": 2699,
+      "sha256": "a595493a2110fdbb40e0a05e39971ece6e47fc17b776d353301cf5bcca48d190"
+    },
+    {
+      "path": "src/components/raqeem/annotations/AnnotationRow.jsx",
+      "bytes": 3017,
+      "sha256": "5a804195c51be7955092debcff616850a12721fd8431b6f91956c4bdde1fd301"
+    },
+    {
+      "path": "src/components/raqeem/annotations/DocumentAnnotationsPanel.jsx",
+      "bytes": 4088,
+      "sha256": "35a9419856b9cbc1a888bf65a089139edebfdb27fe2b8da0004ffcee0cb60e91"
+    },
+    {
+      "path": "src/components/raqeem/annotations/VersionChangeStrip.jsx",
+      "bytes": 1803,
+      "sha256": "dbc2ed06a354024fdfd1541abdd023f504b8033ada03f4a341e6f6a070743b06"
+    },
+    {
+      "path": "src/components/raqeem/annotations/annotationLabels.js",
+      "bytes": 1773,
+      "sha256": "23c0afc005ba3f90c243ab86e5178e02d0b6a3f75b313c16b904d7705d2ca3e7"
+    },
+    {
+      "path": "src/components/raqeem/copilot/MessageBubble.jsx",
+      "bytes": 3098,
+      "sha256": "d8000c67539fc507c52ac533fd4e6c4c75eda3bc21536d8a2dd43c672b50a890"
+    },
+    {
+      "path": "src/components/raqeem/home/shared.jsx",
+      "bytes": 4979,
+      "sha256": "29ad9662de3e727a5bf740af2b5248c61dfd73db2b1c852d4c5da34526264037"
+    },
+    {
+      "path": "src/components/raqeem/homes/ChairHomeEnhanced.jsx",
+      "bytes": 7545,
+      "sha256": "6accd1ead8a23eafe20c6e76817c3a45e43a446e7dd773030c120d6bde3fed1d"
+    },
+    {
+      "path": "src/components/raqeem/homes/MemberHomeEnhanced.jsx",
+      "bytes": 7718,
+      "sha256": "d0d2003cd91446b239536b275a36f090e834bd235daeec546a93830b57d4f594"
+    },
+    {
+      "path": "src/components/raqeem/homes/ObserverHomeEnhanced.jsx",
+      "bytes": 4956,
+      "sha256": "b780f4f054c463ee4f407fc7eae4d17aec0b48ca358f2607ce5ffb4767cdb3d7"
+    },
+    {
+      "path": "src/components/raqeem/homes/SecretaryHomeEnhanced.jsx",
+      "bytes": 6682,
+      "sha256": "b4c51dea5b3e92eda8606963d6e0aa62133c8b86d20556187270e81e23ac7b7a"
+    },
+    {
+      "path": "src/components/routing/LegacyCommitteeRedirect.jsx",
+      "bytes": 1332,
+      "sha256": "2ad4e15a5a545ad0cf3cbdf7c8803c04c873933191a409d2c38ae292b7d64c0d"
+    },
+    {
+      "path": "src/components/routing/LegacyRecordRedirect.jsx",
+      "bytes": 2001,
+      "sha256": "c5fc3dab92c83fe74beef90dd7cd87e4fea077b692d441fb2990667f5945096a"
+    },
+    {
+      "path": "src/components/routing/ParamRedirect.jsx",
+      "bytes": 384,
+      "sha256": "8705b5f592f02f40412bf834e5414fb65568c49dccf356727bb169bff8c9e555"
+    },
+    {
+      "path": "src/components/showcase/BeforeAfter.jsx",
+      "bytes": 1478,
+      "sha256": "fb68ee265365367baae3ef60271a42b5a708d3f0f75dad7733a6fee0ffa4f3cf"
+    },
+    {
+      "path": "src/components/showcase/CommitteeBrief.jsx",
+      "bytes": 2865,
+      "sha256": "591292de3836f469e03189196ae13c48a95222352a079ef10c87c6565082d52f"
+    },
+    {
+      "path": "src/components/showcase/DecisionRoom.jsx",
+      "bytes": 2341,
+      "sha256": "37f42803c109ea37f105a208857e0c22a988d12420ca45cdfc468de8b7a4798e"
+    },
+    {
+      "path": "src/components/showcase/DemoBanner.jsx",
+      "bytes": 969,
+      "sha256": "09a1edece4a9973f4468291b98937ba47ffa16914026ae14df4a74183ddb2b97"
+    },
+    {
+      "path": "src/components/showcase/DependenciesView.jsx",
+      "bytes": 1622,
+      "sha256": "49cf4765c529b14970e992433c11f3797848aaec5b678117cc66fe9b63bb8ca4"
+    },
+    {
+      "path": "src/components/showcase/ElanReference.jsx",
+      "bytes": 4222,
+      "sha256": "290448b98d6985f642346ec37ecf71f1d9723b6464e344d9975f557de211902e"
+    },
+    {
+      "path": "src/components/showcase/EvidenceReadiness.jsx",
+      "bytes": 3386,
+      "sha256": "bf2b4ae83ee036abce0e057c9cec6960126d0ed8b191ac9bfa8a9dd0c8c05f33"
+    },
+    {
+      "path": "src/components/showcase/ExecutiveArrival.jsx",
+      "bytes": 1972,
+      "sha256": "1e9eacf9389dceb3351f3d4fa97b1d779c9bebc98c0f788336f1641be6c2f39e"
+    },
+    {
+      "path": "src/components/showcase/InitiativeCard.jsx",
+      "bytes": 2509,
+      "sha256": "5d3cf267701e26b62e02874e5b2af9d9738efaf71680de40c772e09732b6ec85"
+    },
+    {
+      "path": "src/components/showcase/MarketsWorkspace.jsx",
+      "bytes": 1845,
+      "sha256": "a3e06d8d2fb47408742e9f533b977af905bd27ef1e360accd4e39418615e520e"
+    },
+    {
+      "path": "src/components/showcase/NationalAdoption.jsx",
+      "bytes": 3116,
+      "sha256": "a1110e1e728a9c15ebf8323f5e4a1be483db82ee0bb28429810d84d94ac64ce1"
+    },
+    {
+      "path": "src/components/showcase/SourceTag.jsx",
+      "bytes": 747,
+      "sha256": "615ff7c250605a1325dbe750dd802daad84357aff098b476732d978dcbb4846d"
+    },
+    {
+      "path": "src/components/ui/accordion.jsx",
+      "bytes": 1615,
+      "sha256": "b47533b3783b8149550b8481e4ae93d54bdcbc51d434793c176b0aec5558ee1c"
+    },
+    {
+      "path": "src/components/ui/alert-dialog.jsx",
+      "bytes": 3461,
+      "sha256": "a20098cdc2eb2b5915575d3f0fb7a3e8e6c1035c7eef77144f3fc389e0fdbda0"
+    },
+    {
+      "path": "src/components/ui/alert.jsx",
+      "bytes": 1335,
+      "sha256": "c5baf27fb6a4bf130236fa0f336c21084fee192e8215bb6b20c87436c27f3b38"
+    },
+    {
+      "path": "src/components/ui/aspect-ratio.jsx",
+      "bytes": 140,
+      "sha256": "08b0aa0b05efc573c7d63363c03e83d4b101bfeb54140764e96ddea30659cfcc"
+    },
+    {
+      "path": "src/components/ui/avatar.jsx",
+      "bytes": 1043,
+      "sha256": "703fb6852952bd039b68dc494c004eee1d835fa12647b851722ab9b6b3058b32"
+    },
+    {
+      "path": "src/components/ui/badge.jsx",
+      "bytes": 990,
+      "sha256": "380dcda78ff8fdd80c82b89cb7dd38ffd84c355735fc8f16300ff647e15988aa"
+    },
+    {
+      "path": "src/components/ui/breadcrumb.jsx",
+      "bytes": 2271,
+      "sha256": "4c0972765dc0212c5101446cb931db44b7db68a21ef9d7bc8a75c46f9bb96e42"
+    },
+    {
+      "path": "src/components/ui/button.jsx",
+      "bytes": 1679,
+      "sha256": "6c28699c64ff8c36ec5a2baf835d6bfa141cedeaf472b97d64671dac6cf7cbf8"
+    },
+    {
+      "path": "src/components/ui/calendar.jsx",
+      "bytes": 2851,
+      "sha256": "06e0c81497bda70ac24855b54fddd385557cbc3be8d8066a345bedbec551b3ee"
+    },
+    {
+      "path": "src/components/ui/card.jsx",
+      "bytes": 1440,
+      "sha256": "8ab6f42e722e9c51752ce2f14aabb2696bddc0b6818041fb8f313f670955c2c4"
+    },
+    {
+      "path": "src/components/ui/carousel.jsx",
+      "bytes": 4821,
+      "sha256": "55eb9456609f96f5c28c1fa35fe79554fc0ffab12883e3aceb041ff10e347e83"
+    },
+    {
+      "path": "src/components/ui/chart.jsx",
+      "bytes": 8639,
+      "sha256": "c4684b470cae53b857a08e5fe006d4406450a442a103858beb179ec810aba2b3"
+    },
+    {
+      "path": "src/components/ui/checkbox.jsx",
+      "bytes": 880,
+      "sha256": "b0260cb7767493d8273f5def1b7d32e844d068db5f5760258d333ae6ad88f0d8"
+    },
+    {
+      "path": "src/components/ui/collapsible.jsx",
+      "bytes": 329,
+      "sha256": "f4cdd104de29928bfcd40b865c7d08eed9157a537fbb8b5e6d0921f02b63cc04"
+    },
+    {
+      "path": "src/components/ui/command.jsx",
+      "bytes": 3897,
+      "sha256": "e7cea37aff49e211ffea1bf3ed67add6ce1ab29862e902aff739fcd11014f06f"
+    },
+    {
+      "path": "src/components/ui/context-menu.jsx",
+      "bytes": 5995,
+      "sha256": "5fe320cad9ee1833e9528f86e340f83f419f77790549f4cff083fad329e8dc4c"
+    },
+    {
+      "path": "src/components/ui/dialog.jsx",
+      "bytes": 3228,
+      "sha256": "50a7cc4ae5ce0f2527662ed9742d35b8c4933d1629a2740b26890793aee00742"
+    },
+    {
+      "path": "src/components/ui/drawer.jsx",
+      "bytes": 2359,
+      "sha256": "3d2dce97d3f6bc5dfa887e87c6688228298526bfdc29a28f2edbd6c1dc2eb47a"
+    },
+    {
+      "path": "src/components/ui/dropdown-menu.jsx",
+      "bytes": 6157,
+      "sha256": "d36cd67e71781bbb03059b057b6f686445477a4275120359178729574398c465"
+    },
+    {
+      "path": "src/components/ui/form.jsx",
+      "bytes": 3141,
+      "sha256": "d899b071230c321acdb2996cbe02d84a46dd9825f81af1015f7e54c6b9ee211c"
+    },
+    {
+      "path": "src/components/ui/hover-card.jsx",
+      "bytes": 1070,
+      "sha256": "3b49e533ad60995767a3419351642037438e8f27b62132115fc71115cf1fd0ad"
+    },
+    {
+      "path": "src/components/ui/image-helpers.js",
+      "bytes": 2482,
+      "sha256": "e273c4545b9ddfe600d9cb6355dd3e3e03d13d9a3e585acf8076036ebbcddb7d"
+    },
+    {
+      "path": "src/components/ui/image.jsx",
+      "bytes": 6905,
+      "sha256": "614261a7574437028782aa72d9456be04da6ed828cd058ca30d0dd6ec3dec489"
+    },
+    {
+      "path": "src/components/ui/input-otp.jsx",
+      "bytes": 1811,
+      "sha256": "78a437a82203c1d9d22d47db830bdc67d49d6473c5c28ad77634eeb8c399a649"
+    },
+    {
+      "path": "src/components/ui/input.jsx",
+      "bytes": 690,
+      "sha256": "4455aea152904f128df0ecd82047bbceb23e06ffcc9ccc7cbb3bcc87df5bcc4f"
+    },
+    {
+      "path": "src/components/ui/label.jsx",
+      "bytes": 525,
+      "sha256": "37c6425d2a5c798ade4e60f89f86054d703433a8977e12d796de2b5bb4e3d0b7"
+    },
+    {
+      "path": "src/components/ui/menubar.jsx",
+      "bytes": 6790,
+      "sha256": "5411f1b8221d9a34fc9b58f830642cfa3a33c776d0072014690e2f024515391d"
+    },
+    {
+      "path": "src/components/ui/navigation-menu.jsx",
+      "bytes": 4217,
+      "sha256": "a1f789747cb750329a33ee04c54209b044239a15ba200fb9d7da1f2ce6b73403"
+    },
+    {
+      "path": "src/components/ui/pagination.jsx",
+      "bytes": 2322,
+      "sha256": "1d519fc3ba1c8c6cf7f2d30c98739ecba2fa7af35cbc024d6793785e7a6d65c8"
+    },
+    {
+      "path": "src/components/ui/popover.jsx",
+      "bytes": 1166,
+      "sha256": "199cc7b3d810013867ae91305f0966b8a66526a1c13d10248c38ee1797d169db"
+    },
+    {
+      "path": "src/components/ui/progress.jsx",
+      "bytes": 667,
+      "sha256": "1ad2808d51c365f04f23a4e985b03274dcc30735d74db68e1f78332a6533859c"
+    },
+    {
+      "path": "src/components/ui/radio-group.jsx",
+      "bytes": 1135,
+      "sha256": "10ced1e6932e4fe53d6c18201f50b8bb4b334b4372f01ce5f0993aa2a6bb9110"
+    },
+    {
+      "path": "src/components/ui/resizable.jsx",
+      "bytes": 1570,
+      "sha256": "4e74fb31b8321012570554dc8c55a58aacf1adcced2fdc43085c67ff96ce9773"
+    },
+    {
+      "path": "src/components/ui/scroll-area.jsx",
+      "bytes": 1362,
+      "sha256": "3de4bed34be51a940243b0fbf8c6d9324ecb416a91a919d65ca18d15a7ba32a1"
+    },
+    {
+      "path": "src/components/ui/select.jsx",
+      "bytes": 4677,
+      "sha256": "15c7a0e4c45b655ffa8d3f3be8bdaab727a19fd6baa95b34056bf02c7254243e"
+    },
+    {
+      "path": "src/components/ui/separator.jsx",
+      "bytes": 600,
+      "sha256": "2c82247abd573d0f4a93eb259166e3b778365b58c0d18921b4739d5ba4b29e7e"
+    },
+    {
+      "path": "src/components/ui/sheet.jsx",
+      "bytes": 3549,
+      "sha256": "33f27d1b55925dbc354d0a61b0cbc6f977352da13f4df519f06e5b5bd9ed2d5c"
+    },
+    {
+      "path": "src/components/ui/sidebar.jsx",
+      "bytes": 20643,
+      "sha256": "828bec5ac1ec715fe50deebae08a7da23f01e9b0dcb221b110e37de63eb22d3c"
+    },
+    {
+      "path": "src/components/ui/skeleton.jsx",
+      "bytes": 227,
+      "sha256": "c5f32316d9f8feeba529bac6321766424067185afee5f29a15bb18145adaf1bc"
+    },
+    {
+      "path": "src/components/ui/slider.jsx",
+      "bytes": 914,
+      "sha256": "1761bfaa0a06480b76b31511e4a5c24903b407732e027fc11ad615dd3d93a562"
+    },
+    {
+      "path": "src/components/ui/sonner.jsx",
+      "bytes": 799,
+      "sha256": "f1309f953467d583202225d08414161fc3183758ac38c997249eb63686a27ba8"
+    },
+    {
+      "path": "src/components/ui/switch.jsx",
+      "bytes": 1025,
+      "sha256": "880e95637cc1d90ef4476f79114afd2fa7b5f6e5da1f49a70e0efc1f84aa0c8a"
+    },
+    {
+      "path": "src/components/ui/table.jsx",
+      "bytes": 2231,
+      "sha256": "301509bb8337184f1b299cb15b8d4f8ec8f0d3bbc17a2ffdf33ff58f7eaa444e"
+    },
+    {
+      "path": "src/components/ui/tabs.jsx",
+      "bytes": 1529,
+      "sha256": "57591bdfb3fa931b06edcf4168b6881a79785c674ad0618003d12cd656072350"
+    },
+    {
+      "path": "src/components/ui/textarea.jsx",
+      "bytes": 587,
+      "sha256": "b64a8fabf495dd59dbfd23914334ffbdfa695f506a133370603a49eca1243f62"
+    },
+    {
+      "path": "src/components/ui/toast.jsx",
+      "bytes": 3915,
+      "sha256": "cf9d4869024d879c2e0c4122f74dd0d7cfc834c7377634a14e1bfc47db1d15e0"
+    },
+    {
+      "path": "src/components/ui/toaster.jsx",
+      "bytes": 785,
+      "sha256": "fc1bce32d9a45f5be28c67b486962b90eed76742f3c0995f5fb908ffc6bde3cd"
+    },
+    {
+      "path": "src/components/ui/toggle-group.jsx",
+      "bytes": 1284,
+      "sha256": "1c7566b9f2aa00f0afdf161527be90588a11386158dca55425ea0d8c0e3883e4"
+    },
+    {
+      "path": "src/components/ui/toggle.jsx",
+      "bytes": 1310,
+      "sha256": "e8fe6de52ef73d6fa868229ae7a21e681fb3088975847d6ee65a8387731c1c79"
+    },
+    {
+      "path": "src/components/ui/tooltip.jsx",
+      "bytes": 1091,
+      "sha256": "73e47a5dde6c55aca2e32e429ba95d8746ce2cca02cc718613f337b5bc9f5f19"
+    },
+    {
+      "path": "src/components/ui/use-toast.jsx",
+      "bytes": 3379,
+      "sha256": "40f2839736597a3f7d54e4359a375c5991ce58eb341d8abb944874ac0dce9bbc"
+    },
+    {
+      "path": "src/components/workgroups/AmeenWorkGroupPanel.jsx",
+      "bytes": 3855,
+      "sha256": "58a4cde4f5505ec8184d82182cf9136b365f46603e2448a28569f3c111e4b0a5"
+    },
+    {
+      "path": "src/components/workgroups/DecisionActionBoard.jsx",
+      "bytes": 7665,
+      "sha256": "3517b1d82900f476906e25f702923d464139650c271478d6b73844888877d283"
+    },
+    {
+      "path": "src/components/workgroups/InstitutionSeatLine.jsx",
+      "bytes": 1391,
+      "sha256": "84f08ad096b80382c4a371fcf42da821b0473fc6eb504bbd0ae72f54b5103f3b"
+    },
+    {
+      "path": "src/components/workgroups/MemberInstitutionCard.jsx",
+      "bytes": 3353,
+      "sha256": "dcdda03fe8c5215cba2fb324b67d69f115e85a851e00999ee78899ee84b5ca63"
+    },
+    {
+      "path": "src/components/workgroups/OrganizationMark.jsx",
+      "bytes": 3381,
+      "sha256": "6d6e585719899e060484968006d83bad989872359364ff2eb777200166f1a751"
+    },
+    {
+      "path": "src/components/workgroups/WorkGroupCard.jsx",
+      "bytes": 6466,
+      "sha256": "d4217b114b58b7312dc293ccbbbb2e924b5b30ae4fb0b9e044b9295bd713f165"
+    },
+    {
+      "path": "src/components/workgroups/WorkGroupDocumentCenter.jsx",
+      "bytes": 12284,
+      "sha256": "99736fa7e5e979150413230256690654cba9fe324a578535e802ebd9235667ea"
+    },
+    {
+      "path": "src/components/workgroups/WorkGroupMetrics.jsx",
+      "bytes": 2803,
+      "sha256": "50f473b931a370a51c6bfe70c97531b5e7722610082b096676fd17ad09d55ce0"
+    },
+    {
+      "path": "src/components/workgroups/WorkGroupTimeline.jsx",
+      "bytes": 4341,
+      "sha256": "f06bfcf29805bad7c14282788a2a64ab804f31d7e10a066e39d9481f9f83edc9"
+    },
+    {
+      "path": "src/hooks/use-mobile.jsx",
+      "bytes": 545,
+      "sha256": "a136217739e79f9d02440e711b9bd1abb6adf60f1a83b45a39a009a09568ad1c"
+    },
+    {
+      "path": "src/hooks/use-size.jsx",
+      "bytes": 900,
+      "sha256": "9d9e943e8dadcc95a2be6c40c20dee85029c87b443ed1fa1c6104d10ae7b9bdc"
+    },
+    {
+      "path": "src/hooks/useCommitteeAdmin.js",
+      "bytes": 2833,
+      "sha256": "cc3b7d227e0d75e2af2d1b74d28e65fb1a307b4a9a95f8dbeeccfdb71c47a2cc"
+    },
+    {
+      "path": "src/hooks/useCommitteeRecord.js",
+      "bytes": 2652,
+      "sha256": "abc9e01604ab481a553d87193fb214fe0af6b6018f90e8d0eab7be30c9651a60"
+    },
+    {
+      "path": "src/hooks/useCommitteeRegister.js",
+      "bytes": 3298,
+      "sha256": "ac0daf372efd28f8537c4000d80c2d0177e71ac94eeea57d95627d527b004e6b"
+    },
+    {
+      "path": "src/hooks/useCommitteeScoped.js",
+      "bytes": 1776,
+      "sha256": "cc1c18d76dd4a2732f11e53b1a10b1fd38500ecea505cd8b148fe363072d54e3"
+    },
+    {
+      "path": "src/hooks/useCrudAction.js",
+      "bytes": 1487,
+      "sha256": "38ab8692ffba834dac5c4baaa3d17a051522033f1d32ded6d833375ebd6c887f"
+    },
+    {
+      "path": "src/hooks/useDocumentAnnotations.js",
+      "bytes": 1750,
+      "sha256": "e83352c3039d6fbd1fd480a91f07f980f0a63e94e736527bcbf23f00845d3f08"
+    },
+    {
+      "path": "src/hooks/useDocumentationPack.js",
+      "bytes": 10342,
+      "sha256": "d55b47e9e6a95e1a9844a2e584b189dbae5083ba6a778fae198757da9fa07a18"
+    },
+    {
+      "path": "src/hooks/useNSDCShowcaseData.js",
+      "bytes": 2905,
+      "sha256": "90b40ae2f8edebad52850cb2a4088a546a81a5c0795484a7192ca5dabf4a18cd"
+    },
+    {
+      "path": "src/hooks/usePageConfig.js",
+      "bytes": 2977,
+      "sha256": "3522b0909d067fe455f9a183f540db7e98db864191bc9447d230ca750c07cf75"
+    },
+    {
+      "path": "src/index.css",
+      "bytes": 10956,
+      "sha256": "5e4bdecd52f8c5da03199a9876ae83f391144b8540268f4d8097d4a4c90cda10"
+    },
+    {
+      "path": "src/lib/AmeenContext.jsx",
+      "bytes": 4874,
+      "sha256": "0a19577272cce3e1cf9a4eb8ce99528d7421ba5cc43acbcf0045dcb3d59b1781"
+    },
+    {
+      "path": "src/lib/AuthContext.jsx",
+      "bytes": 5629,
+      "sha256": "9ad65a5bea330525cc7948badefda99eb5e1c4b4f607606184999b067d46f6df"
+    },
+    {
+      "path": "src/lib/CommitteeContext.jsx",
+      "bytes": 3121,
+      "sha256": "702905429959fb10453196edf9292749b25063ca5f66da12cf7fce98f856a6e5"
+    },
+    {
+      "path": "src/lib/EffectiveActorContext.jsx",
+      "bytes": 10609,
+      "sha256": "bf7332b8848c48624991713c89b8e8b193ed180d8f6ac55941520ee28535ea5f"
+    },
+    {
+      "path": "src/lib/LanguageContext.jsx",
+      "bytes": 3520,
+      "sha256": "1ca579e3d1e0ede2f3d8815bdce8c97378e9be46bffc538b3939421a1cb28bd5"
+    },
+    {
+      "path": "src/lib/OrgContext.jsx",
+      "bytes": 2076,
+      "sha256": "3ce49e2d79294f240191e54ffb0390335242ab5baa64240bb48692b561b07925"
+    },
+    {
+      "path": "src/lib/PageNotFound.jsx",
+      "bytes": 3922,
+      "sha256": "4016e4d9e04b23d419c67bdb41a041cb9d78c9facff7a5c5d817176eea8a2dcb"
+    },
+    {
+      "path": "src/lib/actionState.js",
+      "bytes": 2578,
+      "sha256": "9b4ecd06b8e13ea9b723e2d97e56e6a79539160c9efd04f3d4349900dcec0b8e"
+    },
+    {
+      "path": "src/lib/ameenAgent.js",
+      "bytes": 13190,
+      "sha256": "8abe6e3eefc06b5eac6ed7573628a456ff0150071892b7519f425d237dfd3dd9"
+    },
+    {
+      "path": "src/lib/ameenContext.js",
+      "bytes": 3340,
+      "sha256": "84ab3cc7ae3f3bb726e9d5acf087f45268ab1e5ae636bab1ca9e9ac48fa1f53d"
+    },
+    {
+      "path": "src/lib/ameenIdentity.js",
+      "bytes": 1217,
+      "sha256": "e750c23a12879aaebeee96517538ac347d37e6527527a479c47b2f29f407e8fb"
+    },
+    {
+      "path": "src/lib/ameenLocale.js",
+      "bytes": 4975,
+      "sha256": "2ee667f39c7966bef8c72a10c0ada3d6ec134e436cbcbc345ab0434b20e16830"
+    },
+    {
+      "path": "src/lib/app-params.js",
+      "bytes": 1791,
+      "sha256": "d0c8c149528b705355dbc842096b6662df4610eba1f356285fee74211fc580d3"
+    },
+    {
+      "path": "src/lib/arabicTypography.js",
+      "bytes": 3983,
+      "sha256": "f75600d96256d112d83a002d7ca513a594efd44b7a9b5a034362d14c38557a03"
+    },
+    {
+      "path": "src/lib/auditLabels.js",
+      "bytes": 1344,
+      "sha256": "70b076137c8ef6ae097757006db535c2ace4f0ba84d794feb8012172836b7664"
+    },
+    {
+      "path": "src/lib/authReturnTo.js",
+      "bytes": 1743,
+      "sha256": "45b0039c2e75fc4669921b16786cd770e630734ff59c4093c9324cf87985badf"
+    },
+    {
+      "path": "src/lib/brand.js",
+      "bytes": 1878,
+      "sha256": "7071ebc6b11cc9477916930b84af545743ceeedd3ae9dba22790f61f237594e5"
+    },
+    {
+      "path": "src/lib/demoPersonas.js",
+      "bytes": 5897,
+      "sha256": "3a4c3978078afb5343cd76babac8f881c261aa442da38dcdc5198af163f46b0e"
+    },
+    {
+      "path": "src/lib/docs/catalog.js",
+      "bytes": 368,
+      "sha256": "cdd2d7056e3e1f53ea98be62a692a832fba7a274088d854a29619bcb3425b6dc"
+    },
+    {
+      "path": "src/lib/docs/releaseLabels.js",
+      "bytes": 4271,
+      "sha256": "1ba58aeae1cb4bf36c400489788565f27d736f709ec1da45826df9fa3cf118b7"
+    },
+    {
+      "path": "src/lib/documentEngine.js",
+      "bytes": 7569,
+      "sha256": "27cf2e7c3486e6d7958167c25187d98e3255d49556893c713b9cfb0f4650bf1c"
+    },
+    {
+      "path": "src/lib/exportContent.js",
+      "bytes": 6648,
+      "sha256": "7055b608f2b390ad042f42043003233f0cf2ce099469e613e1e49c22f5dd3ccc"
+    },
+    {
+      "path": "src/lib/exportDocxRenderer.js",
+      "bytes": 6117,
+      "sha256": "545726c715964f4708626d0f6b1ef21a9f929fc23707674c1e469236d6f81122"
+    },
+    {
+      "path": "src/lib/exportPdfRenderer.js",
+      "bytes": 7813,
+      "sha256": "eeb46f0be01acd0e2c176db8c93c5e5281c63a4ca2f58475e76fdc919592dfe4"
+    },
+    {
+      "path": "src/lib/exportRenderers.js",
+      "bytes": 9694,
+      "sha256": "7555eb60a050e3247ca7f8f7ec56d365544c8c7216e7d348d55e5e1bf51495b4"
+    },
+    {
+      "path": "src/lib/exportTemplates.js",
+      "bytes": 5457,
+      "sha256": "05dd02081d0a71d17fe136be4140e3817d1fae44ed299a97eeda9f85a0c9a548"
+    },
+    {
+      "path": "src/lib/governedInvoke.js",
+      "bytes": 1970,
+      "sha256": "4a282095b9a809d35aeab77f0c8f0593e83657fa42c2a0ef5ba3a89a2c99738e"
+    },
+    {
+      "path": "src/lib/governedState.js",
+      "bytes": 3605,
+      "sha256": "c83d50ab58efcd79cc63f95fecc3f0ca33bab404cdc4f21e142935a92c7ffee6"
+    },
+    {
+      "path": "src/lib/institutionalExportEngine.js",
+      "bytes": 6861,
+      "sha256": "9e288bda8bd3b76824aa19be3d179a6381ebcfa53a8fc213c40038c337ecf630"
+    },
+    {
+      "path": "src/lib/l10n.js",
+      "bytes": 5628,
+      "sha256": "3b519b5d9ba2b83c550027683ec25792df5d8f309b1ea05806e420346719b162"
+    },
+    {
+      "path": "src/lib/legislativeFileLabels.js",
+      "bytes": 2189,
+      "sha256": "62c93312f300d7898a392c9cf023ed73be12af9c9a75a7788b16daa1c5955ab9"
+    },
+    {
+      "path": "src/lib/noticeStates.js",
+      "bytes": 4712,
+      "sha256": "ec630fa38a01e26cc532139a3054d4d04e5ab8638807c667fa26152b602136c7"
+    },
+    {
+      "path": "src/lib/nsdcPersona.js",
+      "bytes": 793,
+      "sha256": "0a624b21bb8d521dba59fdb51f4fcba20427a804198343422f8334fa1d7dcf78"
+    },
+    {
+      "path": "src/lib/officialOrgSources.js",
+      "bytes": 3648,
+      "sha256": "d4eb7f3cfcff63827bcc6cdd36cb3c8daf664ba4253818158581eb1592a64dc0"
+    },
+    {
+      "path": "src/lib/qatariEntities.js",
+      "bytes": 22047,
+      "sha256": "ee3b2800eee524d7d56324297c744bc9528cc85a79795a106dd1d957cab26ad2"
+    },
+    {
+      "path": "src/lib/query-client.js",
+      "bytes": 197,
+      "sha256": "0a080b6d9a1ed9f5f32150d9e3faa928f955d2b8d6206831e2b1658e84612c92"
+    },
+    {
+      "path": "src/lib/raqeemUtils.js",
+      "bytes": 18252,
+      "sha256": "bff91eba1ef94c08dbea1decc5b78666cd228bf72a4dfcfb2832394e83bcbb2f"
+    },
+    {
+      "path": "src/lib/richText.js",
+      "bytes": 1438,
+      "sha256": "c320c52f284a95348bbbfe870cc517b78cc4aab2402cb9b28859b036125688de"
+    },
+    {
+      "path": "src/lib/secureFiles.js",
+      "bytes": 6600,
+      "sha256": "f1c84439e5b255a1fbe1463f99f91a5feb6eec491039f6fea9f4715b2bb672b8"
+    },
+    {
+      "path": "src/lib/sidebarPresence.js",
+      "bytes": 860,
+      "sha256": "c44067b2c3f280fd13e2452d43184f382c5fb2bd8df558c7c39991f1566c2147"
+    },
+    {
+      "path": "src/lib/structureLabels.js",
+      "bytes": 6434,
+      "sha256": "67caf0d5ebe66ecfdec29eac12d0d3393e9e18305c5196026f243981a0a06a7f"
+    },
+    {
+      "path": "src/lib/translationGaps.js",
+      "bytes": 1579,
+      "sha256": "29f18088fdad3025a399b11fe77c3bd2a9f2270dd4f300b69a3a1df50cea2248"
+    },
+    {
+      "path": "src/lib/utils.js",
+      "bytes": 190,
+      "sha256": "4f592359765d69c32c3617700fa111af9a6a9cac8f18cb1987c25503a343c203"
+    },
+    {
+      "path": "src/lib/workExport.js",
+      "bytes": 9152,
+      "sha256": "b9d57f404521a2b1fedc1b241f0271fd8cfe89dd454b1848248a79187c6b6846"
+    },
+    {
+      "path": "src/lib/workGroupPermissions.js",
+      "bytes": 3344,
+      "sha256": "2486e50190133c73a3c26b46278f4df6daadf5a54eb60b8d9125749b6afe51c8"
+    },
+    {
+      "path": "src/main.jsx",
+      "bytes": 189,
+      "sha256": "caa3bab80b647fbb53fccd2e80d6e190d45a4b06c92bf85e3968d87e8d891cec"
+    },
+    {
+      "path": "src/pages/ActionExtractView.jsx",
+      "bytes": 19976,
+      "sha256": "5cfacfec51ffd434b74d19fefdf00bc5e20709773379c3b6576107231192178e"
+    },
+    {
+      "path": "src/pages/ActivityLog.jsx",
+      "bytes": 13450,
+      "sha256": "8e5e61948209d146186d8f782fedf09d2452432ef04b025fa6c249e16ac5e96d"
+    },
+    {
+      "path": "src/pages/AuditTrail.jsx",
+      "bytes": 14057,
+      "sha256": "b5b3aac74971af80ee72c73fdbbe824a38463d029eb18c52bd2a9f82cf6da635"
+    },
+    {
+      "path": "src/pages/CommitteeCreateV2.jsx",
+      "bytes": 17024,
+      "sha256": "b251a4e3febb50d4ad5be874ea097c0196b2f9dbc1e677302d317a29c4c8ef09"
+    },
+    {
+      "path": "src/pages/CreatePortal.jsx",
+      "bytes": 22470,
+      "sha256": "f0d00ac7a4ac6ff9686469650a99b72e6cacd41b28f6e41eaf3c56769d0622ab"
+    },
+    {
+      "path": "src/pages/DecisionDetail.jsx",
+      "bytes": 8579,
+      "sha256": "9e22b24db4a0bfa8db16dede8dfbb9c90a3b1cc292b84195f2d9c8af4aeffcd8"
+    },
+    {
+      "path": "src/pages/EntryPortal.jsx",
+      "bytes": 10018,
+      "sha256": "7f4d0864ad7de1ac026c145cd80165a8368292685af83fe3034dfd8cca294903"
+    },
+    {
+      "path": "src/pages/ExploreGateway.jsx",
+      "bytes": 7697,
+      "sha256": "49d448a2d76f12290f06f7bf0bf0570a91b17c6a13192848da07a26635a749b7"
+    },
+    {
+      "path": "src/pages/ExploreSession.jsx",
+      "bytes": 3545,
+      "sha256": "234631c418584e30e24cb2ddf0f5d5d61632b4cd32063c75901e06a8f345f726"
+    },
+    {
+      "path": "src/pages/ForgotPassword.jsx",
+      "bytes": 2998,
+      "sha256": "3f7c9c2d53fe1cc6c4847db3d926f6ccb1d3040824138cf2a2905bccd9e77c7a"
+    },
+    {
+      "path": "src/pages/FounderVault.jsx",
+      "bytes": 14465,
+      "sha256": "a640438ce14937cea2b907edde4c551f3fb89624057ababf65927a1453437e4a"
+    },
+    {
+      "path": "src/pages/GovernancePolicies.jsx",
+      "bytes": 20631,
+      "sha256": "4a8e7a9f80740b515ccb11bc0d662161868f2660aa016e9ceaaeefb5a05173ed"
+    },
+    {
+      "path": "src/pages/GuestItemView.jsx",
+      "bytes": 7453,
+      "sha256": "8a8107b903cda8dbbe5df2098822ea607664f45c6a78d8778ea0df32445f0827"
+    },
+    {
+      "path": "src/pages/Login.jsx",
+      "bytes": 4531,
+      "sha256": "9a49b5f4af388c27f09fffdcb715919b9556a33a2c9888751e6e6a353dc4fcbb"
+    },
+    {
+      "path": "src/pages/MeetingDetail.jsx",
+      "bytes": 22028,
+      "sha256": "52a2b90936f354bf716ecc8c054418a2fd2ec18c158d9b2aab99c4ba5c276614"
+    },
+    {
+      "path": "src/pages/MinutesArchive.jsx",
+      "bytes": 6992,
+      "sha256": "2704d0a87f2b6df44cd72d7b32246f7b8609103feb7386822ce711aac4736fbd"
+    },
+    {
+      "path": "src/pages/NationalAdoptionShowcase.jsx",
+      "bytes": 4617,
+      "sha256": "ac33343327a3473257e36a7e3ddfd784595c6f19b9bdee08c421f4a48c1ed217"
+    },
+    {
+      "path": "src/pages/NotificationPreferences.jsx",
+      "bytes": 9264,
+      "sha256": "72479292aac03dcc13e051f4f8e1ff1d5ab73c6197c381e07a229ae520c52595"
+    },
+    {
+      "path": "src/pages/OAuthConsent.jsx",
+      "bytes": 9895,
+      "sha256": "c6e51294ed60b5d222bc4b438cf49fcc58a7d294ed39b5ae93374bbf3ee2c21e"
+    },
+    {
+      "path": "src/pages/OrgAdmin.jsx",
+      "bytes": 13022,
+      "sha256": "0a314b5251674269d65615c56af1a1b18c6a733b8189eb5e39fc0c4a3f7f38ad"
+    },
+    {
+      "path": "src/pages/OrgCommittees.jsx",
+      "bytes": 2636,
+      "sha256": "8ed18fdd6d79e2221e20849f8198ee598665e4be257adb16f419a7b0203e0530"
+    },
+    {
+      "path": "src/pages/OrgNotifications.jsx",
+      "bytes": 7357,
+      "sha256": "5cc47d702ec08f8e5ba35cd5efbc287c55b186f5bc42edd45dfc7b4a7c449169"
+    },
+    {
+      "path": "src/pages/OrgPortal.jsx",
+      "bytes": 9240,
+      "sha256": "a9b34465a713e479eae9bbd27dbd7acc783fda9d8c2f6395182bc60ea81809c6"
+    },
+    {
+      "path": "src/pages/OrganizationAssetsAdmin.jsx",
+      "bytes": 18007,
+      "sha256": "6965ea55668f38c4d742c631a744e44cd2b3d066e84f0131b50c4e26ffa2f9e0"
+    },
+    {
+      "path": "src/pages/PlatformSpecification.jsx",
+      "bytes": 43623,
+      "sha256": "ea3c0889b838b7deb38d03f277684d8ab234828344b3e770cede1a071387bea9"
+    },
+    {
+      "path": "src/pages/Profile.jsx",
+      "bytes": 25282,
+      "sha256": "5c59ed99652bd6d22a0f2d3e46b7b64c8df58ab5aecf54b08384e52a8b1ca14a"
+    },
+    {
+      "path": "src/pages/PublicAIRegister.jsx",
+      "bytes": 14665,
+      "sha256": "6ab6bf763f1764bf4a7ba3860cba83a664d299331bc3e58d951b506ba7f9cf4c"
+    },
+    {
+      "path": "src/pages/PublicCommittees.jsx",
+      "bytes": 11168,
+      "sha256": "ee3436b86669f7138016457db00c16cd52be7c2957ff1518a9c15e847f9b2771"
+    },
+    {
+      "path": "src/pages/Register.jsx",
+      "bytes": 7566,
+      "sha256": "0a95d976c339e0d894155b7d31fb9788eba715bd93395f0a2af0c4065fd74f39"
+    },
+    {
+      "path": "src/pages/ResetPassword.jsx",
+      "bytes": 3727,
+      "sha256": "340e88d23e6a02d34ac26d619839a270887cc00524a13e3ea3fb6f662065598a"
+    },
+    {
+      "path": "src/pages/SovereignStandards.jsx",
+      "bytes": 15084,
+      "sha256": "4169dcd2aa339bc785443095415f04dfbbc4e51d88c2f00cba48784d028696fe"
+    },
+    {
+      "path": "src/pages/VerifyRecord.jsx",
+      "bytes": 11536,
+      "sha256": "31f3ccf5c58d414595c410021c87cb6ff33ceb7622b2cd62439a51bee6c0dd0f"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAI.jsx",
+      "bytes": 10023,
+      "sha256": "a67f822109de0fd9358c004cfaea2695d8a5f9ef65288aeab290e1b002eeb2ed"
+    },
+    {
+      "path": "src/pages/committee/CommitteeActions.jsx",
+      "bytes": 10222,
+      "sha256": "8e76348158d5afbc5624d4ce68a0c9c089ff4e22146588544f068eaa0aae7b10"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAgenda.jsx",
+      "bytes": 8170,
+      "sha256": "5ee53f8f22520a564e60ad723809fea59fab788e6e96b4e2538d0899429718aa"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAlternates.jsx",
+      "bytes": 4034,
+      "sha256": "f2e7ebebd380d0583b93b75691e4e877fdf455f398ac67f0bed75f2fd34eff95"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAmendments.jsx",
+      "bytes": 27054,
+      "sha256": "982336c0ef6e463e03a855a95665fa54b8b5f01a0dd3cc1fce30b7d6c7560165"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAppointments.jsx",
+      "bytes": 13243,
+      "sha256": "a43791563ac123747cb96e6b256cde197c5963d0fc05b8032d0760b144a3271e"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAttendance.jsx",
+      "bytes": 6138,
+      "sha256": "30ae5bae5d6971539630427dc69f252e4ea259655fdfab1459c350f33bd41181"
+    },
+    {
+      "path": "src/pages/committee/CommitteeAudit.jsx",
+      "bytes": 9530,
+      "sha256": "8d9e27a04e4fcc2f20c14169926d16931d8bd05d4b2ba60821cfe816f0fa6502"
+    },
+    {
+      "path": "src/pages/committee/CommitteeCalendar.jsx",
+      "bytes": 5064,
+      "sha256": "d7617111b94fec09cd2b77b7c562d33a84fe18295aeb9cadf838ce0e06ed0de4"
+    },
+    {
+      "path": "src/pages/committee/CommitteeClosure.jsx",
+      "bytes": 7006,
+      "sha256": "9eed104d3c7eab96ce58718b679cf1f84e91beee5ada30451bfccac225b58730"
+    },
+    {
+      "path": "src/pages/committee/CommitteeDecisions.jsx",
+      "bytes": 7083,
+      "sha256": "24208b7cd7c437fe925094aba5805568c1c1427d64a37a276e8e267f63e6e53d"
+    },
+    {
+      "path": "src/pages/committee/CommitteeDelegations.jsx",
+      "bytes": 4719,
+      "sha256": "ca16fe857183da9d165a9f70597455ff98d9b5e30f71d7f3fa2426379a8ea9b1"
+    },
+    {
+      "path": "src/pages/committee/CommitteeDependencies.jsx",
+      "bytes": 5349,
+      "sha256": "760f3b93c923385a1fe358623713cabcef3e51de1e1ac63e2c0ab3fad3fc4792"
+    },
+    {
+      "path": "src/pages/committee/CommitteeDocuments.jsx",
+      "bytes": 6876,
+      "sha256": "f22f50f0baec789690db2272894b33e17f323d96e09ec80abf8246e531d17eb6"
+    },
+    {
+      "path": "src/pages/committee/CommitteeEscalations.jsx",
+      "bytes": 7866,
+      "sha256": "813fa943cfe2fb2bc8e89721f6c8a05cfaf00205fdcd234378e4bc3740dfe041"
+    },
+    {
+      "path": "src/pages/committee/CommitteeEstablishment.jsx",
+      "bytes": 24550,
+      "sha256": "902566087d7aeb69061995801d85393dedaeeaaa0621f25b1af89cde502a2fef"
+    },
+    {
+      "path": "src/pages/committee/CommitteeEvidence.jsx",
+      "bytes": 3637,
+      "sha256": "8e7c8202f2e65121fbd23c5216b8b65cfd4f978afeeb66fda468730395e5877a"
+    },
+    {
+      "path": "src/pages/committee/CommitteeFormation.jsx",
+      "bytes": 16968,
+      "sha256": "4216a0eca1f09a20b616cef436a08931797878b5bf83dc2642d4deed4e4a3f9a"
+    },
+    {
+      "path": "src/pages/committee/CommitteeGovernanceRules.jsx",
+      "bytes": 8444,
+      "sha256": "4f91a9499010876a3e2b0d5a07bf84157e48ee1a6413801c8d7ad043052331d2"
+    },
+    {
+      "path": "src/pages/committee/CommitteeHandover.jsx",
+      "bytes": 13769,
+      "sha256": "2b72738a6ec6766d64f32cd12b17ff4e2dec37371e54ab9d2fff82acbfad9691"
+    },
+    {
+      "path": "src/pages/committee/CommitteeHome.jsx",
+      "bytes": 8496,
+      "sha256": "a5937d3b2e9f6f3fba6030f7ebe5731a5651bbfd673136fc538b4ec4ce5fe97c"
+    },
+    {
+      "path": "src/pages/committee/CommitteeIntegrations.jsx",
+      "bytes": 9427,
+      "sha256": "d3b562c35975c12a6940a5554c645fad32b6f8f303e7b9e2e3dac59728b1dfd2"
+    },
+    {
+      "path": "src/pages/committee/CommitteeMandate.jsx",
+      "bytes": 6811,
+      "sha256": "8552bb40688624076e9e1caccfdc5a3650212201e6eaa25c3461dcacd2d6cdc0"
+    },
+    {
+      "path": "src/pages/committee/CommitteeMeetings.jsx",
+      "bytes": 9117,
+      "sha256": "32d8a88097fb663cd63711c40db0344a807bf5d9280fd84bb33f0a4224543a91"
+    },
+    {
+      "path": "src/pages/committee/CommitteeMembers.jsx",
+      "bytes": 10913,
+      "sha256": "685e75975bf068de7ee7724e58b09a330388e9eea6b1e707c62530319942b1f8"
+    },
+    {
+      "path": "src/pages/committee/CommitteeMemory.jsx",
+      "bytes": 4243,
+      "sha256": "61113327aaf918934a970ca1a16e097fa849ba4a96f500d42de75a5225cd50e6"
+    },
+    {
+      "path": "src/pages/committee/CommitteeMinutes.jsx",
+      "bytes": 10194,
+      "sha256": "c277c68c06e6a36a976ab92bc506ba521a17f3b659ebf60512eda8ebe964bf19"
+    },
+    {
+      "path": "src/pages/committee/CommitteeNotifications.jsx",
+      "bytes": 15510,
+      "sha256": "56cf9aca72992d7c871e8ac477d32dfeaa8a9b8da803de6c5fe76231ba3fad17"
+    },
+    {
+      "path": "src/pages/committee/CommitteePacks.jsx",
+      "bytes": 3694,
+      "sha256": "6d4441e79f9d5535b5d77f62050db02b4fa39ea82d74a16603896cacf626fd80"
+    },
+    {
+      "path": "src/pages/committee/CommitteeRecusals.jsx",
+      "bytes": 3996,
+      "sha256": "ae27c3ab6d3f5178f7759159e484431fd94703e069f71c3ae8d5ccc8cec39b70"
+    },
+    {
+      "path": "src/pages/committee/CommitteeReports.jsx",
+      "bytes": 6879,
+      "sha256": "98a158ba0cac52dbaad3c7bfc97f8f62f3151eb8047d3f3490310779271e2d3f"
+    },
+    {
+      "path": "src/pages/committee/CommitteeRisks.jsx",
+      "bytes": 6962,
+      "sha256": "d6816a28f6224e6625efa224f4c992f5e194125858ecb167302bb45ee81706ea"
+    },
+    {
+      "path": "src/pages/committee/CommitteeRoles.jsx",
+      "bytes": 5944,
+      "sha256": "139c02eab4bff19fb569ce2632c757b132762a3ba03f6eb39227c524d1cbf88a"
+    },
+    {
+      "path": "src/pages/committee/CommitteeSettings.jsx",
+      "bytes": 6514,
+      "sha256": "346439919baa161f7fa76ab9cdeaedc75d0f9254c1a0b5611114b2a017c4b3dd"
+    },
+    {
+      "path": "src/pages/committee/CommitteeSignatures.jsx",
+      "bytes": 4960,
+      "sha256": "5b7ecbb4771e0d1009240e2ae9137c4af40b11f2d2efa3a001bf8f13740912eb"
+    },
+    {
+      "path": "src/pages/committee/CommitteeStructure.jsx",
+      "bytes": 9047,
+      "sha256": "adbf611e53e0c1378c5b4d4bd920327a16c4673a8684926ef7f278b4c8d1f34d"
+    },
+    {
+      "path": "src/pages/committee/CommitteeVoting.jsx",
+      "bytes": 6754,
+      "sha256": "5d1637882a3ec5a804d5cbbead45de20f7687a17b1a50fd06d186734ffbdc803"
+    },
+    {
+      "path": "src/pages/committee/CommitteeWorkstreams.jsx",
+      "bytes": 5226,
+      "sha256": "8db050afe56a17a076afab5b2d6fe328a290fe067a33ee9f3d4bec4243b3a5c1"
+    },
+    {
+      "path": "src/pages/committee/DocumentDetail.jsx",
+      "bytes": 16892,
+      "sha256": "beed9b5c4d62213ef69e251ad9fbcebbb44c515a3062044ec71f394488a6e3ae"
+    },
+    {
+      "path": "src/pages/committee/DocumentationHub.jsx",
+      "bytes": 5026,
+      "sha256": "dd8343ef12b054dcd8ab4f274f40a35bbdda2f23a511c43b10b20bb79cce2f25"
+    },
+    {
+      "path": "src/pages/committee/FormationHistory.jsx",
+      "bytes": 7828,
+      "sha256": "fd2edcc5e350af1fe88c96d311693f72bdce32179dcb8835dbe2e1f713a5b724"
+    },
+    {
+      "path": "src/pages/committee/GovernanceSurfaceRegistry.jsx",
+      "bytes": 11529,
+      "sha256": "aa58471d8c5d2412f121213b9c9a133ce24f81c265c67115f3fc9f5ae30f6fa8"
+    },
+    {
+      "path": "src/pages/committee/LegislativeFileDetail.jsx",
+      "bytes": 22987,
+      "sha256": "5522587dba94f326f1ad1b736bb903a81751c6486f7fb0828c66aa99ff5b91c8"
+    },
+    {
+      "path": "src/pages/committee/LegislativeFiles.jsx",
+      "bytes": 9075,
+      "sha256": "cc23ce0efb6dd1abc934460b4f29266afce9e117a6de5c2ea39859a7780211e5"
+    },
+    {
+      "path": "src/pages/committee/ProductCatalog.jsx",
+      "bytes": 9946,
+      "sha256": "0e5d2107fdde22c65166f62243161936cd035dd821afc3f7dc7f620fce22a12a"
+    },
+    {
+      "path": "src/pages/committee/ReportCenter.jsx",
+      "bytes": 6886,
+      "sha256": "087822ce63cfd35c957b6f74efb8937620696b0fd6ec3b2fbd61ba8dd8bb1c2c"
+    },
+    {
+      "path": "src/pages/committee/WorkstreamDetail.jsx",
+      "bytes": 19874,
+      "sha256": "aaffa3448adaaac6fcf71664f66138b050472c94df875612d0c2383ac1327e62"
+    },
+    {
+      "path": "src/pages/committee/hubs/ExecutionHub.jsx",
+      "bytes": 1758,
+      "sha256": "55a01cdc677c567589756cc7c0c0261d3a55a3f835f8603a8100042d1e25be98"
+    },
+    {
+      "path": "src/pages/committee/hubs/GovernanceHub.jsx",
+      "bytes": 2099,
+      "sha256": "ef144216ccc87b4364994c238ec173c021b121cb66eeaf4c2734388e56094162"
+    },
+    {
+      "path": "src/pages/committee/hubs/IntelligenceHub.jsx",
+      "bytes": 1720,
+      "sha256": "f7ae9226c22ba4d589c1b6c098477bf97b7277ae8f0a829e92d96af81e0094c9"
+    },
+    {
+      "path": "src/pages/committee/hubs/MeetingsHub.jsx",
+      "bytes": 1452,
+      "sha256": "7685f26c1aff79c1cb49fa974bfe36ead9ea9e494fabc66beeea5cf54abd0168"
+    },
+    {
+      "path": "src/pages/committee/hubs/PeopleFormationHub.jsx",
+      "bytes": 3041,
+      "sha256": "66ca7118a888cd8ff31928427ec5571b638d5258a2f8a4c64c5e2be0c840dccb"
+    },
+    {
+      "path": "src/pages/committee/hubs/RecordsHub.jsx",
+      "bytes": 1571,
+      "sha256": "ce2bc51eef7d72d222494f7e9b4478f571285d0890e253aebe6c72c7d7dd0ca9"
+    },
+    {
+      "path": "src/utils/index.ts",
+      "bytes": 97,
+      "sha256": "1bd31d3e8630b19dcb1d92878a2501d5e29fc935eab48ec5d90e66c410cf7e1a"
+    },
+    {
+      "path": "tailwind.config.js",
+      "bytes": 4071,
+      "sha256": "605c05527de8a440f70bb734ea7e8f4b1c0a366f4328fedcbd9a812f284f1ec3"
+    },
+    {
+      "path": "vite.config.js",
+      "bytes": 617,
+      "sha256": "d92e1eb3037080aa2a643aa3e7fd23b26ba946db9b78ce17e31e2dfc0bb1a586"
+    }
+  ]
+}
