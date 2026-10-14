@@ -7,9 +7,7 @@ import { ScrollText, Search, Loader2, Calendar, Building2 } from "lucide-react";
 import PageHeader from "@/components/raqeem/PageHeader";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
-import {
-  CLASSIFICATION_LABELS, REPORT_STAGE_LABELS,
-} from "@/lib/legislativeFileLabels";
+import { CLASSIFICATION_LABELS } from "@/lib/legislativeFileLabels";
 
 // LegislativeFiles — the committee's legislative matter list.
 //

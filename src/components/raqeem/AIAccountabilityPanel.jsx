@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import {
-  RefreshCw, AlertTriangle, ShieldCheck, Bot, Gauge, ThumbsUp, ThumbsDown, AlertCircle,
-  CheckCircle2, Info, Lock, FileCheck2, Siren, Scale, TrendingUp, TrendingDown, Minus, PlusCircle,
+  RefreshCw, AlertTriangle, ShieldCheck, Gauge, ThumbsUp, ThumbsDown, AlertCircle,
+  CheckCircle2, Lock, FileCheck2, Siren, Scale, TrendingUp, TrendingDown, Minus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BookOpen, RefreshCw, AlertTriangle, Loader2, Info, FileText, Copy, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
-import { cn } from "@/lib/utils";
+
 import AIFeedbackPanel from "@/components/raqeem/AIFeedbackPanel";
 
 // PackDraftPanel — تجميع مسودة حزمة الاجتماع من ملفات المصدر (استشاري بحت).

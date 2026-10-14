@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { governedInvoke } from "@/lib/governedInvoke";
-import { SURFACE_STATE, resolveSurfaceState } from "@/lib/governedState";
+import { resolveSurfaceState } from "@/lib/governedState";
 
 // useCommitteeRegister — one governed read of a committee's registers.
 //

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, ArrowUp, Send, Play } from "lucide-react";
+import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, Send, Play } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import { DECISION_STATUS, ESCALATION_LEVEL } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";

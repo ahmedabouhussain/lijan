@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { Stamp, Loader2, AlertTriangle, RefreshCw, Check, Clock, Ban } from "lucide-react";
 
 // RatificationPanel — التصديق على الناتج: مَن يُصدِّق بحسب مسار اللجنة، وأين يقف التصديق اليوم.
