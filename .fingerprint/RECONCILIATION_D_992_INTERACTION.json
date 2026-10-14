@@ -1,0 +1,382 @@
+{
+  "title": "D. Interaction Reconciliation",
+  "timestamp": "2026-10-14T10:29:34.468Z",
+  "frozen_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+  "total_discovered": 992,
+  "registered": 928,
+  "excluded": 64,
+  "breakdown": [
+    {
+      "category": "navigation",
+      "count": 162
+    },
+    {
+      "category": "component plumbing",
+      "count": 53
+    },
+    {
+      "category": "user-visible operational",
+      "count": 766
+    },
+    {
+      "category": "decorative",
+      "count": 3
+    },
+    {
+      "category": "propagation-only",
+      "count": 6
+    },
+    {
+      "category": "dead/unreachable",
+      "count": 2
+    },
+    {
+      "category": "test/development",
+      "count": 0
+    }
+  ],
+  "exclusions_by_category": {
+    "component plumbing": {
+      "count": 53,
+      "items": [
+        {
+          "file": "src/App.jsx",
+          "line": 293,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/nav/AppShell.jsx",
+          "line": 76,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/nav/AppShell.jsx",
+          "line": 77,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/nav/AppSidebar.jsx",
+          "line": 91,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/nav/AppSidebar.jsx",
+          "line": 97,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/AgentChatPanel.jsx",
+          "line": 187,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/DeliberationFormDialog.jsx",
+          "line": 62,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/GenerateWizard.jsx",
+          "line": 94,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/InstitutionalTimeMachine.jsx",
+          "line": 91,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/PageNav.jsx",
+          "line": 138,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/raqeem/ProofChainDrawer.jsx",
+          "line": 46,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/ui/carousel.jsx",
+          "line": 103,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/components/ui/carousel.jsx",
+          "line": 163,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/components/ui/carousel.jsx",
+          "line": 184,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/components/ui/image.jsx",
+          "line": 97,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/components/ui/sidebar.jsx",
+          "line": 160,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/components/ui/sidebar.jsx",
+          "line": 229,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/components/ui/sidebar.jsx",
+          "line": 257,
+          "reason": "Unused reusable primitive; not mounted, no visible control or app navigation target"
+        },
+        {
+          "file": "src/pages/MinutesArchive.jsx",
+          "line": 170,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/NationalAdoptionShowcase.jsx",
+          "line": 84,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeAppointments.jsx",
+          "line": 82,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeAppointments.jsx",
+          "line": 86,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeAppointments.jsx",
+          "line": 102,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeAppointments.jsx",
+          "line": 106,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDelegations.jsx",
+          "line": 51,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDelegations.jsx",
+          "line": 55,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDependencies.jsx",
+          "line": 72,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDependencies.jsx",
+          "line": 82,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDocuments.jsx",
+          "line": 78,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeDocuments.jsx",
+          "line": 87,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeEscalations.jsx",
+          "line": 95,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeEscalations.jsx",
+          "line": 99,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeEscalations.jsx",
+          "line": 150,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeHandover.jsx",
+          "line": 103,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeHandover.jsx",
+          "line": 107,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeHome.jsx",
+          "line": 150,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeMembers.jsx",
+          "line": 96,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeMembers.jsx",
+          "line": 100,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeMinutes.jsx",
+          "line": 114,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeMinutes.jsx",
+          "line": 118,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeNotifications.jsx",
+          "line": 140,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeNotifications.jsx",
+          "line": 141,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRecusals.jsx",
+          "line": 44,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRecusals.jsx",
+          "line": 48,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRisks.jsx",
+          "line": 76,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRisks.jsx",
+          "line": 86,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRoles.jsx",
+          "line": 72,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeRoles.jsx",
+          "line": 76,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeSignatures.jsx",
+          "line": 71,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeSignatures.jsx",
+          "line": 75,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeStructure.jsx",
+          "line": 67,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/CommitteeStructure.jsx",
+          "line": 71,
+          "reason": "Reusable component callback, not a separate rendered action"
+        },
+        {
+          "file": "src/pages/committee/ProductCatalog.jsx",
+          "line": 158,
+          "reason": "Reusable component callback, not a separate rendered action"
+        }
+      ]
+    },
+    "decorative": {
+      "count": 3,
+      "items": [
+        {
+          "file": "src/components/raqeem/EntitySearchSelect.jsx",
+          "line": 278,
+          "reason": "Pointer presentation or animation lifecycle; no recorded operational effect"
+        },
+        {
+          "file": "src/components/raqeem/EntitySearchSelect.jsx",
+          "line": 300,
+          "reason": "Pointer presentation or animation lifecycle; no recorded operational effect"
+        },
+        {
+          "file": "src/components/raqeem/SignaturePad.jsx",
+          "line": 122,
+          "reason": "Pointer presentation or animation lifecycle; no recorded operational effect"
+        }
+      ]
+    },
+    "propagation-only": {
+      "count": 6,
+      "items": [
+        {
+          "file": "src/components/raqeem/admin/AdminEditMode.jsx",
+          "line": 315,
+          "reason": "Only event propagation or browser-default suppression"
+        },
+        {
+          "file": "src/components/raqeem/admin/AdminEditMode.jsx",
+          "line": 352,
+          "reason": "Only event propagation or browser-default suppression"
+        },
+        {
+          "file": "src/components/raqeem/admin/AdminEditMode.jsx",
+          "line": 377,
+          "reason": "Only event propagation or browser-default suppression"
+        },
+        {
+          "file": "src/components/raqeem/admin/AdminVersionHistory.jsx",
+          "line": 55,
+          "reason": "Only event propagation or browser-default suppression"
+        },
+        {
+          "file": "src/pages/committee/CommitteeActions.jsx",
+          "line": 160,
+          "reason": "Only event propagation or browser-default suppression"
+        },
+        {
+          "file": "src/pages/committee/CommitteeMembers.jsx",
+          "line": 182,
+          "reason": "Only event propagation or browser-default suppression"
+        }
+      ]
+    },
+    "dead/unreachable": {
+      "count": 2,
+      "items": [
+        {
+          "file": "src/pages/OAuthConsent.jsx",
+          "line": 224,
+          "reason": "Unregistered existing MCP consent page, depends on active MCP consent configuration"
+        },
+        {
+          "file": "src/pages/OAuthConsent.jsx",
+          "line": 231,
+          "reason": "Unregistered existing MCP consent page, depends on active MCP consent configuration"
+        }
+      ]
+    }
+  },
+  "unexplained_remainder": 0,
+  "status": "PASS — VERIFIED"
+}

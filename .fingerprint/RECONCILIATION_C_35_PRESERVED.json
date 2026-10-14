@@ -1,0 +1,10 @@
+{
+  "title": "C. Preserved Versioned Document Histories",
+  "timestamp": "2026-10-14T10:29:34.468Z",
+  "frozen_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+  "versioned_histories_preserved": 35,
+  "canonical_documents_accessible": true,
+  "versions_ordered": false,
+  "versions_downloadable": "STRUCTURAL — VERIFIED (file_uri exists, signed URL returns 200, hash matches); viewer opening NOT TESTED",
+  "status": "PARTIAL — structural verification complete; viewer opening deferred to Suite C"
+}

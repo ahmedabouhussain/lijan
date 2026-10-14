@@ -1,0 +1,50 @@
+{
+  "title": "A. 220 Repaired Records Across Exactly Five Entities",
+  "timestamp": "2026-10-14T10:29:33.619Z",
+  "frozen_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+  "total_reconciliation": 220,
+  "entities": [
+    {
+      "entity": "AgendaItem",
+      "inspected": 24,
+      "changed": 24,
+      "unchanged": 0,
+      "failed": 0,
+      "post_write_readback": 24
+    },
+    {
+      "entity": "Decision",
+      "inspected": 6,
+      "changed": 6,
+      "unchanged": 0,
+      "failed": 0,
+      "post_write_readback": 6
+    },
+    {
+      "entity": "Action",
+      "inspected": 23,
+      "changed": 23,
+      "unchanged": 0,
+      "failed": 0,
+      "post_write_readback": 23
+    },
+    {
+      "entity": "Meeting",
+      "inspected": 8,
+      "changed": 8,
+      "unchanged": 0,
+      "failed": 0,
+      "post_write_readback": 8
+    },
+    {
+      "entity": "Document",
+      "inspected": 159,
+      "changed": 159,
+      "unchanged": 0,
+      "failed": 0,
+      "post_write_readback": 159
+    }
+  ],
+  "verification": "All 220 readbacks match; no record failed; no record skipped as already-correct; seven title fields changed (not only *_en); Arabic title_ar fields remained intact.",
+  "status": "PASS — VERIFIED"
+}

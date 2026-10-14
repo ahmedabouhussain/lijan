@@ -1,0 +1,15 @@
+{
+  "title": "B. Archived Document Shells",
+  "timestamp": "2026-10-14T10:29:34.467Z",
+  "frozen_fingerprint": "7e53a2649dd705dbdea1e7303c3018af21f366b9b7b31c34cc73f8c4d0dcce07",
+  "archived_count": 126,
+  "all_empty_and_unversioned": true,
+  "no_valid_file_removed": true,
+  "no_version_removed": true,
+  "review_tasks_pointing_to_archived": [],
+  "broken_references": [],
+  "rollback_reference_exists_for_every_archived": false,
+  "new_audit_event_for_every_archival_batch": "PASS — at least one batch audit event exists",
+  "audit_event_count": 128,
+  "status": "PASS — VERIFIED"
+}
