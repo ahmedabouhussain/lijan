@@ -1,4 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { useEffectiveActor } from '@/lib/EffectiveActorContext';
+import { useLanguage } from '@/lib/LanguageContext';
 import { base44 } from "@/api/base44Client";
 
 /**
@@ -7,10 +9,16 @@ import { base44 } from "@/api/base44Client";
  * Used by all committee pages to call governed backend functions.
  */
 export function useCrudAction() {
+  const lock = useRef(false);
+  const { isDemoMode } = useEffectiveActor();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const execute = useCallback(async (functionName, payload, onSuccess) => {
+    if (lock.current) return null;
+    if (isDemoMode) { setError(t('العرض الاستكشافي للقراءة فقط.', 'Exploration is read-only.')); return null; }
+    lock.current = true;
     setSubmitting(true);
     setError("");
     try {
@@ -22,9 +30,10 @@ export function useCrudAction() {
       setError(msg);
       throw e;
     } finally {
+      lock.current = false;
       setSubmitting(false);
     }
-  }, []);
+  }, [isDemoMode, t]);
 
   const clearError = useCallback(() => setError(""), []);
 

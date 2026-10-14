@@ -52,7 +52,7 @@ const GROUP_ORDER = ["preparation", "voting", "issuance", "execution", "verifica
 export default function MyWorkInbox() {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
-  const { isDemoMode, demoPersonaKey } = useEffectiveActor();
+  const { isDemoMode, demoPersonaKey, showcaseToken } = useEffectiveActor();
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

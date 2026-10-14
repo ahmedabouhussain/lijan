@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useCommitteeSafe } from "@/lib/CommitteeContext";
+import { useEffectiveActor } from '@/lib/EffectiveActorContext';
 
 /**
  * useCommitteeAdmin — resolves backend-governed capabilities for the current user
@@ -11,12 +12,14 @@ import { useCommitteeSafe } from "@/lib/CommitteeContext";
  */
 export function useCommitteeAdmin() {
   const { data } = useCommitteeSafe() || {};
+  const { isDemoMode } = useEffectiveActor();
   const [capabilities, setCapabilities] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const committeeId = data?.committee?.id;
 
   const load = useCallback(async () => {
+    if (isDemoMode) { setCapabilities({}); setLoading(false); return; }
     if (!committeeId) return;
     setLoading(true);
     try {
@@ -27,7 +30,7 @@ export function useCommitteeAdmin() {
       setCapabilities(null);
     }
     setLoading(false);
-  }, [committeeId]);
+  }, [committeeId, isDemoMode]);
 
   useEffect(() => {
     load();

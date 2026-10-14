@@ -3,6 +3,7 @@ import { resolveAuthority, capabilitiesForRole } from '../../shared/authorityKer
 import { resolvePersonaCapabilities } from '../../shared/committeeAuth.ts';
 import { resolveDemoPersona } from '../../shared/demoPersonas.ts';
 import { DEMO_DATASET } from '../../shared/demoDataset.ts';
+import { verifyShowcaseSession } from '../../shared/showcaseSession.ts';
 import { DONE_STATUSES } from '../../shared/actionState.ts';
 import { assemblePersonalWork, auditReach, PERSONAL_WORK_VERSION } from '../../shared/personalWork.ts';
 
@@ -62,7 +63,10 @@ export default async function (req) {
     let actor: any = null;
     let persona: any = null;
     if (demoMode) {
-      persona = resolveDemoPersona(body.demo_persona);
+      const session = await verifyShowcaseSession(sr, body.showcase_token);
+      if (!session.ok) return Response.json({ code: 'no_session' }, { status: 401 });
+      persona = session.persona;
+      if (body.demo_persona && body.demo_persona !== persona.key) return Response.json({ code: 'not_found' }, { status: 404 });
       if (!persona) return Response.json({ error: 'Unknown or missing demo persona', code: 'unknown_persona' }, { status: 400 });
       actor = { id: persona.user_id, full_name: persona.name_ar, email: null, is_demo: true };
     } else {

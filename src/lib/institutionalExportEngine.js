@@ -69,6 +69,18 @@ export async function exportInstitutionalDocument({
 }) {
   const tpl = templateFor(productType);
   const fmt = format || tpl.default_format;
+  if (['pdf', 'docx', 'xlsx'].includes(fmt)) {
+    const session = JSON.parse(sessionStorage.getItem('lijan_demo_session') || 'null');
+    const showcase_token = session?.showcase_token || null;
+    const source_id = data?.minutes?.id || data?.file?.id || data?.product?.id || committeeId || data?.workData?.scope?.committees?.[0]?.committee?.id;
+    const generated = await base44.functions.invoke('GenerateInstitutionalExport', { product_type: productType, source_id, committee_id: committeeId, format: fmt, language, showcase_token });
+    const artifact = generated.data;
+    const access = await base44.functions.invoke('GetInstitutionalExportAccess', { artifact_id: artifact.artifact_id, showcase_token });
+    const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: access.data.file_uri, expires_in: 60 });
+    const response = await fetch(signed_url);
+    if (!response.ok) throw new Error(language === 'ar' ? 'تعذّر تنزيل الملف.' : 'The file could not be downloaded.');
+    return { ...artifact, blob: await response.blob(), content_hash: artifact.sha256, metadata: artifact, quality: { ok: artifact.inspection_status !== 'BLOCKED' } };
+  }
   const brandAssets = await resolveBrandAssets({ organizationId, language });
   const itemCount = data?.items?.length ?? data?.rows?.length ?? null;
   const metadata = buildDocumentMetadata({
