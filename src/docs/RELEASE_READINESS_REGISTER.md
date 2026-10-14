@@ -1,5 +1,10 @@
 # RELEASE_READINESS_REGISTER — LIJAN™ (Phase 0/1)
 
+**PHASE 1: IMPLEMENTED — ACCEPTANCE INCOMPLETE**
+
+Acceptance status: PARTIAL. Publication recommendation: BLOCKED.
+The earlier claim that Phase 1 was complete is withdrawn. Existing historical claims below are not fresh acceptance evidence.
+
 > Stable IDs: `G-###` (gate), `T-###` (acceptance case).
 > Status vocabulary: PASS — VERIFIED · FAIL · PARTIAL · BLOCKED ·
 > IMPLEMENTED — NOT BROWSER TESTED · NOT TESTED.
