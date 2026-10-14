@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-10-14T09:08:03.583Z",
+  "session_id": "6acf4673151c9722d2724e43",
+  "minutes_ids": [
+    "6ac2070c899ceece20c12361",
+    "6ac144ea88830d4d4f98375b"
+  ],
+  "assets": [
+    {
+      "id": "6ac17f2f91de3658fa770c95",
+      "verification_status": "approved",
+      "source_url": "https://www.qdb.qa/-/media/images/project/qdb/icons/logo-colored.svg"
+    }
+  ],
+  "token_stored_in_evidence": false
+}
