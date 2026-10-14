@@ -38,15 +38,16 @@ export default async function (req) {
       committeeRef: committee_ref,
     });
 
-    if (demo_mode === true) {
+    if (demo_mode === true || showcase_token) {
       const session = await verifyShowcaseSession(base44.asServiceRole, showcase_token, { committeeId: committee?.id });
-      if (!session.ok || session.persona.key !== demo_persona_key) return Response.json({ error: 'Record not available', code: 'no_session' }, { status: 401 });
+      if (!session.ok) return Response.json({ error: 'Record not available', code: 'no_session' }, { status: 401 });
+      if (demo_persona_key && session.persona.key !== demo_persona_key) return Response.json({ error: 'Record not available', code: 'not_found' }, { status: 404 });
       return await resolveSandboxContext({
         base44,
         organization,
         committee,
         context_key,
-        demo_persona_key,
+        demo_persona_key: session.persona.key,
         showcase_token,
       });
     }

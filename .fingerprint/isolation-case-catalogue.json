@@ -1,0 +1,262 @@
+{
+  "status": "NOT TESTED",
+  "current_case_count": 13,
+  "cases": [
+    {
+      "test_id": "1_real_user_showcase_record",
+      "actor_session_type": "ordinary-user synthetic policy principal",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "not_found",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "2_showcase_production_record",
+      "actor_session_type": "exploration session",
+      "target": "production meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "out_of_scope",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "3_cross_persona_record",
+      "actor_session_type": "Dr Hamad exploration session",
+      "target": "other persona meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "out_of_scope",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "4_forged_organization_id",
+      "actor_session_type": "exploration with forged organization",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "ignored_from_record",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "5_forged_committee_id",
+      "actor_session_type": "exploration with forged committee",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "ignored_from_record",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "6_role_injection",
+      "actor_session_type": "exploration with injected role",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "role_from_seat",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "7_expired_session",
+      "actor_session_type": "expired exploration",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "session_expired",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "8_revoked_session",
+      "actor_session_type": "revoked exploration",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "session_revoked",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "9_direct_link_without_session",
+      "actor_session_type": "anonymous direct link",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "unauthenticated",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "10_write_from_showcase",
+      "actor_session_type": "exploration direct write intent",
+      "target": "Dr Hamad showcase meeting",
+      "request": "authorizeRead(writeIntent:true)",
+      "expected_result": "write_not_permitted",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "11_administrator_direct",
+      "actor_session_type": "administrator without exploration",
+      "target": "Dr Hamad showcase meeting",
+      "request": "shared authorizeRead / verifyShowcaseSession",
+      "expected_result": "not_found",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "12_modified_token",
+      "actor_session_type": "modified token",
+      "target": "Dr Hamad showcase meeting",
+      "request": "resolvePrincipal(showcase_token)",
+      "expected_result": "no_session",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    },
+    {
+      "test_id": "13_missing_token",
+      "actor_session_type": "anonymous missing token",
+      "target": "Dr Hamad showcase meeting",
+      "request": "resolvePrincipal(showcase_token)",
+      "expected_result": "unauthenticated",
+      "actual_status_code": null,
+      "actual_result": "NOT TESTED on current fingerprint",
+      "returned_disclosure_level": "NOT TESTED",
+      "database_effect": "NOT TESTED",
+      "audit_effect": "NOT TESTED",
+      "status": "NOT TESTED",
+      "boundary": "Existing harness uses synthetic ordinary-user principal and shared policy calls, not actual authenticated HTTP requests. Cases with absent fixtures must be BLOCKED, never PASS."
+    }
+  ],
+  "function_regressions": [
+    {
+      "function": "GetMyWork",
+      "scenario": "real user with real records, no token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "GetMyWork",
+      "scenario": "exploration with valid token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "GetMyWork",
+      "scenario": "real user requesting showcase scope",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "GetMyWork",
+      "scenario": "exploration token requesting real scope including demo_mode:false",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "GetMyWork",
+      "scenario": "missing token with demo_mode:true",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "GetMyWork",
+      "scenario": "revoked token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "real user with real records, no token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "exploration with valid token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "real user requesting showcase scope",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "exploration token requesting real scope including demo_mode:false",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "missing token with demo_mode:true",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    },
+    {
+      "function": "ResolveAmeenContext",
+      "scenario": "revoked token",
+      "status": "NOT TESTED",
+      "execution": "Testing Agent using independent authenticated contexts"
+    }
+  ]
+}

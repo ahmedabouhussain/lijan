@@ -44,7 +44,8 @@ export default async function (req) {
   const base44 = createClientFromRequest(req);
   const sr = base44.asServiceRole;
   const body = await req.json().catch(() => ({})) || {};
-  const demoMode = body.demo_mode === true;
+  // A supplied exploration token always selects exploration; it can never fall back to the real caller.
+  const demoMode = body.demo_mode === true || Boolean(body.showcase_token);
 
   const unread: any[] = [];
   const readList = async (source, promise) => {

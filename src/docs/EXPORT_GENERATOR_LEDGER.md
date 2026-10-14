@@ -63,10 +63,33 @@ No generator may write a file directly to the user outside the engine. Every exp
 must call `exportInstitutionalDocument` so that branding, audit, and the content hash
 are applied. A generator that returns only a URL without the engine is non-compliant.
 
-## Render inspection status
-- No output has been visually opened/inspected yet this baseline. All X-### are
-  **NOT TESTED**. Phase 1 gate requires at least one real PDF + one XLSX + one DOCX
-  opened in Arabic and English. Deferred to browser acceptance.
+## Controlled generation and structural inspection (2026-10-14)
+Engine claim: IMPLEMENTED — NOT VERIFIED. Acceptance status: PARTIAL.
+Exactly 16 artifacts were generated in the controlled run, 8 Arabic and 8 English.
+All 16 have persisted private files, non-zero sizes, recorded SHA-256 values,
+governed artifact access and successful signed downloads; downloaded hashes match.
+PDF header/trailer/pages/font dictionaries were parsed; DOCX/XLSX ZIP packages pass CRC
+and their expected OOXML parts were parsed. This is NOT viewer-opening or visual acceptance.
+Evidence: `.fingerprint/export-controlled-artifacts.json` and
+`.fingerprint/export-structural-inspection.json` (exact artifact IDs, checks and source IDs).
+
+- PDF: six outputs contain Noto Naskh Arabic font dictionaries and FontFile2 streams.
+  Arabic ToUnicode maps include presentation forms, so logical Arabic search is NOT TESTED.
+- DOCX: all four packages contain regular/bold `.odttf` font parts, fontTable relationships,
+  document fontTable linkage and content types. Deobfuscated bytes match the actual Noto
+  Naskh Arabic TTF assets. This establishes embedded package parts, not Word rendering.
+- XLSX: Arabic files have rightToLeft sheet views and readingOrder=2; English equivalents
+  use LTR. Column presentation is structurally verified, viewer rendering NOT TESTED.
+  Fonts are declared, not embedded: FONT DECLARED — EMBEDDING NOT ESTABLISHED.
+- Missing owning-institution logo: BLOCKED for the selected national committee. The QDB
+  registered logo is SVG, while current renderers expect PNG; QDB rendering remains BLOCKED.
+- Personal work report covers identity-bound actions in one committee, not the complete
+  seven-committee queue. Current source actions without owner_user_id are not inferred.
+- Classification label is currently fixed to Internal despite stored classification;
+  non-internal outputs remain unverified.
+- LIJAN/CONNECTION image parts and identity lockup exist; visual logo correctness, malformed
+  Arabic, full viewer opening, source completeness and unauthorized download are NOT TESTED.
+No artifact is labelled fully accepted. Browser suites must use the exact IDs in the manifest.
 
 ## Known export gaps
 - XGAP-1: agenda_pack, decision_resolution, attendance_quorum, action_tracking,

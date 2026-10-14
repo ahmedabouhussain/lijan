@@ -51,15 +51,22 @@ explanation. No fake success is presented. Annotations belong to an authenticate
 account and are not available in exploration (`DocumentAnnotationsPanel` states this).
 No showcase write access is opened in this package.
 
-## Coverage denominators (static, 2026-10-14)
-INTERACTION COVERAGE: PARTIAL — 30 CONTROLS REGISTERED, COMPLETE DENOMINATOR NOT ESTABLISHED.
-Static source scan found: onClick handlers ~496 · `<Button>` 245 · `<Link to>` 9 (most
-navigation uses `Link` via component wrappers / `useNavigate`) · `<form>` 5 ·
-`onSubmit` 7 · TabsTrigger 16 · upload surfaces 16 · download/export triggers 58 ·
-generate triggers 159 (many are string occurrences, not distinct controls). The 30
-registered controls (I-001..I-030) are the governed-write + navigation surface; a
-complete per-control registry of all ~496 onClick handlers is a Phase 2 work item
-(ICOV-1). Until then this registry is PARTIAL by its own declaration.
+## Coverage denominators (fresh source inventory, 2026-10-14)
+Status: PARTIAL. The earlier 30 interaction families are not the per-control denominator.
+Every discovered event attribute and declared navigation target is indexed with stable ID,
+source, line, handler, category, exclusion/disposition and verification status in
+`.fingerprint/interaction-inventory-current.json` and its CSV equivalent.
+
+Exact balance: 766 user-visible operational + 162 navigation + 53 component plumbing +
+3 decorative + 6 propagation-only + 0 test/development + 2 dead/unreachable = 992.
+Registered operational/navigation occurrences: 928. Excluded: 64, with per-entry reasons.
+Source-import reachability is NOT proof of rendered runtime reachability. All 928 registered
+occurrences remain NOT TESTED in browser acceptance; listing a handler is not a verified contract.
+The six unused shadcn primitive callbacks are component plumbing, not rendered dead buttons.
+The two unregistered OAuthConsent callbacks are BLOCKED external MCP-consent dependencies:
+no active MCP configuration or visible entry point exists. They were not silently connected.
+Dead controls repaired: 0. User-facing AMEEN language/scope behavior was corrected separately.
+The broader inventory includes input, submit and navigation attributes, unlike the old 504 scan.
 
 ## Known interaction gaps
 - I-GAP-1: Calendar sync (I-021) requires an authorized app-user connector
