@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useCommittee } from "@/lib/CommitteeContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { PRIORITY } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { useCommitteeAdmin } from "@/hooks/useCommitteeAdmin";
@@ -161,7 +163,7 @@ export default function CommitteeNotifications() {
                         {eventLabel ? (lang === "ar" ? eventLabel.label_ar : eventLabel.label_en) : tmpl.event_type}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {tmpl.channel} · {tmpl.priority || "normal"}
+                        {tmpl.channel} · {L.label(PRIORITY, tmpl.priority, tmpl.priority) || "normal"}
                       </div>
                     </div>
                   </div>

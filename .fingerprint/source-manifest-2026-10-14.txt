@@ -1,0 +1,23 @@
+LIJAN Source Fingerprint
+Generated: 2026-10-14T08:57+03:00 (Asia/Riyadh)
+Build: npx vite build exit 0 (2026-10-13)
+
+=== SCOPE ===
+file count: 770
+
+=== AGGREGATE SHA-256 ===
+per-file list digest: 2e9cca43c469f6bf8c290249b2e8eadeeaa1c986ed7bef4a95c1c128646be569
+path-list digest: aa39f88c11e659a0c19e4fb4af6e3c4fa2b0e8c88c84845253d56c739f8ce4c2
+
+=== COUNTS ===
+pages: 85
+components: 219
+entities: 106
+backend_functions: 212
+shared_modules: 75
+workflows: 3
+agents: 2
+
+=== POLICY/CONTRACT VERSIONS (distinct) ===
+"contract_version"
+"contract_version": {

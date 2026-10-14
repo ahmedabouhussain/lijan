@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Vote, FileSignature, AlertTriangle, Lock, RefreshCw, Check, X, Clock, ArrowUp, Send, Play } from "lucide-react";
 import StatusBadge from "@/components/raqeem/StatusBadge";
-import { DECISION_STATUS } from "@/lib/raqeemUtils";
+import { DECISION_STATUS, ESCALATION_LEVEL } from "@/lib/raqeemUtils";
 import { useLanguage } from "@/lib/LanguageContext";
 import { L } from "@/lib/l10n";
 import ProposalIntegrityPanel from "@/components/raqeem/ProposalIntegrityPanel";
@@ -162,7 +162,7 @@ export default function DecisionWorkflow({ decision, onChanged }) {
         <span className="text-xs text-muted-foreground">{t("الحالة الحالية:", "Current status:")}</span>
         <StatusBadge label={L.label(DECISION_STATUS, status, status)} colorClass={DECISION_STATUS[status]?.color} size="md" />
         {decision?.escalation_level && decision.escalation_level !== "none" && (
-          <StatusBadge label={`${L.pair("تصعيد", "Escalation")}: ${decision.escalation_level}`} colorClass="text-state-warning-ink bg-state-warning-surface" />
+          <StatusBadge label={`${L.pair("تصعيد", "Escalation")}: ${L.label(ESCALATION_LEVEL, decision.escalation_level, decision.escalation_level)}`} colorClass="text-state-warning-ink bg-state-warning-surface" />
         )}
       </div>
 

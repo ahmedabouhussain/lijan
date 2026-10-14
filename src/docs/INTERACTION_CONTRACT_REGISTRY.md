@@ -51,6 +51,16 @@ explanation. No fake success is presented. Annotations belong to an authenticate
 account and are not available in exploration (`DocumentAnnotationsPanel` states this).
 No showcase write access is opened in this package.
 
+## Coverage denominators (static, 2026-10-14)
+INTERACTION COVERAGE: PARTIAL — 30 CONTROLS REGISTERED, COMPLETE DENOMINATOR NOT ESTABLISHED.
+Static source scan found: onClick handlers ~496 · `<Button>` 245 · `<Link to>` 9 (most
+navigation uses `Link` via component wrappers / `useNavigate`) · `<form>` 5 ·
+`onSubmit` 7 · TabsTrigger 16 · upload surfaces 16 · download/export triggers 58 ·
+generate triggers 159 (many are string occurrences, not distinct controls). The 30
+registered controls (I-001..I-030) are the governed-write + navigation surface; a
+complete per-control registry of all ~496 onClick handlers is a Phase 2 work item
+(ICOV-1). Until then this registry is PARTIAL by its own declaration.
+
 ## Known interaction gaps
 - I-GAP-1: Calendar sync (I-021) requires an authorized app-user connector
   (googlecalendar id 6a40f423404d169cb3344836 or outlook id 6abe5970bddfed2e7caa5cda).

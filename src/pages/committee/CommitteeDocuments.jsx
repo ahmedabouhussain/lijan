@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { L } from "@/lib/l10n";
+import { DOCUMENT_STATUS } from "@/lib/raqeemUtils";
 
 const DOC_TYPES = [
   { value: "memo", label_ar: "مذكرة", label_en: "Memo" },
@@ -61,6 +62,7 @@ export default function CommitteeDocuments() {
       <PageHeader
         icon={FileText}
         title={getTitle("وثائق اللجنة", "Committee Documents", lang)}
+        subtitle={t("مستودع الوثائق والسجلات التشغيلية المحوكمة للجنة — لا توثيق المنتج.", "Governed repository of the committee's operational records — not product documentation.")}
         badge={<span className="text-sm text-muted-foreground">({total})</span>}
         actions={canManageDocuments && (
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>
@@ -115,7 +117,7 @@ export default function CommitteeDocuments() {
                   {d.created_date ? ` · ${formatDate(d.created_date)}` : ""}
                 </div>
               </div>
-              <StatusBadge label={d.status || "draft"} colorClass="bg-secondary text-muted-foreground" />
+              <StatusBadge label={L.label(DOCUMENT_STATUS, d.status, d.status) || "draft"} colorClass={DOCUMENT_STATUS[d.status]?.color || "bg-secondary text-muted-foreground"} />
               <ChevronRight className="w-4 h-4 text-muted-foreground rtl:rotate-180 shrink-0" aria-hidden="true" />
             </Link>
           ))}

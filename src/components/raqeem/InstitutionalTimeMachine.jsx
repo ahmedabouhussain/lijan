@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { PRIORITY } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 import { base44 } from "@/api/base44Client";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -211,7 +213,7 @@ export default function InstitutionalTimeMachine({ open, onClose, committeeId, c
                     <div key={a.id} className="flex items-center justify-between text-xs py-1">
                       <span className="text-foreground truncate">{(a[`title_${lang}`] || a.title) || "—"}</span>
                       <StatusBadge
-                        label={a.priority || "—"}
+                        label={L.label(PRIORITY, a.priority, a.priority) || "—"}
                         colorClass={a.priority === "urgent" ? "bg-red-100 text-red-700" : "bg-secondary text-muted-foreground"}
                       />
                     </div>

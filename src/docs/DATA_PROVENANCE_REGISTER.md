@@ -33,7 +33,15 @@ DemoBanner) when the effective actor is a demo persona.
 ## Bilingual data correction log (showcase only)
 | ID | Record | Field | Before | After | Timestamp | Actor | Reversible |
 |----|--------|-------|--------|-------|-----------|-------|------------|
-| (none yet) | — | — | — | — | — | — | — |
+| M-001 | AgendaItem (all 7 Dr Hamad committees) | title | `def.topics_ar` (Arabic, fell back to `mandate_ar`) → English title rendered Arabic | `enTopics[idx]` from `DR_HAMAD_TOPICS[def.key].en` | 2026-10-14T09:10+03:00 | build agent (ProvisionDrHamadDemoData edit) | yes — revert import + 3 title expressions |
+| M-002 | AgendaItem | title_ar | `def.topics_ar` (mandate_ar) | `arTopics[idx]` from `DR_HAMAD_TOPICS[def.key].ar` | 2026-10-14T09:10 | build agent | yes |
+| M-003 | Decision | title / title_ar | `Decision on ${topics_ar?.[0] \|\| mandate_en}` / `قرار بشأن ${topics_ar?.[0] \|\| mandate_ar}` | `Decision on ${topicEn}` / `قرار بشأن ${topicAr}` (real bilingual topic) | 2026-10-14T09:10 | build agent | yes |
+| M-004 | Action | title / title_ar | `Follow up on ${topics_ar?.[0] \|\| mandate_en}` / `متابعة ${topics_ar?.[0] \|\| mandate_ar}` | `Follow up on ${topicEn}` / `متابعة ${topicAr}` | 2026-10-14T09:10 | build agent | yes |
+
+> These edits change the *provision function*, not persisted records. Existing demo
+> records change only on the next admin re-provision (idempotent upsert). No
+> production/institutional record touched. Permanent org remains Qatar Development
+> Bank; seven independent memberships unchanged; no authority widening.
 
 > Rule: official bilingual institutional data is authored in both languages; it is
 > never machine-translated at display time. User-authored content and proper names

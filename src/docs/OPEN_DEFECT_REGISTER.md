@@ -100,7 +100,28 @@ Traced from the Phase 1 brief; recorded as found, not fabricated:
   pattern; `LegacyCommitteeRedirect` resolves legacy. → NOT REPRODUCED.
 - **`/documents` vs `/documentation` inconsistency:** distinct purpose split
   (D-ROUTE-1): official record library vs product documentation hub. Clarify labels.
-  → P3 open.
+  → P3. **D-ROUTE-1 RESOLVED (static):** CommitteeDocuments now carries an explicit
+  subtitle "Governed repository of the committee's operational records — not product
+  documentation." / Arabic equivalent; DocumentationHub remains the product/executive
+  pack. Single canonical route each; no duplicated repository. NOT BROWSER TESTED.
+
+## LGUARD-1 sweep — new defects (2026-10-14)
+| ID | Severity | Surface | Static finding | Fix | Disposition |
+|----|----------|--------|----------------|-----|-------------|
+| D-137 | P1 | DecisionWorkflow.jsx:165 | raw `decision.escalation_level` in badge | routed via `ESCALATION_LEVEL` | IMPLEMENTED — NOT BROWSER TESTED |
+| D-138 | P1 | InstitutionalTimeMachine.jsx:214 | raw `a.priority` in badge | routed via `PRIORITY` | IMPLEMENTED — NOT BROWSER TESTED |
+| D-139 | P1 | CommitteeNotifications.jsx:164 | raw `tmpl.priority` in row | routed via `PRIORITY` | IMPLEMENTED — NOT BROWSER TESTED |
+| D-140 | P1 | CommitteeDocuments.jsx:119 | raw `d.status` in StatusBadge | routed via `DOCUMENT_STATUS` | IMPLEMENTED — NOT BROWSER TESTED |
+
+## Backend regression (2026-10-14)
+- TestVoteEligibility: PASS 12/12, 0 writes — identity-by-identifier, recusal, term.
+- TestPrincipalRepresentation: PASS 24/24, 0 writes — one-person/seven-seats invariant.
+- TestAuthorizationGuard: 200, policy `authz-1.10.0` (effective-time gate, fail-closed).
+- TestShowcaseIsolation: **REPRODUCED — OPEN.** Sub-test 1 ("real user requests
+  showcase committee record") expected `not_found`, actual `showcase_scope` (pass:
+  false). Likely an artifact of the admin test context (test_backend_function runs as
+  builder/admin), but not disproved in a rendered non-admin browser session. Browser
+  verification required before closing.
 
 ## Pending Phase 1 investigations (not yet defects)
 - Raw status string audit across `src/pages/committee/ReportCenter.jsx`,

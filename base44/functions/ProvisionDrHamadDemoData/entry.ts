@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import {
   DR_HAMAD_PERSONA, DR_HAMAD_PERSON_KEY, DR_HAMAD_DATASET, DR_HAMAD_ORGS, DR_HAMAD_COMMITTEES,
 } from '../../shared/drHamadDataset.ts';
+import { DR_HAMAD_TOPICS } from '../../shared/drHamadExperience.ts';
 
 // ProvisionDrHamadDemoData — idempotent seed for the Dr. Hamad demonstration persona.
 //
@@ -199,22 +200,27 @@ export default async function (req) {
 
       const existingAgenda = await sr.entities.AgendaItem.filter({ meeting_id: meeting.id }).catch(() => []);
       if (existingAgenda.length === 0) {
-        const topics = def.topics_ar || [def.mandate_ar];
-        await Promise.all(topics.slice(0, 3).map((topic, idx) =>
+        // Bilingual agenda topics — the English title must never carry Arabic text.
+        const topicSet = DR_HAMAD_TOPICS[def.key] || { ar: [def.mandate_ar], en: [def.mandate_en] };
+        const arTopics = topicSet.ar || [def.mandate_ar];
+        const enTopics = topicSet.en || [def.mandate_en];
+        await Promise.all(arTopics.slice(0, 3).map((arTopic, idx) =>
           sr.entities.AgendaItem.create({
             organization_id: owningOrg.id,
             committee_id: committee.id,
             meeting_id: meeting.id,
             sequence: idx + 1,
-            title: topic,
-            title_ar: topic,
-            objective: topic,
+            title: enTopics[idx] || arTopic,
+            title_ar: arTopic,
+            objective: enTopics[idx] || arTopic,
             readiness: idx === 0 ? 'ready' : 'needs_attention',
             status: 'pending',
             ...demoFlags,
           })
         ));
       }
+      const topicAr = DR_HAMAD_TOPICS[def.key]?.ar?.[0] || def.mandate_ar;
+      const topicEn = DR_HAMAD_TOPICS[def.key]?.en?.[0] || def.mandate_en;
 
       const existingDecisions = await sr.entities.Decision.filter({ committee_id: committee.id }).catch(() => []);
       if (existingDecisions.length === 0) {
@@ -223,8 +229,8 @@ export default async function (req) {
           committee_id: committee.id,
           meeting_id: meeting.id,
           decision_number: `${def.public_id}-D1`,
-          title: `Decision on ${def.topics_ar?.[0] || def.mandate_en}`,
-          title_ar: `قرار بشأن ${def.topics_ar?.[0] || def.mandate_ar}`,
+          title: `Decision on ${topicEn}`,
+          title_ar: `قرار بشأن ${topicAr}`,
           proposal: def.mandate_en,
           status: def.role === 'chair' ? 'in_review' : 'proposed',
           ...demoFlags,
@@ -238,8 +244,8 @@ export default async function (req) {
         await sr.entities.Action.create({
           organization_id: owningOrg.id,
           committee_id: committee.id,
-          title: `Follow up on ${def.topics_ar?.[0] || def.mandate_en}`,
-          title_ar: `متابعة ${def.topics_ar?.[0] || def.mandate_ar}`,
+          title: `Follow up on ${topicEn}`,
+          title_ar: `متابعة ${topicAr}`,
           owner_name: DR_HAMAD_PERSONA.name_ar,
           deadline: deadline.toISOString().slice(0, 10),
           priority: 'medium',

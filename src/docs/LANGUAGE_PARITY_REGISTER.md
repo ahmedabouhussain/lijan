@@ -68,9 +68,36 @@ Accessors: `L.label(map, key, fallback)`, `L.color(map, key, fallback)`,
 - Date literals in inline `t(...)` are localized; no untranslated dates found in
   governed surfaces.
 
+## LGUARD-1 — static guard (IMPLEMENTED — VERIFIED PASS)
+`scripts/lang-guard.mjs` scans every `.jsx`/`.tsx` under `src/` for direct JSX rendering
+of a governed enum field (`status`, `state`, `rule`, `response`, `priority`,
+`escalation_level`, `stage`, etc.) that is NOT routed through the canonical bilingual
+resolver (`L.label`, `labelOf`, `StatusBadge` with a map label, `t()` with a map, etc.).
+It distinguishes logic comparisons (`===`), persistence/payload values
+(`.create`/`.update`/`payload:`), form input `value={x.field}`, and known free-text
+fields (`deliberation.outcome`) from visible UI renders. Exit 1 on unresolved raw
+renders, else 0. **Run result: PASS, 0 findings** (2026-10-14).
+
+## Defects found and corrected by LGUARD-1 (Phase 1, second sweep)
+| ID | Surface | Defect | Fix | Status |
+|----|--------|--------|-----|--------|
+| L-008 → D-137 | DecisionWorkflow | raw `escalation_level` in badge label | routed via `ESCALATION_LEVEL` | IMPLEMENTED — NOT BROWSER TESTED |
+| L-009 → D-138 | InstitutionalTimeMachine | raw `a.priority` in badge label | routed via `PRIORITY` | IMPLEMENTED — NOT BROWSER TESTED |
+| L-010 → D-139 | CommitteeNotifications | raw `tmpl.priority` in list row | routed via `PRIORITY` | IMPLEMENTED — NOT BROWSER TESTED |
+| L-011 → D-140 | CommitteeDocuments | raw `d.status` in StatusBadge | routed via `DOCUMENT_STATUS` | IMPLEMENTED — NOT BROWSER TESTED |
+
+Two guard findings were confirmed false positives and suppressed by design:
+`deliberation.outcome` (free-text field, no enum) and `form.priority` (form input
+value, persistence not display).
+
 ## Remaining language work (Phase 1 open)
-- LGUARD-1: ESLint rule to forbid raw `{x.status}`/`{x.state}` renders — NOT IMPLEMENTED.
-- P-GAP-1: bilingual showcase fields for Dr Hamad committees/meetings — NOT YET DONE.
-- L-GAP-1: AMEEN reply-language verification — NOT TESTED.
-- Full surface-by-surface visual audit (all pages × both languages × 3 viewports) —
+- L-GAP-1: AMEEN reply-language verification — NOT TESTED (browser).
+- Full surface-by-surface visual audit (all 85 pages × both languages × 3 viewports) —
   NOT TESTED (deferred to browser acceptance).
+
+## Denominators (static, 2026-10-14)
+- Bilingual label maps: 31 in `raqeemUtils.js` + 12 in `structureLabels.js` = 43.
+- Pages: 85 · Components: 219 · Backend functions: 212 · Entities: 106.
+- Discovered raw renders: 7 (first sweep) + 6 (LGUARD) − 2 false positives = 11 real;
+  registered: 11; implemented: 11; statically verified (guard PASS): 11;
+  browser-tested: 0; failed: 0; blocked: 0; not-tested: 11.

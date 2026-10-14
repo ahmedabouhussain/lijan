@@ -30,13 +30,17 @@
 ## Phase 1 gates
 | ID | Gate | Evidence | Status |
 |----|------|----------|--------|
-| G-020 | No visible raw statuses | 7 leaks fixed (D-130..D-136) | IMPLEMENTED — NOT BROWSER TESTED |
+| G-020 | No visible raw statuses | 7 + 4 leaks fixed (D-130..D-140); LGUARD-1 PASS | IMPLEMENTED — NOT BROWSER TESTED |
 | G-021 | No dead buttons | audit done; calendar-sync = outcome E pending connector | IMPLEMENTED — NOT BROWSER TESTED |
-| G-022 | No mixed languages in a single mode | static grep clean; visual NOT TESTED | IMPLEMENTED — NOT BROWSER TESTED |
-| G-023 | Dr Hamad 7-membership journey | identity-by-identifier enforced; bilingual fields partial (P-GAP-1) | PARTIAL |
-| G-024 | Branded exports (PDF/DOCX/XLSX) | engine wired for 3 products; render inspection NOT TESTED | IMPLEMENTED — NOT BROWSER TESTED |
+| G-022 | No mixed languages in a single mode | LGUARD-1 PASS (static); visual NOT TESTED | IMPLEMENTED — NOT BROWSER TESTED |
+| G-023 | Dr Hamad 7-membership journey | identity-by-identifier PASS (24/24); bilingual provision fix applied (P-GAP-1) | IMPLEMENTED — NOT BROWSER TESTED |
+| G-024 | Branded exports (PDF/DOCX/XLSX) | engine wired for 3 products; render inspection NOT TESTED | NOT TESTED |
 | G-025 | Honest empty/error/permission states | governed-state contract documented; per-surface NOT TESTED | IMPLEMENTED — NOT BROWSER TESTED |
 | G-026 | No fabricated votes/signatures/attendance | none fabricated; aggregate-display rule documented (I-GAP-2) | PASS — VERIFIED |
+| G-027 | LGUARD-1 static guard | `scripts/lang-guard.mjs` → PASS 0 findings | PASS — VERIFIED |
+| G-028 | Source fingerprint | `.fingerprint/source-manifest-2026-10-14.txt` (770 files) | PASS — VERIFIED |
+| G-029 | Authority regression | TestVoteEligibility 12/12 · TestPrincipalRepresentation 24/24 · TestAuthorizationGuard 200 (authz-1.10.0) | PASS — VERIFIED |
+| G-030 | Showcase isolation | TestShowcaseIsolation: 1 sub-test failed (real-user showcase access) | REPRODUCED — OPEN (browser-pending) |
 
 ## Browser acceptance (Gate 1 — Showcase Ready)
 | ID | Journey | Languages | Viewports | Status |
