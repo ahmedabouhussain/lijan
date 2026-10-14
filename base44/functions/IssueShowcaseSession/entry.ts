@@ -21,40 +21,9 @@ export default async function (req) {
       return Response.json({ error: 'persona_key is required', code: 'invalid_request' }, { status: 400 });
     }
 
-    // The visitor may be signed in or anonymous — either way this is a showcase principal only.
-    const user = await base44.auth.me().catch(() => null);
-
-    const issued = await issueShowcaseSession(sr, { personaKey, issuedTo: user, entryPoint });
-    if (!issued.ok) {
-      return Response.json({ error: 'Showcase not available', code: issued.reason }, { status: 404 });
-    }
-
-    await sr.entities.AuditEvent.create({
-      action: 'showcase_session_issued',
-      entity_type: 'ShowcaseSession',
-      entity_id: issued.session_id,
-      entity_title: issued.persona_key,
-      actor_user_id: user?.id || 'anonymous',
-      actor_name: user?.full_name || 'زائر',
-      actor_email: user?.email || 'anonymous@visitor',
-      description: `Showcase session issued for ${issued.persona_key}`,
-      authority_context: `data_class:${issued.data_class}`,
-      correlation_id: `showcase-${issued.session_id}`,
-    }).catch(() => {});
-
-    return Response.json({
-      status: 'ok',
-      showcase_token: issued.token,
-      session_id: issued.session_id,
-      persona_key: issued.persona_key,
-      persona_id: issued.persona_id,
-      dataset: issued.dataset,
-      data_class: issued.data_class,
-      allowed_scope_count: issued.allowed_scope_count,
-      allowed_committee_public_ids: issued.allowed_committee_public_ids,
-      write_scope: issued.write_scope,
-      expires_at: issued.expires_at,
-    });
+    // Retained compatibility endpoint delegates the explicit gateway, never mints here.
+    const result = await base44.functions.invoke('EnterExploration', { persona_key: personaKey, entry_point: entryPoint });
+    return Response.json(result.data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

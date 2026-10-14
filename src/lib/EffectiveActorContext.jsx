@@ -15,7 +15,7 @@ import { useLanguage } from '@/lib/LanguageContext';
 
 const DEMO_SESSION_KEY = 'lijan_demo_session';
 const DEFAULT_PERSONA = 'DR_HAMAD_MAJEEGHEER';
-const REPAIR_FUNCTION = 'RepairDrHamadDemoExperienceV3';
+
 
 // Context keys that belong to a persona session — always cleared when the session
 // starts, changes persona, or ends. They are caches, never an authority source.
@@ -116,7 +116,7 @@ export const EffectiveActorProvider = ({ children }) => {
 
     let issued = null;
     try {
-      const res = await base44.functions.invoke('IssueShowcaseSession', {
+      const res = await base44.functions.invoke('EnterExploration', {
         persona_key: persona.key,
         entry_point: window.location.pathname,
       });
@@ -131,13 +131,7 @@ export const EffectiveActorProvider = ({ children }) => {
     sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
     setDemoSession(session);
 
-    // Self-heal: the canonical persona's records are repaired idempotently on entry, so the
-    // experience always resolves the persisted identity, memberships and role boundaries.
-    if (persona.key === DEFAULT_PERSONA) {
-      base44.functions
-        .invoke(REPAIR_FUNCTION, { demo_mode: true, demo_persona_key: persona.key })
-        .catch(() => {});
-    }
+    // Exploration never provisions or repairs operational records.
 
     // Record the exploration start (fire-and-forget) for admin tracking
     try {

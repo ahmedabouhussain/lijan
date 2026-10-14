@@ -44,6 +44,7 @@ export default async function (req) {
         committee,
         context_key,
         demo_persona_key,
+        showcase_token,
       });
     }
 
@@ -165,7 +166,7 @@ export default async function (req) {
  * Sandbox scope — the exploration experience.
  * Only a registered governed persona, and only that persona's sandbox-flagged records.
  */
-async function resolveSandboxContext({ base44, organization, committee, context_key, demo_persona_key }) {
+async function resolveSandboxContext({ base44, organization, committee, context_key, demo_persona_key, showcase_token }) {
   const denied = () => Response.json({
     verified: true,
     access_denied: true,

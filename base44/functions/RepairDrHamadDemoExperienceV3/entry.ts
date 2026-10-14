@@ -39,8 +39,8 @@ export default async function (req) {
     if (requestedPersona && requestedPersona !== 'DR_HAMAD_MAJEEGHEER') {
       return Response.json({ error: 'Unknown or missing demo persona', code: 'unknown_persona' }, { status: 400 });
     }
-    if (!isAdmin && !demoMode) {
-      return Response.json({ error: 'Admin access or exploration mode required' }, { status: 403 });
+    if (!isAdmin) {
+      return Response.json({ error: 'Administrator authorization required', code: 'forbidden' }, { status: 403 });
     }
 
     const changed = { created: 0, updated: 0, deactivated: 0 };

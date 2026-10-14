@@ -24,6 +24,17 @@ export default async function (req) {
     const sr = base44.asServiceRole;
     const body = await req.json().catch(() => ({}));
 
+    if (body.persona_key) {
+      const personaKey = typeof body.persona_key === 'string' ? body.persona_key : '';
+      const user = await base44.auth.me().catch(() => null);
+      const issued = await issueShowcaseSession(sr, { personaKey, issuedTo: user, entryPoint: 'exploration_gateway' });
+      if (!issued.ok) return refuse('not_found');
+      await sr.entities.AuditEvent.create({ action: 'demo_explore', entity_type: 'ShowcaseSession', entity_id: issued.session_id,
+        actor_user_id: user?.id || 'anonymous', description: 'Explicit isolated exploration entry; write_scope:none',
+        correlation_id: `showcase-${issued.session_id}` });
+      const { token, ...details } = issued;
+      return Response.json({ ...details, showcase_token: token, status: 'ok' });
+    }
     const raw = typeof body?.target_path === 'string' ? body.target_path.trim() : '';
     if (!raw || raw.length > 300 || raw.includes('//') || raw.includes('\\') || raw.includes('..')) {
       return Response.json({ error: 'Unsupported target', code: 'invalid_request' }, { status: 400 });
@@ -69,7 +80,7 @@ export default async function (req) {
 
     // Audited WITHOUT the token: the record of the transition names the session, never the secret.
     await sr.entities.AuditEvent.create({
-      action: 'showcase_session_issued',
+      action: 'demo_explore',
       entity_type: 'ShowcaseSession',
       entity_id: issued.session_id,
       entity_title: committee.name_ar || committee.public_id,

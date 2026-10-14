@@ -20,7 +20,7 @@ const AmeenContext = createContext(null);
 export function AmeenProvider({ children }) {
   const location = useLocation();
   const { lang, t } = useLanguage();
-  const { effectiveActor, isDemoMode, isAuthenticated } = useEffectiveActor();
+  const { effectiveActor, isDemoMode, isAuthenticated, showcaseToken } = useEffectiveActor();
 
   const route = useMemo(() => resolveAmeenRoute(location.pathname), [location.pathname]);
 
@@ -52,6 +52,8 @@ export function AmeenProvider({ children }) {
           entity_id: route.entityId,
           demo_mode: isDemoMode,
           demo_persona_key: demoPersonaKey,
+          showcase_token: showcaseToken,
+          language: lang,
         });
         if (!cancelled) setVerified(res?.data || res || null);
       } catch {
@@ -67,6 +69,8 @@ export function AmeenProvider({ children }) {
     isAuthenticated,
     isDemoMode,
     demoPersonaKey,
+    showcaseToken,
+    lang,
     route.orgRef,
     route.committeeRef,
     route.contextKey,
