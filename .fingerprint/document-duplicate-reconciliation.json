@@ -1,0 +1,2860 @@
+{
+  "timestamp": "2026-10-14T09:00:25.080Z",
+  "scope": "Title groups are candidates only, not proof of duplicated histories",
+  "groups": [
+    {
+      "committee_id": "6ac13600152beda145cdbd92",
+      "title_ar": "اللجنة التنفيذية لمجموعة إعلان — أجندة BEC (مستند مرجعي)",
+      "title_en": "ELAN Executive Committee — BEC agenda (reference document)",
+      "documents": [
+        {
+          "id": "6acf1c6901cd9b9d5e83fbe0",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196dc"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:41.495000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d7fb2ac8a3c6ab4a7be",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e3"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:01:03.147000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd980bb4320616bac0899",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ea"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:56.740000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd6868adea303b30d6d4a",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f1"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:58.937000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc636a906228f415fee167",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f8"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:50.173000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a39db7710dc934b35da",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ff"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:21.512000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58ef5f44047d914044fa",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119706"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:51.954000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca4636630dc67ec1f85842",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:42.960000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8b353359bb971bb3e1d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119714"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:17:07.323000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad0f46f62116883bec3b",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:55.196000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d7f7c1d276488cc1a28",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119722"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:15.936000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac39991f26477093865b3bc",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119729"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:29.649000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370f0732586b5d68d66fb",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119730"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:08.016000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac34276b562c5919dd1a96d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119737"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:50.349000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cbbfa8b35a77f079208",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:07.342000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230c2bd95ecd9d39e1127",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119745"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:56:02.629000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d123da3ef806afcd331",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:32:02.410000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cdc20224aae197ba7e1",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119752"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:08.579000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1476e416c002c7b95b012",
+          "status": "in_review",
+          "current_version_id": "6ac215ca6c175cd1db613b72",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac215ca6c175cd1db613b72",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/d61d7ea02_bec-v1.html",
+              "content_hash": "167b2e03153f659416c6ed177dc70aabafea1ab1fb1581ed26a2b6189511f6c6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [
+            {
+              "id": "6ac215caa886d3564c74fa75",
+              "version_id": "6ac215ca6c175cd1db613b72",
+              "status": "pending"
+            }
+          ],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119758"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:30.713000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1458568386c4a8dd8558f",
+          "status": "in_review",
+          "current_version_id": "6ac215cbfa118b703911d4d1",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac215cbfa118b703911d4d1",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/95bb3ba11_bec-v1.html",
+              "content_hash": "167b2e03153f659416c6ed177dc70aabafea1ab1fb1581ed26a2b6189511f6c6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:21.087000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac145607f04a8209069c9c9",
+          "status": "in_review",
+          "current_version_id": "6ac215ccffa0c96c914cd622",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac215ccffa0c96c914cd622",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/25a3d9316_bec-v1.html",
+              "content_hash": "167b2e03153f659416c6ed177dc70aabafea1ab1fb1581ed26a2b6189511f6c6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119766"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:44.651000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144f58360bf33817d138e",
+          "status": "in_review",
+          "current_version_id": "6ac215ce7d2f7d50d622f977",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac215ce7d2f7d50d622f977",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/866eda3c5_bec-v1.html",
+              "content_hash": "167b2e03153f659416c6ed177dc70aabafea1ab1fb1581ed26a2b6189511f6c6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:57",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "title_ar": "مواد مصدرية للعرض — تنمية الشركات الصغيرة والمتوسطة",
+      "title_en": "Source-based demonstration material — SME development",
+      "documents": [
+        {
+          "id": "6acf1c67153115bbbeeb15e5",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196dd"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:39.646000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d7d3e9bb3c3e249d9b9",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e4"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:01:01.379000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd97edbaf930c6c85928d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196eb"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:54.940000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd68504b9136f41fd7d49",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f2"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:57.013000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc6368acba3fa314067684",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f9"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:48.614000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a38af50d055fc39e355",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119700"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:20.196000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58eea6261f96ecad8692",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119707"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:50.289000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca46358d1f6cd490cb043e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:41.311000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8b1e0a2f5c326e3c125",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119715"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:17:05.886000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad0ca565918cc942070c",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:52.642000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d7ef002ac54bb48ac90",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119723"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:14.496000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3998fa10f98f4f564db25",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:27.616000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370ee896b83f1c5726a62",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119731"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:06.664000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac342741fb33c11a426da67",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119738"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:48.431000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb9196ba1baa49bb427",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:05.951000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230c1f5becca55b937d9d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119746"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:56:01.152000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d10fb97ebcf0e32228b",
+          "status": "archived",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6ac22199c8bb5e1a06da598d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:32:00.699000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cda08af2b859586f250",
+          "status": "archived",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6ac2219980e329f848deafdd"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:06.143000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1476d75aeaf0d05e21a2c",
+          "status": "in_review",
+          "current_version_id": "6ac206dd0cec9fafe84eb2e0",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206dd0cec9fafe84eb2e0",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/da179e8f0_document-v1.html",
+              "content_hash": "2f95755f634fdc03b5e79a5b931a47cd89d5dc7f9ff554ed2ca80f208bde83ad",
+              "status": "current"
+            }
+          ],
+          "review_refs": [
+            {
+              "id": "6ac206dd6da29a8025a901ac",
+              "version_id": "6ac206dd0cec9fafe84eb2e0",
+              "status": "pending"
+            }
+          ],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119759"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:29.109000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1458313decdb9fcd38ece",
+          "status": "in_review",
+          "current_version_id": "6ac206dec2ede4a835e3e024",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206dec2ede4a835e3e024",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/72abcebad_document-v1.html",
+              "content_hash": "2f95755f634fdc03b5e79a5b931a47cd89d5dc7f9ff554ed2ca80f208bde83ad",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119760"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:19.486000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1455f78fb45ffe8052bf0",
+          "status": "in_review",
+          "current_version_id": "6ac206df4c163dd481ae4c2c",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206df4c163dd481ae4c2c",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/97973e8f3_document-v1.html",
+              "content_hash": "2f95755f634fdc03b5e79a5b931a47cd89d5dc7f9ff554ed2ca80f208bde83ad",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119767"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:43.041000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144f3da9cd4699d6f0ec8",
+          "status": "in_review",
+          "current_version_id": "6ac206e059a80820eecdb752",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206e059a80820eecdb752",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/f0673e81e_document-v1.html",
+              "content_hash": "5c9e73192cd0d00e84703c961e207ea185a478c7ba04209cdeaab40670966005",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:55.052000",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "title_ar": "مذكرة إحاطة — لجنة الابتكار وتطوير الخدمات",
+      "title_en": "Innovation and Service Development Committee — Briefing Note",
+      "documents": [
+        {
+          "id": "6acf1c6617c65913a09541a1",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196de"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:38.049000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d7bbceeefccaa4d6422",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e5"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:00:59.629000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd97d14da131641d503e8",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ec"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:53.382000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd6833418fd5b1f363737",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f3"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:55.435000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc63675c911f7b3adb6922",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196fa"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:47.207000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a36e1be7ad96d823c58",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119701"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:18.873000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58ea06620050ff8e2388",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119708"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:46.088000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca462d09871d23e5f70861",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:33.530000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8b05fdfe3330f4b3f33",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119716"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:17:04.415000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad0a7b06d164648eb3dc",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:50.419000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d7cdad4813f973423e3",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119724"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:12.924000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3998d9086364f30d3cd79",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:25.818000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370ed5b76cc272370293d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119732"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:05.269000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac34272f81d117308342db6",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119739"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:46.717000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb8fa66801156f9d281",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119740"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:04.742000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230bf2ca740efbc1238e0",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119747"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:55:59.690000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d0f5a0cec6ba71f73ba",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:59.081000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cd824991f5980996bb5",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119753"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:04.138000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1476bd71a7771df18dba7",
+          "status": "in_review",
+          "current_version_id": "6ac206f889f3d3bf26ca3ee2",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206f889f3d3bf26ca3ee2",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/272258720_document-v1.html",
+              "content_hash": "12755a6ec6ac3da18f4b49d5a22d119bba7091a6ec68b5f3f2dd5a7ebf1afec1",
+              "status": "current"
+            }
+          ],
+          "review_refs": [
+            {
+              "id": "6ac206f81e8d54c89cdce935",
+              "version_id": "6ac206f889f3d3bf26ca3ee2",
+              "status": "pending"
+            }
+          ],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:27.561000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1458123df948a3271f556",
+          "status": "in_review",
+          "current_version_id": "6ac206f9dee2aa2c8a8ac481",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206f9dee2aa2c8a8ac481",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/37f2978ba_document-v1.html",
+              "content_hash": "12755a6ec6ac3da18f4b49d5a22d119bba7091a6ec68b5f3f2dd5a7ebf1afec1",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119761"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:17.940000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1455c8419edb9dcc6dfc0",
+          "status": "in_review",
+          "current_version_id": "6ac206fa493e27789db574de",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206fa493e27789db574de",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/105bd2b6a_document-v1.html",
+              "content_hash": "12755a6ec6ac3da18f4b49d5a22d119bba7091a6ec68b5f3f2dd5a7ebf1afec1",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119768"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:40.272000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144f15d264c86636a2c9e",
+          "status": "in_review",
+          "current_version_id": "6ac206fbc0e4cf63f9ba1b54",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206fbc0e4cf63f9ba1b54",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/21cabae24_document-v1.html",
+              "content_hash": "12755a6ec6ac3da18f4b49d5a22d119bba7091a6ec68b5f3f2dd5a7ebf1afec1",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:53.386000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac13609ff49f5ce4f8b066d",
+          "status": "in_review",
+          "current_version_id": "6ac206fcea3cabe32909c063",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206fcea3cabe32909c063",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/6b6f397ef_document-v1.html",
+              "content_hash": "12755a6ec6ac3da18f4b49d5a22d119bba7091a6ec68b5f3f2dd5a7ebf1afec1",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119774"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T17:06:17.231000",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "title_ar": "مذكرة إحاطة — لجنة المخاطر واستمرارية الأعمال",
+      "title_en": "Risk and Business Continuity Committee — Briefing Note",
+      "documents": [
+        {
+          "id": "6acf1c64ec40677f3cf057b2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196df"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:36.267000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d7590bdafe9119f98d5",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e6"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:00:53.080000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd97bb75d0b47465dbd8c",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ed"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:51.419000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd68142ef6f0fb2eb1aa1",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f4"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:53.949000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc6365d0fe07469504c2f6",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196fb"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:45.763000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a356900c38d856cf3a6",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119702"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:17.450000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58e76847e9aa3087d231",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119709"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:43.905000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca462beecb306b9b216875",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119710"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:31.779000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8ae90877f087425b346",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119717"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:17:02.856000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad086581fe449f19d32c",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:48.355000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d7b7ab009a2e6ffc15e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119725"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:11.562000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3998c179ffc2d67522c50",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:24.172000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370ebb7c4f894ad7ac2a8",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119733"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:03.978000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac342710fa85c198eb41c1e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:45.034000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb7780c40ddf031eb24",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119741"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:03.400000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230bea36e17f99453b745",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119748"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:55:58.146000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d0bf22708f257ed4b71",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:55.390000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cd3b61a25740d0f6add",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119754"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:30:59.955000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1476a39cc592b5529d7c0",
+          "status": "in_review",
+          "current_version_id": "6ac206fecf4eb830c8eedbc4",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206fecf4eb830c8eedbc4",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/d036dc6ff_document-v1.html",
+              "content_hash": "34364cf19c399db4346862ab10552a7f7fd9126b383e11e31e70faf3b83e558d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:26.079000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac145806941775d56de6d10",
+          "status": "in_review",
+          "current_version_id": "6ac20700707b82fb19aef84d",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20700707b82fb19aef84d",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/b06d7b443_document-v1.html",
+              "content_hash": "34364cf19c399db4346862ab10552a7f7fd9126b383e11e31e70faf3b83e558d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119762"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:16.387000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1455bd0764284b64d9034",
+          "status": "in_review",
+          "current_version_id": "6ac20701a7cf908dd22a7854",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20701a7cf908dd22a7854",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/af3ae79fe_document-v1.html",
+              "content_hash": "34364cf19c399db4346862ab10552a7f7fd9126b383e11e31e70faf3b83e558d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119769"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:39.034000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144eff8e9db72740a7791",
+          "status": "in_review",
+          "current_version_id": "6ac20702a0e0f59f49f893c6",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20702a0e0f59f49f893c6",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/cacbebe8c_document-v1.html",
+              "content_hash": "34364cf19c399db4346862ab10552a7f7fd9126b383e11e31e70faf3b83e558d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119770"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:51.640000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac13607a45c10cf006b8970",
+          "status": "in_review",
+          "current_version_id": "6ac20703aa8402c0a8404a9a",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20703aa8402c0a8404a9a",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/ad435f9bb_document-v1.html",
+              "content_hash": "34364cf19c399db4346862ab10552a7f7fd9126b383e11e31e70faf3b83e558d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119775"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T17:06:15.267000",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac13605726965c591ea015a",
+      "title_ar": "مذكرة إحاطة — لجنة الاستثمار والشراكات الاستراتيجية",
+      "title_en": "Investment and Strategic Partnerships Committee — Briefing Note",
+      "documents": [
+        {
+          "id": "6acf1c62dcc59f24b8badb1a",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e0"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:34.599000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d70ec0a927bb7f3ff51",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e7"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:00:48.703000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd979243603d005d170c1",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ee"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:49.643000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd6800935eb92419f452d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f5"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:52.167000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc6364ba6401a5cb38c79e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196fc"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:44.396000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a340fc64fbc3069cbd2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119703"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:16.010000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58e66199921697e30414",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:42.373000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca462a3db2e78ce0538239",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119711"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:30.215000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8ad2360ac2eae6fe6e2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119718"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:17:01.250000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad064409ac7f4b143e2e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:46.203000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d7ae5fad814352b9c10",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119726"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:10.172000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3998ac4e9ce469078e749",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:22.403000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370ea02576ee7fdc78e08",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119734"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:02.408000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3426fd055b37d8bc51645",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:43.214000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb526b981cfa3c65dd8",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119742"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:01.857000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230bccdd67aef8a178138",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119749"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:55:56.957000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d09ee8c565191609d32",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:53.675000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cd21789b8d72dfde033",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119755"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:30:58.186000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14768e7179d0f34afe266",
+          "status": "in_review",
+          "current_version_id": "6ac20705fff869655ef20983",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20705fff869655ef20983",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/dd6da4eed_document-v1.html",
+              "content_hash": "30f6e1c584cd8671f8ffa01b3ad6f8ceda1b9048e424e5c0f763322c6bb1feaa",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:24.937000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1457ebabfb15447968285",
+          "status": "in_review",
+          "current_version_id": "6ac207068a2b371188605b88",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac207068a2b371188605b88",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/17f741576_document-v1.html",
+              "content_hash": "30f6e1c584cd8671f8ffa01b3ad6f8ceda1b9048e424e5c0f763322c6bb1feaa",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119763"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:14.791000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14559ee045618ff9e311c",
+          "status": "in_review",
+          "current_version_id": "6ac207078c39184e5d475b02",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac207078c39184e5d475b02",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/5f9b53cb6_document-v1.html",
+              "content_hash": "30f6e1c584cd8671f8ffa01b3ad6f8ceda1b9048e424e5c0f763322c6bb1feaa",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:37.391000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144ed36d0f2e795b9b858",
+          "status": "in_review",
+          "current_version_id": "6ac20708af0bd9535b7a6620",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20708af0bd9535b7a6620",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/575201d0f_document-v1.html",
+              "content_hash": "30f6e1c584cd8671f8ffa01b3ad6f8ceda1b9048e424e5c0f763322c6bb1feaa",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119771"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:49.684000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac13606a4ed4062e0f705d9",
+          "status": "in_review",
+          "current_version_id": "6ac20709683d8540f89c6dba",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20709683d8540f89c6dba",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/486cd7e68_document-v1.html",
+              "content_hash": "30f6e1c584cd8671f8ffa01b3ad6f8ceda1b9048e424e5c0f763322c6bb1feaa",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119776"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T17:06:14.063000",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac13603531124962afac370",
+      "title_ar": "مذكرة إحاطة — اللجنة التوجيهية لتمويل الشركات الصغيرة والمتوسطة",
+      "title_en": "SME Finance Steering Committee — Briefing Note",
+      "documents": [
+        {
+          "id": "6acf1c60d515671634c7548e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e1"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:32.887000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d6c2e4bfe0fe25223a5",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e8"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:00:44.479000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd977564ea2625be3ea5b",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196ef"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:47.898000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd67e03b7d476944f55e1",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f6"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:50.327000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc63621d7f0565d9a4637e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196fd"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:42.890000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a32480e9f93361b7a5c",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119704"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:14.611000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58e4d272910f646b8e62",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:40.876000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca462817caf5dce94bc9b5",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119712"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:28.373000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8ab2df84f32569cdca2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119719"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:16:59.817000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4ad014157a6e746c820c2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119720"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:41.867000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d78b9117b294b30a43c",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119727"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:08.597000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac39988ec5d52e6c49f2760",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:20.945000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370e92933ac1365b13868",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119735"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:42:01.037000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3426d080831a201ca02ff",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:41.410000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb42d59b50b53e0c156",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119743"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:47:00.575000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230bbca7199c7c281b4a8",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:55:55.426000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d0703cbd037cc2e63b6",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119750"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:51.851000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cd0a18b426134a5adb2",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119756"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:30:56.594000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14767214d3f1ca7cf0c22",
+          "status": "in_review",
+          "current_version_id": "6ac206400d34e758875aefd3",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206400d34e758875aefd3",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/81dae2086_document-v1.html",
+              "content_hash": "d565bfea3f4edf15ecbc2fbd4fe2d7648a8643b41ad0f255c6fd702056d699d6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [
+            {
+              "id": "6ac20640326f55493ab1b6fe",
+              "version_id": "6ac206400d34e758875aefd3",
+              "status": "pending"
+            }
+          ],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:23.476000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1457dca10145d1747aedc",
+          "status": "in_review",
+          "current_version_id": "6ac206412e24538699262764",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac206412e24538699262764",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/0f48cd9dd_document-v1.html",
+              "content_hash": "d565bfea3f4edf15ecbc2fbd4fe2d7648a8643b41ad0f255c6fd702056d699d6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119764"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:13.509000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14558020d0571938275d8",
+          "status": "in_review",
+          "current_version_id": "6ac2064256cf19dad6cbd7b6",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac2064256cf19dad6cbd7b6",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/88fddf3c2_document-v1.html",
+              "content_hash": "d565bfea3f4edf15ecbc2fbd4fe2d7648a8643b41ad0f255c6fd702056d699d6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:36.066000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144ece0e639a68ec4ce8e",
+          "status": "in_review",
+          "current_version_id": "6ac20644c75a682ae7ccf0db",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20644c75a682ae7ccf0db",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/bfae0d54d_document-v1.html",
+              "content_hash": "d565bfea3f4edf15ecbc2fbd4fe2d7648a8643b41ad0f255c6fd702056d699d6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119772"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:48.065000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac13604486436a2b6af34cb",
+          "status": "in_review",
+          "current_version_id": "6ac20644ddd58123522b85cd",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20644ddd58123522b85cd",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/b1554b9dd_document-v1.html",
+              "content_hash": "d565bfea3f4edf15ecbc2fbd4fe2d7648a8643b41ad0f255c6fd702056d699d6",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119777"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T17:06:12.903000",
+            "source_instrument": null
+          }
+        }
+      ]
+    },
+    {
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "title_ar": "مذكرة إحاطة — لجنة التحول الرقمي والذكاء المؤسسي",
+      "title_en": "Digital Transformation and Institutional Intelligence Committee — Briefing Note",
+      "documents": [
+        {
+          "id": "6acf1c5f15058c4b0aaefc5b",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e2"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-14T06:08:31.300000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ace1d6790526a2879e0e4e4",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196e9"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T12:00:39.618000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acdd972f2723c20445ade41",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f0"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-13T07:10:42.922000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6accd67c76695260a80ec22d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196f7"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T12:45:48.680000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acc636101514414f7e830d0",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc781196fe"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-12T04:34:41.439000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb5a3100886d93aae7b3fb",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119705"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:43:13.232000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6acb58e3928220f593c0297d",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811970c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-11T09:37:39.343000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6aca4626c4f5baac00221907",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119713"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-10T14:05:26.616000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4d8aafbc3cd784b864ec0",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811971a"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T11:16:58.458000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac4acff0923a0a5a50f40ec",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119721"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T08:10:39.965000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac48d77f0b9a0e016e73e21",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119728"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-06T05:56:07.111000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac39987bbb5af4009269aa4",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811972f"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T12:35:19.349000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac370e78babc5acd4eb28f6",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119736"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T09:41:59.607000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac3426b5cfe86c65ae1885b",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811973d"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-05T06:23:39.452000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac23cb3d20875215228e3d4",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119744"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T11:46:59.158000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac230ba8ef9c8aba2d2e8ba",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811974b"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T10:55:54.190000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21d06adfff5ef283dcb7e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119751"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:31:50.230000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac21cce6b6fb5e096b1845e",
+          "status": "in_review",
+          "current_version_id": null,
+          "version_count": 0,
+          "versions": [],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119757"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-04T09:30:54.861000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14766be534a1105964afc",
+          "status": "in_review",
+          "current_version_id": "6ac2070d37358e698bec0c0e",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac2070d37358e698bec0c0e",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/d50dd2380_document-v1.html",
+              "content_hash": "4ecff42bfb390db3684251bb0a6cbd5a3f9131d13ebbbc0f6bc2e7bb3813807d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [
+            {
+              "id": "6ac2070dc67a3404b25e6f80",
+              "version_id": "6ac2070d37358e698bec0c0e",
+              "status": "pending"
+            }
+          ],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811975e"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:20:22.187000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac1457c9a516b1e3b95ca5e",
+          "status": "in_review",
+          "current_version_id": "6ac2070ec0e86afc1288a6e9",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac2070ec0e86afc1288a6e9",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/235622ab0_document-v1.html",
+              "content_hash": "4ecff42bfb390db3684251bb0a6cbd5a3f9131d13ebbbc0f6bc2e7bb3813807d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119765"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:12:12.156000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac14556c7a8cf20800878c1",
+          "status": "in_review",
+          "current_version_id": "6ac2070fb21f854afbb954b0",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac2070fb21f854afbb954b0",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/c28b370cf_document-v1.html",
+              "content_hash": "4ecff42bfb390db3684251bb0a6cbd5a3f9131d13ebbbc0f6bc2e7bb3813807d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc7811976c"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:11:34.752000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac144eae78e758c2ffa9ac3",
+          "status": "in_review",
+          "current_version_id": "6ac20710c298a4217c5a8a19",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20710c298a4217c5a8a19",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/886149764_document-v1.html",
+              "content_hash": "4ecff42bfb390db3684251bb0a6cbd5a3f9131d13ebbbc0f6bc2e7bb3813807d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119773"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T18:09:46.483000",
+            "source_instrument": null
+          }
+        },
+        {
+          "id": "6ac136039e03355edb4d69b8",
+          "status": "in_review",
+          "current_version_id": "6ac20711b7bd9543d1e8da8e",
+          "version_count": 1,
+          "versions": [
+            {
+              "id": "6ac20711b7bd9543d1e8da8e",
+              "file_url": "mp/private/6a96a0e0cd5dac701b62b7f5/19e844116_document-v1.html",
+              "content_hash": "4ecff42bfb390db3684251bb0a6cbd5a3f9131d13ebbbc0f6bc2e7bb3813807d",
+              "status": "current"
+            }
+          ],
+          "review_refs": [],
+          "audit_refs": [
+            "6acf1ec158c14bcc78119778"
+          ],
+          "creation_source": {
+            "created_by_id": "service_e1ef4274-9299-4021-adfa-08e472c4b4eb",
+            "created_date": "2026-10-03T17:06:11.612000",
+            "source_instrument": null
+          }
+        }
+      ]
+    }
+  ]
+}
