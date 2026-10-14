@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-10-14T09:01:46.766Z",
+  "persona_profile_count": 1,
+  "registered_auth_accounts_matching_demo_email": 0,
+  "identity_kind": "Governed demo principal; no authentication account claim",
+  "permanent_organization": {
+    "id": "6ac135fe0e5016f1af6c3d95",
+    "name_ar": "بنك قطر للتنمية",
+    "name_en": "Qatar Development Bank",
+    "profile_institution_id": "qdb"
+  },
+  "active_memberships": [
+    {
+      "id": "6ac13916aa77a68bdf6c66f0",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac1360718fad7d60565ccd4",
+      "role": "secretary",
+      "status": "active",
+      "authority_level": "execution",
+      "voting_right": false
+    },
+    {
+      "id": "6ac139160dae2757b6c4f4a0",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac136066f4a078a2606d45a",
+      "role": "member",
+      "status": "active",
+      "authority_level": "advisory",
+      "voting_right": true
+    },
+    {
+      "id": "6ac13914c0a7024f4d6b3273",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac13605726965c591ea015a",
+      "role": "member",
+      "status": "active",
+      "authority_level": "advisory",
+      "voting_right": true
+    },
+    {
+      "id": "6ac1391473cbf1c47f67626b",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac13603531124962afac370",
+      "role": "vice_chair",
+      "status": "active",
+      "authority_level": "approval",
+      "voting_right": true
+    },
+    {
+      "id": "6ac13913a34df7bb046c89b4",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac136029bdc0684e26491f1",
+      "role": "chair",
+      "status": "active",
+      "authority_level": "decision",
+      "voting_right": true
+    },
+    {
+      "id": "6ac139123db947b61bcf3297",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac13600152beda145cdbd92",
+      "role": "chair",
+      "status": "active",
+      "authority_level": "decision",
+      "voting_right": true
+    },
+    {
+      "id": "6ac139112efdd3e404a85aae",
+      "user_id": "DEMO-USER-DR-HAMAD-MAJEEGHEER",
+      "committee_id": "6ac135fe15c0e0749681e65b",
+      "role": "member",
+      "status": "active",
+      "authority_level": "advisory",
+      "voting_right": true
+    }
+  ],
+  "active_count": 7,
+  "duplicate_membership_groups": [],
+  "authority_differences_since_saved_baseline": [],
+  "historical_evidence_comparison": "NOT TESTED; full pre-repair audit/vote/signature snapshot unavailable"
+}
