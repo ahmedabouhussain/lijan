@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import NextActionCard from "@/components/raqeem/NextActionCard";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import LocalizedField from "@/components/raqeem/LocalizedField";
 import { DECISION_STATUS, isOverdue } from "@/lib/raqeemUtils";
 import { ShieldCheck, AlertTriangle, Gavel, TrendingUp } from "lucide-react";
 
@@ -108,7 +109,7 @@ export default function ChairHome({ data, base }) {
             {decisionsAwaitingCert.slice(0, 5).map((d) => (
               <Link key={d.id} to={`/decisions/${d.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate"><LocalizedField entity="Decision" record={d} base="title" /></div>
                   {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                 </div>
                 <StatusBadge label={t(DECISION_STATUS[d.status]?.ar || d.status, DECISION_STATUS[d.status]?.en || d.status)} colorClass={DECISION_STATUS[d.status]?.color} />

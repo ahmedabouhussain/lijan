@@ -12,6 +12,7 @@ import { CheckSquare, Gavel, Loader2, ThumbsUp, ThumbsDown, Minus } from "lucide
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { L } from "@/lib/l10n";
+import LocalizedField from "@/components/raqeem/LocalizedField";
 
 export default function CommitteeVoting() {
   const { data, reload } = useCommittee();
@@ -68,7 +69,7 @@ export default function CommitteeVoting() {
             <div key={d.id} className="raqeem-card p-4">
               <div className="flex items-center justify-between mb-2">
                 <Link to={`${base}/decisions/${d.id}`} className="text-sm font-medium text-foreground hover:text-primary">
-                  {d.title}
+                  <LocalizedField entity="Decision" record={d} base="title" />
                 </Link>
                 <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
               </div>

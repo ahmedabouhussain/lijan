@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { L } from "@/lib/l10n";
+import LocalizedField from "@/components/raqeem/LocalizedField";
 
 export default function CommitteeDecisions() {
   const { data, reload } = useCommittee();
@@ -82,7 +83,7 @@ export default function CommitteeDecisions() {
             {inProgress.map((d) => (
               <Link key={d.id} to={`${base}/decisions/${d.id}`} className="flex items-center justify-between p-3 hover:bg-secondary/30">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate"><LocalizedField entity="Decision" record={d} base="title" /></div>
                   {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                 </div>
                 <StatusBadge label={L.label(DECISION_STATUS, d.status, d.status)} colorClass={DECISION_STATUS[d.status]?.color} />
@@ -105,7 +106,7 @@ export default function CommitteeDecisions() {
                 <div className="min-w-0 flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                    <div className="text-sm font-medium text-foreground truncate"><LocalizedField entity="Decision" record={d} base="title" /></div>
                     {d.decision_number && <div className="text-xs text-muted-foreground">{d.decision_number}</div>}
                   </div>
                 </div>

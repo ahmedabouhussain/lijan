@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import NextActionCard from "@/components/raqeem/NextActionCard";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import LocalizedField from "@/components/raqeem/LocalizedField";
 import { DECISION_STATUS, ACTION_STATUS, formatDate, isOverdue } from "@/lib/raqeemUtils";
 import { Calendar, Gavel, CheckSquare, FileText, AlertTriangle, Clock } from "lucide-react";
 
@@ -122,7 +123,7 @@ export default function MemberHome({ data, base, userName }) {
             {openVotes.slice(0, 5).map((d) => (
               <Link key={d.id} to={`/decisions/${d.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{d.title}</div>
+                  <div className="text-sm font-medium text-foreground truncate"><LocalizedField entity="Decision" record={d} base="title" /></div>
                   <div className="text-xs text-muted-foreground">
                     {t("موافق", "For")}: {d.vote_for || 0} · {t("معارض", "Against")}: {d.vote_against || 0}
                   </div>
