@@ -3,14 +3,21 @@ import { applyAmendmentChanges } from '../../shared/amendmentApplier.ts';
 
 // ApplyScheduledAmendments — finds scheduled amendments whose effective_date
 // has arrived and applies them automatically. Called by the daily scheduled
-// workflow "Scheduled Amendment Effectivation".
-//
-// No user context — runs as service role with system actor for audit.
+// workflow "Scheduled Amendment Effectivation", whose step runs as the workflow
+// creator (an app admin). The function URL is public, so an anonymous or
+// non-admin caller is refused before anything is applied.
 // Only amendments with status "scheduled" and effective_date <= today are processed.
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Public URL: only the scheduled workflow's admin identity may effectuate amendments.
+    let user = null;
+    try { user = await base44.auth.me(); } catch { /* no session */ }
+    if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (user.role !== "admin") return Response.json({ error: "Forbidden" }, { status: 403 });
+
     const today = new Date().toISOString().split("T")[0];
 
     // Find all scheduled amendments
