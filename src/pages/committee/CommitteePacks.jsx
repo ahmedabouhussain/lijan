@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/raqeemUtils";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import PackDraftPanel from "@/components/raqeem/PackDraftPanel";
+import { L } from "@/lib/l10n";
 
 export default function CommitteePacks() {
   const { data, reload } = useCommittee();
@@ -45,7 +46,7 @@ export default function CommitteePacks() {
           {upcoming.map((m) => (
             <div key={m.id} className="raqeem-card p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">{m.title || m.title_ar}</span>
+                <span className="text-sm font-medium">{L.title(m)}</span>
                 <StatusBadge
                   label={m.agenda_ready ? t("الحزمة جاهزة", "Pack Ready") : t("غير مكتملة", "Incomplete")}
                   colorClass={m.agenda_ready ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}

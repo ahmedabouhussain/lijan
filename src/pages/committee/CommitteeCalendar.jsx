@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/raqeemUtils";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { L } from "@/lib/l10n";
 
 const MEETING_STATUS = {
   scheduled: { ar: "مجدول", en: "Scheduled", color: "bg-secondary text-muted-foreground" },
@@ -78,7 +79,7 @@ export default function CommitteeCalendar() {
                   <div className="text-[10px] text-muted-foreground uppercase">{new Date(m.date).toLocaleDateString(lang === "ar" ? "ar-QA" : "en", { month: "short" })}</div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{m.title || m.title_ar}</div>
+                  <div className="text-sm font-medium truncate">{L.title(m)}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {t(mi.ar, mi.en)}</div>
                   {m.location && <div className="text-xs text-muted-foreground mt-0.5">{m.location}</div>}
                 </div>

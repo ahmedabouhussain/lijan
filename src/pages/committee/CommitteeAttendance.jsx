@@ -11,6 +11,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import { Button } from "@/components/ui/button";
 import ParticipationMatrixPanel from "@/components/raqeem/ParticipationMatrixPanel";
+import { L } from "@/lib/l10n";
 
 const ATT_STATUS = {
   present: { ar: "حاضر", en: "Present", color: "bg-emerald-50 text-emerald-700" },
@@ -87,7 +88,7 @@ export default function CommitteeAttendance() {
             return (
               <div key={m.id} className="raqeem-card p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">{m.title || m.title_ar}</h3>
+                  <h3 className="text-sm font-semibold">{L.title(m)}</h3>
                   <div className="flex items-center gap-2">
                     {isCertified && (
                       <span className="text-xs text-emerald-700 flex items-center gap-1">

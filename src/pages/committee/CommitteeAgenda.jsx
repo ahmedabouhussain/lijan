@@ -100,7 +100,7 @@ export default function CommitteeAgenda() {
           <div><Label>{t("الاجتماع", "Meeting")}</Label>
             <select aria-label={t("الاجتماع", "Meeting")} className="w-full h-9 rounded-md border border-input px-3 text-sm" value={form.meeting_id} onChange={(e) => setForm(f => ({ ...f, meeting_id: e.target.value }))}>
               <option value="">{t("— اختر —", "— Select —")}</option>
-              {upcomingMeetings.map((m) => <option key={m.id} value={m.id}>{m.title || m.title_ar} — {new Date(m.date).toLocaleDateString()}</option>)}
+              {upcomingMeetings.map((m) => <option key={m.id} value={m.id}>{L.title(m)} — {new Date(m.date).toLocaleDateString()}</option>)}
             </select>
           </div>
           <div><Label>{t("العنوان", "Title")}</Label><Input aria-label={t("العنوان", "Title")} value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Review Q3 Budget" /></div>

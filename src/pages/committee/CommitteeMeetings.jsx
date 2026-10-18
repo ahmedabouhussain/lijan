@@ -9,6 +9,7 @@ import RecurrenceConfig from "@/components/raqeem/RecurrenceConfig";
 import PageHeader from "@/components/raqeem/PageHeader";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
+import { L } from "@/lib/l10n";
 import { Calendar, Plus, X, Loader2, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,7 +113,7 @@ export default function CommitteeMeetings() {
                     <Repeat className="w-3.5 h-3.5 text-accent shrink-0" title={t("اجتماع متكرر", "Recurring meeting")} />
                   )}
                   <div>
-                    <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                    <div className="text-sm font-medium text-foreground">{L.title(m)}</div>
                     <div className="text-xs text-muted-foreground">{formatDate(m.date)} · {t(MODE_LABELS[m.mode]?.ar, MODE_LABELS[m.mode]?.en) || m.mode}</div>
                   </div>
                 </div>
@@ -137,7 +138,7 @@ export default function CommitteeMeetings() {
                     <Repeat className="w-3.5 h-3.5 text-accent shrink-0" title={t("اجتماع متكرر", "Recurring meeting")} />
                   )}
                   <div>
-                    <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                    <div className="text-sm font-medium text-foreground">{L.title(m)}</div>
                     <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
                   </div>
                 </div>

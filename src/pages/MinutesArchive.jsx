@@ -156,7 +156,7 @@ export default function MinutesArchive() {
                   key={d.id}
                   deliberation={d}
                   committeeName={committee?.name_ar || committee?.name_en}
-                  decisionTitle={decision?.title || decision?.title_ar || decision?.decision_number}
+                  decisionTitle={L.title(decision) || decision?.decision_number}
                   decisionLink={decisionLink}
                 />
               );

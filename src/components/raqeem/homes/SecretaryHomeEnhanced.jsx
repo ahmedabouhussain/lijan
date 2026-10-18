@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/lib/LanguageContext";
 import NextActionCard from "@/components/raqeem/NextActionCard";
 import StatusBadge from "@/components/raqeem/StatusBadge";
+import { L } from "@/lib/l10n";
 import { MEETING_STATUS, formatDate } from "@/lib/raqeemUtils";
 import { Calendar, FileText, CheckSquare, AlertTriangle } from "lucide-react";
 
@@ -103,7 +104,7 @@ export default function SecretaryHome({ data, base }) {
             {upcoming.slice(0, 4).map((m) => (
               <Link key={m.id} to={`/meetings/${m.id}`} className="flex items-center justify-between py-2 border-b border-border last:border-0 hover:bg-secondary/30 -mx-2 px-2 rounded">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">{m.title || m.title_ar}</div>
+                  <div className="text-sm font-medium text-foreground truncate">{L.title(m)}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
                 </div>
                 <div className="flex items-center gap-2">

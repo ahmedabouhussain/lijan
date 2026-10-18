@@ -2,6 +2,7 @@ import React from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import LocalizedField from "@/components/raqeem/LocalizedField";
+import { L } from "@/lib/l10n";
 import { MEETING_STATUS, DECISION_STATUS, formatDate } from "@/lib/raqeemUtils";
 import { Calendar, FileText, Gavel, Lock } from "lucide-react";
 
@@ -45,7 +46,7 @@ export default function ObserverHome({ data }) {
             {upcoming.slice(0, 3).map((m) => (
               <div key={m.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div>
-                  <div className="text-sm font-medium text-foreground">{m.title || m.title_ar}</div>
+                  <div className="text-sm font-medium text-foreground">{L.title(m)}</div>
                   <div className="text-xs text-muted-foreground">{formatDate(m.date)}</div>
                 </div>
                 <StatusBadge label={t(MEETING_STATUS[m.status]?.ar || m.status, MEETING_STATUS[m.status]?.en || m.status)} colorClass={MEETING_STATUS[m.status]?.color} />
