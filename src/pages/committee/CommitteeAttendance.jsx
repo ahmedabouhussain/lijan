@@ -78,7 +78,11 @@ export default function CommitteeAttendance() {
         <div className="space-y-3">
           {allMeetings.filter((m) => byMeeting[m.id]).map((m) => {
             const attendees = byMeeting[m.id];
-            const present = attendees.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
+            // A record carrying a seat is a Committee seat; one without a seat is an executive who
+            // attended in support. Only seats carry the quorum, so only seats are counted here.
+            const seats = attendees.filter((a) => a.member_id);
+            const alsoPresent = attendees.filter((a) => !a.member_id);
+            const present = seats.filter((a) => a.attendance_status === "present" || a.attendance_status === "late").length;
             const isCertified = attendees.some((a) => a.certified);
             return (
               <div key={m.id} className="raqeem-card p-4">
@@ -105,9 +109,9 @@ export default function CommitteeAttendance() {
                     )}
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground mb-2">{t("الحاضرون", "Present")}: {present} / {attendees.length}</div>
+                <div className="text-xs text-muted-foreground mb-2">{t("الحاضرون من الأعضاء", "Members present")}: {present} / {seats.length}</div>
                 <div className="space-y-1.5">
-                  {attendees.map((a) => {
+                  {seats.map((a) => {
                     const si = ATT_STATUS[a.attendance_status] || ATT_STATUS.absent;
                     return (
                       <div key={a.id} className="flex items-center justify-between text-sm">
@@ -120,6 +124,25 @@ export default function CommitteeAttendance() {
                     );
                   })}
                 </div>
+                {alsoPresent.length > 0 && (
+                  <>
+                    <div className="raqeem-section-title mt-3 mb-1.5">{t("كما حضر", "Also in attendance")}</div>
+                    <div className="space-y-1.5">
+                      {alsoPresent.map((a) => {
+                        const si = ATT_STATUS[a.attendance_status] || ATT_STATUS.present;
+                        return (
+                          <div key={a.id} className="flex items-center justify-between text-sm gap-2">
+                            <div className="min-w-0">
+                              <span className="font-medium">{a.member_name}</span>
+                              {a.member_role && <span className="text-xs text-muted-foreground ml-2">{a.member_role}</span>}
+                            </div>
+                            <StatusBadge label={t(si.ar, si.en)} colorClass={si.color} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
