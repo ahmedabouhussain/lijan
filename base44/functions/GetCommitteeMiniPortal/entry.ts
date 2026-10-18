@@ -49,6 +49,26 @@ async function buildOrgIndex(sr: any, ids: any[]) {
   return index;
 }
 
+// A link minted before a duplicate was merged still names the retired record. ONLY the recorded
+// merge pointer is followed — the retired record's content is never read out to a caller — and the
+// canonical committee is adopted only when the caller's own scope already admits it (the dataset in
+// the showcase branch, the membership check that follows in the authenticated branch).
+async function followMergedDuplicate(sr: any, ref: string, admitted: (c: any) => boolean) {
+  if (!ref) return null;
+  const bySlug = await sr.entities.Committee.filter({ slug: ref }).catch(() => []);
+  let retired = (bySlug || [])[0] || null;
+  if (!retired) {
+    const byPublic = await sr.entities.Committee.filter({ public_id: ref }).catch(() => []);
+    retired = (byPublic || [])[0] || null;
+  }
+  if (!retired) retired = await sr.entities.Committee.get(ref).catch(() => null);
+  if (!retired) return null;
+  if (retired.merge_status !== 'merged_duplicate' && retired.status !== 'archived') return null;
+  if (!retired.merged_into_committee_id) return null;
+  const canonical = await sr.entities.Committee.get(retired.merged_into_committee_id).catch(() => null);
+  return canonical && admitted(canonical) ? canonical : null;
+}
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -100,6 +120,10 @@ export default async function(req) {
           const byId = await sr.entities.Committee.get(ref).catch(() => null);
           if (byId && byId.is_demo_data === true && byId.demo_dataset === dataset) committee = byId;
         }
+      }
+      // A retired duplicate of a committee this scope admits resolves to its canonical record.
+      if (!committee) {
+        committee = await followMergedDuplicate(sr, ref, (c) => c.is_demo_data === true && c.demo_dataset === dataset);
       }
       if (!committee) return Response.json({ error: 'Committee not found', code: 'out_of_scope' }, { status: 404 });
       // A session reads only the committees it was issued for — the scope comes from the server.
@@ -248,6 +272,12 @@ export default async function(req) {
       }
     } else if (committee_id) {
       committee = await base44.asServiceRole.entities.Committee.get(committee_id).catch(() => null);
+    }
+    // The same rule on the real session: an archived duplicate opens its canonical record, never a
+    // retired shell — membership is then verified against that record by the checks below.
+    if (committee && (committee.merge_status === 'merged_duplicate' || committee.status === 'archived') && committee.merged_into_committee_id) {
+      const canonical = await base44.asServiceRole.entities.Committee.get(committee.merged_into_committee_id).catch(() => null);
+      if (canonical) committee = canonical;
     }
     if (!committee) return Response.json({ error: 'Committee not found' }, { status: 404 });
 
