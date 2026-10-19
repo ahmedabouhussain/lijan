@@ -10,13 +10,13 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
       </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl overflow-hidden mb-4 mx-auto" style={{ background: "#FFFFFF" }}>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-card overflow-hidden mb-4 mx-auto bg-card">
             <BrandLogo className="w-full h-full" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+          <h1 className="ui-title text-[26px] text-foreground">{title}</h1>
           {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
         </div>
-        <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
+        <div className="bg-card rounded-card shadow-elevation-1 border border-border p-8">
           {children}
         </div>
         {footer && (

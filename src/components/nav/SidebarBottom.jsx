@@ -15,21 +15,21 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
   const { t, lang, toggleLang } = useLanguage();
 
   return (
-    <div className="border-t border-sidebar-border">
+    <div className="border-t border-sidebar-border/70">
       {/* «أمين» — a full row inside the sidebar when open, a round icon when collapsed. */}
       <div className={cn("py-2.5", collapsed ? "px-3" : "px-3")}>
         <AgentChatPanel variant="nav" collapsed={collapsed} />
       </div>
 
       {account && (
-        <div className="border-t border-sidebar-border px-3 py-2.5">
+        <div className="border-t border-sidebar-border/70 px-3 py-2.5">
           <Link
             to={account.to}
             onClick={onNavigate}
             title={collapsed ? account.name : undefined}
             className={cn(
-              "flex items-center rounded-md transition-colors sovereign-focus",
-              "hover:bg-white/5",
+              "flex items-center rounded-control transition-colors sovereign-focus",
+              "hover:bg-white/[0.06]",
               collapsed ? "justify-center min-h-[40px]" : "gap-2.5 min-h-[44px] px-1"
             )}
           >
@@ -50,7 +50,7 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
 
       <div
         className={cn(
-          "border-t border-sidebar-border px-3 py-2.5 flex items-center",
+          "border-t border-sidebar-border/70 px-3 py-2.5 flex items-center",
           collapsed ? "flex-col gap-2" : "justify-between"
         )}
       >
@@ -60,7 +60,7 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
             onClick={toggleLang}
             aria-label={t("تغيير اللغة", "Change language")}
             title={t("تغيير اللغة", "Change language")}
-            className="flex items-center justify-center w-9 h-9 rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 transition-colors sovereign-focus"
+            className="flex items-center justify-center w-9 h-9 rounded-control text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/[0.06] transition-colors sovereign-focus"
           >
             <Languages className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -68,7 +68,7 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
           <button
             type="button"
             onClick={toggleLang}
-            className="inline-flex items-center gap-2 min-h-[36px] rounded-md px-2 text-[12px] text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 transition-colors sovereign-focus"
+            className="inline-flex items-center gap-2 min-h-[36px] rounded-control px-2 text-[12px] text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/[0.06] transition-colors sovereign-focus"
           >
             <Languages className="w-4 h-4" aria-hidden="true" />
             {lang === "ar" ? "English" : "العربية"}
@@ -78,7 +78,7 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
       </div>
 
       {!collapsed && (
-        <div className="border-t border-sidebar-border px-3 py-3">
+        <div className="border-t border-sidebar-border/70 px-3 py-3">
           <PoweredByConnection variant="light" />
         </div>
       )}

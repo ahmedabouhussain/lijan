@@ -254,7 +254,7 @@ export default function Profile() {
               <button
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="absolute bottom-0 left-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary-dark transition-colors disabled:opacity-50"
+                className="absolute bottom-0 left-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-elevation-2 hover:bg-primary-dark transition-colors disabled:opacity-50"
                 title={t("تغيير الصورة", "Change photo")}
               >
                 {uploading ? (
@@ -499,7 +499,7 @@ export default function Profile() {
       </div>
 
       {/* Notification preferences link */}
-      <Link to="/notification-preferences" className="raqeem-card p-5 flex items-center justify-between hover:shadow-md transition-all group">
+      <Link to="/notification-preferences" className="raqeem-card p-5 flex items-center justify-between hover:shadow-elevation-3 transition-all group">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-primary/5 group-hover:bg-primary/10 transition-colors">
             <Bell className="w-5 h-5 text-primary" />

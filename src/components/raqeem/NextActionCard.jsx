@@ -29,7 +29,7 @@ export default function NextActionCard({ to, icon: Icon, title, subtitle, urgenc
     <Link
       to={to}
       className={cn(
-        "block raqeem-card p-4 relative overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5",
+        "block raqeem-card p-4 relative overflow-hidden transition-all hover:shadow-elevation-3 hover:-translate-y-0.5",
         urgencyStyles[urgency]
       )}
     >

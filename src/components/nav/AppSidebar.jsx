@@ -33,6 +33,7 @@ export default function AppSidebar({
     <div
       className={cn(
         "flex flex-col bg-sidebar text-sidebar-foreground overflow-hidden",
+        "border-e border-sidebar-border/70 shadow-elevation-2",
         collapsed ? "w-[76px]" : "w-[296px]",
         className
       )}
@@ -40,17 +41,16 @@ export default function AppSidebar({
       {/* 1 — Platform header: the official mark, the platform name in the active
           language only, and the collapse control. */}
       <div className="shrink-0 border-b border-sidebar-border">
-        <div className={cn("flex items-center py-3", collapsed ? "flex-col gap-2 px-3" : "gap-2.5 px-3")}>
+        <div className={cn("flex items-center py-3.5", collapsed ? "flex-col gap-2 px-3" : "gap-2.5 px-3")}>
           <Link
             to="/"
             title={isAr ? "لجان" : "LIJAN"}
-            className="w-9 h-9 rounded-md overflow-hidden flex items-center justify-center shrink-0 sovereign-focus"
-            style={{ background: "#FFFFFF" }}
+            className="w-9 h-9 rounded-control overflow-hidden flex items-center justify-center shrink-0 sovereign-focus bg-card"
           >
             <BrandLogo className="w-full h-full" />
           </Link>
           {!collapsed && (
-            <span className="min-w-0 flex-1 text-[15px] font-semibold tracking-tight text-sidebar-foreground truncate">
+            <span className="min-w-0 flex-1 text-[15px] font-semibold text-sidebar-foreground truncate">
               {t("لجان", "LIJAN")}
             </span>
           )}
@@ -60,7 +60,7 @@ export default function AppSidebar({
               onClick={onClose}
               aria-label={t("إغلاق قائمة التنقل", "Close navigation menu")}
               title={t("إغلاق قائمة التنقل", "Close navigation menu")}
-              className="flex items-center justify-center w-9 h-9 rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 transition-colors sovereign-focus"
+              className="flex items-center justify-center w-8 h-8 rounded-control text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/[0.06] transition-colors duration-150 ease-sovereign sovereign-focus"
             >
               <X className="w-4 h-4" aria-hidden="true" />
             </button>
@@ -71,7 +71,7 @@ export default function AppSidebar({
               aria-expanded={!collapsed}
               aria-label={collapsed ? t("توسيع الشريط", "Expand sidebar") : t("طي الشريط", "Collapse sidebar")}
               title={collapsed ? t("توسيع الشريط", "Expand sidebar") : t("طي الشريط", "Collapse sidebar")}
-              className="flex items-center justify-center w-8 h-8 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-white/5 transition-colors sovereign-focus"
+              className="flex items-center justify-center w-8 h-8 rounded-control text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-white/[0.06] transition-colors duration-150 ease-sovereign sovereign-focus"
             >
               <CollapseIcon className="w-4 h-4" aria-hidden="true" />
             </button>

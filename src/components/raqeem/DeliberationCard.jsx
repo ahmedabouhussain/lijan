@@ -18,7 +18,7 @@ export default function DeliberationCard({ deliberation, committeeName, decision
   const date = deliberation.deliberated_at ? dateOf(deliberation.deliberated_at, lang) : "—";
 
   return (
-    <div className="raqeem-card p-5 hover:shadow-md transition-shadow flex flex-col">
+    <div className="raqeem-card p-5 hover:shadow-elevation-3 transition-shadow flex flex-col">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

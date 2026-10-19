@@ -223,7 +223,7 @@ export default function EntitySearchSelect({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-md shadow-lg overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-control shadow-elevation-3 overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-secondary/30">
             <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />

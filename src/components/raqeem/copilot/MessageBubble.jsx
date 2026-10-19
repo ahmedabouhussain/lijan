@@ -37,7 +37,7 @@ export default function MessageBubble({ message }) {
       <div className="flex justify-end">
         <div
           dir="auto"
-          className="max-w-[80%] rounded-2xl rounded-tr-md px-3.5 py-2.5 bg-primary text-primary-foreground shadow-sm"
+          className="max-w-[80%] rounded-2xl rounded-tr-md px-3.5 py-2.5 bg-primary text-primary-foreground shadow-elevation-1"
         >
           <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
         </div>
@@ -52,7 +52,7 @@ export default function MessageBubble({ message }) {
       </div>
       <div
         dir={bubbleDir}
-        className="max-w-[85%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-sm text-start"
+        className="max-w-[85%] rounded-2xl rounded-tl-md px-3.5 py-2.5 bg-card border border-border shadow-elevation-1 text-start"
       >
         {message.content && (
           <ReactMarkdown

@@ -19,12 +19,12 @@ export default function SidebarContextCard({ context, collapsed = false }) {
 
   if (collapsed) {
     return (
-      <div className="px-3 py-3 border-b border-sidebar-border flex flex-col items-center gap-2">
+      <div className="px-3 py-3 border-b border-sidebar-border/70 flex flex-col items-center gap-2">
         <Link
           to={context.portalTo}
           title={context.name}
           aria-label={context.name}
-          className="flex items-center justify-center rounded-md sovereign-focus"
+          className="flex items-center justify-center rounded-control sovereign-focus"
         >
           <OrganizationMark org={context.org} logoUrl={context.logoUrl} size="mobile" tone="light" />
         </Link>
@@ -33,7 +33,7 @@ export default function SidebarContextCard({ context, collapsed = false }) {
             to={context.switchTo}
             title={context.switchLabel}
             aria-label={context.switchLabel}
-            className="flex items-center justify-center w-9 h-9 rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 transition-colors sovereign-focus"
+            className="flex items-center justify-center w-9 h-9 rounded-control text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/[0.06] transition-colors sovereign-focus"
           >
             <ArrowLeftRight className="w-4 h-4" aria-hidden="true" />
           </Link>
@@ -43,7 +43,7 @@ export default function SidebarContextCard({ context, collapsed = false }) {
   }
 
   return (
-    <div className="px-3 py-3 border-b border-sidebar-border">
+    <div className="px-3 py-3 border-b border-sidebar-border/70">
       <Link
         to={context.portalTo}
         className="inline-flex items-center gap-1 text-[12px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors sovereign-focus"
@@ -88,7 +88,7 @@ export default function SidebarContextCard({ context, collapsed = false }) {
       </div>
 
       {context.recusedLabel && (
-        <p className="mt-2 rounded-md bg-destructive/25 px-2 py-1 text-[11px] text-sidebar-foreground">
+        <p className="mt-2 rounded-control bg-destructive/25 px-2 py-1 text-[11px] text-sidebar-foreground">
           {context.recusedLabel}
         </p>
       )}
@@ -97,8 +97,8 @@ export default function SidebarContextCard({ context, collapsed = false }) {
         <Link
           to={context.switchTo}
           className={cn(
-            "mt-3 flex items-center gap-2 min-h-[40px] rounded-md px-2.5 text-[13px]",
-            "text-sidebar-foreground/80 hover:bg-white/5 hover:text-sidebar-foreground transition-colors sovereign-focus"
+            "mt-3 flex items-center gap-2 min-h-[40px] rounded-control px-2.5 text-[13px]",
+            "text-sidebar-foreground/80 hover:bg-white/[0.06] hover:text-sidebar-foreground transition-colors sovereign-focus"
           )}
         >
           <ArrowLeftRight className="w-4 h-4 shrink-0" aria-hidden="true" />

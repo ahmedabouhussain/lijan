@@ -46,7 +46,7 @@ export default function AppShell({
     <div className="min-h-app bg-background flex" dir={dir}>
       <a
         href={`#${mainId}`}
-        className="sr-only focus:not-sr-only focus:block focus:m-3 focus:px-4 focus:py-2 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
+        className="sr-only focus:not-sr-only focus:block focus:m-3 focus:px-4 focus:py-2 focus:rounded-control focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
       >
         {skipLabel || t("تخطَّ إلى المحتوى", "Skip to content")}
       </a>
@@ -67,7 +67,7 @@ export default function AppShell({
       {/* Tablet & phone — a full-height panel over the content, with a scrim and Escape. */}
       {!isDesktop && overlayOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex" role="dialog" aria-modal="true">
-          <div className="absolute inset-0 bg-black/50" onClick={closeOverlay} aria-hidden="true" />
+          <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px]" onClick={closeOverlay} aria-hidden="true" />
           <AppSidebar
             overlay
             context={context}
@@ -75,18 +75,18 @@ export default function AppShell({
             account={account}
             onClose={closeOverlay}
             onNavigate={closeOverlay}
-            className="relative max-h-app safe-top safe-bottom"
+            className="relative max-h-app safe-top safe-bottom shadow-overlay"
           />
         </div>
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between gap-2 px-3 py-2.5 border-b border-border bg-card">
+        <header className="lg:hidden flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-card">
           <button
             type="button"
             onClick={openOverlay}
             aria-label={t("فتح قائمة التنقل", "Open navigation menu")}
-            className="flex items-center justify-center w-10 h-10 rounded-md text-foreground hover:bg-muted transition-colors sovereign-focus"
+            className="flex items-center justify-center w-10 h-10 rounded-control text-foreground hover:bg-muted transition-colors sovereign-focus"
           >
             <Menu className="w-5 h-5" aria-hidden="true" />
           </button>
@@ -98,7 +98,7 @@ export default function AppShell({
                 to={mobileBackTo}
                 aria-label={mobileBackLabel}
                 title={mobileBackLabel}
-                className="flex items-center justify-center w-10 h-10 rounded-md text-primary hover:bg-muted transition-colors sovereign-focus"
+                className="flex items-center justify-center w-10 h-10 rounded-control text-primary hover:bg-muted transition-colors sovereign-focus"
               >
                 <BackIcon className="w-5 h-5" aria-hidden="true" />
               </Link>
@@ -110,7 +110,7 @@ export default function AppShell({
           id={mainId}
           className={cn("flex-1 overflow-y-auto", bottomNav && "pb-20 lg:pb-0")}
         >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">{children}</div>
         </main>
       </div>
 

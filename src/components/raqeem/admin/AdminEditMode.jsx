@@ -237,8 +237,8 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
         </div>
         {view === "edit" && (
           <div className="flex items-center gap-1 bg-secondary rounded-md p-0.5">
-            <button onClick={() => setTab("ar")} className={`px-3 py-1 rounded text-sm ${tab === "ar" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}>عربي</button>
-            <button onClick={() => setTab("en")} className={`px-3 py-1 rounded text-sm ${tab === "en" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}>EN</button>
+            <button onClick={() => setTab("ar")} className={`px-3 py-1 rounded text-sm ${tab === "ar" ? "bg-card shadow-elevation-1 font-medium" : "text-muted-foreground"}`}>عربي</button>
+            <button onClick={() => setTab("en")} className={`px-3 py-1 rounded text-sm ${tab === "en" ? "bg-card shadow-elevation-1 font-medium" : "text-muted-foreground"}`}>EN</button>
           </div>
         )}
       </div>
@@ -390,7 +390,7 @@ export default function AdminEditMode({ pageKey, committeeId, onClose }) {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-md bg-foreground text-background text-sm shadow-lg flex items-center gap-2">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-control bg-foreground text-background text-sm shadow-elevation-3 flex items-center gap-2">
           <Check className="w-4 h-4" />
           {toast}
         </div>

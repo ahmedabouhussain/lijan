@@ -369,7 +369,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
       <button
         onClick={() => setOpen(true)}
         className={cn(
-          "flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary-dark transition-all hover:scale-105",
+          "flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-primary text-primary-foreground shadow-elevation-3 hover:bg-primary-dark transition-all duration-200 ease-sovereign hover:scale-105",
           buttonClassName
         )}
         aria-label={name}

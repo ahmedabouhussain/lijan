@@ -110,7 +110,7 @@ export default function OrgPortal() {
                 <Link
                   key={c.id}
                   to={`/o/${orgRef}/c/${cRef}`}
-                  className="raqeem-card p-4 hover:shadow-md transition-shadow group"
+                  className="raqeem-card p-4 hover:shadow-elevation-3 transition-shadow group"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">
@@ -151,7 +151,7 @@ export default function OrgPortal() {
                 <Link
                   key={c.id}
                   to={`/o/${orgRef}/c/${cRef}`}
-                  className="raqeem-card p-4 hover:shadow-md transition-shadow group opacity-75"
+                  className="raqeem-card p-4 hover:shadow-elevation-3 transition-shadow group opacity-75"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">

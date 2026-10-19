@@ -107,7 +107,7 @@ export default function CommitteeDocuments() {
       ) : (
         <div className="space-y-2">
           {docs.map((d) => (
-            <Link key={d.id} to={`${base}/documents/${d.id}`} className="raqeem-card p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+            <Link key={d.id} to={`${base}/documents/${d.id}`} className="raqeem-card p-4 flex items-center gap-3 hover:shadow-elevation-3 transition-shadow">
               <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{L.title(d)}</div>

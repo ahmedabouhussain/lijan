@@ -122,7 +122,7 @@ export default function NotificationCenter() {
       </button>
 
       {open && (
-        <div className="absolute left-0 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-popover shadow-lg z-50" dir={lang === "ar" ? "rtl" : "ltr"}>
+        <div className="absolute left-0 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-control border border-border bg-popover shadow-elevation-3 z-50" dir={lang === "ar" ? "rtl" : "ltr"}>
           <div className="flex items-center justify-between px-3 py-2.5 border-b border-border">
             <h3 className="text-sm font-semibold">{t("الإشعارات", "Notifications")}</h3>
             {unreadCount > 0 && (
