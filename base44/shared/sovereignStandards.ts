@@ -1,4 +1,4 @@
-// sovereign-standards-1.0.0 — سجل المعايير السيادية (الإثبات الذي يطلبه مراجعو الحوكمة الوطنيون).
+// sovereign-standards-1.1.0 — سجل المعايير السيادية (الإثبات الذي يطلبه مراجعو الحوكمة الوطنيون).
 //
 // WHY THIS EXISTS. «أداة» تُعلن ما تفعله؛ و«منصة سيادية حكومية» تُعلن أي معيار دولي تلتزم به،
 // ماذا تفعل ازاء كل بند فيه، أين دليله داخل المنصة، ومن الجهة المالكة للحالة. هذا السجل هو
@@ -11,8 +11,12 @@
 //
 // WHAT IT DOES NOT CLAIM. لا يُصدر شهادة، لا يُعلن امتثالاً خارجياً، ولا يحلّ محل تدقيق
 // مستقل. هو إعلان المنصة عن نفسها ازاء معايير معلنة — والفحص الذاتي يكشف أي بند بلا دليل.
+//
+// REVISIONS. 1.0.0 الإعلان الأول · 1.1.0 تصحيح دليل بند الإلحاقية (سجل التدقيق وحزم الإصدار
+// وسجلات التصديق — لا المحاضر) وإضافة أربعة بنود: تسجيل أنظمة الذكاء وتصنيف مخاطرها، حوادث
+// الذكاء، جدول الاحتفاظ، وسجل التصدير المؤسسي. كل بند جديد يسمّي عقده النافذ وإصداره.
 
-export const SOVEREIGN_STANDARDS_VERSION = 'sovereign-standards-1.0.0';
+export const SOVEREIGN_STANDARDS_VERSION = 'sovereign-standards-1.1.0';
 
 export type StandardStatus = 'adhered' | 'partial' | 'planned';
 
@@ -162,6 +166,32 @@ export const SOVEREIGN_STANDARDS: SovereignStandard[] = [
         owning_authority_en: 'AI output ledger',
         status: 'adhered',
       },
+      {
+        id: 'ai-system-register',
+        clause: '1.4',
+        ar: 'تسجيل أنظمة الذكاء وتصنيف مخاطرها — رقابة بشرية إلزامية',
+        en: 'AI systems registered and risk-classified — human oversight mandatory',
+        what_platform_does_ar: 'لا يُعتمد نظام ذكاء على المنصة بلا تسجيل وتصنيف مخاطر: التسجيل يرفض فئة «الممنوع» (prohibited_tier)، ولا يُقبل نظام عالي المخاطر بلا تقييم أثر مكتمل (الأطراف المتأثرة · المخاطر · التدابير · أساس الرقابة البشرية)، والرقابة البشرية إلزامية تُفرض عند التسجيل لا تُترك للخيار، وكل حالة استخدام معلنة استشارية. والتصنيف مقروء من عقد ai-system-registry-1.0.0 (EU AI Act Art. 5/6 · Annex III · Art. 50).',
+        what_platform_does_en: 'No AI system is adopted on the platform without registration and a risk classification: registration refuses the prohibited tier (prohibited_tier), admits no high-risk system without a complete impact assessment (affected parties, risks, mitigation measures, human oversight basis), and human oversight is enforced as mandatory at registration rather than left optional. Every declared use case is advisory, and the classification is read from the ai-system-registry-1.0.0 contract (EU AI Act Art. 5/6, Annex III, Art. 50).',
+        evidence: 'AISystem entity · aiSystemRegistry.ts (ai-system-registry-1.0.0) · RegisterAISystem · GetPublicAIRegister',
+        evidence_kind: 'contract',
+        owning_authority_ar: 'سجل أنظمة الذكاء',
+        owning_authority_en: 'AI system register',
+        status: 'adhered',
+      },
+      {
+        id: 'ai-incident',
+        clause: '1.5',
+        ar: 'حوادث الذكاء تُقيَّد وتُعالج — ولا تُغلق صامتة',
+        en: 'AI incidents are recorded and remedied — never closed silently',
+        what_platform_does_ar: 'كل حادث ذكاء (إضرار · حادث وشيك · تصحيح · تحيّز · فشل نموذج · فشل مصدر بيانات · استخدام غير مصرّح · فشل إفصاح) يُقيَّد بنوعه وشدّته وسببه الجذري والمخرج المعني، ويُغلق بقرار مكتوب يحمل أساسه (resolution_note)، و«الإغلاق» و«قبول الخطر» حالتان مختلفتان لا حالة واحدة. والحصيلة تُقرأ من تقرير مساءلة يُحسب على الخادم لا في المتصفح (ai-accountability-1.0.0 · NIST AI RMF MEASURE/MANAGE).',
+        what_platform_does_en: 'Every AI incident (harm, near miss, correction, bias finding, model failure, data provenance failure, unauthorized use, disclosure failure) is recorded with its type, severity, root cause and the affected output, and is closed by a written decision carrying its basis (resolution_note) — closure and accepted risk are two different states, never one. The outcome is read from a server-computed accountability report, not from the browser (ai-accountability-1.0.0, NIST AI RMF MEASURE/MANAGE).',
+        evidence: 'AIIncident entity · aiAccountability.ts (ai-accountability-1.0.0) · GetAIAccountabilityReport',
+        evidence_kind: 'contract',
+        owning_authority_ar: 'تقارير المساءلة',
+        owning_authority_en: 'Accountability reporting',
+        status: 'adhered',
+      },
     ],
   },
   {
@@ -232,11 +262,11 @@ export const SOVEREIGN_STANDARDS: SovereignStandard[] = [
       {
         id: 'audit-append-only',
         clause: '9.4',
-        ar: 'السجل إلحاقي — لا تحرير ولا حذف',
-        en: 'Append-only records — no edit, no delete',
-        what_platform_does_ar: 'سجلات التدقيق والمحاضر وحزم الإصدار والتصديق إلحاقية: RLS يحظر التحديث/الحذف بدور __append_only_no_writer__، والتصحيح سجلٌّ جديد مرتبط لا تحرير.',
-        what_platform_does_en: 'Audit, minutes, issuance packages and ratification records are append-only: RLS forbids update/delete with the __append_only_no_writer__ role, and a correction is a new linked record, never an edit.',
-        evidence: 'AuditEvent · IssueSnapshot · RatificationRecord RLS',
+        ar: 'سجل التدقيق إلحاقي — لا تحرير ولا حذف',
+        en: 'The audit record is append-only — no edit, no delete',
+        what_platform_does_ar: 'سجل التدقيق (AuditEvent) مغلق على مستوى الصف: التحديث والحذف = false لكل كاتب، فلا يُحرَّر حدث مُقيَّد ولا يُمحى. وحزم الإصدار (IssueSnapshot) وسجلات التصديق (RatificationRecord) محميّة بدور __append_only_no_writer__. أما محضر الاجتماع فليس نهائيًا قبل الاعتماد: يُحرَّر فقط عبر انتقال محكوم (تحضير ← اعتماد)، ولا يُحذف إلا بسلطة مدير، وكل انتقال يُقيَّد في سجل التدقيق — فالمحضر مقيَّد بالسلطة ومساره محفوظ، ولا ادّعاء بعصمته عن التعديل.',
+        what_platform_does_en: 'The audit record (AuditEvent) is sealed at the row level: update and delete are false for every writer, so a recorded event is neither edited nor erased, while issuance packages (IssueSnapshot) and ratification records (RatificationRecord) are held by the __append_only_no_writer__ role. Meeting minutes are not final before approval: they are edited only through a governed transition (prepare → approve), deleted only by an administrator, and every transition is recorded in the audit trail — a minute is controlled by authority with its path preserved, and no claim of immutability is made for it.',
+        evidence: 'AuditEvent RLS (update/delete = false) · IssueSnapshot · RatificationRecord (__append_only_no_writer__)',
         evidence_kind: 'entity',
         owning_authority_ar: 'سجل التدقيق',
         owning_authority_en: 'Audit trail',
@@ -253,6 +283,19 @@ export const SOVEREIGN_STANDARDS: SovereignStandard[] = [
         evidence_kind: 'contract',
         owning_authority_ar: 'سجل التدقيق',
         owning_authority_en: 'Audit trail',
+        status: 'adhered',
+      },
+      {
+        id: 'audit-retention',
+        clause: '9.4',
+        ar: 'جدول احتفاظ معلن لكل صنف — ولا إتلاف تلقائي',
+        en: 'A declared retention schedule per record class — no automatic disposal',
+        what_platform_does_ar: 'لكل صنف مواد (حزمة القرار · المحضر · دليل التنفيذ · الوثائق · الملاحظات) قاعدة احتفاظ معلنة: مدة محددة أو احتفاظ دائم، مع الجهة المختصة بالإجراء ونصّ السند النظامي الذي تستند إليه (retention-1.0.0). وهذا البناء لا يُتلف ولا يمحو أي سجل: الطريق الوحيد المعتمد هو مراجعة مؤسسية تُبقي السجل قابلًا للتدقيق، وقاعدة الاحتفاظ السابقة تُستبدل ولا تُعاد كتابتها.',
+        what_platform_does_en: 'Each class of material (decision package, minutes, action evidence, documents, annotations) carries a declared retention rule — a stated period or permanence — together with the authority competent for the disposition and the instrument clause the schedule rests on (retention-1.0.0). This build neither disposes of nor erases any record: the only admitted route is an institutional review that keeps the record auditable, and a superseded retention rule is replaced, never rewritten.',
+        evidence: 'RetentionRule entity · retentionSchedule.ts (retention-1.0.0) · SetRetentionRule · GetRetentionState',
+        evidence_kind: 'contract',
+        owning_authority_ar: 'جدول الاحتفاظ',
+        owning_authority_en: 'Retention schedule',
         status: 'adhered',
       },
     ],
@@ -305,6 +348,19 @@ export const SOVEREIGN_STANDARDS: SovereignStandard[] = [
         evidence_kind: 'entity',
         owning_authority_ar: 'عقد الوصول الخارجي',
         owning_authority_en: 'External access contract',
+        status: 'adhered',
+      },
+      {
+        id: 'residency-export',
+        clause: '4',
+        ar: 'التصدير بسلطة — والمستخرج يُبنى على الخادم ويُقيَّد ببصمته',
+        en: 'Export under authority — the artifact is built server-side and fingerprinted',
+        what_platform_does_ar: 'لا يُنتج المستخرج المؤسسي إلا عبر بوابة تفويض على الخادم تفحص السلطة على الأصل نفسه (authorizeRead) وتُعيد 401 لغير المصرّح. والحزمة تُبنى على الخادم، ويُحسب بصمتها SHA-256 من بايتاتها الفعلية، ثم تُقيَّد كأثر (InstitutionalExportArtifact) بنسخة المولّد وسجلات المصدر والتصنيف وحجمه ووقت إنتاجه وحالة الفحص المعلنة، ويُكتب عنها حدث تدقيق. ولا يُقرأ الأثر إلا لطالبه أو لمدير — فلا يخرج مستند بلا سلطة ولا بلا أثر.',
+        what_platform_does_en: 'An institutional export is produced only through a server-side authorization gateway that checks capability against the source record itself (authorizeRead) and answers 401 to the unauthorized. The package is assembled on the server, its SHA-256 fingerprint is computed from its actual bytes, and it is then recorded as an artifact (InstitutionalExportArtifact) carrying the generator version, the source record ids, the classification, its size, its generation instant and its declared inspection status, with an audit event written for it. The artifact is readable only by its requester or an administrator — no document leaves without authority, and none leaves without a trace.',
+        evidence: 'InstitutionalExportArtifact entity · GenerateInstitutionalExport · GetInstitutionalExportAccess · institutionalExportModel.ts (institutional-export-2.0.0)',
+        evidence_kind: 'contract',
+        owning_authority_ar: 'سجل التصدير المؤسسي',
+        owning_authority_en: 'Institutional export register',
         status: 'adhered',
       },
     ],
