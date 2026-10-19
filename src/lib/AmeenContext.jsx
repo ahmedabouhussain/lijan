@@ -26,6 +26,10 @@ export function AmeenProvider({ children }) {
 
   const [verified, setVerified] = useState(null);
   const [verifying, setVerifying] = useState(false);
+  // A verification that FAILED is not the same fact as a context that was never requested:
+  // the surface must not accept a question it already knows cannot be answered.
+  const [verifyFailed, setVerifyFailed] = useState(false);
+  const [verifyNonce, setVerifyNonce] = useState(0);
   // A quick action on a page hands «أمين» a prompt; the chat surface opens and consumes it once.
   const [pendingPrompt, setPendingPrompt] = useState(null);
 
@@ -38,10 +42,12 @@ export function AmeenProvider({ children }) {
   useEffect(() => {
     if ((!isAuthenticated && !isDemoMode) || !route.orgRef) {
       setVerified(null);
+      setVerifyFailed(false);
       return;
     }
     let cancelled = false;
     setVerifying(true);
+    setVerifyFailed(false);
     (async () => {
       try {
         const res = await base44.functions.invoke("ResolveAmeenContext", {
@@ -57,7 +63,10 @@ export function AmeenProvider({ children }) {
         });
         if (!cancelled) setVerified(res?.data || res || null);
       } catch {
-        if (!cancelled) setVerified(null);
+        if (!cancelled) {
+          setVerified(null);
+          setVerifyFailed(true);
+        }
       } finally {
         if (!cancelled) setVerifying(false);
       }
@@ -76,6 +85,7 @@ export function AmeenProvider({ children }) {
     route.contextKey,
     route.entityType,
     route.entityId,
+    verifyNonce,
   ]);
 
   const context = getAmeenContext(route.contextKey);
@@ -108,6 +118,8 @@ export function AmeenProvider({ children }) {
     accessDenied: verified?.access_denied === true,
     verified: verified?.verified === true,
     verifying,
+    verifyFailed,
+    reverify: () => setVerifyNonce((n) => n + 1),
     isDemo: isDemoMode,
     isActive: active,
     actorId,
