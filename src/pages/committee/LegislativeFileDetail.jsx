@@ -11,6 +11,7 @@ import BrandLogo from "@/components/raqeem/BrandLogo";
 import StatusBadge from "@/components/raqeem/StatusBadge";
 import EmptyState from "@/components/raqeem/EmptyState";
 import LegislativeReportPanel from "@/components/raqeem/LegislativeReportPanel";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
   CLASSIFICATION_LABELS, DELIVERY_STATUS_LABELS, REPORT_STAGE_LABELS, INTEGRATION_POSTURE_LABELS,
 } from "@/lib/legislativeFileLabels";
@@ -331,30 +332,28 @@ function ComparisonTable({ file, isAr, t }) {
           {t("لم يُبنَ جدول المقارنة بعد.", "No comparison table built yet.")}
         </p>
       ) : (
-        <div className="overflow-x-auto -mx-2">
-          <table className="w-full text-[11px]">
-            <thead>
-              <tr className="text-muted-foreground border-b border-border">
-                <th className="text-start font-medium px-2 py-1.5">{t("المادة", "Article")}</th>
-                <th className="text-start font-medium px-2 py-1.5">{t("النص المحال", "Referred")}</th>
-                <th className="text-start font-medium px-2 py-1.5">{t("النص المقترح", "Proposed")}</th>
-                <th className="text-start font-medium px-2 py-1.5">{t("ملاحظات اللجنة", "Committee Note")}</th>
-                <th className="text-start font-medium px-2 py-1.5">{t("الصياغة النهائية", "Final")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {rows.map((r, i) => (
-                <tr key={i} className="align-top">
-                  <td className="px-2 py-1.5 font-mono font-semibold text-primary whitespace-nowrap">{r.article_no || i + 1}</td>
-                  <td className="px-2 py-1.5 text-muted-foreground leading-relaxed">{r.referred_text || "—"}</td>
-                  <td className="px-2 py-1.5 text-foreground leading-relaxed">{r.proposed_text || "—"}</td>
-                  <td className="px-2 py-1.5 text-muted-foreground leading-relaxed">{r.committee_note || "—"}</td>
-                  <td className="px-2 py-1.5 text-foreground font-medium leading-relaxed">{r.final_wording || "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="h-8 px-2">{t("المادة", "Article")}</TableHead>
+              <TableHead className="h-8 px-2">{t("النص المحال", "Referred")}</TableHead>
+              <TableHead className="h-8 px-2">{t("النص المقترح", "Proposed")}</TableHead>
+              <TableHead className="h-8 px-2">{t("ملاحظات اللجنة", "Committee Note")}</TableHead>
+              <TableHead className="h-8 px-2">{t("الصياغة النهائية", "Final")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((r, i) => (
+              <TableRow key={i} className="align-top">
+                <TableCell className="px-2 py-1.5 text-[11px] font-mono font-semibold text-primary whitespace-nowrap">{r.article_no || i + 1}</TableCell>
+                <TableCell className="px-2 py-1.5 text-[11px] text-muted-foreground leading-relaxed">{r.referred_text || "—"}</TableCell>
+                <TableCell className="px-2 py-1.5 text-[11px] text-foreground leading-relaxed">{r.proposed_text || "—"}</TableCell>
+                <TableCell className="px-2 py-1.5 text-[11px] text-muted-foreground leading-relaxed">{r.committee_note || "—"}</TableCell>
+                <TableCell className="px-2 py-1.5 text-[11px] text-foreground font-medium leading-relaxed">{r.final_wording || "—"}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </div>
   );

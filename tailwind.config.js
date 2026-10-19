@@ -54,6 +54,12 @@ module.exports = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			/* Glass — complete colour values, never wrapped in hsl(): the token carries its own. */
+  			glass: {
+  				DEFAULT: 'var(--glass-surface)',
+  				strong: 'var(--glass-surface-strong)',
+  				border: 'var(--glass-border)'
+  			},
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',
@@ -81,6 +87,9 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			}
+  		},
+  		backdropBlur: {
+  			glass: 'var(--glass-blur)'
   		},
   		boxShadow: {
   			'elevation-1': 'var(--elevation-1)',

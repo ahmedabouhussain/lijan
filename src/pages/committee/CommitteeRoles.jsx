@@ -9,6 +9,7 @@ import StatusBadge from "@/components/raqeem/StatusBadge";
 import { Award, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/raqeem/LoadingSkeleton";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 const ROLE_INFO = {
   chair: { ar: "الرئيس", en: "Chair", color: "bg-primary/10 text-primary" },
@@ -84,33 +85,35 @@ export default function CommitteeRoles() {
         />
       )}
 
-      <div className="raqeem-card overflow-hidden overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-secondary/50 text-xs text-muted-foreground">
-            <tr>
-              <th scope="col" className="text-right p-3 font-medium">{t("العضو", "Member")}</th>
-              <th scope="col" className="text-right p-3 font-medium">{t("الدور", "Role")}</th>
-              <th scope="col" className="text-right p-3 font-medium">{t("مستوى الصلاحية", "Authority Level")}</th>
-              <th scope="col" className="text-right p-3 font-medium">{t("حق التصويت", "Voting Right")}</th>
-              <th scope="col" className="text-right p-3 font-medium">{t("المؤسسة", "Institution")}</th>
-            </tr>
-          </thead>
-          <tbody>
+      {/* One table contract for the whole platform: shared header height, logical
+          alignment (text-start, never a hard-coded side) and a quiet row hover. */}
+      <div className="raqeem-card p-2 sm:p-3">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("العضو", "Member")}</TableHead>
+              <TableHead>{t("الدور", "Role")}</TableHead>
+              <TableHead>{t("مستوى الصلاحية", "Authority Level")}</TableHead>
+              <TableHead>{t("حق التصويت", "Voting Right")}</TableHead>
+              <TableHead>{t("المؤسسة", "Institution")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {members.map((m) => {
               const ri = ROLE_INFO[m.role] || ROLE_INFO.member;
               const ai = AUTH_INFO[m.authority_level] || AUTH_INFO.decision;
               return (
-                <tr key={m.id} className="border-t border-border">
-                  <td className="p-3 font-medium">{m.full_name || m.full_name_ar}</td>
-                  <td className="p-3"><StatusBadge label={t(ri.ar, ri.en)} colorClass={ri.color} /></td>
-                  <td className="p-3 text-muted-foreground">{t(ai.ar, ai.en)}</td>
-                  <td className="p-3">{m.voting_right ? "✓" : "—"}</td>
-                  <td className="p-3 text-muted-foreground">{m.institution_name || "—"}</td>
-                </tr>
+                <TableRow key={m.id}>
+                  <TableCell className="font-medium">{m.full_name || m.full_name_ar}</TableCell>
+                  <TableCell><StatusBadge label={t(ri.ar, ri.en)} colorClass={ri.color} /></TableCell>
+                  <TableCell className="text-muted-foreground">{t(ai.ar, ai.en)}</TableCell>
+                  <TableCell>{m.voting_right ? "✓" : "—"}</TableCell>
+                  <TableCell className="text-muted-foreground">{m.institution_name || "—"}</TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

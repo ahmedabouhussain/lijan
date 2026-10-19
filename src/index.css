@@ -61,6 +61,22 @@
     --elevation-overlay: 0 32px 80px rgba(31, 12, 20, 0.26);
     --card-shadow: var(--elevation-1);
     --card-shadow-hover: var(--elevation-3);
+    /* ── Hajar Wahid glass ──────────────────────────────────────────────────────
+       ONE material for every card, on every page: a translucent pane the field shows
+       through, held by a hairline edge and a single specular highlight along the top
+       rim. The values are COMPLETE colours because their consumers are Tailwind
+       var() passthrough classes (bg-glass · border-glass), never hsl(var(--…)).
+       Levitation is a separate, slow translate: an ambient card drifts, and a card the
+       pointer answers rises on transform instead — the two never fight. */
+    --glass-surface: hsl(0 0% 100% / 0.68);
+    --glass-surface-strong: hsl(0 0% 100% / 0.88);
+    --glass-border: hsl(38 14% 87% / 0.92);
+    --glass-highlight: hsl(0 0% 100% / 0.72);
+    --glass-blur: 14px;
+    --levitate-y: 3px;
+    --levitate-duration: 9s;
+    --levitate-delay: 0s;
+    --levitate-stagger: 1.1s;
     /* ── Motion — one easing, three durations, nothing else ───────────────────── */
     --ease-sovereign: cubic-bezier(0.32, 0.72, 0, 1);
     --dur-fast: 140ms;
@@ -119,6 +135,14 @@
     --chart-3: 335 69% 21%;
     --chart-4: 210 4% 45%;
     --chart-5: 152 42% 30%;
+  }
+
+  /* The same glass on a dark field: identical roles, values read for maroon-black. */
+  .dark {
+    --glass-surface: hsl(335 30% 13% / 0.66);
+    --glass-surface-strong: hsl(335 30% 11% / 0.88);
+    --glass-border: hsl(335 18% 26% / 0.9);
+    --glass-highlight: hsl(0 0% 100% / 0.08);
   }
 }
 
@@ -199,24 +223,58 @@
 }
 
 @layer components {
+  /* ── The glass card — one material, one motion, every page ─────────────────
+     The pane: translucent surface + hairline edge + a single specular highlight on the
+     top rim. The drift: a slow three-pixel levitation on `translate`, so it never
+     collides with the transform a hover lift uses. Neighbouring cards drift out of
+     phase, so a grid breathes instead of pumping in unison. */
   .raqeem-card {
-    @apply bg-card border border-border;
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
     border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow);
-    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign);
+    box-shadow: var(--card-shadow), inset 0 1px 0 var(--glass-highlight);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign), background-color var(--transition-sovereign);
+    animation: sovereign-levitate var(--levitate-duration) var(--ease-sovereign) var(--levitate-delay) infinite;
   }
 
+  /* A card the pointer answers: the material thickens, the surface rises, the drift stops. */
+  .raqeem-card:hover {
+    background-color: var(--glass-surface-strong);
+    box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--glass-highlight);
+    transform: translateY(calc(-1 * var(--levitate-y)));
+    animation: none;
+  }
+
+  /* An interactive card is lifted by intent, never by ambience. */
   .raqeem-card-interactive {
-    @apply bg-card border border-border cursor-pointer;
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
     border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow);
-    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign);
+    box-shadow: var(--card-shadow), inset 0 1px 0 var(--glass-highlight);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    cursor: pointer;
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign), background-color var(--transition-sovereign);
   }
 
   .raqeem-card-interactive:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px);
+    background-color: var(--glass-surface-strong);
+    box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--glass-highlight);
+    transform: translateY(calc(-1 * var(--levitate-y) - 1px));
   }
+
+  /* Inside an overlay the surface is already floating — it never drifts there. */
+  [role="dialog"] .raqeem-card,
+  [data-radix-popper-content-wrapper] .raqeem-card,
+  .raqeem-still .raqeem-card {
+    animation: none;
+  }
+
+  /* Out-of-phase neighbours — an even grid never pulses as one block. */
+  .raqeem-card:nth-of-type(2n) { --levitate-delay: var(--levitate-stagger); }
+  .raqeem-card:nth-of-type(3n) { --levitate-delay: calc(var(--levitate-stagger) * 2); }
 
   .raqeem-section-title {
     @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground;
@@ -311,6 +369,11 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+    /* The glass stays; only the drifting stops. */
+    .raqeem-card {
+      animation: none !important;
+      translate: none;
+    }
   }
 
   .touch-target {
@@ -356,6 +419,11 @@
   }
   @keyframes sovereign-shimmer-slide {
     100% { transform: translateX(100%); }
+  }
+  /* Slower than a shimmer, smaller than a breath: three pixels over nine seconds. */
+  @keyframes sovereign-levitate {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 calc(-1 * var(--levitate-y)); }
   }
   @keyframes sovereign-shimmer-slide-rtl {
     0% { transform: translateX(100%); }

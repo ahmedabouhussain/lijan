@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { X, Loader2 } from "lucide-react";
 
 /**
@@ -64,7 +65,7 @@ export default function CrudFormDialog({
   };
 
   return (
-    <div className="raqeem-card p-4 space-y-3">
+    <div className="raqeem-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">{title}</h3>
         <button
@@ -77,11 +78,11 @@ export default function CrudFormDialog({
         </button>
       </div>
       {error && (
-        <div role="alert" className="p-2 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>
+        <div role="alert" className="p-2.5 rounded-control bg-destructive/10 text-destructive text-sm text-start">{error}</div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fields.map((f) => (
-          <div key={f.name} className={f.fullWidth ? "md:col-span-2" : ""}>
+          <div key={f.name} className={cn("space-y-1.5", f.fullWidth && "md:col-span-2")}>
             <Label htmlFor={fieldId(f.name)} className="text-xs">
               {f.label}
               {f.required && <span className="text-destructive" aria-hidden="true"> *</span>}
@@ -90,7 +91,7 @@ export default function CrudFormDialog({
               <select
                 id={fieldId(f.name)}
                 aria-required={f.required ? "true" : undefined}
-                className="w-full h-9 rounded-md border border-input px-3 text-sm mt-1 bg-transparent sovereign-focus"
+                className="w-full h-10 rounded-control border border-input bg-card px-3.5 text-sm shadow-elevation-1 transition-[border-color,box-shadow] duration-150 ease-sovereign focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25 disabled:cursor-not-allowed disabled:opacity-50"
                 value={form[f.name] || ""}
                 onChange={(e) => setField(f.name, e.target.value)}
               >
@@ -109,7 +110,6 @@ export default function CrudFormDialog({
                 onChange={(e) => setField(f.name, e.target.value)}
                 placeholder={f.placeholder}
                 rows={f.rows || 3}
-                className="mt-1"
               />
             ) : (
               <Input
@@ -119,7 +119,6 @@ export default function CrudFormDialog({
                 value={form[f.name] || ""}
                 onChange={(e) => setField(f.name, e.target.value)}
                 placeholder={f.placeholder}
-                className="mt-1"
                 dir={f.type === "email" || f.type === "url" ? "ltr" : undefined}
               />
             )}

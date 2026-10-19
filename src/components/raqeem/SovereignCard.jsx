@@ -18,7 +18,6 @@ export default function SovereignCard({
   return (
     <Comp
       className={cn(
-        "bg-card border border-border/60",
         interactive ? "raqeem-card-interactive sovereign-focus" : "raqeem-card",
         className
       )}
