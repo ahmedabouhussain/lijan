@@ -80,6 +80,15 @@ module.exports = {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+  		boxShadow: {
+  			'elevation-1': 'var(--elevation-1)',
+  			'elevation-2': 'var(--elevation-2)',
+  			'elevation-3': 'var(--elevation-3)',
+  			overlay: 'var(--elevation-overlay)'
+  		},
+  		transitionTimingFunction: {
+  			sovereign: 'var(--ease-sovereign)'
+  		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],

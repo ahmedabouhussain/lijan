@@ -49,11 +49,31 @@
     --input: 38 12% 88%;
     --ring: 335 71% 31%;
     --gold: 38 36% 53%;
-    --radius: 0.375rem;
-    --card-radius: 20px;
-    --card-shadow: 0 1px 2px rgba(138, 21, 56, 0.04), 0 4px 12px rgba(138, 21, 56, 0.06);
-    --card-shadow-hover: 0 2px 4px rgba(138, 21, 56, 0.06), 0 8px 24px rgba(138, 21, 56, 0.10);
-    --transition-sovereign: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: 0.5rem;
+    --card-radius: 18px;
+    /* ── Elevation — one family for every raised surface ─────────────────────────
+       Soft, layered and maroon-tinted: a resting surface is barely lifted, and a
+       hovered, opened or overlaid surface rises by exactly one step. */
+    --elevation-1: 0 1px 2px rgba(46, 12, 26, 0.05), 0 1px 3px rgba(46, 12, 26, 0.06);
+    --elevation-2: 0 2px 6px rgba(46, 12, 26, 0.05), 0 10px 24px rgba(46, 12, 26, 0.07);
+    --elevation-3: 0 4px 10px rgba(46, 12, 26, 0.06), 0 18px 42px rgba(46, 12, 26, 0.10);
+    --elevation-overlay: 0 24px 64px rgba(31, 12, 20, 0.22);
+    --card-shadow: var(--elevation-1);
+    --card-shadow-hover: var(--elevation-3);
+    /* ── Motion — one easing, three durations, nothing else ───────────────────── */
+    --ease-sovereign: cubic-bezier(0.32, 0.72, 0, 1);
+    --dur-fast: 140ms;
+    --dur-base: 220ms;
+    --dur-slow: 320ms;
+    --transition-sovereign: 220ms cubic-bezier(0.32, 0.72, 0, 1);
+    /* ── Typographic rhythm ─────────────────────────────────────────────────────
+       Leading and Latin tracking only. Arabic letter-spacing stays 0 everywhere. */
+    --leading-display: 1.1;
+    --leading-heading: 1.25;
+    --leading-body: 1.6;
+    --leading-label: 1.35;
+    --tracking-display: -0.022em;
+    --tracking-heading: -0.012em;
     --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -108,6 +128,19 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+    line-height: var(--leading-body);
+  }
+
+  /* Latin display type carries its hierarchy in size, weight and tracking. Scoped to
+     LTR on purpose: Arabic headings are never tracked (see the RTL block below). */
+  [dir="ltr"] h1, [dir="ltr"] h2, [dir="ltr"] h3, [dir="ltr"] h4 {
+    @apply font-heading;
+    letter-spacing: var(--tracking-heading);
+    line-height: var(--leading-heading);
+  }
+  [dir="ltr"] h1 {
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
   }
 
   /* Device safe areas are absorbed once, at the app root, so no page can place
