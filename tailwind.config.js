@@ -15,7 +15,9 @@ module.exports = {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+  			control: 'var(--radius-control)',
+  			card: 'var(--card-radius)'
   		},
   		colors: {
   			background: 'hsl(var(--background))',
