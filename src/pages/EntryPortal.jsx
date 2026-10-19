@@ -16,7 +16,7 @@ import "@/styles/entryPortal.css";
 // Approved public-entry artwork: the veined marble field the engraved lockup rests on,
 // and the LIJAN™ mark at both scales of the entry (band and centre).
 const ENTRY_MARBLE_URL =
-  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/1c96dea65_generated_image.png";
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/d1475cb44_generated_image.png";
 const ENTRY_LOGO_URL =
   "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/eb7f391e3_LijanLogo.png";
 

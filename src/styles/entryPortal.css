@@ -46,11 +46,10 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  /* The stone must read as stone: the veins are meant to be SEEN. The slab keeps its
-     full presence and its contrast is pushed, so the white and gold calcites cross the
-     whole field instead of dissolving into the maroon. */
-  opacity: 0.86;
-  filter: contrast(1.4) brightness(1.14) saturate(1.06);
+  /* Sparse hairline calcite stays at its natural contrast; no enhancement that
+     makes mineral threads read as broad, bright streaks. */
+  opacity: 0.72;
+  filter: none;
 }
 .ep .ep-scrim {
   position: absolute;
