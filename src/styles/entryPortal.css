@@ -26,11 +26,15 @@
   inset: 0;
   z-index: -1;
   background-color: #3c0719;
+  /* Layers, topmost first: a vignette that holds the eye at the centre, then the
+     drifting mineral washes and two hairline streaks that stand in for the stone's
+     own veining beneath the photograph. */
   background-image:
-    radial-gradient(ellipse at 18% 22%, rgba(139, 50, 78, 0.28), transparent 34%),
-    radial-gradient(ellipse at 78% 58%, rgba(13, 2, 8, 0.62), transparent 38%),
-    linear-gradient(118deg, transparent 0 38%, rgba(190, 124, 137, 0.12) 38.2%, transparent 39%, transparent 63%, rgba(15, 2, 8, 0.4) 63.2%, transparent 64%),
-    linear-gradient(28deg, rgba(255, 255, 255, 0.035), transparent 36%, rgba(10, 1, 5, 0.4) 74%, transparent);
+    radial-gradient(ellipse 78% 66% at 50% 46%, transparent 32%, rgba(16, 1, 7, 0.52) 100%),
+    radial-gradient(ellipse at 18% 22%, rgba(139, 50, 78, 0.24), transparent 34%),
+    radial-gradient(ellipse at 78% 58%, rgba(13, 2, 8, 0.52), transparent 38%),
+    linear-gradient(118deg, transparent 0 38%, rgba(190, 124, 137, 0.1) 38.2%, transparent 39%, transparent 63%, rgba(15, 2, 8, 0.34) 63.2%, transparent 64%),
+    linear-gradient(28deg, rgba(255, 255, 255, 0.03), transparent 36%, rgba(10, 1, 5, 0.34) 74%, transparent);
 }
 .ep .ep-bg-img {
   position: absolute;
@@ -41,14 +45,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.1;
   display: block;
-  filter: saturate(0.45) brightness(0.65);
+  /* The stone must read as stone, never as a picture: enough presence for the
+     white and gold veining to register, faint enough that the field stays dark
+     and the words keep their contrast. */
+  opacity: 0.4;
+  filter: saturate(0.85) brightness(0.9);
 }
 .ep .ep-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(60, 7, 25, 0.58), rgba(60, 7, 25, 0.88) 38%, #3c0719 78%);
+  /* Never a flat wash: the veil deepens at the head and the foot and lifts
+     through the middle, so the veining stays barely visible behind the words. */
+  background: linear-gradient(
+    180deg,
+    rgba(52, 6, 21, 0.72),
+    rgba(43, 5, 18, 0.56) 34%,
+    rgba(38, 5, 16, 0.62) 64%,
+    rgba(24, 2, 11, 0.9)
+  );
 }
 
 .ep .ep-in {
