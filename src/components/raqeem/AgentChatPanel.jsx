@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Send, Loader2, Maximize2, Minimize2, ShieldCheck, Lock } from "lucide-react";
+import { Send, Loader2, Maximize2, Minimize2, ShieldCheck, Lock, ShieldAlert, RefreshCw } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AmeenEmblem from "@/components/ameen/AmeenEmblem";
 import MessageBubble from "./copilot/MessageBubble";
@@ -18,6 +19,48 @@ import { useEffectiveActor } from "@/lib/EffectiveActorContext";
  * AgentChatPanel — the single «أمين» chat surface.
  * One identity, one engine; the active context and role come from AmeenContext.
  */
+
+/**
+ * Every refusal gets its own sentence. ONE generic message for a lapsed session, a foreign
+ * conversation and an engine fault alike leaves the reader with nothing to act on — and hid a
+ * real server fault behind a sentence that named no cause.
+ */
+function refusalMessage(code, t) {
+  switch (code) {
+    case "unauthenticated":
+      return t("سجّل الدخول لاستخدام «أمين».", "Sign in to consult AMEEN.");
+    case "no_session":
+    case "expired":
+    case "revoked":
+    case "unknown_persona":
+      return t(
+        "انتهت جلسة الاستكشاف أو أُبطلت — أعد الدخول إلى العرض التجريبي.",
+        "The exploration session has ended or was revoked — re-enter the exploration experience."
+      );
+    case "not_found":
+      return t(
+        "فتُح سياق جديد: هذه المحادثة مرتبطة بسياق لم تعد فيه.",
+        "A new context is being opened: this conversation belongs to a context you are no longer in."
+      );
+    case "conversation_not_available":
+      return t(
+        "لم تعد هذه المحادثة متاحة — يُفتح سياق جديد وتبقى رسالتك في الحقل.",
+        "This conversation is no longer available — a new one is opening, and your message is kept in the box."
+      );
+    case "engine_unavailable":
+      return t(
+        "تعذّر الوصول إلى محرك «أمين» الآن. أعد المحاولة بعد قليل.",
+        "The AMEEN engine could not be reached. Please try again shortly."
+      );
+    case "not_a_member":
+    case "no_seat":
+    case "showcase_scope":
+      return t("لا تملك عضوية فعّالة في هذا النطاق.", "You hold no active membership in this scope.");
+    default:
+      return t("تعذّر إرسال الطلب إلى أمين.", "The request to AMEEN could not be sent.");
+  }
+}
+
 export default function AgentChatPanel({ variant = "inline", buttonClassName, collapsed = false }) {
   const {
     identity,
@@ -34,6 +77,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     contextPathEn,
     lang,
     accessDenied,
+    verified,
+    verifyFailed,
+    reverify,
     isDemo,
     isActive,
     pendingPrompt,
@@ -88,16 +134,25 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
   // The next request carries the current UI locale; changing it never clears history.
 
   useEffect(() => {
-    if (!open || conversation || !isActive || accessDenied) return;
+    // A scoped route opens its conversation only AFTER the server has stated the scope: the
+    // conversation is bound to the verified ids, so one opened ahead of that verdict would be
+    // bound to nothing while every question carried a committee — a refusal on a legitimate ask.
+    const scopeReady = !route.orgRef || verified;
+    if (!open || conversation || !isActive || accessDenied || !scopeReady) return;
     let cancelled = false;
     (async () => {
       setLoading(true);
       try {
         const list = await base44.agents.listConversations({ agent_name: agentName });
         const meta = JSON.parse(metadataKey);
+        // A thread is reused only when it is bound to the SAME organization and committee — the
+        // scope string alone could re-attach a thread to a scope it was not opened in.
         const existing = (list || []).find((c) => {
           if (!c.metadata) return false;
-          return c.metadata.scope === meta.scope && c.metadata.context_key === meta.context_key;
+          return c.metadata.scope === meta.scope
+            && c.metadata.context_key === meta.context_key
+            && (c.metadata.committee_id || null) === (meta.committee_id || null)
+            && (c.metadata.organization_id || null) === (meta.organization_id || null);
         });
         const conv = existing ? await base44.agents.getConversation(existing.id) : await base44.agents.createConversation({
           agent_name: agentName,
@@ -115,13 +170,21 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
           setMessages(conv.messages || []);
           setSendError(null);
         }
-      } catch {
-        if (!cancelled) setSendError(t('تعذّر فتح محادثة أمين.', 'The AMEEN conversation could not be opened.'));
+      } catch (error) {
+        if (!cancelled) {
+          // A refusal from the server names itself; anything else is a transport fault.
+          const code = error?.response?.data?.code || "";
+          setSendError(
+            code
+              ? refusalMessage(code, t)
+              : t('تعذّر فتح محادثة أمين.', 'The AMEEN conversation could not be opened.')
+          );
+        }
       }
       if (!cancelled) setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [open, conversation, metadataKey, isActive, accessDenied, agentName, name, scopeName, contextLabel, roleLabel]);
+  }, [open, conversation, metadataKey, isActive, accessDenied, verified, verifyFailed, route.orgRef, agentName, name, scopeName, contextLabel, roleLabel]);
 
   useEffect(() => {
     if (!conversation || conversation.metadata?.scope !== scopeKey) return;
@@ -144,7 +207,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
 
   const send = async (text) => {
     const content = (text ?? input).trim();
-    if (!content || !conversation || conversation.metadata?.scope !== scopeKey || sendLock.current) return;
+    if (!content || !conversation || verifyFailed || conversation.metadata?.scope !== scopeKey || sendLock.current) return;
     sendLock.current = true;
     setSendError(null);
     setInput("");
@@ -162,8 +225,16 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     }).catch(() => {});
     try {
       await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, scope_key: scopeKey, context_key: contextKey, committee_id: committee?.id || null, organization_id: organization?.id || null, showcase_token: isDemo ? showcaseToken : null });
-    } catch {
-      setSendError(t('تعذّر إرسال الطلب إلى أمين.', 'The request to AMEEN could not be sent.'));
+    } catch (error) {
+      const code = error?.response?.data?.code || "";
+      setSendError(refusalMessage(code, t));
+      // A conversation that no longer belongs to this scope is not a dead end: it is dropped so a
+      // fresh, correctly bound one opens — and the question is handed back into the box, not lost.
+      if (code === "not_found" || code === "conversation_not_available") {
+        setConversation(null);
+        setMessages([]);
+        setInput(content);
+      }
     } finally {
       sendLock.current = false;
       setSending(false);
@@ -173,7 +244,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
   // A contextual quick action asks «أمين» a question: open the surface and send it in the
   // CURRENT scope. The prompt is consumed once, so it can never re-fire on a later render.
   useEffect(() => {
-    if (!pendingPrompt || !isActive || accessDenied) return;
+    if (!pendingPrompt || !isActive || accessDenied || verifyFailed) return;
     setOpen(true);
     setScopeNotice(null);
     if (!conversation || loading) return;
@@ -181,7 +252,7 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
     consumeAmeenPrompt();
   }, [pendingPrompt, conversation, loading, isActive, accessDenied]);
 
-  const disabled = !isActive || accessDenied || sending || loading || !conversation || conversation.metadata?.scope !== scopeKey;
+  const disabled = !isActive || accessDenied || verifyFailed || sending || loading || !conversation || conversation.metadata?.scope !== scopeKey;
 
   const panel = (children) => (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -257,6 +328,9 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
               <p className="text-xs text-muted-foreground">
                 {t("سجّل الدخول لاستخدامه في هذا السياق.", "Sign in to use AMEEN in this context.")}
               </p>
+              <Button asChild size="sm" variant="outline" className="mt-1">
+                <Link to="/login">{t("تسجيل الدخول", "Sign in")}</Link>
+              </Button>
             </div>
           ) : accessDenied ? (
             <div className="text-center py-12 space-y-2">
@@ -267,6 +341,23 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
               <p className="text-xs text-muted-foreground">
                 {t("لا يمكن لـ«أمين» الوصول إلى محتوى لست طرفاً فيه.", "AMEEN cannot reach content you are not party to.")}
               </p>
+            </div>
+          ) : verifyFailed ? (
+            <div className="text-center py-12 space-y-2">
+              <ShieldAlert className="w-7 h-7 text-muted-foreground/50 mx-auto" />
+              <p className="text-sm text-muted-foreground">
+                {t("تعذّر التحقق من سياقك الآن.", "Your context could not be verified right now.")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t(
+                  "لا يسأل «أمين» ولا يجيب قبل أن يتحقق الخادم من سياقك ودورك.",
+                  "AMEEN neither asks nor answers before the server verifies your context and role."
+                )}
+              </p>
+              <Button size="sm" variant="outline" onClick={reverify} className="mt-1">
+                <RefreshCw className="w-4 h-4" />
+                {t("إعادة المحاولة", "Try again")}
+              </Button>
             </div>
           ) : loading ? (
             <div className="flex items-center justify-center py-12">

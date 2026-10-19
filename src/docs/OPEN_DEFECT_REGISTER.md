@@ -145,6 +145,42 @@ Traced from the Phase 1 brief; recorded as found, not fabricated:
   boundary tests added. Browser verification of a non-admin session still pending
   before final closure.
 
+## «أمين» send path (2026-10-19)
+
+- **D-A1 — one generic sentence for every failure, and a call to a method this SDK does not have.**
+  `SendAmeenMessage` answered `تعذّر إرسال الطلب إلى أمين.` for a lapsed session, a foreign
+  conversation and an internal fault alike, and `AgentChatPanel` collapsed every refusal into
+  that same string, so the reader was told nothing.
+  **Root cause of the reported failure:** the function called
+  `base44.agents.updateConversation(...)` on the locale-change path — and this platform's agents
+  module exposes only `getConversations · getConversation · listConversations · createConversation ·
+  addMessage · subscribeToConversation · getWhatsAppConnectURL · getTelegramConnectURL`. The call
+  threw a TypeError, and the outer catch reported it as the generic sentence. Every send that
+  followed a UI-language change therefore failed.
+  **FIXED:** the locale is carried by the message contract (as before); the metadata write is
+  attempted only where the SDK offers it; each refusal returns its own `code` and
+  `reason_ar`/`reason_en`; the panel states the reason it received, and the engine path is named
+  (`engine_unavailable`, 503) instead of being flattened into "the request could not be sent".
+- **D-A2 — an exploration visitor could never send.** The function demanded a registered account
+  before any other check, so a showcase (exploration) session — which holds no platform account —
+  was refused, and the whole sandbox branch below it was unreachable.
+  **FIXED:** the principal is resolved first (registered account OR server-verified showcase
+  session), and the conversation is then read through the service role, as the server's own verdict
+  already authorizes it. All binding checks (scope key · context key · committee · organization ·
+  `authorizeRead`) are unchanged.
+- **D-A3 — the thread could be bound ahead of the verdict.** The panel opened a conversation before
+  the server verified the scope, so `committee_id` stayed null in its metadata while the send
+  carried a committee — a `not_found` refusal on a legitimate question.
+  **FIXED:** a scoped route waits for the verdict, and an existing thread is reused only when its
+  bound committee and organization match.
+- **Also:** a failed verification (`ResolveAmeenContext` unreachable) used to leave the composer
+  enabled, so every question was refused; the surface now states that the context is unverified and
+  offers a retry, and it no longer disappears for a visitor who holds no session (locked state with
+  a sign-in path).
+- **Probes (2026-10-19):** unknown conversation → 404 `conversation_not_available` (was a generic
+  500); invalid exploration token → 401 `no_session` (branch previously unreachable); build clean.
+  Browser verification of a signed-in send still pending.
+
 ## Pending Phase 1 investigations (not yet defects)
 - Raw status string audit across `src/pages/committee/ReportCenter.jsx`,
   `CommitteeHandover.jsx`, `WorkstreamDetail.jsx` — these use status enums in *logic*
