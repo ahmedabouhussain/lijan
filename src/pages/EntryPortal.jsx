@@ -18,7 +18,7 @@ import "@/styles/entryPortal.css";
 const ENTRY_MARBLE_URL =
   "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/4a678fd6e_generated_432ce281.jpg";
 const ENTRY_LOGO_URL =
-  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/38aa20d05_logo.png";
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/eb7f391e3_LijanLogo.png";
 
 // The four institutional pillars shown on the public entry.
 const PILLARS = [

@@ -71,13 +71,16 @@
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
+/* The lockup itself is a maroon/black mark on a transparent field, so it is
+   reversed to a single white treatment wherever it sits on the dark maroon
+   surfaces — the alpha channel keeps every edge smooth. */
 .ep .ep-top-logo {
-  height: 40px;
-  width: 140px;
+  height: 50px;
+  width: 120px;
+  filter: brightness(0) invert(1);
 }
 .ep .ep-top-logo img {
   object-fit: contain;
-  mix-blend-mode: screen;
 }
 
 .ep .ep-sw {
@@ -125,10 +128,9 @@
   padding: 112px 120px 115px;
 }
 .ep .ep-hero-logo {
-  width: 270px;
-  height: 88px;
-  mix-blend-mode: screen;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.28));
+  width: 330px;
+  height: 138px;
+  filter: brightness(0) invert(1) drop-shadow(0 8px 14px rgba(0, 0, 0, 0.28));
 }
 .ep .ep-hero-logo img {
   object-fit: contain;
@@ -429,9 +431,9 @@
 }
 @media (max-width: 720px) {
   .ep .ep-top { padding: 14px 18px; }
-  .ep .ep-top-logo { height: 32px; width: 112px; }
+  .ep .ep-top-logo { height: 40px; width: 96px; }
   .ep .ep-main { padding: 52px 20px 60px; }
-  .ep .ep-hero-logo { width: 200px; height: 66px; }
+  .ep .ep-hero-logo { width: 210px; height: 88px; }
   .ep .ep-h1 { margin-top: 30px; font-size: 36px; }
   .ep .ep-en { font-size: 17px; }
   .ep .ep-desc { margin-top: 20px; font-size: 16px; line-height: 1.75; }
