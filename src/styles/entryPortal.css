@@ -1,0 +1,448 @@
+/* LIJAN™ — public entry, approved direction «حجر واحد».
+   A deep maroon field with veined marble, one engraved gold lockup in the centre,
+   the four pillars as a single hairline strip, and one metal plate carrying the two
+   entrances. The values below are the approved design contract: hover/active/focus
+   behaviour, the sheen keyframes and the staggered entrance are literal.
+   Scoped under .ep so no other surface is touched. Arabic type is the licensed
+   Naskh face (--font-arabic, bundled locally); Latin and figures use --font-heading
+   with tabular figures. */
+
+.ep {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #3c0719;
+  color: #f7f2f3;
+  font-family: var(--font-arabic);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+
+/* ── Marble field ─────────────────────────────────────────────────────────── */
+.ep .ep-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: #3c0719;
+  background-image:
+    radial-gradient(ellipse at 18% 22%, rgba(139, 50, 78, 0.28), transparent 34%),
+    radial-gradient(ellipse at 78% 58%, rgba(13, 2, 8, 0.62), transparent 38%),
+    linear-gradient(118deg, transparent 0 38%, rgba(190, 124, 137, 0.12) 38.2%, transparent 39%, transparent 63%, rgba(15, 2, 8, 0.4) 63.2%, transparent 64%),
+    linear-gradient(28deg, rgba(255, 255, 255, 0.035), transparent 36%, rgba(10, 1, 5, 0.4) 74%, transparent);
+}
+.ep .ep-bg-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.ep .ep-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.1;
+  display: block;
+  filter: saturate(0.45) brightness(0.65);
+}
+.ep .ep-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(60, 7, 25, 0.58), rgba(60, 7, 25, 0.88) 38%, #3c0719 78%);
+}
+
+.ep .ep-in {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ── Top band ─────────────────────────────────────────────────────────────── */
+.ep .ep-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 21px 72px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(43, 5, 18, 0.76);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.ep .ep-top-logo {
+  height: 40px;
+  width: 140px;
+}
+.ep .ep-top-logo img {
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
+.ep .ep-sw {
+  display: inline-flex;
+  border: 1px solid rgba(48, 43, 40, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(45, 34, 31, 0.05);
+}
+.ep .ep-sw button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border: 0;
+  background: transparent;
+  color: #68656a;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.ep .ep-sw button.on {
+  background: #851b3d;
+  color: #fff;
+}
+.ep .ep-sw button:hover {
+  background: rgba(133, 27, 61, 0.1);
+  color: #851b3d;
+}
+.ep .ep-sw button.on:hover {
+  background: #6f1432;
+  color: #fff;
+}
+.ep .ep-sw button:focus-visible {
+  outline: 2px solid #851b3d;
+  outline-offset: -3px;
+}
+
+/* ── Centre composition ───────────────────────────────────────────────────── */
+.ep .ep-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 112px 120px 115px;
+}
+.ep .ep-hero-logo {
+  width: 270px;
+  height: 88px;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.28));
+}
+.ep .ep-hero-logo img {
+  object-fit: contain;
+}
+.ep .ep-h1 {
+  margin: 42px 0 0;
+  font-size: 70px;
+  line-height: 1.2;
+  font-weight: 800;
+  text-align: center;
+  color: #fff9fa;
+  letter-spacing: 0;
+}
+/* The headline stays in the script's own face: Naskh for Arabic, the Latin
+   heading face when the entry is read in English. */
+.ep[dir="ltr"] .ep-h1 {
+  font-family: var(--font-heading);
+}
+.ep .ep-en {
+  margin: 13px 0 0;
+  font-family: var(--font-heading);
+  font-size: 23px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #e0b774;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.015em;
+}
+.ep .ep-en[dir="rtl"] {
+  font-family: var(--font-arabic);
+}
+.ep .ep-desc {
+  margin: 27px 0 0;
+  max-width: 760px;
+  text-align: center;
+  font-size: 19px;
+  line-height: 1.8;
+  color: #eee3e6;
+}
+
+/* ── The four pillars — one strip, hairline dividers, no cards ────────────── */
+.ep .ep-pl {
+  margin: 58px 0 0;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(78, 67, 58, 0.11);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 12px 32px rgba(48, 38, 34, 0.055);
+}
+.ep .ep-pl li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 23px 12px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #373338;
+  position: relative;
+}
+.ep .ep-pl li + li {
+  border-inline-start: 1px solid rgba(78, 67, 58, 0.11);
+}
+.ep .ep-pl svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  background: #f3e9e7;
+  border-radius: 50%;
+  padding: 3px;
+  stroke: #c8a24a;
+  stroke-width: 2.5;
+}
+
+/* ── One metal plate, two entrances ───────────────────────────────────────── */
+.ep .ep-plate {
+  position: relative;
+  margin: 48px 0 0;
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  border: 1px solid rgba(75, 49, 48, 0.13);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 16px 40px rgba(45, 34, 31, 0.11), inset 0 1px 0 #fff;
+}
+.ep .ep-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  left: -160px;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  animation: ep-sheen 8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ep-sheen {
+  0% { transform: translateX(0); }
+  18% { transform: translateX(950px); }
+  100% { transform: translateX(950px); }
+}
+.ep .ep-btn {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 66px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  color: #5e1833;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.ep .ep-btn + .ep-btn {
+  border-inline-start: 1px solid rgba(75, 49, 48, 0.12);
+}
+.ep .ep-btn-p {
+  background: #861b3d;
+  color: #fff;
+}
+.ep .ep-btn-p:hover {
+  background: #711631;
+}
+.ep .ep-btn-p:active {
+  background: #5c1029;
+}
+.ep .ep-btn-s:hover {
+  background: rgba(134, 27, 61, 0.07);
+}
+.ep .ep-btn-s:active {
+  background: rgba(134, 27, 61, 0.13);
+}
+.ep .ep-btn:focus-visible {
+  outline: 2px solid #851b3d;
+  outline-offset: -5px;
+}
+.ep .ep-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+.ep .ep-btn-s svg {
+  stroke: #c8a24a;
+}
+
+/* ── Footer plate ─────────────────────────────────────────────────────────── */
+.ep .ep-ft {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4e3a40;
+  padding: 25px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  border-top: 1px solid rgba(48, 43, 40, 0.1);
+  box-shadow: 0 -8px 30px rgba(45, 34, 31, 0.035);
+}
+.ep .ep-lk {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.ep .ep-lk button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6f1836;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  transition: color 0.2s, opacity 0.2s;
+}
+.ep .ep-lk button:hover {
+  color: #a07735;
+}
+.ep .ep-lk button:active {
+  color: #4e0b23;
+}
+.ep .ep-lk button:focus-visible {
+  outline: 2px solid #7a1236;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.ep .ep-lk button svg {
+  width: 13px;
+  height: 13px;
+}
+.ep .ep-lk i {
+  width: 1px;
+  height: 14px;
+  background: #d2c3a3;
+}
+.ep .ep-cons {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  line-height: 1.7;
+  color: rgba(78, 58, 64, 0.75);
+  text-align: center;
+  margin: 0;
+}
+.ep .ep-cons button {
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7a1236;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0 2px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ep .ep-cons button:hover {
+  color: #a07735;
+}
+.ep .ep-cons button:focus-visible {
+  outline: 2px solid #7a1236;
+  outline-offset: 2px;
+}
+.ep .ep-pw {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #4e0b23;
+  transition: opacity 0.2s;
+}
+.ep .ep-pw:hover {
+  opacity: 0.78;
+}
+.ep .ep-pw img {
+  height: 34px;
+  width: 190px;
+  object-fit: contain;
+}
+.ep .ep-pw span {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: #4e0b23;
+}
+.ep .ep-pw b {
+  color: #7a1236;
+  font-weight: 700;
+}
+.ep .ep-pw u {
+  color: #7a1236;
+  font-size: 10px;
+  text-underline-offset: 2px;
+}
+.ep .ep-pw:focus-visible {
+  outline: 2px solid #7a1236;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ── Entrance: the lockup, then the title, then everything else ───────────── */
+.ep .ep-e {
+  opacity: 0;
+  animation: ep-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes ep-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+.ep .ep-d1 { animation-delay: 0.1s; }
+.ep .ep-d2 { animation-delay: 0.18s; }
+.ep .ep-d3 { animation-delay: 0.26s; }
+.ep .ep-d4 { animation-delay: 0.34s; }
+.ep .ep-d5 { animation-delay: 0.42s; }
+.ep .ep-d6 { animation-delay: 0.5s; }
+
+/* ── Smaller surfaces keep the same composition, recomposed ───────────────── */
+@media (max-width: 1024px) {
+  .ep .ep-top { padding: 16px 28px; }
+  .ep .ep-main { padding: 72px 40px 80px; }
+  .ep .ep-h1 { font-size: 52px; }
+}
+@media (max-width: 720px) {
+  .ep .ep-top { padding: 14px 18px; }
+  .ep .ep-top-logo { height: 32px; width: 112px; }
+  .ep .ep-main { padding: 52px 20px 60px; }
+  .ep .ep-hero-logo { width: 200px; height: 66px; }
+  .ep .ep-h1 { margin-top: 30px; font-size: 36px; }
+  .ep .ep-en { font-size: 17px; }
+  .ep .ep-desc { margin-top: 20px; font-size: 16px; line-height: 1.75; }
+  .ep .ep-pl { margin-top: 38px; flex-direction: column; border-radius: 14px; }
+  .ep .ep-pl li { padding: 15px 14px; font-size: 15px; }
+  .ep .ep-pl li + li { border-inline-start: 0; border-top: 1px solid rgba(78, 67, 58, 0.11); }
+  .ep .ep-plate { margin-top: 34px; flex-direction: column; border-radius: 14px; }
+  .ep .ep-btn { height: 56px; font-size: 16px; }
+  .ep .ep-btn + .ep-btn { border-inline-start: 0; border-top: 1px solid rgba(75, 49, 48, 0.12); }
+  .ep .ep-sheen { display: none; }
+  .ep .ep-ft { padding: 20px 18px; }
+  .ep .ep-lk { flex-direction: column; gap: 4px; }
+  .ep .ep-lk i { display: none; }
+}

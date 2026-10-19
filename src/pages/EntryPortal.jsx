@@ -9,7 +9,16 @@ import BrandLogo from "@/components/raqeem/BrandLogo";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 import LanguageSwitcher from "@/components/raqeem/LanguageSwitcher";
 import UnifiedWorkspace from "@/components/raqeem/UnifiedWorkspace";
+import { Image } from "@/components/ui/image";
 import { BRAND } from "@/lib/brand";
+import "@/styles/entryPortal.css";
+
+// Approved public-entry artwork: the veined marble field the engraved lockup rests on,
+// and the LIJAN™ mark at both scales of the entry (band and centre).
+const ENTRY_MARBLE_URL =
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/4a678fd6e_generated_432ce281.jpg";
+const ENTRY_LOGO_URL =
+  "https://media.base44.com/images/public/6a96a0e0cd5dac701b62b7f5/38aa20d05_logo.png";
 
 // The four institutional pillars shown on the public entry.
 const PILLARS = [
@@ -23,7 +32,7 @@ export default function EntryPortal() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoadingAuth, user } = useAuth();
   const { isDemoMode, effectiveActor, exitDemo } = useEffectiveActor();
-  const { t, lang } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
 
   if (isLoadingAuth) {
     return (
@@ -109,91 +118,108 @@ export default function EntryPortal() {
     );
   }
 
-  // ── Public entry — two primary paths only: Sign In, Explore LIJAN.
+  // ── Public entry — one marble field, one engraved lockup, one plate:
+  //    Sign In and Explore LIJAN remain the only two paths in.
   return (
-    <div className="min-h-app bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <header className="border-b border-border bg-card">
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <BrandLogo className="h-9 w-32 shrink-0" />
-          <LanguageSwitcher />
-        </div>
-      </header>
+    <div className="ep" dir={lang === "ar" ? "rtl" : "ltr"}>
+      <div className="ep-bg" aria-hidden="true">
+        <Image src={ENTRY_MARBLE_URL} fittingType="fill" alt="" className="ep-bg-img" />
+        <div className="ep-scrim" />
+      </div>
 
-      <main className="flex-1 flex items-center justify-center px-5 sm:px-6 py-12">
-        <div className="w-full max-w-lg">
-          <div className="text-center">
-            <BrandLogo className="h-16 w-52 mx-auto mb-7" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-              {t("مرحبًا بك في لجان™", "Welcome to LIJAN™")}
-            </h1>
-            <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed text-balance">
-              {t(
-                `${BRAND.descriptorAr} — ${BRAND.taglineAr}`,
-                `${BRAND.descriptorEn} — ${BRAND.taglineEn}`
-              )}
-            </p>
+      <div className="ep-in">
+        <header className="ep-top">
+          <Image
+            src={ENTRY_LOGO_URL}
+            fittingType="fit"
+            alt={`${BRAND.nameAr} · ${BRAND.nameEn}`}
+            className="ep-top-logo"
+          />
+          <div className="ep-sw" role="group" aria-label={t("اللغة", "Language")}>
+            <button
+              type="button"
+              onClick={() => setLang("ar")}
+              aria-pressed={lang === "ar"}
+              className={lang === "ar" ? "on" : ""}
+            >
+              عربي
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              aria-pressed={lang === "en"}
+              className={lang === "en" ? "on" : ""}
+            >
+              EN
+            </button>
           </div>
+        </header>
 
-          <ul className="mt-9 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+        <main className="ep-main">
+          <Image
+            src={ENTRY_LOGO_URL}
+            fittingType="fit"
+            alt={`${BRAND.nameAr} · ${BRAND.nameEn}`}
+            className="ep-hero-logo ep-e ep-d1"
+          />
+          <h1 className="ep-h1 ep-e ep-d2">{t("مرحبًا بك في لجان™", "Welcome to LIJAN™")}</h1>
+          <div className="ep-en ep-e ep-d2" dir={lang === "ar" ? "ltr" : "rtl"}>
+            {t("Welcome to LIJAN™", "مرحبًا بك في لجان™")}
+          </div>
+          <p className="ep-desc ep-e ep-d3">
+            {t(
+              "نظام تشغيل وطني متكامل لإدارة المجالس واللجان، من التأسيس والتشكيل إلى الاجتماعات والمحاضر والقرارات والتنفيذ والمتابعة والإغلاق، ضمن بيئة مؤسسية آمنة وقابلة للتدقيق تحفظ الذاكرة المؤسسية وتدعم اتخاذ القرار بذكاء منضبط.",
+              "LIJAN™ is an integrated national operating system for managing councils and committees — from founding and formation to meetings, minutes, decisions, execution, follow-up and closure — within a secure, auditable institutional environment that preserves institutional memory and supports disciplined, AI-assisted decision-making."
+            )}
+          </p>
+
+          <ul className="ep-pl ep-e ep-d4">
             {PILLARS.map((pillar) => (
-              <li key={pillar.en} className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
-                <span className="text-sm text-foreground">{t(pillar.ar, pillar.en)}</span>
+              <li key={pillar.en}>
+                <Check aria-hidden="true" />
+                <span>{t(pillar.ar, pillar.en)}</span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-10 space-y-2.5">
+          <div className="ep-plate ep-e ep-d5">
             <button
+              type="button"
               onClick={() => navigate("/login?returnTo=" + encodeURIComponent("/"))}
-              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground h-12 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors sovereign-focus"
+              className="ep-btn ep-btn-p"
             >
-              <LogIn className="w-4 h-4" aria-hidden="true" />
+              <LogIn aria-hidden="true" />
               {t("تسجيل الدخول", "Sign In")}
             </button>
-            <button
-              onClick={() => navigate("/explore")}
-              className="w-full inline-flex items-center justify-center gap-2 border border-primary/30 text-primary bg-transparent h-12 rounded-md text-sm font-medium hover:bg-primary/5 transition-colors sovereign-focus"
-            >
-              <Compass className="w-4 h-4" aria-hidden="true" />
+            <button type="button" onClick={() => navigate("/explore")} className="ep-btn ep-btn-s">
+              <Compass aria-hidden="true" />
               {t("استكشاف المنصة", "Explore LIJAN")}
             </button>
+            <span className="ep-sheen" aria-hidden="true" />
           </div>
+        </main>
 
-          <div className="mt-5 text-center space-y-1.5">
-            <button
-              type="button"
-              onClick={() => navigate("/committees-registry")}
-              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors block"
-            >
+        <footer className="ep-ft ep-e ep-d6">
+          <div className="ep-lk">
+            <button type="button" onClick={() => navigate("/committees-registry")}>
               {t("سجل اللجان العامة", "Public Committees Registry")}
             </button>
-            <button
-              type="button"
-              onClick={() => navigate("/platform-specification")}
-              className="text-xs text-muted-foreground hover:text-primary font-medium transition-colors inline-flex items-center gap-1"
-            >
-              <FileText className="w-3 h-3" />
+            <i aria-hidden="true" />
+            <button type="button" onClick={() => navigate("/platform-specification")}>
+              <FileText aria-hidden="true" />
               {t("المواصفات الفنية للمنصة", "Platform Technical Specification")}
             </button>
           </div>
-
-          <div className="mt-10 flex flex-col items-center gap-4">
-            <PoweredByConnection variant="dark" />
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              {t("باستخدامك للمنصة فإنك توافق على الالتزام بـ", "By using this platform you agree to comply with the")}
-              <button
-                type="button"
-                onClick={() => navigate("/governance-policies")}
-                className="text-primary hover:underline font-medium mx-0.5"
-              >
-                {t("سياسات الحوكمة والتصنيف المؤسسي", "Governance & Institutional Classification Policies")}
-              </button>
-              .
-            </p>
-          </div>
-        </div>
-      </main>
+          <p className="ep-cons">
+            {t("باستخدامك للمنصة فإنك توافق على الالتزام بـ", "By using this platform you agree to comply with the")}
+            <button type="button" onClick={() => navigate("/governance-policies")}>
+              {t("سياسات الحوكمة والتصنيف المؤسسي", "Governance & Institutional Classification Policies")}
+            </button>
+            .
+          </p>
+          <PoweredByConnection variant="dark" className="ep-pw" />
+        </footer>
+      </div>
     </div>
   );
 }
