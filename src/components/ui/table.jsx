@@ -2,15 +2,8 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Table — the one data surface for the platform.
- * A quiet tinted header band, hairline row separators, and a single hover step. No zebra
- * striping and no vertical rules: at 1366px a dense register stays readable, and at 390px
- * the wrapper scrolls horizontally with the platform's own hairline scrollbar.
- * Alignment is logical (`text-start`), so Arabic and English read identically.
- */
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto lijan-scroll">
+  <div className="relative w-full overflow-auto">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}
@@ -20,10 +13,7 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead
-    ref={ref}
-    className={cn("bg-secondary/50 [&_tr]:border-b [&_tr]:border-border/70", className)}
-    {...props} />
+  <thead ref={ref} className={cn("[&_tr]:border-b [&_tr]:border-border", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -38,7 +28,7 @@ TableBody.displayName = "TableBody"
 const TableFooter = React.forwardRef(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("border-t border-border/70 bg-secondary/40 font-medium [&>tr]:last:border-b-0", className)}
+    className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
     {...props} />
 ))
 TableFooter.displayName = "TableFooter"
@@ -47,7 +37,7 @@ const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "border-b border-border/60 transition-colors duration-150 ease-sovereign hover:bg-secondary/40 data-[state=selected]:bg-secondary",
+      "border-b border-border/70 transition-colors duration-150 ease-sovereign hover:bg-secondary/50 data-[state=selected]:bg-secondary",
       className
     )}
     {...props} />

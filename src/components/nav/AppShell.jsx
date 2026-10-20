@@ -43,7 +43,7 @@ export default function AppShell({
   }, []);
 
   return (
-    <div className="min-h-app lijan-field flex" dir={dir}>
+    <div className="min-h-app bg-background flex" dir={dir}>
       <a
         href={`#${mainId}`}
         className="sr-only focus:not-sr-only focus:block focus:m-3 focus:px-4 focus:py-2 focus:rounded-control focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
@@ -67,7 +67,7 @@ export default function AppShell({
       {/* Tablet & phone — a full-height panel over the content, with a scrim and Escape. */}
       {!isDesktop && overlayOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex" role="dialog" aria-modal="true">
-          <div className="absolute inset-0 bg-scrim backdrop-blur-[3px]" onClick={closeOverlay} aria-hidden="true" />
+          <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px]" onClick={closeOverlay} aria-hidden="true" />
           <AppSidebar
             overlay
             context={context}
@@ -81,7 +81,7 @@ export default function AppShell({
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-card/85 backdrop-blur-glass">
+        <header className="lg:hidden flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-card">
           <button
             type="button"
             onClick={openOverlay}
@@ -108,11 +108,9 @@ export default function AppShell({
 
         <main
           id={mainId}
-          className={cn("flex-1 overflow-y-auto lijan-scroll", bottomNav && "pb-20 lg:pb-0")}
+          className={cn("flex-1 overflow-y-auto", bottomNav && "pb-20 lg:pb-0")}
         >
-          {/* One rise-and-settle per surface paint — never keyed to route or data, so a
-              state change inside a page never replays the entrance. */}
-          <div className="lijan-enter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">{children}</div>
         </main>
       </div>
 

@@ -55,7 +55,7 @@ export default function ExploreGateway() {
   const Arrow = lang === "ar" ? ArrowLeft : ArrowRight;
 
   return (
-    <div className="min-h-screen lijan-field flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-background flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
       <header className="border-b border-border bg-card">
         <div className="max-w-5xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-3">
           <Link

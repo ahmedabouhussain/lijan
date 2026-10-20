@@ -17,7 +17,7 @@ export function LoadingSkeleton({ className, lines = 3 }) {
 
 export function CardSkeleton() {
   return (
-    <div role="status" aria-busy="true" className="lijan-surface p-4 space-y-3">
+    <div role="status" aria-busy="true" className="raqeem-card p-4 space-y-3">
       <div className="h-4 w-24 bg-muted/70 rounded-md sovereign-shimmer" />
       <div className="h-8 w-32 bg-muted/70 rounded-md sovereign-shimmer" />
       <div className="h-3 w-full bg-muted/70 rounded-md sovereign-shimmer" />
@@ -27,7 +27,7 @@ export function CardSkeleton() {
 
 export function StatCardSkeleton() {
   return (
-    <div role="status" aria-busy="true" className="lijan-surface p-4 flex items-start gap-3">
+    <div role="status" aria-busy="true" className="raqeem-card p-4 flex items-start gap-3">
       <div className="w-9 h-9 rounded-lg bg-muted/70 sovereign-shimmer" />
       <div className="flex-1 space-y-2">
         <div className="h-3 w-20 bg-muted/70 rounded-md sovereign-shimmer" />
@@ -41,7 +41,7 @@ export function TableSkeleton({ rows = 5 }) {
   return (
     <div role="status" aria-busy="true" className="space-y-2">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="lijan-surface p-3 flex items-center gap-3">
+        <div key={i} className="raqeem-card p-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-muted/70 sovereign-shimmer" />
           <div className="flex-1 space-y-1.5">
             <div className="h-3 w-1/3 bg-muted/70 rounded-md sovereign-shimmer" />
@@ -67,7 +67,7 @@ export function PageSkeleton() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="lijan-surface p-5 space-y-3">
+          <div key={i} className="raqeem-card p-5 space-y-3">
             <div className="h-4 w-32 bg-muted/70 rounded-md sovereign-shimmer" />
             <div className="space-y-2">
               <div className="h-3 w-full bg-muted/70 rounded-md sovereign-shimmer" />
@@ -89,7 +89,7 @@ export function WorkspaceSkeleton() {
         <div className="h-4 w-80 bg-muted/70 rounded-md sovereign-shimmer" />
       </div>
       {Array.from({ length: 2 }).map((_, i) => (
-        <div key={i} className="lijan-surface overflow-hidden">
+        <div key={i} className="raqeem-card overflow-hidden">
           <div className="flex items-center gap-3 p-4">
             <div className="w-10 h-10 rounded-md bg-muted/70 sovereign-shimmer shrink-0" />
             <div className="flex-1 space-y-2">

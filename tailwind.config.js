@@ -16,16 +16,8 @@ module.exports = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)',
-  			xs: 'var(--radius-xs)',
   			control: 'var(--radius-control)',
-  			card: 'var(--card-radius)',
-  			pill: 'var(--radius-pill)'
-  		},
-  		/* The only spacing steps the platform adds to the stock scale. */
-  		spacing: {
-  			gutter: 'var(--space-gutter)',
-  			stack: 'var(--space-stack)',
-  			section: 'var(--space-section)'
+  			card: 'var(--card-radius)'
   		},
   		colors: {
   			background: 'hsl(var(--background))',
@@ -55,11 +47,6 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
-  			/* Ceremonial gold as its own role — plates, hairlines, ceremonial emphasis. */
-  			gold: {
-  				DEFAULT: 'hsl(var(--gold))',
-  				ink: 'hsl(var(--gold-ink))'
-  			},
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
@@ -67,8 +54,6 @@ module.exports = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
-  			/* Complete colour value — carries its own alpha for both modes. */
-  			scrim: 'var(--scrim)',
   			/* Glass — complete colour values, never wrapped in hsl(): the token carries its own. */
   			glass: {
   				DEFAULT: 'var(--glass-surface)',
@@ -110,9 +95,7 @@ module.exports = {
   			'elevation-1': 'var(--elevation-1)',
   			'elevation-2': 'var(--elevation-2)',
   			'elevation-3': 'var(--elevation-3)',
-  			overlay: 'var(--elevation-overlay)',
-  			/* The glass surface's own lift: elevation plus its specular top rim. */
-  			surface: 'var(--elevation-1), inset 0 1px 0 var(--glass-highlight)'
+  			overlay: 'var(--elevation-overlay)'
   		},
   		transitionTimingFunction: {
   			sovereign: 'var(--ease-sovereign)'
@@ -134,14 +117,6 @@ module.exports = {
   			subheading: '600'
   		},
   		keyframes: {
-  			'lijan-rise': {
-  				from: { opacity: '0', transform: 'translateY(6px)' },
-  				to: { opacity: '1', transform: 'none' }
-  			},
-  			'lijan-fade': {
-  				from: { opacity: '0' },
-  				to: { opacity: '1' }
-  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -161,9 +136,7 @@ module.exports = {
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'lijan-rise': 'lijan-rise var(--dur-enter) var(--ease-sovereign) both',
-  			'lijan-fade': 'lijan-fade var(--dur-base) var(--ease-sovereign) both'
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
   	}
   },

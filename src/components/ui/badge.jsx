@@ -15,8 +15,6 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow-elevation-1 hover:bg-destructive/90",
         outline: "text-foreground",
-        /* Ceremonial emphasis — reserved for a ratified / sealed state. */
-        gold: "border-transparent bg-accent/15 text-gold-ink dark:text-gold",
       },
     },
     defaultVariants: {
