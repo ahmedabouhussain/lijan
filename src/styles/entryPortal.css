@@ -193,12 +193,20 @@
   padding: 0;
   display: flex;
   align-items: stretch;
-  border: 1px solid rgba(78, 67, 58, 0.11);
+  border: 1px solid rgba(226, 197, 142, 0.32);
   border-radius: 18px;
   width: 100%;
   max-width: 900px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 12px 32px rgba(48, 38, 34, 0.055);
+  /* Hajar Wahid glass on the sovereign field: a translucent pane the marble reads through,
+     held by a gold hairline and one specular highlight — and it drifts, three pixels over
+     nine seconds, exactly as every card inside the platform does. */
+  background: rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  backdrop-filter: blur(16px) saturate(130%);
+  box-shadow:
+    0 18px 46px rgba(18, 5, 11, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  animation: ep-levitate 9s var(--ease-sovereign, cubic-bezier(0.32, 0.72, 0, 1)) infinite;
 }
 .ep .ep-pl li {
   flex: 1;
@@ -209,20 +217,20 @@
   padding: 23px 12px;
   font-size: 17px;
   font-weight: 700;
-  color: #373338;
+  color: #f7eef0;
   position: relative;
 }
 .ep .ep-pl li + li {
-  border-inline-start: 1px solid rgba(78, 67, 58, 0.11);
+  border-inline-start: 1px solid rgba(226, 197, 142, 0.22);
 }
 .ep .ep-pl svg {
   width: 17px;
   height: 17px;
   flex: none;
-  background: #f3e9e7;
+  background: rgba(227, 192, 122, 0.18);
   border-radius: 50%;
   padding: 3px;
-  stroke: #c8a24a;
+  stroke: #e8c684;
   stroke-width: 2.5;
 }
 
@@ -233,11 +241,26 @@
   width: 100%;
   max-width: 760px;
   display: flex;
-  border: 1px solid rgba(75, 49, 48, 0.13);
+  border: 1px solid rgba(226, 197, 142, 0.34);
   border-radius: 16px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 16px 40px rgba(45, 34, 31, 0.11), inset 0 1px 0 #fff;
+  background: rgba(255, 255, 255, 0.11);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+  box-shadow:
+    0 22px 54px rgba(18, 5, 11, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  animation: ep-levitate 9s var(--ease-sovereign, cubic-bezier(0.32, 0.72, 0, 1)) infinite;
+}
+/* Neighbouring plates drift out of phase: the entry breathes, it never pumps as one block. */
+.ep .ep-plate { animation-delay: 1.1s; }
+@keyframes ep-levitate {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ep .ep-pl,
+  .ep .ep-plate { animation: none; }
 }
 .ep .ep-sheen {
   position: absolute;
@@ -267,12 +290,12 @@
   font: inherit;
   font-size: 18px;
   font-weight: 800;
-  color: #5e1833;
+  color: #f7eef0;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .ep .ep-btn + .ep-btn {
-  border-inline-start: 1px solid rgba(75, 49, 48, 0.12);
+  border-inline-start: 1px solid rgba(226, 197, 142, 0.24);
 }
 .ep .ep-btn-p {
   background: #861b3d;
@@ -285,10 +308,10 @@
   background: #5c1029;
 }
 .ep .ep-btn-s:hover {
-  background: rgba(134, 27, 61, 0.07);
+  background: rgba(255, 255, 255, 0.10);
 }
 .ep .ep-btn-s:active {
-  background: rgba(134, 27, 61, 0.13);
+  background: rgba(255, 255, 255, 0.16);
 }
 .ep .ep-btn:focus-visible {
   outline: 2px solid #851b3d;

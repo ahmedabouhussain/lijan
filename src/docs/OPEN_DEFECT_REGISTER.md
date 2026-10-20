@@ -164,10 +164,19 @@ Traced from the Phase 1 brief; recorded as found, not fabricated:
 - **D-A2 — an exploration visitor could never send.** The function demanded a registered account
   before any other check, so a showcase (exploration) session — which holds no platform account —
   was refused, and the whole sandbox branch below it was unreachable.
-  **FIXED:** the principal is resolved first (registered account OR server-verified showcase
-  session), and the conversation is then read through the service role, as the server's own verdict
-  already authorizes it. All binding checks (scope key · context key · committee · organization ·
+  **FIXED (principal):** the principal is resolved first (registered account OR server-verified
+  showcase session). All binding checks (scope key · context key · committee · organization ·
   `authorizeRead`) are unchanged.
+- **D-A4 — an agent conversation may only be driven by its own session (platform constraint).**
+  Measured, not assumed: a service-role read is refused with *"Access denied: conversation belongs
+  to another user"*, a service-role write is refused identically, and a client built from a function
+  request cannot carry an anonymous visitor's `X-Base44-Anonymous-Id` (that header is set only in
+  the browser, and `createClientFromRequest` forwards a closed set that does not include it).
+  A backend function therefore cannot post into any conversation — not even the caller's own.
+  **FIXED (architecture):** `SendAmeenMessage` now does exactly what only the server may do — verify
+  the principal, verify the scope binding, apply the locale contract and record the transition —
+  and returns the prepared turn; the browser session posts it with `addMessage`. One governed path:
+  the text that reaches the agent is the text the server prepared, and nothing is posted without it.
 - **D-A3 — the thread could be bound ahead of the verdict.** The panel opened a conversation before
   the server verified the scope, so `committee_id` stayed null in its metadata while the send
   carried a committee — a `not_found` refusal on a legitimate question.
@@ -177,9 +186,21 @@ Traced from the Phase 1 brief; recorded as found, not fabricated:
   enabled, so every question was refused; the surface now states that the context is unverified and
   offers a retry, and it no longer disappears for a visitor who holds no session (locked state with
   a sign-in path).
-- **Probes (2026-10-19):** unknown conversation → 404 `conversation_not_available` (was a generic
-  500); invalid exploration token → 401 `no_session` (branch previously unreachable); build clean.
-  Browser verification of a signed-in send still pending.
+- **Locale record (closed):** the conversation's own metadata cannot be rewritten (no update helper
+  exists in this SDK), so a locale transition is written to the append-only trail as an
+  `AuditEvent` (`entity_type: AmeenConversation`, `action: update`, `old_value → new_value`,
+  `authority_context: ameen:live|sandbox:locale`). The reply language is governed by the contract at
+  the head of each message, never by a stored field.
+- **Probes (2026-10-20):**
+  - unknown conversation → 404 `conversation_not_available` (was a generic 500);
+  - invalid exploration token → 401 `no_session` (branch previously unreachable);
+  - **registered-account send, end to end:** server returned the prepared turn (392 chars, contract
+    present) → the session posted it → **the agent answered in Arabic (1066 chars)** on committee
+    governance principles;
+  - locale transitions `en → ar` read back from `AuditEvent` for that conversation (append-only).
+  - Build clean. Browser click-through of the composer still pending (Testing Agent).
+  - Artifact: the probe thread `probe-send-path` remains — this platform exposes no conversation
+    delete or update, so it cannot be removed; a clean thread of the same scope supersedes it.
 
 ## Pending Phase 1 investigations (not yet defects)
 - Raw status string audit across `src/pages/committee/ReportCenter.jsx`,

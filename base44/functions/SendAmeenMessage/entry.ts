@@ -91,13 +91,12 @@ export default async function (req) {
       principal = { kind: 'user', user: callerUser };
     }
 
-    // ── The conversation, read through the service role: the principal above is already the
-    //    server's own verdict, and the binding checks below are what authorize THIS read.
-    //    Reading it under the caller's own session is what made an exploration visitor's own
-    //    conversation unreachable. ──
+    // ── The conversation is read AS THE CALLER: a thread belongs to the identity that owns it,
+    //    and no elevated client may read another identity's conversation (service-role read is
+    //    refused by the platform with "belongs to another user"). ──
     let conversation = null;
     try {
-      conversation = await sr.agents.getConversation(body.conversation_id);
+      conversation = await base44.agents.getConversation(body.conversation_id);
     } catch {
       conversation = null;
     }
@@ -122,32 +121,38 @@ export default async function (req) {
       return refuse('no_session', 401);
     }
 
-    // ── The locale is carried by the contract at the head of THIS message, and the recorded
-    //    locale is an audit nicety beside it. The write is attempted only where the client's own
-    //    SDK actually offers it: a missing helper must never cost a message. ──
-    const localeChanged = meta.ui_locale !== language;
-    if (localeChanged && typeof sr.agents.updateConversation === 'function') {
-      const updatedMetadata = {
-        ...meta,
-        ui_locale: language,
-        response_language: language,
-        direction: language === 'ar' ? 'rtl' : 'ltr',
-        locale_history: [
-          ...(Array.isArray(meta.locale_history) ? meta.locale_history : []),
-          { from: meta.ui_locale || null, to: language, at: new Date().toISOString() },
-        ],
-      };
-      await sr.agents.updateConversation(conversation.id, { metadata: updatedMetadata }).catch(() => {});
-      conversation.metadata = updatedMetadata;
+    // ── The locale travels in the contract at the head of THIS message, so the reply is governed
+    //    by the language of the turn, not by a stored field. The conversation's own metadata
+    //    cannot be rewritten through this platform's agent API (no update helper exists), so a
+    //    locale transition is recorded where every other institutional fact is: the append-only
+    //    trail. Nothing about the reply depends on this write, and a failed write never costs a
+    //    message. ──
+    if (meta.ui_locale !== language) {
+      await sr.entities.AuditEvent.create({
+        organization_id: body.organization_id || null,
+        committee_id: body.committee_id || null,
+        actor_user_id: principal.user?.id || null,
+        actor_name: principal.user?.full_name || (principal.kind === 'showcase' ? 'Exploration session' : null),
+        actor_email: principal.user?.email || null,
+        action: 'update',
+        entity_type: 'AmeenConversation',
+        entity_id: conversation.id,
+        entity_title: meta.context_key || meta.scope || null,
+        old_value: meta.ui_locale || null,
+        new_value: language,
+        description: `Ameen reply language: ${meta.ui_locale || 'unrecorded'} → ${language}`,
+        authority_context: `ameen:${principal.kind === 'showcase' ? 'sandbox' : 'live'}:locale`,
+      }).catch(() => {});
     }
 
     const content = buildAmeenLanguageContract(language) + '\n' + question.replace(/\[\[\/?AMEEN-LOCALE\]\]/g, '');
-    try {
-      await sr.agents.addMessage(conversation, { role: 'user', content });
-    } catch {
-      return refuse('engine_unavailable', 503);
-    }
-    return Response.json({ ok: true, language, direction: language === 'ar' ? 'rtl' : 'ltr' });
+    // ── The turn is POSTED BY THE CALLER'S OWN SESSION. A conversation belongs to the identity
+    //    that opened it: the platform refuses a service-role read AND write into it ("belongs to
+    //    another user"), and the client a function builds from the request cannot carry an
+    //    anonymous visitor's identity. So the server does exactly what only the server may do —
+    //    verify the principal and the scope binding, apply the locale contract, record the
+    //    transition — and returns the prepared turn, which the browser posts as itself. ──
+    return Response.json({ ok: true, language, direction: language === 'ar' ? 'rtl' : 'ltr', content });
   } catch (error) {
     return refuse('failed', 500);
   }

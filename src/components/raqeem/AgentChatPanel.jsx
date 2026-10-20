@@ -224,9 +224,19 @@ export default function AgentChatPanel({ variant = "inline", buttonClassName, co
       showcase_token: isDemo ? showcaseToken : null,
     }).catch(() => {});
     try {
-      await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, scope_key: scopeKey, context_key: contextKey, committee_id: committee?.id || null, organization_id: organization?.id || null, showcase_token: isDemo ? showcaseToken : null });
+      const res = await base44.functions.invoke('SendAmeenMessage', { conversation_id: conversation.id, language: lang, question: content, scope_key: scopeKey, context_key: contextKey, committee_id: committee?.id || null, organization_id: organization?.id || null, showcase_token: isDemo ? showcaseToken : null });
+      // The turn the server prepared is posted by THIS session — the conversation belongs to it.
+      const prepared = res?.data?.content;
+      if (!prepared) {
+        const missing = new Error('empty_prepared_turn');
+        missing.code = 'failed';
+        throw missing;
+      }
+      await base44.agents.addMessage(conversation, { role: 'user', content: prepared });
+      const updated = await base44.agents.getConversation(conversation.id);
+      setMessages(updated?.messages || []);
     } catch (error) {
-      const code = error?.response?.data?.code || "";
+      const code = error?.response?.data?.code || error?.code || "";
       setSendError(refusalMessage(code, t));
       // A conversation that no longer belongs to this scope is not a dead end: it is dropped so a
       // fresh, correctly bound one opens — and the question is handed back into the box, not lost.
