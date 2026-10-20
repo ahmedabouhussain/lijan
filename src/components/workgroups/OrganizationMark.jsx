@@ -69,7 +69,7 @@ export default function OrganizationMark({
           // A clean neutral ground with breathing space: the mark keeps its own aspect ratio,
           // is never cropped, stretched or recoloured, and vectors stay vectors.
           "shrink-0 inline-flex items-center justify-center rounded border p-0.5",
-          onDarkEdition ? "bg-neutral-900 border-white/10" : "bg-white border-border/60",
+          onDarkEdition ? "bg-neutral-900 border-white/10" : "bg-card border-border/60",
           BOX[size] || BOX.row,
           className
         )}

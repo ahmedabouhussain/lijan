@@ -56,8 +56,8 @@ const STATUS_COLORS = {
   scheduled: "bg-state-progress-surface text-state-progress-ink",
   effective: "bg-green-600 text-white",
   rejected: "bg-red-100 text-red-700",
-  cancelled: "bg-gray-200 text-gray-600",
-  superseded: "bg-gray-300 text-gray-700",
+  cancelled: "bg-state-neutral-surface text-state-neutral-ink",
+  superseded: "bg-state-neutral-surface text-state-neutral-ink",
 };
 
 export default function CommitteeFormation() {

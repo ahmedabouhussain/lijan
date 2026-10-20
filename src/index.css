@@ -35,7 +35,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 6% 13%;
     --primary: 335 71% 31%;          /* #8A1538 deep maroon */
-    --primary-foreground: 38 27% 97%;
+    --primary-foreground: 0 0% 100%;  /* pure white label on a maroon surface */
     --primary-dark: 335 69% 21%;     /* #5F0F28 darker maroon */
     --secondary: 38 16% 91%;         /* #E7E3DF light gray */
     --secondary-foreground: 210 6% 13%;
@@ -100,13 +100,15 @@
     --arabic-leading-compact: 1.4;
     --arabic-leading-heading: 1.25;
     --font-mono: ui-monospace, SFMono-Regular, Menos, Monaco, Consolas, monospace;
+    /* Navigation is a maroon surface: white foreground only, and its active tint and
+       hairline come from gold transparency — never a lighter maroon laid over maroon. */
     --sidebar-background: 335 69% 21%;  /* maroon sidebar */
     --sidebar-foreground: 38 27% 97%;
     --sidebar-primary: 38 36% 53%;
     --sidebar-primary-foreground: 335 69% 21%;
-    --sidebar-accent: 335 71% 31%;
+    --sidebar-accent: 38 36% 53%;       /* gold overlay (used at low alpha) */
     --sidebar-accent-foreground: 38 27% 97%;
-    --sidebar-border: 335 50% 28%;
+    --sidebar-border: 38 30% 46%;       /* restrained gold hairline */
     --sidebar-ring: 38 36% 53%;
 
     /* ── Semantic state tokens ─────────────────────────────────────────────
@@ -137,12 +139,92 @@
     --chart-5: 152 42% 30%;
   }
 
-  /* The same glass on a dark field: identical roles, values read for maroon-black. */
+  /* ──────────────────────────────────────────────────────────────
+     DARK MODE — the same identity, read by lamplight.
+     The rule this block exists to enforce: MAROON IS NEVER PLACED OVER MAROON.
+       maroon surface  → white foreground
+       white surface   → maroon foreground
+       dark neutral    → white foreground, maroon held back for identity only
+     So the field and every panel is a NEUTRAL charcoal (maroon lives in the hue, not
+     in the fill), maroon is reserved for identity and action with pure white labels,
+     and white stays visibly present as a core identity colour.
+     ────────────────────────────────────────────────────────────── */
   .dark {
-    --glass-surface: hsl(335 30% 13% / 0.66);
-    --glass-surface-strong: hsl(335 30% 11% / 0.88);
-    --glass-border: hsl(335 18% 26% / 0.9);
-    --glass-highlight: hsl(0 0% 100% / 0.08);
+    /* Field and panels — neutral charcoal, never a maroon room */
+    --background: 330 10% 9%;         /* #191417 */
+    --foreground: 36 24% 96%;         /* #F7F4EF */
+    --card: 330 7% 13%;               /* #241F22 elevated neutral panel */
+    --card-foreground: 36 24% 96%;
+    --popover: 330 6% 16%;            /* #2B2629 */
+    --popover-foreground: 36 24% 96%;
+
+    /* Maroon = identity and action only, always carrying a pure white label */
+    --primary: 335 71% 31%;           /* #8A1538 */
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 335 64% 39%;      /* hover / pressed lift, still a white label */
+
+    --secondary: 330 6% 19%;          /* neutral control surface */
+    --secondary-foreground: 36 24% 96%;
+    --muted: 330 6% 17%;
+    --muted-foreground: 34 9% 71%;    /* warm gray — 7:1 against --card */
+
+    /* Restrained gold: emphasis and focus only, never a plate for body text */
+    --accent: 38 42% 60%;             /* #C9A469 */
+    --accent-foreground: 330 12% 9%;
+    --gold: 38 42% 60%;
+
+    --destructive: 0 56% 46%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 330 6% 25%;             /* crisp neutral hairline */
+    --input: 330 6% 25%;
+    --ring: 38 42% 60%;               /* gold ring: legible on charcoal AND on maroon */
+
+    /* Navigation keeps its maroon identity — white foreground content only */
+    --sidebar-background: 335 60% 17%;
+    --sidebar-foreground: 36 24% 96%;
+    --sidebar-primary: 38 42% 60%;
+    --sidebar-primary-foreground: 335 60% 17%;
+    --sidebar-accent: 0 0% 100%;      /* white overlay, never maroon-on-maroon */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 38 30% 46%;     /* restrained gold hairline */
+    --sidebar-ring: 38 42% 60%;
+
+    /* Semantic state plates — quiet surfaces that hold light ink */
+    --state-neutral-surface: 330 6% 20%;
+    --state-neutral-ink: 34 9% 82%;
+    --state-info-surface: 330 6% 20%;
+    --state-info-ink: 34 9% 84%;
+    --state-progress-surface: 30 26% 19%;
+    --state-progress-ink: 38 58% 76%;
+    --state-success-surface: 152 18% 17%;
+    --state-success-ink: 152 42% 74%;
+    --state-warning-surface: 38 34% 17%;
+    --state-warning-ink: 38 70% 76%;
+    --state-danger-surface: 0 28% 19%;
+    --state-danger-ink: 0 64% 80%;
+    --state-ceremonial-surface: 335 30% 20%;
+    --state-ceremonial-ink: 335 45% 84%;
+
+    /* Chart series — the same institutional sequence, lifted for a dark field */
+    --chart-1: 335 62% 55%;
+    --chart-2: 38 42% 60%;
+    --chart-3: 36 24% 90%;
+    --chart-4: 34 9% 62%;
+    --chart-5: 152 34% 56%;
+
+    /* Glass — navigation, overlays and floating context only, and neutral so it can
+       never become a maroon pane over a maroon field. */
+    --glass-surface: hsl(330 7% 12% / 0.72);
+    --glass-surface-strong: hsl(330 7% 14% / 0.92);
+    --glass-border: hsl(0 0% 100% / 0.12);
+    --glass-highlight: hsl(0 0% 100% / 0.07);
+
+    /* Depth on a dark field: deeper shadow, with a white rim rather than a maroon one */
+    --elevation-1: 0 1px 1px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.28);
+    --elevation-2: 0 1px 2px rgba(0, 0, 0, 0.42), 0 10px 24px rgba(0, 0, 0, 0.34);
+    --elevation-3: 0 2px 6px rgba(0, 0, 0, 0.44), 0 18px 42px rgba(0, 0, 0, 0.42);
+    --elevation-overlay: 0 32px 80px rgba(0, 0, 0, 0.60);
   }
 }
 
@@ -223,58 +305,57 @@
 }
 
 @layer components {
-  /* ── The glass card — one material, one motion, every page ─────────────────
-     The pane: translucent surface + hairline edge + a single specular highlight on the
-     top rim. The drift: a slow three-pixel levitation on `translate`, so it never
-     collides with the transform a hover lift uses. Neighbouring cards drift out of
-     phase, so a grid breathes instead of pumping in unison. */
+  /* ── The surface card — one material for content, on every page ─────────────
+     An opaque elevated panel on a hairline edge, lifted by the elevation family.
+     Glass is deliberately NOT used here: it is reserved for navigation, overlays and
+     floating context (.raqeem-pane), so a page reads as structured surfaces instead of
+     a field of translucent boxes — and never as a maroon pane on a maroon field.
+     Nothing drifts on its own: motion is intent-driven only. */
   .raqeem-card {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign),
+      background-color var(--transition-sovereign), border-color var(--transition-sovereign);
+  }
+
+  /* ── The glass pane — navigation, overlays and floating context ONLY ──────── */
+  .raqeem-pane {
     background-color: var(--glass-surface);
     border: 1px solid var(--glass-border);
     border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow), inset 0 1px 0 var(--glass-highlight);
+    box-shadow: var(--elevation-2), inset 0 1px 0 var(--glass-highlight);
     -webkit-backdrop-filter: blur(var(--glass-blur));
     backdrop-filter: blur(var(--glass-blur));
-    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign), background-color var(--transition-sovereign);
-    animation: sovereign-levitate var(--levitate-duration) var(--ease-sovereign) var(--levitate-delay) infinite;
   }
 
-  /* A card the pointer answers: the material thickens, the surface rises, the drift stops. */
+  /* Depth answers the pointer; it is never animated in the background. */
   .raqeem-card:hover {
-    background-color: var(--glass-surface-strong);
-    box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--glass-highlight);
-    transform: translateY(calc(-1 * var(--levitate-y)));
-    animation: none;
+    box-shadow: var(--card-shadow-hover);
   }
 
-  /* An interactive card is lifted by intent, never by ambience. */
+  /* An interactive card is lifted by intent: two pixels, then released on press. */
   .raqeem-card-interactive {
-    background-color: var(--glass-surface);
-    border: 1px solid var(--glass-border);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow), inset 0 1px 0 var(--glass-highlight);
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--card-shadow);
     cursor: pointer;
-    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign), background-color var(--transition-sovereign);
+    transition: box-shadow var(--transition-sovereign), transform var(--transition-sovereign),
+      background-color var(--transition-sovereign), border-color var(--transition-sovereign);
   }
 
   .raqeem-card-interactive:hover {
-    background-color: var(--glass-surface-strong);
-    box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--glass-highlight);
-    transform: translateY(calc(-1 * var(--levitate-y) - 1px));
+    border-color: hsl(var(--primary) / 0.28);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
   }
 
-  /* Inside an overlay the surface is already floating — it never drifts there. */
-  [role="dialog"] .raqeem-card,
-  [data-radix-popper-content-wrapper] .raqeem-card,
-  .raqeem-still .raqeem-card {
-    animation: none;
+  .raqeem-card-interactive:active {
+    transform: translateY(0);
+    box-shadow: var(--card-shadow);
   }
-
-  /* Out-of-phase neighbours — an even grid never pulses as one block. */
-  .raqeem-card:nth-of-type(2n) { --levitate-delay: var(--levitate-stagger); }
-  .raqeem-card:nth-of-type(3n) { --levitate-delay: calc(var(--levitate-stagger) * 2); }
 
   .raqeem-section-title {
     @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground;
@@ -409,7 +490,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      hsl(var(--background) / 60%),
+      hsl(var(--foreground) / 7%),
       transparent
     );
     animation: sovereign-shimmer-slide 1.6s ease-in-out infinite;

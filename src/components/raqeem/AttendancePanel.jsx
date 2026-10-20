@@ -101,7 +101,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
             {quorumMet ? t("اكتمل النصاب", "Quorum met") : t("النصاب غير مكتمل", "Quorum not met")}
           </span>
         </div>
-        <div className="mt-2 h-2 bg-white/50 rounded-full overflow-hidden">
+        <div className="mt-2 h-2 bg-secondary rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all", quorumMet ? "bg-emerald-500" : "bg-amber-500")}
             style={{ width: `${Math.min(100, (presentCount / quorumRequired) * 100)}%` }}
@@ -135,7 +135,7 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
                           onClick={() => setStatus(m, key)}
                           className={cn(
                             "inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] border transition-colors",
-                            isActive ? cfg.activeClass : "bg-white border-border text-muted-foreground hover:bg-secondary"
+                            isActive ? cfg.activeClass : "bg-card border-border text-muted-foreground hover:bg-secondary"
                           )}
                         >
                           <Icon className="w-3 h-3" />

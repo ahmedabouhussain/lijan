@@ -44,7 +44,7 @@ export default function OrgPortal() {
                 src={org.logo_url}
                 alt={L.name(org)}
                 fittingType="fit"
-                className="h-12 w-20 shrink-0 rounded bg-white"
+                className="h-12 w-20 shrink-0 rounded bg-card"
               />
             ) : (
               <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ background: org.branding_primary_color || "hsl(var(--primary))" }}>

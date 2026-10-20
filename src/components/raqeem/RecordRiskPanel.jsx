@@ -131,7 +131,7 @@ export default function RecordRiskPanel({ decisionId }) {
                       <li key={i} className={cn("rounded-md border px-3 py-2.5", tone)}>
                         <div className="flex flex-wrap items-center gap-1.5">
                           <span className="text-sm font-semibold">{lang === "ar" ? cat.ar : cat.en}</span>
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/40">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-background/60">
                             {t(f.severity === "high" ? "عالية" : f.severity === "medium" ? "متوسطة" : "منخفضة",
                               f.severity === "high" ? "High" : f.severity === "medium" ? "Medium" : "Low")}
                           </span>

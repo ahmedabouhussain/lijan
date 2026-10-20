@@ -26,14 +26,21 @@
     <title>لِجان™ | LIJAN™ — National Councils & Committees OS</title>
   </head>
   <body>
-    <!-- Language engine: apply the stored language before first paint so a page
-         never flashes the other language or direction. -->
+    <!-- Language and theme engines: apply the stored language and theme before first
+         paint so a page never flashes the other language, direction or theme. -->
     <script>
       (function () {
         try {
           var l = localStorage.getItem("raqeem_lang") || "ar";
           document.documentElement.lang = l;
           document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+        } catch (e) {}
+        try {
+          var dark = localStorage.getItem("lijan_theme") === "dark";
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", dark ? "#191417" : "#8A1538");
         } catch (e) {}
       })();
     </script>

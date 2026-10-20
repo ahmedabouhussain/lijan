@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/LanguageContext";
 import AgentChatPanel from "@/components/raqeem/AgentChatPanel";
 import NotificationCenter from "@/components/raqeem/NotificationCenter";
+import ThemeToggle from "@/components/raqeem/ThemeToggle";
 import PoweredByConnection from "@/components/brand/PoweredByConnection";
 
 // The bottom region, fixed in place under the scrolling navigation:
@@ -74,7 +75,10 @@ export default function SidebarBottom({ account = null, collapsed = false, onNav
             {lang === "ar" ? "English" : "العربية"}
           </button>
         )}
-        <NotificationCenter />
+        <div className={cn("flex items-center", collapsed ? "flex-col gap-2" : "gap-1")}>
+          <ThemeToggle variant="nav" collapsed={collapsed} />
+          <NotificationCenter />
+        </div>
       </div>
 
       {!collapsed && (

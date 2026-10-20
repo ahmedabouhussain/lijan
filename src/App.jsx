@@ -109,7 +109,7 @@ const DocumentationHub = lazy(() => import('@/pages/committee/DocumentationHub')
 // Route-level code splitting: a lazily loaded surface shows this while its chunk arrives.
 const RouteLoadingFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin"></div>
   </div>
 );
 
@@ -122,7 +122,7 @@ const AuthenticatedApp = () => {
   if (!isDemoMode && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin"></div>
       </div>
     );
   }
