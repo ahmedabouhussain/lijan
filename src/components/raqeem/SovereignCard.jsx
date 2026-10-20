@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { L } from "@/lib/l10n";
 import { ACTION_STATUS } from "@/lib/raqeemUtils";
 import { cn } from "@/lib/utils";
@@ -90,12 +91,14 @@ export function TaskCard({ icon: Icon, title, reason, committee, deadline, prior
           {actionLabel && (
             <div className="pt-2">
               {to ? (
-                <a
-                  href={to}
+                /* In-app navigation, never a browser load: a plain <a href> would reload the whole
+                   platform and drop the reader out of the session. */
+                <Link
+                  to={to}
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors touch-target sovereign-focus"
                 >
                   {actionLabel}
-                </a>
+                </Link>
               ) : (
                 <button
                   onClick={onAction}
