@@ -40,7 +40,7 @@ export default function AppSidebar({
     >
       {/* 1 — Platform header: the official mark, the platform name in the active
           language only, and the collapse control. */}
-      <div className="shrink-0 border-b border-sidebar-border">
+      <div className="shrink-0 lijan-hairline">
         <div className={cn("flex items-center py-3.5", collapsed ? "flex-col gap-2 px-3" : "gap-2.5 px-3")}>
           <Link
             to="/"

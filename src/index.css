@@ -25,9 +25,17 @@
   src: url('/fonts/NotoNaskhArabic/NotoNaskhArabic-Bold.ttf') format('truetype');
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LIJAN DESIGN SYSTEM — token layer
+   One vocabulary, two modes. Every surface, border, shadow, radius, rhythm and
+   motion curve in the platform resolves from the tokens declared here; no page
+   authors its own colour, elevation or duration. The light field is warm white,
+   the dark field is deep maroon-black, and both are read by the SAME class names.
+   ══════════════════════════════════════════════════════════════════════════ */
+
 @layer base {
   :root {
-    /* RAQEEM Institutional Palette — Qatar */
+    /* ── Institutional palette — Qatar ───────────────────────────────────── */
     --background: 38 27% 97%;        /* #FAF8F5 warm white */
     --foreground: 210 6% 13%;        /* #1F2023 charcoal */
     --card: 0 0% 100%;               /* #FFFFFF */
@@ -49,10 +57,24 @@
     --input: 38 12% 88%;
     --ring: 335 71% 31%;
     --gold: 38 36% 53%;
+    --gold-ink: 32 45% 32%;          /* gold text that still passes contrast on light */
+    /* The scrim behind dialogs and drawers — never a foreground tint, so it reads the
+       same in both modes. */
+    --scrim: 335 32% 10% / 0.52;
+
+    /* ── Radii — three steps only: control, card, pill ───────────────────── */
     --radius: 0.5rem;
-    --card-radius: 18px;
+    --radius-xs: 6px;
     --radius-control: 10px;
-    /* ── Elevation — one family for every raised surface ─────────────────────────
+    --card-radius: 18px;
+    --radius-pill: 999px;
+
+    /* ── Spacing rhythm — the only gaps the platform uses ────────────────── */
+    --space-gutter: 1rem;            /* inside a surface */
+    --space-stack: 0.75rem;          /* between items in a group */
+    --space-section: 1.5rem;         /* between sections on a page */
+
+    /* ── Elevation — one family for every raised surface ────────────────────
        Soft, layered and maroon-tinted: a resting surface is barely lifted, and a
        hovered, opened or overlaid surface rises by exactly one step. */
     --elevation-1: 0 1px 1px rgba(46, 12, 26, 0.04), 0 2px 6px rgba(46, 12, 26, 0.06);
@@ -61,7 +83,8 @@
     --elevation-overlay: 0 32px 80px rgba(31, 12, 20, 0.26);
     --card-shadow: var(--elevation-1);
     --card-shadow-hover: var(--elevation-3);
-    /* ── Hajar Wahid glass ──────────────────────────────────────────────────────
+
+    /* ── Hajar Wahid glass ──────────────────────────────────────────────────
        ONE material for every card, on every page: a translucent pane the field shows
        through, held by a hairline edge and a single specular highlight along the top
        rim. The values are COMPLETE colours because their consumers are Tailwind
@@ -77,13 +100,22 @@
     --levitate-duration: 9s;
     --levitate-delay: 0s;
     --levitate-stagger: 1.1s;
-    /* ── Motion — one easing, three durations, nothing else ───────────────────── */
+
+    /* ── The field every page sits on ──────────────────────────────────────
+       Two very low-intensity institutional washes (maroon at the leading corner,
+       gold at the trailing one) give the page depth without competing with content. */
+    --field-wash-1: hsl(335 71% 31% / 0.045);
+    --field-wash-2: hsl(38 36% 53% / 0.05);
+
+    /* ── Motion — one easing, four durations, nothing else ───────────────── */
     --ease-sovereign: cubic-bezier(0.32, 0.72, 0, 1);
     --dur-fast: 140ms;
     --dur-base: 220ms;
     --dur-slow: 320ms;
+    --dur-enter: 420ms;
     --transition-sovereign: 220ms cubic-bezier(0.32, 0.72, 0, 1);
-    /* ── Typographic rhythm ─────────────────────────────────────────────────────
+
+    /* ── Typographic rhythm ────────────────────────────────────────────────
        Leading and Latin tracking only. Arabic letter-spacing stays 0 everywhere. */
     --leading-display: 1.1;
     --leading-heading: 1.25;
@@ -135,14 +167,84 @@
     --chart-3: 335 69% 21%;
     --chart-4: 210 4% 45%;
     --chart-5: 152 42% 30%;
+
+    color-scheme: light;
   }
 
-  /* The same glass on a dark field: identical roles, values read for maroon-black. */
+  /* ══ DARK MODE ═══════════════════════════════════════════════════════════
+     The same roles, re-read for a deep maroon-black field. Nothing is inverted
+     mechanically: the maroon rises in lightness so it stays legible as an action
+     colour, the gold becomes the leading accent, and every state plate keeps the
+     quiet institutional character it has in light mode. */
   .dark {
+    --background: 335 24% 8%;
+    --foreground: 38 20% 93%;
+    --card: 335 20% 11%;
+    --card-foreground: 38 20% 93%;
+    --popover: 335 20% 10%;
+    --popover-foreground: 38 20% 93%;
+    --primary: 339 45% 47%;
+    --primary-foreground: 38 30% 97%;
+    --primary-dark: 339 42% 39%;
+    --secondary: 335 14% 17%;
+    --secondary-foreground: 38 18% 92%;
+    --muted: 335 12% 16%;
+    --muted-foreground: 38 10% 66%;
+    --accent: 38 42% 62%;
+    --accent-foreground: 335 30% 10%;
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 335 12% 22%;
+    --input: 335 12% 22%;
+    --ring: 38 42% 62%;
+    --gold: 38 42% 62%;
+    --gold-ink: 38 45% 72%;
+    --scrim: 335 40% 3% / 0.68;
+
     --glass-surface: hsl(335 30% 13% / 0.66);
     --glass-surface-strong: hsl(335 30% 11% / 0.88);
     --glass-border: hsl(335 18% 26% / 0.9);
     --glass-highlight: hsl(0 0% 100% / 0.08);
+
+    --elevation-1: 0 1px 1px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.32);
+    --elevation-2: 0 1px 2px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.38);
+    --elevation-3: 0 2px 6px rgba(0, 0, 0, 0.36), 0 16px 38px rgba(0, 0, 0, 0.44);
+    --elevation-overlay: 0 32px 80px rgba(0, 0, 0, 0.62);
+
+    --field-wash-1: hsl(339 48% 52% / 0.10);
+    --field-wash-2: hsl(38 42% 62% / 0.06);
+
+    --sidebar-background: 335 30% 12%;
+    --sidebar-foreground: 38 22% 94%;
+    --sidebar-primary: 38 42% 62%;
+    --sidebar-primary-foreground: 335 30% 10%;
+    --sidebar-accent: 335 26% 18%;
+    --sidebar-accent-foreground: 38 22% 94%;
+    --sidebar-border: 335 16% 24%;
+    --sidebar-ring: 38 42% 62%;
+
+    --state-neutral-surface: 335 10% 17%;
+    --state-neutral-ink: 38 12% 80%;
+    --state-info-surface: 335 10% 18%;
+    --state-info-ink: 38 12% 82%;
+    --state-progress-surface: 38 20% 20%;
+    --state-progress-ink: 38 44% 72%;
+    --state-success-surface: 152 18% 16%;
+    --state-success-ink: 152 32% 68%;
+    --state-warning-surface: 32 24% 19%;
+    --state-warning-ink: 38 55% 70%;
+    --state-danger-surface: 0 30% 20%;
+    --state-danger-ink: 0 52% 74%;
+    --state-ceremonial-surface: 335 26% 20%;
+    --state-ceremonial-ink: 38 26% 80%;
+
+    --chart-1: 339 48% 58%;
+    --chart-2: 38 42% 62%;
+    --chart-3: 335 40% 42%;
+    --chart-4: 38 10% 62%;
+    --chart-5: 152 32% 52%;
+
+    color-scheme: dark;
   }
 }
 
@@ -154,6 +256,11 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
     line-height: var(--leading-body);
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
   }
 
   /* Latin display type carries its hierarchy in size, weight and tracking. Scoped to
@@ -223,6 +330,36 @@
 }
 
 @layer components {
+  /* ── The field — what a page sits on ──────────────────────────────────────
+     A warm (or deep) field with two institutional washes at the corners. Applied once
+     per shell, never per card, so depth never stacks into noise. */
+  .lijan-field {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(80% 55% at 100% 0%, var(--field-wash-1), transparent 62%),
+      radial-gradient(65% 50% at 0% 4%, var(--field-wash-2), transparent 58%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  /* ── The surface — static glass, the material cards and panels are cut from ── */
+  .lijan-surface {
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--elevation-1), inset 0 1px 0 var(--glass-highlight);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+  }
+
+  /* A surface that must stay flat — dense tables, nested panels, skeletons. */
+  .lijan-surface-flat {
+    background-color: var(--glass-surface-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--elevation-1);
+  }
+
   /* ── The glass card — one material, one motion, every page ─────────────────
      The pane: translucent surface + hairline edge + a single specular highlight on the
      top rim. The drift: a slow three-pixel levitation on `translate`, so it never
@@ -340,6 +477,89 @@
 }
 
 @layer utilities {
+  /* ── Hairline rule ────────────────────────────────────────────────────────
+     One gold-to-transparent hairline for section separators, mirroring correctly in
+     RTL. It marks a boundary without drawing a box. */
+  .lijan-hairline {
+    position: relative;
+  }
+  .lijan-hairline::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      hsl(var(--accent) / 0.45),
+      hsl(var(--accent) / 0.06) 45%,
+      transparent 78%
+    );
+  }
+
+  /* ── Restrained institutional glow ────────────────────────────────────────
+     A single, very low-intensity maroon/gold wash anchored to the top corners. It
+     sits behind the content, never on top of it, and never moves. */
+  .lijan-glow {
+    position: relative;
+    isolation: isolate;
+  }
+  .lijan-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(58% 52% at 10% 0%, hsl(var(--primary) / 0.09), transparent 68%),
+      radial-gradient(42% 42% at 90% 6%, hsl(var(--accent) / 0.09), transparent 70%);
+  }
+
+  /* ── Specular sweep ───────────────────────────────────────────────────────
+     The one decorative hover: a single soft highlight crossing an interactive plate in
+     900ms, direction-aware, once per hover. */
+  .lijan-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .lijan-sheen::after {
+    content: "";
+    position: absolute;
+    inset-block: -1px;
+    inset-inline-start: -55%;
+    width: 42%;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.16), transparent);
+  }
+  .lijan-sheen:hover::after {
+    opacity: 1;
+    animation: lijan-sweep 900ms var(--ease-sovereign);
+  }
+
+  /* ── Route entrance ───────────────────────────────────────────────────────
+     One rise-and-settle when a surface first paints. Never on a list item, never keyed
+     to data, so nothing re-animates when state changes. */
+  .lijan-enter {
+    animation: lijan-rise var(--dur-enter) var(--ease-sovereign) both;
+  }
+
+  /* The one scrolling region of the content area — a hairline bar, token coloured. */
+  .lijan-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--foreground) / 14%) transparent;
+    overscroll-behavior: contain;
+  }
+  .lijan-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .lijan-scroll::-webkit-scrollbar-track { background: transparent; }
+  .lijan-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--foreground) / 12%);
+    border-radius: var(--radius-pill);
+  }
+  .lijan-scroll:hover::-webkit-scrollbar-thumb { background: hsl(var(--foreground) / 22%); }
+
   /* ── Native device chrome ──
      `#root` absorbs the insets for every page; these helpers are for the chrome that
      escapes the root box (fixed bars, drawers) so nothing hides behind a system bar. */
@@ -361,20 +581,6 @@
   /* Metrics, KPIs and figures stay Latin digits with tabular figures */
   .arabic-figures { font-family: var(--font-arabic); font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
   .arabic-prose { line-height: var(--arabic-leading-body); letter-spacing: 0; }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-    /* The glass stays; only the drifting stops. */
-    .raqeem-card {
-      animation: none !important;
-      translate: none;
-    }
-  }
 
   .touch-target {
     min-height: 44px;
@@ -428,5 +634,38 @@
   @keyframes sovereign-shimmer-slide-rtl {
     0% { transform: translateX(100%); }
     100% { transform: translateX(-100%); }
+  }
+
+  /* The two system entrances — a surface rises six pixels and settles. */
+  @keyframes lijan-rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes lijan-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes lijan-sweep {
+    from { inset-inline-start: -55%; }
+    to { inset-inline-start: 120%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    /* The glass stays; only the drifting and the sweep stop. */
+    .raqeem-card {
+      animation: none !important;
+      translate: none;
+    }
+    .lijan-sheen::after,
+    .lijan-enter,
+    .lijan-glow::before {
+      animation: none !important;
+    }
   }
 }

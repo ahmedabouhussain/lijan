@@ -17,6 +17,13 @@ const buttonVariants = cva(
           "border border-input bg-card text-foreground shadow-elevation-1 hover:bg-secondary",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        /* Ceremonial emphasis — the gold plate, reserved for a single primary act on a
+           surface, never for a row of actions. */
+        gold:
+          "bg-gold text-accent-foreground shadow-elevation-1 hover:bg-gold/90",
+        /* An action resting on a glass card. */
+        glass:
+          "border border-glass-border bg-glass text-foreground shadow-elevation-1 hover:bg-glass-strong",
         ghost: "hover:bg-secondary hover:text-secondary-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
