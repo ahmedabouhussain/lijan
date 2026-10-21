@@ -109,7 +109,7 @@ export default function MemoryReviewPanel({ record, canApprove, canReview, onRev
                   size="sm"
                   disabled={submitting}
                   onClick={() => handleAction("approve")}
-                  className="min-h-[40px] bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="min-h-[40px] bg-primary hover:bg-primary-dark text-primary-foreground"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                   {t("اعتماد", "Approve")}

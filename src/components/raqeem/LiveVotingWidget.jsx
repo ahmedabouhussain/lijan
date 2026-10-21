@@ -62,7 +62,7 @@ export default function LiveVotingWidget({ decision, canCallVote, canCastVote, o
         <div className="flex h-2 rounded-full overflow-hidden mb-3">
           <div className="bg-emerald-500" style={{ width: `${((decision.vote_for || 0) / total) * 100}%` }} />
           <div className="bg-red-500" style={{ width: `${((decision.vote_against || 0) / total) * 100}%` }} />
-          <div className="bg-gray-400" style={{ width: `${((decision.vote_abstain || 0) / total) * 100}%` }} />
+          <div className="bg-state-neutral-ink" style={{ width: `${((decision.vote_abstain || 0) / total) * 100}%` }} />
         </div>
       )}
 

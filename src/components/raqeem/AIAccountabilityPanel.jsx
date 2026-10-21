@@ -251,7 +251,7 @@ function IncidentsSection({ incidents, lang, t }) {
             {t("مفتوحة", "Open")}: {open}
           </span>
           {critical > 0 && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-state-danger-ink text-white animate-pulse">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-state-danger-ink text-state-danger-surface animate-pulse">
               {t("حرج", "Critical")}: {critical}
             </span>
           )}

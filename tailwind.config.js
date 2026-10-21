@@ -77,6 +77,93 @@ module.exports = {
   				danger: { surface: 'hsl(var(--state-danger-surface))', ink: 'hsl(var(--state-danger-ink))' },
   				ceremonial: { surface: 'hsl(var(--state-ceremonial-surface))', ink: 'hsl(var(--state-ceremonial-ink))' }
   			},
+  			/* ── Palette bridge (compatibility, not identity) ───────────────────────────
+  			   Legacy surfaces were written with Tailwind's default palette names for
+  			   status. Those names now RESOLVE to the institutional state tokens, so every
+  			   remaining `text-amber-700` / `bg-emerald-50` / `border-red-200` follows the
+  			   state palette in BOTH themes instead of a fixed light-only hue: emerald and
+  			   green = success, amber and orange = warning, red and rose = danger. Shades
+  			   50/100 read as the quiet surface, 500–900 as the ink, 200–400 as hairlines.
+  			   New work must use the `state-*` classes directly — these aliases exist only
+  			   to keep older surfaces honest, and are documented as deprecated. */
+  			emerald: {
+  				50: 'hsl(var(--state-success-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-success-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-success-ink) / 0.28)',
+  				300: 'hsl(var(--state-success-ink) / 0.45)',
+  				400: 'hsl(var(--state-success-ink) / 0.65)',
+  				500: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-success-ink) / <alpha-value>)'
+  			},
+  			green: {
+  				50: 'hsl(var(--state-success-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-success-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-success-ink) / 0.28)',
+  				300: 'hsl(var(--state-success-ink) / 0.45)',
+  				400: 'hsl(var(--state-success-ink) / 0.65)',
+  				500: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-success-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-success-ink) / <alpha-value>)'
+  			},
+  			amber: {
+  				50: 'hsl(var(--state-warning-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-warning-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-warning-ink) / 0.28)',
+  				300: 'hsl(var(--state-warning-ink) / 0.45)',
+  				400: 'hsl(var(--state-warning-ink) / 0.65)',
+  				500: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-warning-ink) / <alpha-value>)'
+  			},
+  			orange: {
+  				50: 'hsl(var(--state-warning-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-warning-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-warning-ink) / 0.28)',
+  				300: 'hsl(var(--state-warning-ink) / 0.45)',
+  				400: 'hsl(var(--state-warning-ink) / 0.65)',
+  				500: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-warning-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-warning-ink) / <alpha-value>)'
+  			},
+  			red: {
+  				50: 'hsl(var(--state-danger-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-danger-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-danger-ink) / 0.28)',
+  				300: 'hsl(var(--state-danger-ink) / 0.45)',
+  				400: 'hsl(var(--state-danger-ink) / 0.65)',
+  				500: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-danger-ink) / <alpha-value>)'
+  			},
+  			rose: {
+  				50: 'hsl(var(--state-danger-surface) / <alpha-value>)',
+  				100: 'hsl(var(--state-danger-surface) / <alpha-value>)',
+  				200: 'hsl(var(--state-danger-ink) / 0.28)',
+  				300: 'hsl(var(--state-danger-ink) / 0.45)',
+  				400: 'hsl(var(--state-danger-ink) / 0.65)',
+  				500: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				600: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				700: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				800: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				900: 'hsl(var(--state-danger-ink) / <alpha-value>)',
+  				950: 'hsl(var(--state-danger-ink) / <alpha-value>)'
+  			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
