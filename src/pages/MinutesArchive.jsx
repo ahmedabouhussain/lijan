@@ -101,7 +101,7 @@ export default function MinutesArchive() {
               <Archive className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">{L.pair("سجل المداولات", "Deliberations Archive")}</h1>
+              <h1 className="ui-title text-foreground">{L.pair("سجل المداولات", "Deliberations Archive")}</h1>
               <p className="text-sm text-muted-foreground">{L.pair("أرشيف نقاشات اللجان ومداولاتها المرتبطة بالقرارات", "An archive of committee discussions and deliberations linked to decisions")}</p>
             </div>
           </div>

@@ -84,7 +84,7 @@ export default function PublicAIRegister() {
               <Bot className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h1 className="ui-title text-foreground">
                 {t("السجل الوطني للذكاء الاصطناعي", "National AI Register")}
               </h1>
               <p className="text-xs text-muted-foreground">

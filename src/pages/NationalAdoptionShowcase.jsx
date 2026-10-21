@@ -51,7 +51,7 @@ export default function NationalAdoptionShowcase() {
       <DemoBanner />
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <h1 className="text-xl font-bold">عرض تبنّي اللجان الوطنية والأثر</h1>
+          <h1 className="ui-title">عرض تبنّي اللجان الوطنية والأثر</h1>
           <p className="text-xs text-muted-foreground">National Committee Adoption & Impact Showcase</p>
         </div>
 

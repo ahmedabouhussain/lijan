@@ -111,7 +111,7 @@ export default function LegislativeFileDetail() {
               <span className="text-xs text-muted-foreground">{t("ملف تشريعي", "Legislative File")}</span>
               <span className="text-sm font-mono font-bold text-foreground">{file.reference_number}</span>
             </div>
-            <h1 className="text-lg sm:text-xl font-bold text-foreground leading-snug">
+            <h1 className="ui-title text-foreground leading-snug">
               {isAr ? file.subject_title_ar : (file.subject_title_en || file.subject_title_ar)}
             </h1>
             {file.subject_summary && (

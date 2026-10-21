@@ -125,7 +125,7 @@ export default function DocumentDetail() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-foreground"><LocalizedField entity="Document" record={document} base="title" /></h1>
+          <h1 className="ui-title text-foreground"><LocalizedField entity="Document" record={document} base="title" /></h1>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <StatusBadge
               label={t(DOCUMENT_STATUS[document.status]?.ar || document.status, DOCUMENT_STATUS[document.status]?.en || document.status)}

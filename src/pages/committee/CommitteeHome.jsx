@@ -85,7 +85,7 @@ export default function CommitteeHome() {
           </Link>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground tracking-tight">{L.name(committee)}</h1>
+              <h1 className="ui-title text-foreground">{L.name(committee)}</h1>
               {committee.name_en && committee.name_ar && (
                 <p className="text-xs text-muted-foreground mt-0.5">{committee.name_en}</p>
               )}

@@ -201,7 +201,7 @@ export default function MeetingDetail() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-foreground">{L.title(meeting)}</h1>
+            <h1 className="ui-title text-foreground">{L.title(meeting)}</h1>
             <StatusBadge {...L.status(MEETING_STATUS, status, status)} size="md" />
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">

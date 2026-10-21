@@ -122,7 +122,7 @@ export default function PublicCommittees() {
               <Globe className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h1 className="ui-title text-foreground">
                 {isAr ? "السجل العمومي للجان" : "Public Committees Registry"}
               </h1>
               <p className="text-xs text-muted-foreground">

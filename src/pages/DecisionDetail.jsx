@@ -72,7 +72,7 @@ export default function DecisionDetail() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2 flex-wrap">
-          <h1 className="text-2xl font-bold text-foreground"><LocalizedField entity="Decision" record={decision} base="title" /></h1>
+          <h1 className="ui-title text-foreground"><LocalizedField entity="Decision" record={decision} base="title" /></h1>
           {decision.decision_number && <span className="text-sm text-muted-foreground font-mono">{decision.decision_number}</span>}
           <ProofChainDrawer entityType="Decision" entityId={decision.id} entityTitle={L.title(decision)} />
         </div>

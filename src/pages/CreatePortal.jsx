@@ -213,7 +213,7 @@ export default function CreatePortal() {
           <div className="w-14 h-14 rounded-lg bg-primary flex items-center justify-center mx-auto">
             <Building2 className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{t("إنشاء بوابة دخول", "Create a Portal")}</h1>
+          <h1 className="ui-title text-foreground">{t("إنشاء بوابة دخول", "Create a Portal")}</h1>
           <p className="text-sm text-muted-foreground">
             Create Entry Portal · ستحصل على دور مالك البوابة
           </p>

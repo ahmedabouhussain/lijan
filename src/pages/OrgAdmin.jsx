@@ -111,7 +111,7 @@ export default function OrgAdmin() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Settings className="w-5 h-5 text-primary" />
-        <h1 className="text-lg font-bold">{t("إدارة المنظمة", "Organization Administration")}</h1>
+        <h1 className="ui-title">{t("إدارة المنظمة", "Organization Administration")}</h1>
       </div>
 
       {/* A refusal is stated where the act was attempted — never left in the browser console. */}

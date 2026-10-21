@@ -52,7 +52,7 @@ export default function OrgPortal() {
               </div>
             )}
             <div>
-              <h1 className="text-lg font-bold text-foreground">{L.name(org)}</h1>
+              <h1 className="ui-title text-foreground">{L.name(org)}</h1>
             </div>
           </div>
           <div className="flex items-center gap-2">

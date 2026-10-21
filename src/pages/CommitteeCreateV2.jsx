@@ -147,7 +147,7 @@ export default function CommitteeCreateV2() {
         <span className="text-foreground">{L.pair("إنشاء لجنة", "Create Committee")}</span>
       </div>
 
-      <h1 className="text-xl font-bold">{L.pair("إنشاء لجنة جديدة", "Create Committee")}</h1>
+      <h1 className="ui-title">{L.pair("إنشاء لجنة جديدة", "Create Committee")}</h1>
 
       {error && <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-sm text-destructive">{error}</div>}
 

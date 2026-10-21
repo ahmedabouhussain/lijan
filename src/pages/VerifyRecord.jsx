@@ -108,7 +108,7 @@ export default function VerifyRecord() {
               <ShieldAlert className="w-8 h-8 text-state-warning-ink" aria-hidden="true" />
             )}
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-1">
+          <h1 className="ui-title text-foreground mb-1">
             {isRevoked
               ? t("وثيقة ملغاة", "Revoked Document")
               : isVerified

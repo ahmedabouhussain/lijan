@@ -110,7 +110,7 @@ export default function ActivityLog() {
               <Activity className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h1 className="ui-title text-foreground">
                 {isAr ? "لوحة تحكم مدير النظام" : "System Admin Dashboard"}
               </h1>
               <p className="text-xs text-muted-foreground">

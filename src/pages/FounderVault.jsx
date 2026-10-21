@@ -84,7 +84,7 @@ export default function FounderVault() {
             <div className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">
               {t("وحدة محمية", "Protected Module")}
             </div>
-            <h1 className="text-xl font-bold">{t("خزنة المؤسس", "Founder Vault")}</h1>
+            <h1 className="ui-title">{t("خزنة المؤسس", "Founder Vault")}</h1>
             <p className="text-sm text-primary-foreground/70 mt-1">
               العقل الاستراتيجي المحمي للِجان™ — فلسفة المنتج، المعمارية، والقرارات المعمارية المسجلة
             </p>

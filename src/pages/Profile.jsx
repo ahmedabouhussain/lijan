@@ -227,7 +227,7 @@ export default function Profile() {
     <div className="max-w-3xl mx-auto space-y-6">
       <PageNav />
       <div>
-        <h1 className="text-2xl font-bold text-foreground">{t("الملف الشخصي", "Profile")}</h1>
+        <h1 className="ui-title text-foreground">{t("الملف الشخصي", "Profile")}</h1>
         <p className="text-sm text-muted-foreground mt-1">{t("هويتك داخل لِجان™", "Your identity within LIJAN™")}</p>
       </div>
 

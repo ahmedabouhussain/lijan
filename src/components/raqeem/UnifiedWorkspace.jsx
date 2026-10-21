@@ -130,7 +130,7 @@ export default function UnifiedWorkspace() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="ui-title text-foreground">
             {t("مرحبًا", "Welcome")}, {displayName}
           </h1>
           {displayJobTitle && (
