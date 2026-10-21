@@ -28,8 +28,10 @@ const DEMO_CACHE_KEYS = [
 const DEMO_CACHE_PREFIXES = ['raqeem_', 'lijan_demo', 'demo_persona', 'ameen_'];
 
 function clearDemoCaches() {
-  DEMO_CACHE_KEYS.forEach((k) => localStorage.removeItem(k));
+  // Storage can be refused outright (an embedded/preview frame, a locked-down browser). Clearing
+  // a cache is housekeeping, never a precondition for entering: it must not throw.
   try {
+    DEMO_CACHE_KEYS.forEach((k) => localStorage.removeItem(k));
     Object.keys(localStorage)
       .filter((k) => DEMO_CACHE_PREFIXES.some((p) => k.startsWith(p)))
       .forEach((k) => localStorage.removeItem(k));
@@ -128,7 +130,13 @@ export const EffectiveActorProvider = ({ children }) => {
 
     const session = sessionFrom(persona, issued);
     if (!session) return null;
-    sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
+    // Persisting the session is an optimisation for a reload, not the session itself: a storage
+    // refusal must not discard a session the server has already issued.
+    try {
+      sessionStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(session));
+    } catch {
+      // Storage unavailable — the session lives in memory for this tab.
+    }
     setDemoSession(session);
 
     // Exploration never provisions or repairs operational records.

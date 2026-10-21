@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Loader2, Compass } from "lucide-react";
+import { Loader2, Compass, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useEffectiveActor } from "@/lib/EffectiveActorContext";
 import { resolvePersonaBySlug, resolveRoleLens, roleLensPath } from "@/lib/demoPersonas";
@@ -18,33 +18,45 @@ export default function ExploreSession() {
   // ?lens=chair|secretary|member — a lens only decides where the session OPENS.
   // It never grants authority: the role is the one the server resolves from the membership.
   const lens = resolveRoleLens(new URLSearchParams(window.location.search).get("lens"));
-  const [sessionRequested, setSessionRequested] = useState(false);
   const [sessionFailed, setSessionFailed] = useState(false);
-  const started = useRef(false);
+  const [opening, setOpening] = useState(false);
+  const startedRef = useRef(false);
 
   // The session is requested from the server; landing happens only once it is ACTIVE, so an
   // exploration surface never renders as an anonymous visitor.
-  useEffect(() => {
-    if (!persona || started.current) return;
-    started.current = true;
-    enterDemo(persona.key)
-      .then((session) => {
-        if (!session) setSessionFailed(true);
-        setSessionRequested(true);
-      })
-      .catch(() => {
-        setSessionFailed(true);
-        setSessionRequested(true);
-      });
+  //
+  // A single lost call (a cold function start, a token refresh in flight) must never leave the
+  // visitor on a dead page: the request is attempted twice, and a visitor who still fails can
+  // ask again — the route they are on is not a one-way door.
+  const openSession = useCallback(async () => {
+    if (!persona) return;
+    setOpening(true);
+    setSessionFailed(false);
+    let session = null;
+    for (let attempt = 0; attempt < 2 && !session; attempt++) {
+      try {
+        session = await enterDemo(persona.key);
+      } catch {
+        session = null;
+      }
+    }
+    setOpening(false);
+    if (!session) setSessionFailed(true);
   }, [persona, enterDemo]);
+
+  useEffect(() => {
+    if (!persona || startedRef.current) return;
+    startedRef.current = true;
+    openSession();
+  }, [persona, openSession]);
 
   // Land only once the governed session is active, so the landing committee resolves as
   // the persona instead of as an anonymous visitor.
   useEffect(() => {
-    if (!sessionRequested || !isDemoMode) return;
-    const target = lens && lens.personaKey === persona?.key ? roleLensPath(lens) : "/";
+    if (!isDemoMode || !persona) return;
+    const target = lens && lens.personaKey === persona.key ? roleLensPath(lens) : "/";
     navigate(target, { replace: true });
-  }, [sessionRequested, isDemoMode, lens, persona, navigate]);
+  }, [isDemoMode, persona, lens, navigate]);
 
   if (!persona || (sessionFailed && !isDemoMode)) {
     return (
@@ -55,6 +67,21 @@ export default function ExploreSession() {
             ? t("تعذّر فتح جلسة الاستكشاف", "The exploration session could not be opened")
             : t("مسار الاستكشاف غير متاح", "This exploration journey is not available")}
         </h1>
+        {persona && (
+          <button
+            type="button"
+            onClick={openSession}
+            disabled={opening}
+            className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium disabled:opacity-50 sovereign-focus"
+          >
+            {opening ? (
+              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+            )}
+            {t("إعادة المحاولة", "Try again")}
+          </button>
+        )}
         <Link to="/explore" className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
           <Compass className="w-4 h-4" aria-hidden="true" />
           {t("استكشاف المنصة", "Explore LIJAN")}
