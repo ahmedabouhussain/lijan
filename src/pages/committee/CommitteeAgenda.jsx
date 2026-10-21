@@ -15,17 +15,17 @@ import { L } from "@/lib/l10n";
 import AgendaGuestPanel from "@/components/raqeem/AgendaGuestPanel";
 
 const READINESS = {
-  ready: { ar: "جاهز", en: "Ready", color: "bg-emerald-100 text-emerald-700" },
-  needs_attention: { ar: "يحتاج اهتمام", en: "Needs Attention", color: "bg-amber-100 text-amber-700" },
-  not_ready: { ar: "غير جاهز", en: "Not Ready", color: "bg-red-100 text-red-700" },
+  ready: { ar: "جاهز", en: "Ready", color: "bg-state-success-surface text-state-success-ink" },
+  needs_attention: { ar: "يحتاج اهتمام", en: "Needs Attention", color: "bg-state-warning-surface text-state-warning-ink" },
+  not_ready: { ar: "غير جاهز", en: "Not Ready", color: "bg-state-danger-surface text-state-danger-ink" },
 };
 
 const STATUS = {
   pending: { ar: "معلق", en: "Pending", color: "bg-secondary text-muted-foreground" },
   in_discussion: { ar: "قيد المناقشة", en: "In Discussion", color: "bg-secondary text-muted-foreground" },
-  decided: { ar: "تم القرار", en: "Decided", color: "bg-emerald-100 text-emerald-700" },
-  deferred: { ar: "مؤجل", en: "Deferred", color: "bg-amber-100 text-amber-700" },
-  withdrawn: { ar: "مسحب", en: "Withdrawn", color: "bg-red-100 text-red-700" },
+  decided: { ar: "تم القرار", en: "Decided", color: "bg-state-success-surface text-state-success-ink" },
+  deferred: { ar: "مؤجل", en: "Deferred", color: "bg-state-warning-surface text-state-warning-ink" },
+  withdrawn: { ar: "مسحب", en: "Withdrawn", color: "bg-state-danger-surface text-state-danger-ink" },
 };
 
 export default function CommitteeAgenda() {

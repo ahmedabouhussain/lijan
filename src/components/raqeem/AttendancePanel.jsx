@@ -92,18 +92,18 @@ export default function AttendancePanel({ meeting, members, attendance, canCerti
       </div>
 
       {/* Quorum indicator */}
-      <div className={cn("rounded-md p-3 mb-4 border", quorumMet ? "bg-emerald-50 border-emerald-200" : "bg-amber-50 border-amber-200")}>
+      <div className={cn("rounded-md p-3 mb-4 border", quorumMet ? "bg-state-success-surface border-state-success-ink/25" : "bg-state-warning-surface border-state-warning-ink/25")}>
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">
             {t("النصاب", "Quorum")}: {presentCount} / {quorumRequired} {t("حاضر", "present")}
           </span>
-          <span className={cn("text-xs font-semibold px-2 py-0.5 rounded text-white", quorumMet ? "bg-emerald-600" : "bg-amber-600")}>
+          <span className={cn("text-xs font-semibold px-2 py-0.5 rounded", quorumMet ? "bg-state-success-ink text-background" : "bg-state-warning-ink text-background")}>
             {quorumMet ? t("اكتمل النصاب", "Quorum met") : t("النصاب غير مكتمل", "Quorum not met")}
           </span>
         </div>
         <div className="mt-2 h-2 bg-secondary rounded-full overflow-hidden">
           <div
-            className={cn("h-full rounded-full transition-all", quorumMet ? "bg-emerald-500" : "bg-amber-500")}
+            className={cn("h-full rounded-full transition-all", quorumMet ? "bg-state-success-ink" : "bg-state-warning-ink")}
             style={{ width: `${Math.min(100, (presentCount / quorumRequired) * 100)}%` }}
           />
         </div>

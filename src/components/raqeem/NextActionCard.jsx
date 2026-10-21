@@ -8,20 +8,20 @@ export default function NextActionCard({ to, icon: Icon, title, subtitle, urgenc
   const { t } = useLanguage();
 
   const urgencyStyles = {
-    critical: "border-red-200 bg-red-50/50",
-    high: "border-amber-200 bg-amber-50/50",
+    critical: "border-state-danger-ink/25 bg-state-danger-surface",
+    high: "border-state-warning-ink/25 bg-state-warning-surface",
     normal: "border-border bg-card",
   };
 
   const urgencyBars = {
-    critical: "bg-red-500",
-    high: "bg-amber-500",
+    critical: "bg-state-danger-ink",
+    high: "bg-state-warning-ink",
     normal: "bg-primary",
   };
 
   const iconStyles = {
-    critical: "text-red-600 bg-red-100",
-    high: "text-amber-600 bg-amber-100",
+    critical: "text-state-danger-ink bg-state-danger-surface",
+    high: "text-state-warning-ink bg-state-warning-surface",
     normal: "text-primary bg-primary/10",
   };
 

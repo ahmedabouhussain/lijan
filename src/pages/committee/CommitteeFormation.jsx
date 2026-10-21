@@ -21,9 +21,9 @@ const ROLE_ORDER = { chair: 1, vice_chair: 2, secretary: 3, member: 4, alternate
 
 const PROPOSE_ACTIONS = [
   { type: "rename", label: "اقتراح إعادة تسمية", labelEn: "Propose Renaming", icon: Type, color: "text-state-info-ink" },
-  { type: "amend_mandate", label: "اقتراح تعديل الصلاحية", labelEn: "Propose Mandate Amendment", icon: FileText, color: "text-amber-600" },
-  { type: "add_member", label: "اقتراح تعيين عضو", labelEn: "Propose Member Appointment", icon: UserPlus, color: "text-green-600" },
-  { type: "end_member", label: "اقتراح إنهاء عضوية", labelEn: "Propose End of Membership", icon: UserMinus, color: "text-red-600" },
+  { type: "amend_mandate", label: "اقتراح تعديل الصلاحية", labelEn: "Propose Mandate Amendment", icon: FileText, color: "text-state-warning-ink" },
+  { type: "add_member", label: "اقتراح تعيين عضو", labelEn: "Propose Member Appointment", icon: UserPlus, color: "text-state-success-ink" },
+  { type: "end_member", label: "اقتراح إنهاء عضوية", labelEn: "Propose End of Membership", icon: UserMinus, color: "text-state-danger-ink" },
   { type: "reconstitute", label: "اقتراح إعادة تشكيل", labelEn: "Propose Reconstitution", icon: RefreshCw, color: "text-primary" },
 ];
 
@@ -49,13 +49,13 @@ const STATUS_COLORS = {
   ai_processing: "bg-state-neutral-surface text-state-neutral-ink",
   secretary_review: "bg-state-info-surface text-state-info-ink",
   governance_review: "bg-state-info-surface text-state-info-ink",
-  legal_review: "bg-amber-100 text-amber-700",
-  returned: "bg-orange-100 text-orange-700",
+  legal_review: "bg-state-warning-surface text-state-warning-ink",
+  returned: "bg-state-warning-surface text-state-warning-ink",
   pending_approval: "bg-state-warning-surface text-state-warning-ink",
-  approved: "bg-green-100 text-green-700",
+  approved: "bg-state-success-surface text-state-success-ink",
   scheduled: "bg-state-progress-surface text-state-progress-ink",
-  effective: "bg-green-600 text-white",
-  rejected: "bg-red-100 text-red-700",
+  effective: "bg-state-success-surface text-state-success-ink",
+  rejected: "bg-state-danger-surface text-state-danger-ink",
   cancelled: "bg-state-neutral-surface text-state-neutral-ink",
   superseded: "bg-state-neutral-surface text-state-neutral-ink",
 };
@@ -110,12 +110,12 @@ export default function CommitteeFormation() {
       <PageHeader icon={GitBranch} title={getTitle("التشكيل والتعديلات", "Formation & Amendments", lang)} />
 
       {/* Governance notice */}
-      <div className="raqeem-card p-4 bg-amber-50/50 border-amber-200">
+      <div className="raqeem-card p-4 bg-state-warning-surface border-state-warning-ink/25">
         <div className="flex items-start gap-2.5">
-          <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <ShieldCheck className="w-5 h-5 text-state-warning-ink shrink-0 mt-0.5" />
           <div className="space-y-1">
             <div className="text-sm font-semibold text-state-warning-ink">{t("حوكمة التشكيل", "Governed Formation")}</div>
-            <p className="text-xs text-amber-700 leading-relaxed">
+            <p className="text-xs text-state-warning-ink leading-relaxed">
               {t(
                 "لا يمكن تعديل التشكيل أو التسمية أو الصلاحية مباشرةً. كل تغيير رسمي يمر عبر سير عمل محوَّك: اقتراح ← تحليل أثر ← مراجعة ← اعتماد ← نفاذ. التعديلات غير المعتمدة لا تؤثر على الصلاحيات الحالية.",
                 "Formation, naming and mandate cannot be changed directly. Every official change follows a governed workflow: proposal, impact analysis, review, approval, then effectivation. Unapproved amendments do not affect current authority."
@@ -255,7 +255,7 @@ export default function CommitteeFormation() {
                 <div className="text-sm font-medium truncate">{t(AMENDMENT_LABELS[a.amendment_type]?.ar ?? a.amendment_type, AMENDMENT_LABELS[a.amendment_type]?.en ?? a.amendment_type)}</div>
                 {a.description && <div className="text-xs text-muted-foreground truncate">{a.description}</div>}
                 {a.impact_summary && (
-                  <div className="text-[11px] text-amber-600 truncate mt-0.5 flex items-center gap-1">
+                  <div className="text-[11px] text-state-warning-ink truncate mt-0.5 flex items-center gap-1">
                     <AlertTriangle className="w-3 h-3 shrink-0" /> {a.impact_summary}
                   </div>
                 )}

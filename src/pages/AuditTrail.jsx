@@ -36,19 +36,19 @@ const ENTITY_LABELS = {
 };
 
 const ACTION_LABELS = {
-  create: { ar: "إنشاء", en: "Create", color: "text-emerald-700 bg-emerald-50" },
+  create: { ar: "إنشاء", en: "Create", color: "text-state-success-ink bg-state-success-surface" },
   update: { ar: "تحديث", en: "Update", color: "text-state-info-ink bg-state-info-surface" },
   delete: { ar: "حذف", en: "Delete", color: "text-destructive bg-destructive/10" },
-  status_change: { ar: "تغيير حالة", en: "Status Change", color: "text-amber-700 bg-amber-50" },
+  status_change: { ar: "تغيير حالة", en: "Status Change", color: "text-state-warning-ink bg-state-warning-surface" },
   issue: { ar: "إصدار", en: "Issue", color: "text-primary bg-primary/10" },
-  approve: { ar: "اعتماد", en: "Approve", color: "text-emerald-700 bg-emerald-50" },
+  approve: { ar: "اعتماد", en: "Approve", color: "text-state-success-ink bg-state-success-surface" },
   reject: { ar: "رفض", en: "Reject", color: "text-destructive bg-destructive/10" },
   sign: { ar: "توقيع", en: "Sign", color: "text-accent bg-accent/10" },
   vote: { ar: "تصويت", en: "Vote", color: "text-state-info-ink bg-state-info-surface" },
   close: { ar: "إغلاق", en: "Close", color: "text-muted-foreground bg-secondary" },
-  escalate: { ar: "تصعيد", en: "Escalate", color: "text-orange-700 bg-orange-50" },
-  activate: { ar: "تفعيل", en: "Activate", color: "text-emerald-700 bg-emerald-50" },
-  suspend: { ar: "تعليق", en: "Suspend", color: "text-orange-700 bg-orange-50" },
+  escalate: { ar: "تصعيد", en: "Escalate", color: "text-state-warning-ink bg-state-warning-surface" },
+  activate: { ar: "تفعيل", en: "Activate", color: "text-state-success-ink bg-state-success-surface" },
+  suspend: { ar: "تعليق", en: "Suspend", color: "text-state-warning-ink bg-state-warning-surface" },
 };
 
 function getActionLabel(action) {
@@ -284,7 +284,7 @@ export default function AuditTrail() {
 
 function StatCard({ icon, value, label, color }) {
   const colorMap = {
-    emerald: "bg-emerald-50 text-emerald-600",
+    emerald: "bg-state-success-surface text-state-success-ink",
     primary: "bg-primary/10 text-primary",
     accent: "bg-accent/10 text-accent",
     muted: "bg-secondary text-muted-foreground",
